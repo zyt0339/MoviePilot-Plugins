@@ -36,9 +36,9 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件版本
     plugin_version = "1.9.5"
     # 插件作者
-    plugin_author = "zyt"
+    plugin_author = "zytt"
     # 作者主页
-    author_url = "https://github.com/android-zhaoyongtao"
+    author_url = "https://www.baidu.com"
     # 插件配置项ID前缀
     plugin_config_prefix = "iyuuautoseedzyt_"
     # 加载顺序
@@ -649,9 +649,9 @@ class IYUUAutoSeedzyt(_PluginBase):
                 for torrent in paused_torrents:
                     if 'pausedUP' == torrent.state:
                         pausedUP_torrent_hashs.append(torrent.hash)
-                        logger.info(f"下载器 {downloader} 自动开始种子{torrent.name}")
+                        logger.info(f"下载器 {downloader} 自动开始 {torrent.name}")
                     else:
-                        logger.info(f"下载器 {downloader} 不自动开始种子 {torrent.name}, state={torrent.state}")
+                        logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, state={torrent.state}")
                 downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
         self.__update_config()
