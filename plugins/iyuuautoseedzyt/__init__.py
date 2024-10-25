@@ -638,6 +638,21 @@ class IYUUAutoSeedzyt(_PluginBase):
                 self.check_recheck()
             else:
                 logger.info(f"没有需要辅种的种子")
+        #zyt开始所有辅种后暂停的种子
+        for downloader in self._downloaders:
+            # zyt一起开始: 思路先get_torrents 获取所有的,然后 for 取出 非 fail 的,然后一起 start
+            if downloader == "qbittorrent":
+                downloader_obj = self.__get_downloader(downloader)
+                paused_torrents, _ = downloader_obj.get_torrents(status=["paused"])
+                # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
+                pausedUP_torrent_hashs = []
+                for torrent in paused_torrents:
+                    if 'pausedUP' == torrent.state:
+                        pausedUP_torrent_hashs.append(torrent.hash)
+                        logger.info(f"下载器 {downloader} 自动开始种子{torrent.name}")
+                    else:
+                        logger.info(f"下载器 {downloader} 不自动开始种子 {torrent.name}, state={torrent.state}")
+                downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
         self.__update_config()
         # 发送消息
@@ -761,19 +776,19 @@ class IYUUAutoSeedzyt(_PluginBase):
                                     downloader=downloader,
                                     success_torrents=success_torrents)
 
-        # zyt一起开始: 思路先get_torrents 获取所有的,然后 for 取出 非 fail 的,然后一起 start
-        if downloader == "qbittorrent":
-            downloader_obj = self.__get_downloader(downloader)
-            paused_torrents, _ = downloader_obj.get_torrents(status=["paused"])
-            # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
-            pausedUP_torrent_hashs = []
-            for torrent in paused_torrents:
-                if 'pausedUP' == torrent.state:
-                    pausedUP_torrent_hashs.append(torrent.hash)
-                    logger.info(f"下载器 {downloader} 自动开始种子{torrent.name}")
-                else:
-                    logger.info(f"下载器 {downloader} 不自动开始种子 {torrent.name}, state={torrent.state}")
-            downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
+        # # zyt一起开始: 思路先get_torrents 获取所有的,然后 for 取出 非 fail 的,然后一起 start
+        # if downloader == "qbittorrent":
+        #     downloader_obj = self.__get_downloader(downloader)
+        #     paused_torrents, _ = downloader_obj.get_torrents(status=["paused"])
+        #     # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
+        #     pausedUP_torrent_hashs = []
+        #     for torrent in paused_torrents:
+        #         if 'pausedUP' == torrent.state:
+        #             pausedUP_torrent_hashs.append(torrent.hash)
+        #             logger.info(f"下载器 {downloader} 自动开始种子{torrent.name}")
+        #         else:
+        #             logger.info(f"下载器 {downloader} 不自动开始种子 {torrent.name}, state={torrent.state}")
+        #     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         logger.info(f"下载器 {downloader} 辅种完成")
 
     def __save_history(self, current_hash: str, downloader: str, success_torrents: []):
