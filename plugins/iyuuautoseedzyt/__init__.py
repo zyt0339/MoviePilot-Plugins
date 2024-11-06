@@ -34,9 +34,9 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.5"
+    plugin_version = "1.9.6"
     # 插件作者
-    plugin_author = "zytt"
+    plugin_author = "zyt"
     # 作者主页
     author_url = "https://www.baidu.com"
     # 插件配置项ID前缀
