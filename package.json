@@ -15,7 +15,7 @@
         "name": "打印馒头torrent_hashs",
         "description": "打印馒头torrent_hashs desc。",
         "labels": "做种",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "icon": "torrent.png",
         "author": "zyt",
         "level": 2,
