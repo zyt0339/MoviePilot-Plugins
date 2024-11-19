@@ -7,11 +7,8 @@ from typing import Any, List, Dict, Tuple, Optional
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from lxml import etree
-from ruamel.yaml import CommentedMap
 
 from app.core.config import settings
-from app.core.event import eventmanager
 from app.db.site_oper import SiteOper
 from app.helper.sites import SitesHelper
 from app.helper.torrent import TorrentHelper
@@ -20,9 +17,6 @@ from app.modules.qbittorrent import Qbittorrent
 from app.modules.transmission import Transmission
 from app.plugins import _PluginBase
 from app.schemas import NotificationType
-from app.schemas.types import EventType
-from app.utils.http import RequestUtils
-from app.utils.string import StringUtils
 
 
 class getmteamtorrenthashs(_PluginBase):
@@ -33,7 +27,7 @@ class getmteamtorrenthashs(_PluginBase):
     # 插件图标
     plugin_icon = "torrent.png"
     # 插件版本
-    plugin_version = "1.0.0"
+    plugin_version = "1.0.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -117,7 +111,7 @@ class getmteamtorrenthashs(_PluginBase):
             self.__update_config()
 
         # 停止现有任务
-        self.stop_service()
+        # self.stop_service()
 
         # 启动定时任务 & 立即运行一次
         if self.get_state() or self._onlyonce:
@@ -126,14 +120,14 @@ class getmteamtorrenthashs(_PluginBase):
             self.tr = Transmission()
 
             if self._onlyonce:
-                logger.info(f"辅种服务启动，立即运行一次")
+                logger.info(f"插馒头服务启动，立即运行一次")
                 self._scheduler.add_job(self.auto_seed, 'date',
                                         run_date=datetime.now(
                                             tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3)
                                         )
-
+                logger.info(f"插馒头服务运行完了")
                 # 关闭一次性开关
-                self._onlyonce = False
+                # self._onlyonce = False
                 # if self._scheduler.get_jobs():
                 #     # 追加种子校验服务
                 #     self._scheduler.add_job(self.check_recheck, 'interval', minutes=3)
@@ -542,13 +536,8 @@ class getmteamtorrenthashs(_PluginBase):
         """
         开始查询
         """
-        logger.info("开始查询馒头种子 hash任务 ...")
+        logger.info("进入 auto_seed,开始查询馒头种子 hash任务 ...")
 
-        # 计数器初始化
-        self.success = 0
-        self.exist = 0
-        self.fail = 0
-        self.cached = 0
         # 扫描下载器辅种
         for downloader in self._downloaders:
             logger.info(f"开始扫描下载器 {downloader} ...")
@@ -556,29 +545,30 @@ class getmteamtorrenthashs(_PluginBase):
             # 获取下载器中已完成的种子
             torrents = downloader_obj.get_completed_torrents()
             if torrents:
-                logger.info(f"下载器 {downloader} 已完成种子数：{len(torrents)}")
+                logger.info(f"下载器 {downloader} 总种子数：{len(torrents)}")
             else:
                 logger.info(f"下载器 {downloader} 没有已完成种子")
                 continue
             # hash_strs = []
             hash_strs2 = []
             for torrent in torrents:
-                if self._event.is_set():
-                    logger.info(f"服务停止")
-                    return
+                # if self._event.is_set():
+                #     logger.info(f"服务停止")
+                #     return
                 # 获取种子 trackers
                 # 获取种子 size,取 10M 到 100M之间的
                 if self.__get_torrenttrackers_contains_mteam(torrent, downloader) and self.__get_torrent_size_in_10M_and_100M(torrent, downloader):
                     # 获取种子hash
+                    logger.info(f" {downloader} {torrent.name}")
                     hash_str = self.__get_hash(torrent, downloader)
                     hash_strs2.append(hash_str)
                 # 获取种子标签
                 # torrent_labels = self.__get_label(torrent, downloader)
             if hash_strs2:
-                logger.info(f"10M-100M 之间的馒头种子个数：{len(hash_strs2)}")
-                logger.info(f"10M-100M 之间的馒头种子 hashs：{hash_strs2}")
+                logger.info(f" {downloader} 10M-100M 之间的馒头种子个数：{len(hash_strs2)}")
+                logger.info(f" {downloader} 10M-100M 之间的馒头种子 hashs：{hash_strs2}")
             else:
-                logger.info(f"没有获取到馒头种子")
+                logger.info(f" {downloader} 没有获取到馒头种子")
         # 发送消息
         if self._notify:
             if self.success or self.fail:
@@ -666,20 +656,20 @@ class getmteamtorrenthashs(_PluginBase):
 
 
 
-    def stop_service(self):
-        """
-        退出插件
-        """
-        try:
-            if self._scheduler:
-                self._scheduler.remove_all_jobs()
-                if self._scheduler.running:
-                    self._event.set()
-                    self._scheduler.shutdown()
-                    self._event.clear()
-                self._scheduler = None
-        except Exception as e:
-            print(str(e))
+    # def stop_service(self):
+    #     """
+    #     退出插件
+    #     """
+    #     try:
+    #         if self._scheduler:
+    #             self._scheduler.remove_all_jobs()
+    #             if self._scheduler.running:
+    #                 self._event.set()
+    #                 self._scheduler.shutdown()
+    #                 self._event.clear()
+    #             self._scheduler = None
+    #     except Exception as e:
+    #         print(str(e))
 
     def __custom_sites(self) -> List[Any]:
         custom_sites = []
