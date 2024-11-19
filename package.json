@@ -13,7 +13,7 @@
     },
     "getmteamtorrenthashs": {
         "name": "打印馒头torrent",
-        "description": "打印馒头torrent_hashs desc。2",
+        "description": "打印馒头torrent_hashs",
         "labels": "做种",
         "version": "1.0.3",
         "icon": "torrent.png",
