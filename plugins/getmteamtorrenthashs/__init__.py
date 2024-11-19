@@ -21,13 +21,13 @@ from app.schemas import NotificationType
 
 class getmteamtorrenthashs(_PluginBase):
     # 插件名称
-    plugin_name = "打印馒头torrent_hashs"
+    plugin_name = "打印馒头torrent"
     # 插件描述
     plugin_desc = "打印馒头torrent_hashs,desc"
     # 插件图标
     plugin_icon = "torrent.png"
     # 插件版本
-    plugin_version = "1.0.1"
+    plugin_version = "1.0.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
