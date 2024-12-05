@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.87"
+    plugin_version = "1.9.88"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -676,9 +676,9 @@ class IYUUAutoSeedzyt(_PluginBase):
                                 logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, torrent.available={torrent.available}")
                             except:
                                 logger.info(f"error2 不自动开始 {torrent.name}")
-                    except:
-                        logger.info(f"error1 自动开始 {torrent.name}")
-                    
+                    except Exception as e:
+                        logger.info(f"error1 自动开始 {torrent.name},{e}")
+
                 logger.info(f'debug start_torrents{pausedUP_torrent_hashs}')
                 downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
