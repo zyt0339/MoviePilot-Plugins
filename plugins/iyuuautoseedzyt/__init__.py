@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.36"
+    plugin_version = "1.9.46"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -661,13 +661,16 @@ class IYUUAutoSeedzyt(_PluginBase):
                 paused_torrents, _ = downloader_obj.get_torrents(status=["stopped"])
                 # 继续过滤，只选 torrent.available == 100.0
                 pausedUP_torrent_hashs = []
+                print(f'debug get_torrents(status=["stopped"])')
                 for torrent in paused_torrents:
+                    print(f'debug {torrent.name},available = {torrent.available}')
                     if torrent.available == 100.0:
                         pausedUP_torrent_hashs.append(torrent.hashString)
                         logger.info(f"下载器 {downloader} 自动开始 {torrent.name}")
                     else:
                         logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, torrent.available={torrent.available}")
                 downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
+                print(f'debug start_torrents')
         # 保存缓存
         self.__update_config()
         # 发送消息
