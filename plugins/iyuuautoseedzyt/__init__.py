@@ -34,11 +34,11 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.89"
+    plugin_version = "1.9.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
-    author_url = "https://www.baidu.com"
+    author_url = "https://github.com/zyt0339/MoviePilot-Plugins/"
     # 插件配置项ID前缀
     plugin_config_prefix = "iyuuautoseedzyt_"
     # 加载顺序
@@ -188,7 +188,7 @@ class IYUUAutoSeedzyt(_PluginBase):
         if self.get_state():
             return [{
                 "id": "IYUUAutoSeedzyt",
-                "name": "IYUU自动辅种服务zyt",
+                "name": "IYUU辅种自动开始",
                 "trigger": CronTrigger.from_crontab(self._cron),
                 "func": self.auto_seed,
                 "kwargs": {}
@@ -587,7 +587,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                 # 获取种子hash
                 hash_str = self.__get_hash(torrent, downloader)
                 if hash_str in self._error_caches or hash_str in self._permanent_error_caches:
-                    # logger.info(f"种子 {hash_str} 辅种失败且已缓存，跳过 ...")zyt
+                    logger.info(f"种子 {hash_str} 辅种失败且已缓存，跳过 ...")
                     continue
                 save_path = self.__get_save_path(torrent, downloader)
 
@@ -651,13 +651,13 @@ class IYUUAutoSeedzyt(_PluginBase):
                 for torrent in paused_torrents:
                     if 'pausedUP' == torrent.state:
                         pausedUP_torrent_hashs.append(torrent.hash)
-                        logger.info(f"下载器 {downloader} 自动开始 {torrent.name}")
+                        logger.info(f"{downloader} 自动开始 {torrent.name}")
                     else:
-                        logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, state={torrent.state}")
-                downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
+                if len(pausedUP_torrent_hashs) > 0:
+                    downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
             elif downloader == "transmission":
                 downloader_obj = self.__get_downloader(downloader)
-                
                 if "fileStats" not in self.tr._trarg:
                     self.tr._trarg.append("fileStats")
                 if "desiredAvailable" not in self.tr._trarg:
@@ -666,26 +666,15 @@ class IYUUAutoSeedzyt(_PluginBase):
                 paused_torrents, _ = downloader_obj.get_torrents(status=["stopped"])
                 # 继续过滤，只选 torrent.available == 100.0
                 pausedUP_torrent_hashs = []
-                logger.info(f'111debug get_torrents(status=["stopped"])={paused_torrents}')
                 for torrent in paused_torrents:
-                    try:
-                        logger.info(f'debug {torrent.name},available = {str(torrent.available)}')
-                    except:
-                        pass
-                    try:
-                        if torrent.available == 100.0:
-                            pausedUP_torrent_hashs.append(torrent.hashString)
-                            logger.info(f"下载器 {downloader} 自动开始 {torrent.name}")
-                        else:
-                            try:
-                                logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, torrent.available={torrent.available}")
-                            except:
-                                logger.info(f"error2 不自动开始 {torrent.name}")
-                    except Exception as e:
-                        logger.info(f"error1 自动开始 {torrent.name},{e}")
-
-                logger.info(f'debug start_torrents{pausedUP_torrent_hashs}')
-                downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
+                    available = torrent.available
+                    if available == 100.0:
+                        pausedUP_torrent_hashs.append(torrent.hashString)
+                        logger.info(f"{downloader} 自动开始 {torrent.name}")
+                    else:
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available}")
+                if len(pausedUP_torrent_hashs) > 0:
+                    downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
         self.__update_config()
         # 发送消息
@@ -787,14 +776,14 @@ class IYUUAutoSeedzyt(_PluginBase):
                 if not seed.get("sid") or not seed.get("info_hash"):
                     continue
                 if seed.get("info_hash") in hashs:
-                    # logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")zyt
+                    logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")
                     continue
                 if seed.get("info_hash") in self._success_caches:
                     logger.info(f"{seed.get('info_hash')} 已处理过辅种，跳过 ...")
                     continue
                 if seed.get("info_hash") in self._error_caches or seed.get(
                         "info_hash") in self._permanent_error_caches:
-                    # logger.info(f"种子 {seed.get('info_hash')} 辅种失败且已缓存，跳过 ...")zyt
+                    logger.info(f"种子 {seed.get('info_hash')} 辅种失败且已缓存，跳过 ...")
                     continue
                 # 添加任务
                 success = self.__download_torrent(seed=seed,
@@ -965,7 +954,7 @@ class IYUUAutoSeedzyt(_PluginBase):
         downloader_obj = self.__get_downloader(downloader)
         torrent_info, _ = downloader_obj.get_torrents(ids=[seed.get("info_hash")])
         if torrent_info:
-            # logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")zyt
+            logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")
             self.exist += 1
             return False
         # 站点流控
