@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.86"
+    plugin_version = "1.9.87"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -661,23 +661,24 @@ class IYUUAutoSeedzyt(_PluginBase):
                 paused_torrents, _ = downloader_obj.get_torrents(status=["stopped"])
                 # 继续过滤，只选 torrent.available == 100.0
                 pausedUP_torrent_hashs = []
-                logger.info(f'debug get_torrents(status=["stopped"])={paused_torrents}')
+                logger.info(f'111debug get_torrents(status=["stopped"])={paused_torrents}')
                 for torrent in paused_torrents:
                     try:
                         logger.info(f'debug {torrent.name},available = {str(torrent.available)}')
                     except:
                         pass
-                    if torrent.available == 100.0:
-                        try:
+                    try:
+                        if torrent.available == 100.0:
                             pausedUP_torrent_hashs.append(torrent.hashString)
                             logger.info(f"下载器 {downloader} 自动开始 {torrent.name}")
-                        except:
-                            logger.info(f"error1 自动开始 {torrent.name}")
-                    else:
-                        try:
-                            logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, torrent.available={torrent.available}")
-                        except:
-                            logger.info(f"error2 不自动开始 {torrent.name}")
+                        else:
+                            try:
+                                logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, torrent.available={torrent.available}")
+                            except:
+                                logger.info(f"error2 不自动开始 {torrent.name}")
+                    except:
+                        logger.info(f"error1 自动开始 {torrent.name}")
+                    
                 logger.info(f'debug start_torrents{pausedUP_torrent_hashs}')
                 downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
