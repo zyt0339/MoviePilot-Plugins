@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.56"
+    plugin_version = "1.9.66"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -635,12 +635,12 @@ class IYUUAutoSeedzyt(_PluginBase):
                     self.__seed_torrents(hash_strs=chunk,
                                          downloader=downloader)
                 # 触发校验检查
-                logger.info(f"下载器 {downloader} 辅种全部完成")
+                logger.info(f"下载器 {downloader} 辅种全部完成。")
                 self.check_recheck()
             else:
                 logger.info(f"没有需要辅种的种子")
         #zyt开始所有辅种后暂停的种子
-        logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子。。。")
+        logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子 ...")
         for downloader in self._downloaders:
             # zyt一起开始: 思路先get_torrents 获取所有的,然后 for 取出 非 fail 的,然后一起 start
             if downloader == "qbittorrent":
@@ -655,7 +655,9 @@ class IYUUAutoSeedzyt(_PluginBase):
                     else:
                         logger.info(f"下载器 {downloader} 不自动开始 {torrent.name}, state={torrent.state}")
                 downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
-            elif downloader == "transmission":
+            print(f'start into debug downloader == transmission')
+            if downloader == "transmission":
+                print(f'into debug downloader == transmission')
                 downloader_obj = self.__get_downloader(downloader)
                 # 返回结果:种子列表, 是否有错误
                 paused_torrents, _ = downloader_obj.get_torrents(status=["stopped"])
@@ -807,7 +809,7 @@ class IYUUAutoSeedzyt(_PluginBase):
         #         else:
         #             logger.info(f"下载器 {downloader} 不自动开始种子 {torrent.name}, state={torrent.state}")
         #     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
-        logger.info(f"下载器 {downloader} 辅种部分完成")
+        logger.info(f"下载器 {downloader} 辅种部分完成 ...")
 
     def __save_history(self, current_hash: str, downloader: str, success_torrents: []):
         """
