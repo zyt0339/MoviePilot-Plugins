@@ -661,7 +661,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                 paused_torrents, _ = downloader_obj.get_torrents(status=["stopped"])
                 # 继续过滤，只选 torrent.available == 100.0
                 pausedUP_torrent_hashs = []
-                print(f'debug get_torrents(status=["stopped"])')
+                print(f'debug get_torrents(status=["stopped"])={paused_torrents}')
                 for torrent in paused_torrents:
                     print(f'debug {torrent.name},available = {torrent.available}')
                     if torrent.available == 100.0:
