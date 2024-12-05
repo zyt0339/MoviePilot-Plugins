@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.88"
+    plugin_version = "1.9.89"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -657,6 +657,11 @@ class IYUUAutoSeedzyt(_PluginBase):
                 downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
             elif downloader == "transmission":
                 downloader_obj = self.__get_downloader(downloader)
+                
+                if "fileStats" not in self.tr._trarg:
+                    self.tr._trarg.append("fileStats")
+                if "desiredAvailable" not in self.tr._trarg:
+                    self.tr._trarg.append("desiredAvailable")
                 # 返回结果:种子列表, 是否有错误
                 paused_torrents, _ = downloader_obj.get_torrents(status=["stopped"])
                 # 继续过滤，只选 torrent.available == 100.0
