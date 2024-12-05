@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.16"
+    plugin_version = "1.9.26"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -639,6 +639,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             else:
                 logger.info(f"没有需要辅种的种子")
         #zyt开始所有辅种后暂停的种子
+        logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子。。。")
         for downloader in self._downloaders:
             # zyt一起开始: 思路先get_torrents 获取所有的,然后 for 取出 非 fail 的,然后一起 start
             if downloader == "qbittorrent":
@@ -767,14 +768,14 @@ class IYUUAutoSeedzyt(_PluginBase):
                 if not seed.get("sid") or not seed.get("info_hash"):
                     continue
                 if seed.get("info_hash") in hashs:
-                    logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")
+                    # logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")zyt
                     continue
                 if seed.get("info_hash") in self._success_caches:
                     logger.info(f"{seed.get('info_hash')} 已处理过辅种，跳过 ...")
                     continue
                 if seed.get("info_hash") in self._error_caches or seed.get(
                         "info_hash") in self._permanent_error_caches:
-                    logger.info(f"种子 {seed.get('info_hash')} 辅种失败且已缓存，跳过 ...")
+                    # logger.info(f"种子 {seed.get('info_hash')} 辅种失败且已缓存，跳过 ...")zyt
                     continue
                 # 添加任务
                 success = self.__download_torrent(seed=seed,
