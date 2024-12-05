@@ -3,11 +3,12 @@
         "name": "IYUU自动辅种(zyt)",
         "description": "基于IYUU官方Api实现自动辅种。",
         "labels": "做种,IYUU",
-        "version": "1.9.56",
+        "version": "1.9.66",
         "icon": "Iyuu_A.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v1.9.66": "qb tr辅种后暂停状态自动开始,异常状态不开始6",
             "v1.9.56": "qb tr辅种后暂停状态自动开始,异常状态不开始5",
             "v1.9.46": "qb tr辅种后暂停状态自动开始,异常状态不开始4",
             "v1.9.26": "qb tr辅种后暂停状态自动开始,异常状态不开始2",
