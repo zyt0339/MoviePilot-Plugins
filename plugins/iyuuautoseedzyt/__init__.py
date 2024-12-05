@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.26"
+    plugin_version = "1.9.36"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -635,6 +635,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                     self.__seed_torrents(hash_strs=chunk,
                                          downloader=downloader)
                 # 触发校验检查
+                logger.info(f"下载器 {downloader} 辅种全部完成")
                 self.check_recheck()
             else:
                 logger.info(f"没有需要辅种的种子")
@@ -803,7 +804,7 @@ class IYUUAutoSeedzyt(_PluginBase):
         #         else:
         #             logger.info(f"下载器 {downloader} 不自动开始种子 {torrent.name}, state={torrent.state}")
         #     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
-        logger.info(f"下载器 {downloader} 辅种完成")
+        logger.info(f"下载器 {downloader} 辅种部分完成")
 
     def __save_history(self, current_hash: str, downloader: str, success_torrents: []):
         """
