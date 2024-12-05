@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "1.9.46"
+    plugin_version = "1.9.56"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -587,7 +587,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                 # 获取种子hash
                 hash_str = self.__get_hash(torrent, downloader)
                 if hash_str in self._error_caches or hash_str in self._permanent_error_caches:
-                    logger.info(f"种子 {hash_str} 辅种失败且已缓存，跳过 ...")
+                    # logger.info(f"种子 {hash_str} 辅种失败且已缓存，跳过 ...")zyt
                     continue
                 save_path = self.__get_save_path(torrent, downloader)
 
@@ -950,7 +950,7 @@ class IYUUAutoSeedzyt(_PluginBase):
         downloader_obj = self.__get_downloader(downloader)
         torrent_info, _ = downloader_obj.get_torrents(ids=[seed.get("info_hash")])
         if torrent_info:
-            logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")
+            # logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")zyt
             self.exist += 1
             return False
         # 站点流控
