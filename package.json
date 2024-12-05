@@ -3,7 +3,7 @@
         "name": "IYUU自动辅种(zyt)",
         "description": "基于IYUU官方Api实现自动辅种。",
         "labels": "做种,IYUU",
-        "version": "1.9.26",
+        "version": "1.9.46",
         "icon": "Iyuu_A.png",
         "author": "zyt",
         "level": 2,
