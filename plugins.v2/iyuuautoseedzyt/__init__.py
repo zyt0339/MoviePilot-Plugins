@@ -33,7 +33,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.1.2"
+    plugin_version = "2.2.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -653,7 +653,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             dl_type = service.type
             # zyt一起开始: 思路先get_torrents 获取所有的,然后 for 取出 非 fail 的,然后一起 start
             if dl_type == "qbittorrent":
-                paused_torrents, _ = downloader_obj.get_torrents(status=["paused"])
+                paused_torrents, _ = downloader_obj.get_torrents(status="paused")
                 # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
