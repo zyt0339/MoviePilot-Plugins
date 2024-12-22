@@ -33,7 +33,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.2"
+    plugin_version = "2.2.0.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -657,11 +657,11 @@ class IYUUAutoSeedzyt(_PluginBase):
                 # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
-                    if 'pausedUP' == torrent.state:
+                    if 'pausedUP' == torrent.state or 'stoppedUP' == torrent.state:
                         pausedUP_torrent_hashs.append(torrent.hash)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
-                    if 'pausedUP' != torrent.state:
+                    if 'pausedUP' != torrent.state and 'stoppedUP' != torrent.state:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
