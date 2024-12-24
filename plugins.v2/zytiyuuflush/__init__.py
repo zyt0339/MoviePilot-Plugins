@@ -27,13 +27,13 @@ from app.utils.string import StringUtils
 
 class ZYTIYUUflush(_PluginBase):
     # 插件名称
-    plugin_name = "IYUU自动辅种zyt2"
+    plugin_name = "IYUU刷流辅种zyt"
     # 插件描述
     plugin_desc = "基于IYUU官方Api实现自动辅种。"
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.2.0.5"
+    plugin_version = "2.2.0.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -694,7 +694,7 @@ class ZYTIYUUflush(_PluginBase):
             if self.success or self.fail:
                 self.post_message(
                     mtype=NotificationType.SiteMessage,
-                    title="【IYUU自动辅种任务完成】",
+                    title="【IYUU刷流辅种】",
                     text=f"服务器返回可辅种总数：{self.total}\n"
                          f"实际可辅种数：{self.realtotal}\n"
                          f"已存在：{self.exist}\n"
