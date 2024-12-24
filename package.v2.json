@@ -14,12 +14,12 @@
             "v2.0": "兼容MoviePilot V2 版本"
         }
     },
-    "IYUUAutoSeedzyt2": {
+    "IYUUAutoSeedz2": {
         "name": "IYUU刷流辅种(zyt)",
         "description": "基于IYUU官方Api实现自动辅种。",
         "labels": "辅种,IYUU",
         "version": "2.2.0",
-        "icon": "Iyuu_A.png",
+        "icon": "Iyuu_z2.png",
         "author": "zyt",
         "level": 2,
         "history": {
