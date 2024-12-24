@@ -206,7 +206,7 @@ class ZYTIYUUflush(_PluginBase):
         if self.get_state():
             return [{
                 "id": "ZYTIYUUflush",
-                "name": "IYUU自动辅种服务2",
+                "name": "IYUU刷流辅种",
                 "trigger": CronTrigger.from_crontab(self._cron),
                 "func": self.auto_seed,
                 "kwargs": {}
