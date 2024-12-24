@@ -247,7 +247,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件描述
     plugin_desc = "自动托管刷流，将会提高对应站点的访问频率。"
     # 插件图标
-    plugin_icon = "Affine_A.png"
+    plugin_icon = "Iyuu_A.png"
     # 插件版本
     plugin_version = "4.0.1.1"
     # 插件作者
