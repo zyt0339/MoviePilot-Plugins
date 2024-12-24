@@ -4,7 +4,7 @@
         "description": "基于IYUU官方Api实现自动辅种。",
         "labels": "做种,IYUU",
         "version": "2.2.0.1",
-        "icon": "Iyuu_A.png",
+        "icon": "IYUU.png",
         "author": "zyt",
         "level": 2,
         "history": {
@@ -19,7 +19,7 @@
         "description": "基于IYUU官方Api实现自动辅种",
         "labels": "做种,IYUU",
         "version": "2.2.0.3",
-        "icon": "Iyuu_A.png",
+        "icon": "IYUU.png",
         "author": "zyt",
         "level": 2,
         "history": {
