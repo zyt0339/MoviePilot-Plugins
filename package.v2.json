@@ -15,14 +15,15 @@
         }
     },
     "ZYTIYUUflush": {
-        "name": "IYUU刷流辅种服务",
+        "name": "IYUU刷流辅种",
         "description": "基于IYUU官方Api实现自动辅种",
         "labels": "做种,IYUU",
-        "version": "2.2.0.4",
+        "version": "2.2.0.6",
         "icon": "Iyuu_A.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v2.2.0.6": "2.2.0.6",
             "v2.2.0.5": "2.2.0.5",
             "v2.2.0.4": "2.2.0.4",
             "v2.2.0.3": "2.2.0.3",
