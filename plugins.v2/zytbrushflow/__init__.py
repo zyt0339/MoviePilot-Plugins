@@ -249,7 +249,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.0.1.1"
+    plugin_version = "4.0.1.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -257,7 +257,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件配置项ID前缀
     plugin_config_prefix = "zytbrushflow_"
     # 加载顺序
-    plugin_order = 21
+    plugin_order = 4
     # 可使用的用户级别
     auth_level = 2
 
