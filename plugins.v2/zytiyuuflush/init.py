@@ -31,9 +31,9 @@ class ZYTIYUUflush(_PluginBase):
     # 插件描述
     plugin_desc = "基于IYUU官方Api实现自动辅种。"
     # 插件图标
-    plugin_icon = "Iyuu_A.png"
+    plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.2.0.3"
+    plugin_version = "2.2.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
