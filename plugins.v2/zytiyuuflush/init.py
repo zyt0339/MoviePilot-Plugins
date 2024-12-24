@@ -27,21 +27,21 @@ from app.utils.string import StringUtils
 
 class ZYTIYUUflush(_PluginBase):
     # 插件名称
-    plugin_name = "IYUU刷流辅种服务"
+    plugin_name = "IYUU自动辅种zyt2"
     # 插件描述
     plugin_desc = "基于IYUU官方Api实现自动辅种。"
     # 插件图标
-    plugin_icon = "IYUU.png"
+    plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.2.0.4"
+    plugin_version = "2.2.0.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins/"
     # 插件配置项ID前缀
-    plugin_config_prefix = "zytiyuuflush"
+    plugin_config_prefix = "zytiyuuflush_"
     # 加载顺序
-    plugin_order = 3
+    plugin_order = 17
     # 可使用的用户级别
     auth_level = 2
 
@@ -206,7 +206,7 @@ class ZYTIYUUflush(_PluginBase):
         if self.get_state():
             return [{
                 "id": "ZYTIYUUflush",
-                "name": "IYUU刷流辅种服务",
+                "name": "IYUU自动辅种服务2",
                 "trigger": CronTrigger.from_crontab(self._cron),
                 "func": self.auto_seed,
                 "kwargs": {}
@@ -694,7 +694,7 @@ class ZYTIYUUflush(_PluginBase):
             if self.success or self.fail:
                 self.post_message(
                     mtype=NotificationType.SiteMessage,
-                    title="【IYUU刷流辅种任务完成】",
+                    title="【IYUU自动辅种任务完成】",
                     text=f"服务器返回可辅种总数：{self.total}\n"
                          f"实际可辅种数：{self.realtotal}\n"
                          f"已存在：{self.exist}\n"
