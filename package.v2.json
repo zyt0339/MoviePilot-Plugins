@@ -4,7 +4,7 @@
         "description": "基于IYUU官方Api实现自动辅种。",
         "labels": "做种,IYUU",
         "version": "2.2.0.1",
-        "icon": "IYUU.png",
+        "icon": "Iyuu_A.png",
         "author": "zyt",
         "level": 2,
         "history": {
@@ -19,10 +19,11 @@
         "description": "基于IYUU官方Api实现自动辅种",
         "labels": "做种,IYUU",
         "version": "2.2.0.4",
-        "icon": "IYUU.png",
+        "icon": "Iyuu_A.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v2.2.0.5": "2.2.0.5",
             "v2.2.0.4": "2.2.0.4",
             "v2.2.0.3": "2.2.0.3",
             "v2.2.0": "支持 qb5.0.3 自动开始"
