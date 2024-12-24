@@ -29,5 +29,17 @@
             "v2.2.0.3": "2.2.0.3",
             "v2.2.0": "支持 qb5.0.3 自动开始"
         }
+    },
+    "ZYTBrushFlow": {
+        "name": "站点刷流zyt",
+        "description": "自动托管刷流，将会提高对应站点的访问频率。",
+        "labels": "刷流,仪表板",
+        "version": "4.0.1.1",
+        "icon": "Affine_A.png",
+        "author": "zyt",
+        "level": 2,
+        "history": {
+            "v4.0.1.1": "NexusPHP 站点支持自动跳过下载提示页调整为站点独立配置项"
+        }
     }
 }
