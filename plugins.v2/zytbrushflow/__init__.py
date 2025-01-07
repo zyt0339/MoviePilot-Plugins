@@ -62,6 +62,8 @@ class BrushConfig:
         self.seed_avgspeed = self.__parse_number(config.get("seed_avgspeed"))
         self.seed_inactivetime = self.__parse_number(config.get("seed_inactivetime"))
         self.delete_size_range = config.get("delete_size_range")
+        self.minute_flush = config.get("minute_flush", 10)
+        self.minute_check = config.get("minute_check", 5)
         self.up_speed = self.__parse_number(config.get("up_speed"))
         self.dl_speed = self.__parse_number(config.get("dl_speed"))
         self.auto_archive_days = self.__parse_number(config.get("auto_archive_days"))
@@ -249,7 +251,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.0.1.2"
+    plugin_version = "4.0.1.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -437,7 +439,7 @@ class ZYTBrushFlow(_PluginBase):
                 "name": "站点刷流服务",
                 "trigger": "interval",
                 "func": self.brush,
-                "kwargs": {"minutes": self._brush_interval}
+                "kwargs": {"minutes": brush_config.minute_flush}
             })
 
         if brush_config.enabled:
@@ -447,7 +449,7 @@ class ZYTBrushFlow(_PluginBase):
                 "name": "站点刷流检查服务",
                 "trigger": "interval",
                 "func": self.check,
-                "kwargs": {"minutes": self._check_interval}
+                "kwargs": {"minutes": brush_config.minute_check}
             })
 
         if not services:
@@ -931,6 +933,40 @@ class ZYTBrushFlow(_PluginBase):
                                                    'model': 'delete_size_range',
                                                    'label': '动态删种阈值（GB）',
                                                    'placeholder': '如：500 或 500-1000，达到后删除任务'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           "cols": 12,
+                                           "md": 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'minute_flush',
+                                                   'label': '刷流周期（分钟）',
+                                                   'placeholder': 'x分钟运行一次,默认10 分钟'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           "cols": 12,
+                                           "md": 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'minute_check',
+                                                   'label': '检查周期（分钟）',
+                                                   'placeholder': 'x分钟运行一次,默认5 分钟'
                                                }
                                            }
                                        ]
@@ -2948,6 +2984,8 @@ class ZYTBrushFlow(_PluginBase):
             "seed_avgspeed": brush_config.seed_avgspeed,
             "seed_inactivetime": brush_config.seed_inactivetime,
             "delete_size_range": brush_config.delete_size_range,
+            "minute_flush": brush_config.minute_flush,
+            "minute_check": brush_config.minute_check,
             "up_speed": brush_config.up_speed,
             "dl_speed": brush_config.dl_speed,
             "auto_archive_days": brush_config.auto_archive_days,
