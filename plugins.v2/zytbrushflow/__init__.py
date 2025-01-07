@@ -251,7 +251,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.0.1.3"
+    plugin_version = "4.0.1.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -433,7 +433,7 @@ class ZYTBrushFlow(_PluginBase):
             return services
 
         if self._task_brush_enable:
-            logger.info(f"站点刷流定时服务启动，时间间隔 {self._brush_interval} 分钟")
+            logger.info(f"站点刷流定时服务启动，时间间隔 {brush_config.minute_flush} 分钟")
             services.append({
                 "id": "ZYTBrushFlow",
                 "name": "站点刷流服务",
@@ -443,7 +443,7 @@ class ZYTBrushFlow(_PluginBase):
             })
 
         if brush_config.enabled:
-            logger.info(f"站点刷流检查定时服务启动，时间间隔 {self._check_interval} 分钟")
+            logger.info(f"站点刷流检查定时服务启动，时间间隔 {brush_config.minute_check} 分钟")
             services.append({
                 "id": "ZYTBrushFlowCheck",
                 "name": "站点刷流检查服务",
