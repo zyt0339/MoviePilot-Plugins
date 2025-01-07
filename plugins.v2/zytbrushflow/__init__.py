@@ -439,7 +439,7 @@ class ZYTBrushFlow(_PluginBase):
                 "name": "站点刷流服务",
                 "trigger": "interval",
                 "func": self.brush,
-                "kwargs": {"minutes": brush_config.minute_flush}
+                "kwargs": {"minutes": int(brush_config.minute_flush)}
             })
 
         if brush_config.enabled:
@@ -449,7 +449,7 @@ class ZYTBrushFlow(_PluginBase):
                 "name": "站点刷流检查服务",
                 "trigger": "interval",
                 "func": self.check,
-                "kwargs": {"minutes": brush_config.minute_check}
+                "kwargs": {"minutes": int(brush_config.minute_check)}
             })
 
         if not services:
