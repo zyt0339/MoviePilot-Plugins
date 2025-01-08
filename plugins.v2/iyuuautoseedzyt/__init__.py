@@ -33,7 +33,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.1"
+    plugin_version = "2.5.0.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -63,7 +63,6 @@ class IYUUAutoSeedzyt(_PluginBase):
     _notify = False
     _nolabels = None
     _nopaths = None
-    _custom_script_path = None
     _labelsafterseed = None
     _categoryafterseed = None
     _addhosttotag = False
@@ -112,7 +111,6 @@ class IYUUAutoSeedzyt(_PluginBase):
             self._notify = config.get("notify")
             self._nolabels = config.get("nolabels")
             self._nopaths = config.get("nopaths")
-            self._custom_script_path = config.get("custom_script_path")
             self._labelsafterseed = config.get("labelsafterseed") if config.get("labelsafterseed") else "已整理,辅种"
             self._categoryafterseed = config.get("categoryafterseed")
             self._addhosttotag = config.get("addhosttotag")
@@ -458,22 +456,6 @@ class IYUUAutoSeedzyt(_PluginBase):
                                                }
                                            }
                                        ]
-                                   },
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'custom_script_path',
-                                                   'label': '辅种完成后执行自定义python脚本',
-                                                   'placeholder': '只写py文件路径如:/xx/xx/xx.py'
-                                               }
-                                           }
-                                       ]
                                    }
                                ]
                            },
@@ -566,7 +548,6 @@ class IYUUAutoSeedzyt(_PluginBase):
             "notify": self._notify,
             "nolabels": self._nolabels,
             "nopaths": self._nopaths,
-            "custom_script_path": self._custom_script_path,
             "labelsafterseed": self._labelsafterseed,
             "categoryafterseed": self._categoryafterseed,
             "addhosttotag": self._addhosttotag,
@@ -722,14 +703,6 @@ class IYUUAutoSeedzyt(_PluginBase):
                          f"{self.cached} 条失败记录已加入缓存"
                 )
         logger.info("辅种任务执行完成")
-        if self._custom_script_path: # zyt 辅种完成可以执行一个自定义脚本
-            try:
-                with open(self._custom_script_path, 'r') as file:
-                    script_content = file.read()
-                exec(script_content)
-                logger.info(f"执行自定义脚本结束 {self._custom_script_path}")
-            except Exception as e:
-                print(f'执行自定义脚本出错:{e}')
 
     def check_recheck(self):
         """
