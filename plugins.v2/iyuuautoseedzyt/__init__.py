@@ -31,9 +31,9 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件描述
     plugin_desc = "基于IYUU官方Api实现自动辅种。"
     # 插件图标
-    plugin_icon = "Iyuu_A.png"
+    plugin_icon = "Iyuu_z2.png"
     # 插件版本
-    plugin_version = "2.5.0.2"
+    plugin_version = "2.5.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -647,6 +647,7 @@ class IYUUAutoSeedzyt(_PluginBase):
 
         #zyt开始所有辅种后暂停的种子
         logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子 ...")
+        nolabel_set = set(self._nolabels.split(','))
         for service in self.service_infos.values():
             downloader = service.name
             downloader_obj = service.instance
@@ -657,12 +658,14 @@ class IYUUAutoSeedzyt(_PluginBase):
                 # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
-                    if 'pausedUP' == torrent.state or 'stoppedUP' == torrent.state:
+                    if torrent.state in ['pausedUP', 'stoppedUP'] and not nolabel_set.intersection([element.strip() for element in torrent.tags.split(',')]):
                         pausedUP_torrent_hashs.append(torrent.hash)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
-                    if 'pausedUP' != torrent.state and 'stoppedUP' != torrent.state:
+                    if torrent.state not in ['pausedUP', 'stoppedUP']:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
+                    elif nolabel_set.intersection([element.strip() for element in torrent.tags.split(',')]):
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 [{torrent.tags}]")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
             elif dl_type == "transmission":
@@ -678,13 +681,15 @@ class IYUUAutoSeedzyt(_PluginBase):
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
                     available = torrent.available
-                    if available == 100.0:
+                    if available == 100.0 and not nolabel_set.intersection([element.strip() for element in torrent.labels]):
                         pausedUP_torrent_hashs.append(torrent.hashString)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
                     available = torrent.available
                     if available < 100.0:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available}")
+                    elif nolabel_set.intersection([element.strip() for element in torrent.labels]):
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 {torrent.labels}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
