@@ -51,5 +51,17 @@
             "v4.0.1.2": "NexusPHP 站点支持自动跳过下载提示页调整为站点独立配置项",
             "v4.0.1.1": "NexusPHP 站点支持自动跳过下载提示页调整为站点独立配置项"
         }
+    },
+    "DeleteTagCmd": {
+        "name": "下载器标签清理&限速",
+        "description": "定时执行,定制开发qb_delete_tag.py",
+        "labels": "标签清理,限速",
+        "version": "1.0",
+        "icon": "fileupload.png",
+        "author": "zyt",
+        "level": 1,
+        "history": {
+            "v1.0": "定时执行,定制开发qb_delete_tag.py"
+        }
     }
 }
