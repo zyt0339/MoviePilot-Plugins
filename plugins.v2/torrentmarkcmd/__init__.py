@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from pathlib import Path
 from app.core.event import eventmanager, Event
 from app.core.config import settings
 from app.plugins import _PluginBase
@@ -21,7 +22,7 @@ class TorrentMarkCmd(_PluginBase):
     # 插件图标
     plugin_icon = "update.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.0.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -102,6 +103,15 @@ class TorrentMarkCmd(_PluginBase):
             event_data = event.event_data
             if not event_data or event_data.get("action") != "torrentmarkcmd":
                 return
+        # 清理旧日志
+        try:
+            log_path = settings.LOG_PATH / Path("plugins") / "torrentmarkcmd.log"
+            if log_path.exists():
+                file = open(log_path, 'r+', encoding='utf-8')
+                file.truncate(0)
+                file.close()
+        except Exception as e:
+            logger.error(f"清理旧日志出错: {e}")
         try:
             for cmd in self._cmd.split("\n"):
                 logger.info(f"执行命令行: {cmd}")

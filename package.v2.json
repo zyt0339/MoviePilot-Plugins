@@ -68,11 +68,12 @@
         "name": "下载器添加标签",
         "description": "定时执行,定制开发qb_torrent_mark.py",
         "labels": "标签",
-        "version": "1.0",
+        "version": "1.0.1",
         "icon": "update.png",
         "author": "zyt",
         "level": 1,
         "history": {
+            "v1.0.1": "清理旧日志",
             "v1.0": "定时执行,定制开发qb_torrent_mark.py"
         }
     }
