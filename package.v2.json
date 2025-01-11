@@ -56,11 +56,12 @@
         "name": "下载器标签清理&限速",
         "description": "定时执行,定制开发qb_delete_tag.py",
         "labels": "标签清理,限速",
-        "version": "1.0",
-        "icon": "fileupload.png",
+        "version": "1.0.2",
+        "icon": "clean.png",
         "author": "zyt",
         "level": 1,
         "history": {
+            "v1.0.2": "换图标",
             "v1.0": "定时执行,定制开发qb_delete_tag.py"
         }
     },
@@ -68,12 +69,12 @@
         "name": "下载器添加标签",
         "description": "定时执行,定制开发qb_torrent_mark.py",
         "labels": "标签",
-        "version": "1.0.1",
-        "icon": "update.png",
+        "version": "1.0.2",
+        "icon": "clean.png",
         "author": "zyt",
         "level": 1,
         "history": {
-            "v1.0.1": "清理旧日志",
+            "v1.0.2": "清理旧日志",
             "v1.0": "定时执行,定制开发qb_torrent_mark.py"
         }
     }
