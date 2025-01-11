@@ -146,7 +146,7 @@ class TorrentMarkCmd(_PluginBase):
             {
                 "cmd": "/torrentmarkcmd",
                 "event": EventType.PluginAction,
-                "desc": "下载器标签清理&限速",
+                "desc": "下载器添加标签",
                 "category": "",
                 "data": {"action": "torrentmarkcmd"},
             }

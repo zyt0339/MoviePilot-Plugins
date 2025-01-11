@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from pathlib import Path
 from app.core.event import eventmanager, Event
 from app.core.config import settings
 from app.plugins import _PluginBase
@@ -13,11 +14,11 @@ import subprocess
 import shlex
 
 
-class DeleteTagCmd(_PluginBase):
+class NoLinkPrintCmd(_PluginBase):
     # 插件名称
-    plugin_name = "下载器标签清理&限速"
+    plugin_name = "打印emby下无硬链接&重复文件"
     # 插件描述
-    plugin_desc = "定时执行,定制开发qb_delete_tag.py"
+    plugin_desc = "定时执行,定制开发"
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
@@ -27,7 +28,7 @@ class DeleteTagCmd(_PluginBase):
     # 作者主页
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins/"
     # 插件配置项ID前缀
-    plugin_config_prefix = "deletetagcmd_"
+    plugin_config_prefix = "nolinkprintcmd_"
     # 加载顺序
     plugin_order = 97
     # 可使用的用户级别
@@ -101,8 +102,17 @@ class DeleteTagCmd(_PluginBase):
         success = True
         if event:
             event_data = event.event_data
-            if not event_data or event_data.get("action") != "deletetagcmd":
+            if not event_data or event_data.get("action") != "nolinkprintcmd":
                 return
+        # 清理旧日志
+        try:
+            log_path = settings.LOG_PATH / Path("plugins") / "nolinkprintcmd.log"
+            if log_path.exists():
+                file = open(log_path, 'r+', encoding='utf-8')
+                file.truncate(0)
+                file.close()
+        except Exception as e:
+            logger.error(f"清理旧日志出错: {e}")
         try:
             for cmd in self._cmd.split("\n"):
                 logger.info(f"执行命令行: {cmd}")
@@ -122,11 +132,11 @@ class DeleteTagCmd(_PluginBase):
         if self._notify:
             if success:
                 self.post_message(
-                    mtype=NotificationType.SiteMessage, title=f"【下载器标签清理&限速成功】", text=msg
+                    mtype=NotificationType.SiteMessage, title=f"【emby下无硬链接&重复文件】", text=msg
                 )
             else:
                 self.post_message(
-                    mtype=NotificationType.SiteMessage, title=f"【下载器标签清理&限速失败】", text=msg
+                    mtype=NotificationType.SiteMessage, title=f"【打印emby下无硬链接&重复文件出错】", text=msg
                 )
 
     def get_state(self) -> bool:
@@ -140,11 +150,11 @@ class DeleteTagCmd(_PluginBase):
         """
         return [
             {
-                "cmd": "/deletetagcmd",
+                "cmd": "/nolinkprintcmd",
                 "event": EventType.PluginAction,
-                "desc": "下载器标签清理&限速",
+                "desc": "打印emby下无硬链接&重复文件",
                 "category": "",
-                "data": {"action": "deletetagcmd"},
+                "data": {"action": "nolinkprintcmd"},
             }
         ]
 
