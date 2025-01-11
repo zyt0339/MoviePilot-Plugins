@@ -33,7 +33,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.5.0.4"
+    plugin_version = "2.5.0.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -62,6 +62,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     _sites = []
     _notify = False
     _nolabels = None
+    _noautostart = None
     _nopaths = None
     _labelsafterseed = None
     _categoryafterseed = None
@@ -110,6 +111,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             self._sites = config.get("sites") or []
             self._notify = config.get("notify")
             self._nolabels = config.get("nolabels")
+            self._noautostart = config.get("noautostart")
             self._nopaths = config.get("nopaths")
             self._labelsafterseed = config.get("labelsafterseed") if config.get("labelsafterseed") else "已整理,辅种"
             self._categoryafterseed = config.get("categoryafterseed")
@@ -393,7 +395,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 4
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -410,7 +412,24 @@ class IYUUAutoSeedzyt(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 4
+                                           'md': 3
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'noautostart',
+                                                   'label': '不自动开始标签',
+                                                   'placeholder': '使用,分隔多个标签'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -427,7 +446,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 4
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -527,6 +546,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                    "sites": [],
                    "nopaths": "",
                    "nolabels": "",
+                   "noautostart": "",
                    "labelsafterseed": "",
                    "categoryafterseed": "",
                    "size": ""
@@ -547,6 +567,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             "sites": self._sites,
             "notify": self._notify,
             "nolabels": self._nolabels,
+            "noautostart": self._noautostart,
             "nopaths": self._nopaths,
             "labelsafterseed": self._labelsafterseed,
             "categoryafterseed": self._categoryafterseed,
@@ -647,7 +668,7 @@ class IYUUAutoSeedzyt(_PluginBase):
 
         #zyt开始所有辅种后暂停的种子
         logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子 ...")
-        nolabel_set = set(self._nolabels.split(','))
+        noautostart_set = set(self._noautostart.split(',')) if self._noautostart else set()
         for service in self.service_infos.values():
             downloader = service.name
             downloader_obj = service.instance
@@ -658,13 +679,13 @@ class IYUUAutoSeedzyt(_PluginBase):
                 # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
-                    if torrent.state in ['pausedUP', 'stoppedUP'] and not nolabel_set.intersection([element.strip() for element in torrent.tags.split(',')]):
+                    if torrent.state in ['pausedUP', 'stoppedUP'] and not noautostart_set.intersection([element.strip() for element in torrent.tags.split(',')]):
                         pausedUP_torrent_hashs.append(torrent.hash)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
                     if torrent.state not in ['pausedUP', 'stoppedUP']:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
-                    elif nolabel_set.intersection([element.strip() for element in torrent.tags.split(',')]):
+                    elif noautostart_set.intersection([element.strip() for element in torrent.tags.split(',')]):
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 [{torrent.tags}]")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
@@ -681,14 +702,14 @@ class IYUUAutoSeedzyt(_PluginBase):
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
                     available = torrent.available
-                    if available == 100.0 and not nolabel_set.intersection([element.strip() for element in torrent.labels]):
+                    if available == 100.0 and not noautostart_set.intersection([element.strip() for element in torrent.labels]):
                         pausedUP_torrent_hashs.append(torrent.hashString)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
                     available = torrent.available
                     if available < 100.0:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available}")
-                    elif nolabel_set.intersection([element.strip() for element in torrent.labels]):
+                    elif noautostart_set.intersection([element.strip() for element in torrent.labels]):
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 {torrent.labels}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
