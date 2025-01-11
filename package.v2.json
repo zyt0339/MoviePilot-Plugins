@@ -69,12 +69,12 @@
         "name": "下载器添加标签",
         "description": "定时执行,定制开发qb_torrent_mark.py",
         "labels": "标签",
-        "version": "1.0.2",
+        "version": "1.0.3",
         "icon": "clean.png",
         "author": "zyt",
         "level": 1,
         "history": {
-            "v1.0.2": "清理旧日志",
+            "v1.0.3": "清理旧日志",
             "v1.0": "定时执行,定制开发qb_torrent_mark.py"
         }
     },
@@ -91,10 +91,10 @@
         }
     },
     "ZYTCleanLogs": {
-        "name": "插件日志清理zyt",
-        "description": "定时清理插件产生的日志",
+        "name": "插件日志批量清理",
+        "description": "定时批量清理插件产生的日志",
         "labels": "清理",
-        "version": "1.1.1",
+        "version": "1.1.2",
         "icon": "clean.png",
         "author": "zyt",
         "level": 1,

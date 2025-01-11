@@ -22,7 +22,7 @@ class TorrentMarkCmd(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.0.2"
+    plugin_version = "1.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -128,7 +128,7 @@ class TorrentMarkCmd(_PluginBase):
         if self._notify:
             if success:
                 self.post_message(
-                    mtype=NotificationType.SiteMessage, title=f"【下载器添加标签成功】")
+                    mtype=NotificationType.SiteMessage, title=f"【下载器添加标签成功】", text="请前往下载器查看")
             else:
                 self.post_message(
                     mtype=NotificationType.SiteMessage, title=f"【下载器添加标签失败】")

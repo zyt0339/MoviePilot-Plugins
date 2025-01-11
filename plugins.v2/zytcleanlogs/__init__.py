@@ -26,7 +26,7 @@ class ZYTCleanLogs(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.1.1"
+    plugin_version = "1.1.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -90,7 +90,6 @@ class ZYTCleanLogs(_PluginBase):
         for file_name in os.listdir(folder_path):
             file_path = os.path.join(folder_path, file_name)
             if file_path.endswith('.log') and os.path.isfile(file_path):
-                print(file_path)
                 log_path = file_path
                 with open(log_path, 'r', encoding='utf-8') as file:
                     lines = file.readlines()
@@ -149,7 +148,7 @@ class ZYTCleanLogs(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 6
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -161,17 +160,11 @@ class ZYTCleanLogs(_PluginBase):
                                                }
                                            }
                                        ]
-                                   }
-                               ]
-                           },
-                           {
-                               'component': 'VRow',
-                               'content': [
-                                   {
+                                   }, {
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 6
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -184,6 +177,7 @@ class ZYTCleanLogs(_PluginBase):
                                            }
                                        ]
                                    }
+
                                ]
                            }
                        ]
