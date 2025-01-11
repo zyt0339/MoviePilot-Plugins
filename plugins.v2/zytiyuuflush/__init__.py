@@ -33,7 +33,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.2.0.7"
+    plugin_version = "2.5.0.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -62,6 +62,7 @@ class ZYTIYUUflush(_PluginBase):
     _sites = []
     _notify = False
     _nolabels = None
+    _noautostart = None
     _nopaths = None
     _labelsafterseed = None
     _categoryafterseed = None
@@ -110,6 +111,7 @@ class ZYTIYUUflush(_PluginBase):
             self._sites = config.get("sites") or []
             self._notify = config.get("notify")
             self._nolabels = config.get("nolabels")
+            self._noautostart = config.get("noautostart")
             self._nopaths = config.get("nopaths")
             self._labelsafterseed = config.get("labelsafterseed") if config.get("labelsafterseed") else "已整理,辅种"
             self._categoryafterseed = config.get("categoryafterseed")
@@ -226,311 +228,329 @@ class ZYTIYUUflush(_PluginBase):
                         + [{"title": site.get("name"), "value": site.get("id")}
                            for site in customSites])
         return [
-            {
-                'component': 'VForm',
-                'content': [
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'enabled',
-                                            'label': '启用插件',
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'notify',
-                                            'label': '发送通知',
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'onlyonce',
-                                            'label': '立即运行一次',
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'token',
-                                            'label': 'IYUU Token',
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'cron',
-                                            'label': '执行周期',
-                                            'placeholder': '0 0 0 ? *'
-                                        }
-                                    }
-                                ]
-                            },
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSelect',
-                                        'props': {
-                                            'chips': True,
-                                            'multiple': True,
-                                            'clearable': True,
-                                            'model': 'downloaders',
-                                            'label': '下载器',
-                                            'items': [{"title": config.name, "value": config.name}
-                                                      for config in self.downloader_helper.get_configs().values()]
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 6
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'size',
-                                            'label': '辅种体积大于(GB)',
-                                            'placeholder': '只有大于该值的才辅种'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSelect',
-                                        'props': {
-                                            'chips': True,
-                                            'multiple': True,
-                                            'model': 'sites',
-                                            'label': '辅种站点',
-                                            'items': site_options
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'nolabels',
-                                            'label': '不辅种标签',
-                                            'placeholder': '使用,分隔多个标签'
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'labelsafterseed',
-                                            'label': '辅种后增加标签',
-                                            'placeholder': '使用,分隔多个标签,不填写则默认为(已整理,辅种)'
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'categoryafterseed',
-                                            'label': '辅种后增加分类',
-                                            'placeholder': '设置辅种的种子分类'
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextarea',
-                                        'props': {
-                                            'model': 'nopaths',
-                                            'label': '不辅种数据文件目录',
-                                            'rows': 3,
-                                            'placeholder': '每一行一个目录'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'addhosttotag',
-                                            'label': '将站点名添加到标签中',
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'skipverify',
-                                            'label': '跳过校验(仅QB有效)',
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 4
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VSwitch',
-                                        'props': {
-                                            'model': 'clearcache',
-                                            'label': '清除缓存后运行',
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ], {
-            "enabled": False,
-            "skipverify": False,
-            "onlyonce": False,
-            "notify": False,
-            "clearcache": False,
-            "addhosttotag": False,
-            "cron": "",
-            "token": "",
-            "downloaders": [],
-            "sites": [],
-            "nopaths": "",
-            "nolabels": "",
-            "labelsafterseed": "",
-            "categoryafterseed": "",
-            "size": ""
-        }
+                   {
+                       'component': 'VForm',
+                       'content': [
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSwitch',
+                                               'props': {
+                                                   'model': 'enabled',
+                                                   'label': '启用插件',
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSwitch',
+                                               'props': {
+                                                   'model': 'notify',
+                                                   'label': '发送通知',
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSwitch',
+                                               'props': {
+                                                   'model': 'onlyonce',
+                                                   'label': '立即运行一次',
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 6
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'token',
+                                                   'label': 'IYUU Token',
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 6
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'cron',
+                                                   'label': '执行周期',
+                                                   'placeholder': '0 0 0 ? *'
+                                               }
+                                           }
+                                       ]
+                                   },
+                               ]
+                           },
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 6
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSelect',
+                                               'props': {
+                                                   'chips': True,
+                                                   'multiple': True,
+                                                   'clearable': True,
+                                                   'model': 'downloaders',
+                                                   'label': '下载器',
+                                                   'items': [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 6
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'size',
+                                                   'label': '辅种体积大于(GB)',
+                                                   'placeholder': '只有大于该值的才辅种'
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSelect',
+                                               'props': {
+                                                   'chips': True,
+                                                   'multiple': True,
+                                                   'model': 'sites',
+                                                   'label': '辅种站点',
+                                                   'items': site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 3
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'nolabels',
+                                                   'label': '不辅种标签',
+                                                   'placeholder': '使用,分隔多个标签'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 3
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'noautostart',
+                                                   'label': '不自动开始标签',
+                                                   'placeholder': '使用,分隔多个标签'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 3
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'labelsafterseed',
+                                                   'label': '辅种后增加标签',
+                                                   'placeholder': '使用,分隔多个标签,不填写则默认为(已整理,辅种)'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 3
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'categoryafterseed',
+                                                   'label': '辅种后增加分类',
+                                                   'placeholder': '设置辅种的种子分类'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextarea',
+                                               'props': {
+                                                   'model': 'nopaths',
+                                                   'label': '不辅种数据文件目录',
+                                                   'rows': 3,
+                                                   'placeholder': '每一行一个目录'
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSwitch',
+                                               'props': {
+                                                   'model': 'addhosttotag',
+                                                   'label': '将站点名添加到标签中',
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSwitch',
+                                               'props': {
+                                                   'model': 'skipverify',
+                                                   'label': '跳过校验(仅QB有效)',
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 4
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSwitch',
+                                               'props': {
+                                                   'model': 'clearcache',
+                                                   'label': '清除缓存后运行',
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           }
+                       ]
+                   }
+               ], {
+                   "enabled": False,
+                   "skipverify": False,
+                   "onlyonce": False,
+                   "notify": False,
+                   "clearcache": False,
+                   "addhosttotag": False,
+                   "cron": "",
+                   "token": "",
+                   "downloaders": [],
+                   "sites": [],
+                   "nopaths": "",
+                   "nolabels": "",
+                   "noautostart": "",
+                   "labelsafterseed": "",
+                   "categoryafterseed": "",
+                   "size": ""
+               }
 
     def get_page(self) -> List[dict]:
         pass
@@ -547,6 +567,7 @@ class ZYTIYUUflush(_PluginBase):
             "sites": self._sites,
             "notify": self._notify,
             "nolabels": self._nolabels,
+            "noautostart": self._noautostart,
             "nopaths": self._nopaths,
             "labelsafterseed": self._labelsafterseed,
             "categoryafterseed": self._categoryafterseed,
@@ -647,6 +668,7 @@ class ZYTIYUUflush(_PluginBase):
 
         #zyt开始所有辅种后暂停的种子
         logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子 ...")
+        noautostart_set = set(self._noautostart.split(',')) if self._noautostart else set()
         for service in self.service_infos.values():
             downloader = service.name
             downloader_obj = service.instance
@@ -657,12 +679,14 @@ class ZYTIYUUflush(_PluginBase):
                 # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
-                    if 'pausedUP' == torrent.state or 'stoppedUP' == torrent.state:
+                    if torrent.state in ['pausedUP', 'stoppedUP'] and not noautostart_set.intersection([element.strip() for element in torrent.tags.split(',')]):
                         pausedUP_torrent_hashs.append(torrent.hash)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
-                    if 'pausedUP' != torrent.state and 'stoppedUP' != torrent.state:
+                    if torrent.state not in ['pausedUP', 'stoppedUP']:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
+                    elif noautostart_set.intersection([element.strip() for element in torrent.tags.split(',')]):
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 [{torrent.tags}]")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
             elif dl_type == "transmission":
@@ -678,13 +702,15 @@ class ZYTIYUUflush(_PluginBase):
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
                     available = torrent.available
-                    if available == 100.0:
+                    if available == 100.0 and not noautostart_set.intersection([element.strip() for element in torrent.labels]):
                         pausedUP_torrent_hashs.append(torrent.hashString)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
                     available = torrent.available
                     if available < 100.0:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available}")
+                    elif noautostart_set.intersection([element.strip() for element in torrent.labels]):
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 {torrent.labels}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
