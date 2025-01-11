@@ -17,9 +17,9 @@ from app.plugins import _PluginBase
 from app.schemas.types import SystemConfigKey
 
 
-class CleanLogs(_PluginBase):
+class ZYTCleanLogs(_PluginBase):
     # 插件名称
-    plugin_name = "插件日志清理"
+    plugin_name = "插件日志清理zyt"
     # 插件描述
     plugin_desc = "定时清理插件产生的日志"
     # 插件图标
@@ -27,13 +27,13 @@ class CleanLogs(_PluginBase):
     # 插件版本
     plugin_version = "1.1"
     # 插件作者
-    plugin_author = "honue"
+    plugin_author = "zyt"
     # 作者主页
     author_url = "https://github.com/honue"
     # 插件配置项ID前缀
-    plugin_config_prefix = "cleanlogs_"
+    plugin_config_prefix = "zytcleanlogs_"
     # 加载顺序
-    plugin_order = 50
+    plugin_order = 99
     # 可使用的用户级别
     auth_level = 1
 

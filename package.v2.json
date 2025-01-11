@@ -89,5 +89,17 @@
         "history": {
             "v1.0.2": "打印emby下无硬链接&重复文件"
         }
+    },
+    "ZYTCleanLogs": {
+        "name": "插件日志清理zyt",
+        "description": "定时清理插件产生的日志",
+        "labels": "清理",
+        "version": "1.1",
+        "icon": "clean.png",
+        "author": "zyt",
+        "level": 1,
+        "history": {
+            "v1.1": "定时清理插件产生的日志"
+        }
     }
 }
