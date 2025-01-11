@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 
 import pytz
@@ -19,13 +20,13 @@ from app.schemas.types import SystemConfigKey
 
 class ZYTCleanLogs(_PluginBase):
     # 插件名称
-    plugin_name = "插件日志清理zyt"
+    plugin_name = "插件日志批量清理"
     # 插件描述
-    plugin_desc = "定时清理插件产生的日志"
+    plugin_desc = "定时清理所有插件产生的日志"
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.1.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -52,7 +53,6 @@ class ZYTCleanLogs(_PluginBase):
 
         if config:
             self._enable = config.get('enable', False)
-            self._selected_ids = config.get('selected_ids', [])
             self._rows = int(config.get('rows', 300))
             self._onlyonce = config.get('onlyonce', False)
             self._cron = config.get('cron', '30 3 * * *')
@@ -66,19 +66,18 @@ class ZYTCleanLogs(_PluginBase):
                 "onlyonce": self._onlyonce,
                 "rows": self._rows,
                 "enable": self._enable,
-                "selected_ids": self._selected_ids,
                 "cron": self._cron,
             })
             self._scheduler.add_job(func=self._task, trigger='date',
                                     run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=2),
-                                    name="插件日志清理")
+                                    name="插件日志批量清理")
         if self._enable and self._cron:
             try:
                 self._scheduler.add_job(func=self._task,
                                         trigger=CronTrigger.from_crontab(self._cron),
-                                        name="插件日志清理")
+                                        name="插件日志批量清理")
             except Exception as err:
-                logger.error(f"插件日志清理, 定时任务配置错误：{str(err)}")
+                logger.error(f"插件日志批量清理, 定时任务配置错误：{str(err)}")
 
         # 启动任务
         if self._scheduler.get_jobs():
@@ -86,46 +85,28 @@ class ZYTCleanLogs(_PluginBase):
             self._scheduler.start()
 
     def _task(self):
-        clean_plugin = self._selected_ids[:]
+        folder_path = settings.LOG_PATH / Path("plugins")
+        # 遍历文件夹下的文件
+        for file_name in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file_name)
+            if file_path.endswith('.log') and os.path.isfile(file_path):
+                print(file_path)
+                log_path = file_path
+                with open(log_path, 'r', encoding='utf-8') as file:
+                    lines = file.readlines()
 
-        if not clean_plugin:
-            local_plugins = PluginManager().get_local_plugins()
-            for plugin in local_plugins:
-                clean_plugin.append(plugin.id)
+                if self._rows == 0:
+                    top_lines = []
+                else:
+                    top_lines = lines[-min(self._rows, len(lines)):]
 
-        for plugin_id in clean_plugin:
-            log_path = settings.LOG_PATH / Path("plugins") / f"{plugin_id.lower()}.log"
-            if not log_path.exists():
-                logger.debug(f"{plugin_id} 日志文件不存在")
-                continue
+                with open(log_path, 'w', encoding='utf-8') as file:
+                    file.writelines(top_lines)
 
-            with open(log_path, 'r', encoding='utf-8') as file:
-                lines = file.readlines()
-
-            if self._rows == 0:
-                top_lines = []
-            else:
-                top_lines = lines[-min(self._rows, len(lines)):]
-
-            with open(log_path, 'w', encoding='utf-8') as file:
-                file.writelines(top_lines)
-
-            if (len(lines) - self._rows) > 0:
-                logger.info(f"已清理 {plugin_id} {len(lines) - self._rows} 行日志")
+                if (len(lines) - self._rows) > 0:
+                    logger.info(f"已清理 {file_name} {len(lines) - self._rows} 行日志")
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
-        # 已安装插件
-        local_plugins = self.get_local_plugins()
-        # 编历 local_plugins，生成插件类型选项
-        plugin_options = []
-
-        for plugin_id in list(local_plugins.keys()):
-            local_plugin = local_plugins.get(plugin_id)
-            plugin_options.append({
-                "title": f"{local_plugin.get('plugin_name')} v{local_plugin.get('plugin_version')}",
-                "value": local_plugin.get("id")
-            })
-
         return [
                    {
                        'component': 'VForm',
@@ -202,45 +183,6 @@ class ZYTCleanLogs(_PluginBase):
                                                }
                                            }
                                        ]
-                                   },
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 6
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VSelect',
-                                               'props': {
-                                                   'multiple': True,
-                                                   'chips': True,
-                                                   'model': 'selected_ids',
-                                                   'label': '删除插件日志,不指定默认全选',
-                                                   'items': plugin_options
-                                               }
-                                           }
-                                       ]
-                                   }
-                               ]
-                           }, {
-                               'component': 'VRow',
-                               'content': [
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VAlert',
-                                               'props': {
-                                                   'type': 'info',
-                                                   'variant': 'tonal',
-                                                   'text': '谢谢t佬的指点。'
-                                               }
-                                           }
-                                       ]
                                    }
                                ]
                            }
@@ -253,40 +195,6 @@ class ZYTCleanLogs(_PluginBase):
                    "cron": self._cron,
                    "selected_ids": [],
                }
-
-    @staticmethod
-    def get_local_plugins():
-        """
-        获取本地插件
-        """
-        # 已安装插件
-        install_plugins = SystemConfigOper().get(SystemConfigKey.UserInstalledPlugins) or []
-
-        local_plugins = {}
-        # 线上插件列表
-        markets = settings.PLUGIN_MARKET.split(",")
-        for market in markets:
-            online_plugins = PluginHelper().get_plugins(market) or {}
-            for pid, plugin in online_plugins.items():
-                if pid in install_plugins:
-                    local_plugin = local_plugins.get(pid)
-                    if local_plugin:
-                        if StringUtils.compare_version(local_plugin.get("plugin_version"), plugin.get("version")) < 0:
-                            local_plugins[pid] = {
-                                "id": pid,
-                                "plugin_name": plugin.get("name"),
-                                "repo_url": market,
-                                "plugin_version": plugin.get("version")
-                            }
-                    else:
-                        local_plugins[pid] = {
-                            "id": pid,
-                            "plugin_name": plugin.get("name"),
-                            "repo_url": market,
-                            "plugin_version": plugin.get("version")
-                        }
-
-        return local_plugins
 
     def get_state(self) -> bool:
         return self._enable
