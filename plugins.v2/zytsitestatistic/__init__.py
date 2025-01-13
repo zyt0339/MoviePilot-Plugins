@@ -25,13 +25,13 @@ lock = Lock()
 
 class ZYTSiteStatistic(_PluginBase):
     # 插件名称
-    plugin_name = "站点数据统计zyt"
+    plugin_name = "站点数据统计"
     # 插件描述
     plugin_desc = "站点统计数据图表。"
     # 插件图标
     plugin_icon = "statistic.png"
     # 插件版本
-    plugin_version = "1.5.1"
+    plugin_version = "1.5.2"
     # 插件作者
     plugin_author = "lightolly,jxxghp"
     # 作者主页
