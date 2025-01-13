@@ -31,7 +31,7 @@ class ZYTSiteStatistic(_PluginBase):
     # 插件图标
     plugin_icon = "statistic.png"
     # 插件版本
-    plugin_version = "1.5.2"
+    plugin_version = "1.5.3"
     # 插件作者
     plugin_author = "lightolly,jxxghp"
     # 作者主页
@@ -295,6 +295,7 @@ class ZYTSiteStatistic(_PluginBase):
         MAX_COUNT = 3
         lookBackIndex = 2  # 从前天开始找
         while empty_sites_name and lookBackIndex <= MAX_COUNT:
+            lookBackIndex+=1
             # 获取前 x 天的日期
             lookBackDay = (datetime.strptime(today, "%Y-%m-%d") - timedelta(days=lookBackIndex)).strftime("%Y-%m-%d")
             # 前 x 天的数据
