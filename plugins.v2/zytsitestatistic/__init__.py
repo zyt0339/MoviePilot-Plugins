@@ -33,7 +33,7 @@ class ZYTSiteStatistic(_PluginBase):
     # 插件版本
     plugin_version = "1.5.3"
     # 插件作者
-    plugin_author = "lightolly,jxxghp"
+    plugin_author = "zyt"
     # 作者主页
     author_url = "https://github.com/lightolly"
     # 插件配置项ID前缀
