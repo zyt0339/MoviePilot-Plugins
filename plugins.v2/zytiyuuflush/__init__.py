@@ -33,7 +33,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.5"
+    plugin_version = "2.5.0.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -60,6 +60,7 @@ class ZYTIYUUflush(_PluginBase):
     _token = None
     _downloaders = []
     _sites = []
+    _limit_sites = []
     _notify = False
     _nolabels = None
     _noautostart = None
@@ -109,6 +110,7 @@ class ZYTIYUUflush(_PluginBase):
             self._token = config.get("token")
             self._downloaders = config.get("downloaders")
             self._sites = config.get("sites") or []
+            self._limit_sites = config.get("limit_sites") or []
             self._notify = config.get("notify")
             self._nolabels = config.get("nolabels")
             self._noautostart = config.get("noautostart")
@@ -126,6 +128,7 @@ class ZYTIYUUflush(_PluginBase):
             all_sites = [site.id for site in self.site_oper.list_order_by_pri()] + [site.get("id") for site in
                                                                                     self.__custom_sites()]
             self._sites = [site_id for site_id in all_sites if site_id in self._sites]
+            self._limit_sites = [site_id for site_id in all_sites if site_id in self._sites]
             self.__update_config()
 
         # 停止现有任务
@@ -311,7 +314,7 @@ class ZYTIYUUflush(_PluginBase):
                                        },
                                        'content': [
                                            {
-                                               'component': 'VTextField',
+                                               'component': 'VCronField',
                                                'props': {
                                                    'model': 'cron',
                                                    'label': '执行周期',
@@ -381,6 +384,29 @@ class ZYTIYUUflush(_PluginBase):
                                                    'multiple': True,
                                                    'model': 'sites',
                                                    'label': '辅种站点',
+                                                   'items': site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VSelect',
+                                               'props': {
+                                                   'chips': True,
+                                                   'multiple': True,
+                                                   'model': 'limit_sites',
+                                                   'label': '限速100K站点',
                                                    'items': site_options
                                                }
                                            }
@@ -470,7 +496,7 @@ class ZYTIYUUflush(_PluginBase):
                                                'props': {
                                                    'model': 'nopaths',
                                                    'label': '不辅种数据文件目录',
-                                                   'rows': 3,
+                                                   'rows': 2,
                                                    'placeholder': '每一行一个目录'
                                                }
                                            }
@@ -544,6 +570,7 @@ class ZYTIYUUflush(_PluginBase):
                    "token": "",
                    "downloaders": [],
                    "sites": [],
+                   "limit_sites": [],
                    "nopaths": "",
                    "nolabels": "",
                    "noautostart": "",
@@ -565,6 +592,7 @@ class ZYTIYUUflush(_PluginBase):
             "token": self._token,
             "downloaders": self._downloaders,
             "sites": self._sites,
+            "limit_sites": self._limit_sites,
             "notify": self._notify,
             "nolabels": self._nolabels,
             "noautostart": self._noautostart,
@@ -689,6 +717,30 @@ class ZYTIYUUflush(_PluginBase):
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 [{torrent.tags}]")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
+                # 设置限速站点
+                if self._limit_sites:
+                    all_site_name_id_map = {}
+                    for site in self.site_oper.list_order_by_pri():
+                        all_site_name_id_map[site.name] = site.id
+                    for site in self.__custom_sites():
+                        all_site_name_id_map[site.get("name")] = site.get("id")
+                    all_site_names = set(all_site_name_id_map.keys())
+                    all_torrents, _ = downloader_obj.get_torrents()
+                    to_limit_torrent_hashs = []
+                    for torrent in all_torrents:
+                        # 当前种子 tags list
+                        current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
+                        # qb 补充站点标签,交集第一个就是站点标签
+                        intersection = all_site_names.intersection(current_torrent_tag_list)
+                        site_name = None
+                        if intersection:
+                            site_name = list(intersection)[0]
+                        if all_site_name_id_map[site_name] in self._limit_sites:
+                            to_limit_torrent_hashs.append(torrent.hash)
+                    if to_limit_torrent_hashs:
+                        downloader_obj.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
+                        downloader_obj.torrents_add_tags("F100K", to_limit_torrent_hashs)
+                        logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}]")
             elif dl_type == "transmission":
                 # logger.info(f"debug service={type(service)},downloader={type(downloader)},downloader_obj={type(downloader_obj)},")
                 # downloader_obj=<class 'app.modules.transmission.transmission.Transmission'>
@@ -1306,21 +1358,27 @@ class ZYTIYUUflush(_PluginBase):
         config = self.get_config()
         if config:
             sites = config.get("sites")
+            limit_sites = config.get("limit_sites")
             if sites:
                 if isinstance(sites, str):
                     sites = [sites]
+                if isinstance(limit_sites, str):
+                    limit_sites = [limit_sites]
 
                 # 删除对应站点
                 if site_id:
                     sites = [site for site in sites if int(site) != int(site_id)]
+                    limit_sites = [site for site in limit_sites if int(site) != int(site_id)]
                 else:
                     # 清空
                     sites = []
+                    limit_sites = []
 
                 # 若无站点，则停止
                 if len(sites) == 0:
                     self._enabled = False
 
                 self._sites = sites
+                self._limit_sites = limit_sites
                 # 保存配置
                 self.__update_config()
