@@ -33,7 +33,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.5.0.8"
+    plugin_version = "2.5.0.9"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -779,7 +779,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                         if intersection:
                             site_name = list(intersection)[0]
                         if all_site_name_id_map[site_name] in self._limit_sites:
-                            to_limit_torrent_hashs.append(torrent.hash)
+                            to_limit_torrent_hashs.append(torrent.hashString)
                     if to_limit_torrent_hashs:
                         downloader_obj.change_torrent(hash_string=to_limit_torrent_hashs, upload_limit=100)
                         logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
