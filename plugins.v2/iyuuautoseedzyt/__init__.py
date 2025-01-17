@@ -693,7 +693,14 @@ class IYUUAutoSeedzyt(_PluginBase):
                 self.check_recheck()
             else:
                 logger.info(f"没有需要辅种的种子")
-
+        # 限速需要 开始
+        all_site_name_id_map = {}
+        for site in self.site_oper.list_order_by_pri():
+            all_site_name_id_map[site.name] = site.id
+        for site in self.__custom_sites():
+            all_site_name_id_map[site.get("name")] = site.get("id")
+        all_site_names = set(all_site_name_id_map.keys())
+        # 限速需要 结束
         #zyt开始所有辅种后暂停的种子
         logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子 ...")
         noautostart_set = set(self._noautostart.split(',')) if self._noautostart else set()
@@ -719,12 +726,6 @@ class IYUUAutoSeedzyt(_PluginBase):
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
                 # 设置限速站点
                 if self._limit_sites:
-                    all_site_name_id_map = {}
-                    for site in self.site_oper.list_order_by_pri():
-                        all_site_name_id_map[site.name] = site.id
-                    for site in self.__custom_sites():
-                        all_site_name_id_map[site.get("name")] = site.get("id")
-                    all_site_names = set(all_site_name_id_map.keys())
                     all_torrents, _ = downloader_obj.get_torrents()
                     to_limit_torrent_hashs = []
                     for torrent in all_torrents:
@@ -765,6 +766,23 @@ class IYUUAutoSeedzyt(_PluginBase):
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {torrent.labels}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
+                # 设置限速站点
+                if self._limit_sites:
+                    all_torrents, _ = downloader_obj.get_torrents()
+                    to_limit_torrent_hashs = []
+                    for torrent in all_torrents:
+                        # 当前种子 tags list
+                        current_torrent_tag_list = [element.strip() for element in torrent.labels]
+                        # tr 补充站点标签,交集第一个就是站点标签
+                        intersection = all_site_names.intersection(current_torrent_tag_list)
+                        site_name = None
+                        if intersection:
+                            site_name = list(intersection)[0]
+                        if all_site_name_id_map[site_name] in self._limit_sites:
+                            to_limit_torrent_hashs.append(torrent.hash)
+                    if to_limit_torrent_hashs:
+                        downloader_obj.change_torrent(hash_string=to_limit_torrent_hashs, upload_limit=100)
+                        logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
         # 保存缓存
         self.__update_config()
         # 发送消息
