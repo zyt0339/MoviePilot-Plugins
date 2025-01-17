@@ -33,7 +33,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.5.0.9"
+    plugin_version = "2.5.0.9.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -184,7 +184,7 @@ class IYUUAutoSeedzyt(_PluginBase):
         if not active_services:
             logger.warning("没有已连接的下载器，请检查配置")
             return None
-
+        logger.info(f"IYUU自动辅种服务重新启动，执行周期 {self._cron}")
         return active_services
 
     def get_state(self) -> bool:
