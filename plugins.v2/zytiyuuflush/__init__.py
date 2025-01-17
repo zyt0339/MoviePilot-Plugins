@@ -33,7 +33,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.9.2"
+    plugin_version = "2.5.0.9.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -184,7 +184,6 @@ class ZYTIYUUflush(_PluginBase):
         if not active_services:
             logger.warning("没有已连接的下载器，请检查配置")
             return None
-        logger.info(f"IYUU刷流辅种服务重新启动，执行周期 {self._cron}")
         return active_services
 
     def get_state(self) -> bool:
@@ -209,6 +208,7 @@ class ZYTIYUUflush(_PluginBase):
         }]
         """
         if self.get_state():
+            logger.info(f"IYUU刷流辅种服务重新启动，执行周期 {self._cron}")
             return [{
                 "id": "ZYTIYUUflush",
                 "name": "IYUU刷流辅种",
