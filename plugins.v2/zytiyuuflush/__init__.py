@@ -740,7 +740,7 @@ class ZYTIYUUflush(_PluginBase):
                     if to_limit_torrent_hashs:
                         downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
                         downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
-                        logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}]")
+                        logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
             elif dl_type == "transmission":
                 # logger.info(f"debug service={type(service)},downloader={type(downloader)},downloader_obj={type(downloader_obj)},")
                 # downloader_obj=<class 'app.modules.transmission.transmission.Transmission'>
