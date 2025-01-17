@@ -260,7 +260,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.1"
+    plugin_version = "4.3.1.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -964,32 +964,15 @@ class ZYTBrushFlow(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     "cols": 12,
-                                    "md": 2
+                                    "md": 3
                                 },
                                 'content': [
                                     {
-                                        'component': 'VCronField',
+                                        'component': 'VTextField',
                                         'props': {
                                             'model': 'cron',
-                                            'label': '执行周期',
-                                            'placeholder': '可填分钟数如:10, 或者cron如：0 0-1 * * FRI,SUN'
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    "cols": 12,
-                                    "md": 2
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VCronField',
-                                        'props': {
-                                            'model': 'cron_check',
-                                            'label': '执行周期',
-                                            'placeholder': '可填分钟数如:10, 或者cron如：0 0-1 * * FRI,SUN'
+                                            'label': '刷流执行周期',
+                                            'placeholder': '可填分钟数或cron'
                                         }
                                     }
                                 ]
@@ -999,6 +982,23 @@ class ZYTBrushFlow(_PluginBase):
                                 'props': {
                                     "cols": 12,
                                     "md": 3
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VTextField',
+                                        'props': {
+                                            'model': 'cron_check',
+                                            'label': '检查执行周期',
+                                            'placeholder': '可填分钟数或cron'
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    "cols": 12,
+                                    "md": 2
                                 },
                                 'content': [
                                     {
@@ -1015,7 +1015,7 @@ class ZYTBrushFlow(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     "cols": 12,
-                                    "md": 3
+                                    "md": 2
                                 },
                                 'content': [
                                     {
