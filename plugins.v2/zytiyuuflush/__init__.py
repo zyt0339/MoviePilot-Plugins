@@ -33,7 +33,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.6"
+    plugin_version = "2.5.0.7"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -128,7 +128,7 @@ class ZYTIYUUflush(_PluginBase):
             all_sites = [site.id for site in self.site_oper.list_order_by_pri()] + [site.get("id") for site in
                                                                                     self.__custom_sites()]
             self._sites = [site_id for site_id in all_sites if site_id in self._sites]
-            self._limit_sites = [site_id for site_id in all_sites if site_id in self._sites]
+            self._limit_sites = [site_id for site_id in all_sites if site_id in self._limit_sites]
             self.__update_config()
 
         # 停止现有任务
