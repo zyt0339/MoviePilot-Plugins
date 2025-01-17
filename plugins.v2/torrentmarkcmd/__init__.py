@@ -22,7 +22,7 @@ class TorrentMarkCmd(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -217,7 +217,7 @@ class TorrentMarkCmd(_PluginBase):
                                        },
                                        "content": [
                                            {
-                                               "component": "VTextField",
+                                               "component": "VCronField",
                                                "props": {"model": "cron", "label": "执行周期"},
                                            }
                                        ],

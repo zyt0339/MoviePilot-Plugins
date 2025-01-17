@@ -21,7 +21,7 @@ class DeleteTagCmd(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.0.2"
+    plugin_version = "1.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -213,7 +213,7 @@ class DeleteTagCmd(_PluginBase):
                                        },
                                        "content": [
                                            {
-                                               "component": "VTextField",
+                                               "component": "VCronField",
                                                "props": {"model": "cron", "label": "执行周期"},
                                            }
                                        ],
