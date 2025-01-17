@@ -33,7 +33,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.9"
+    plugin_version = "2.5.0.9.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -766,23 +766,6 @@ class ZYTIYUUflush(_PluginBase):
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {torrent.labels}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
-                # 设置限速站点
-                if self._limit_sites:
-                    all_torrents, _ = downloader_obj.get_torrents()
-                    to_limit_torrent_hashs = []
-                    for torrent in all_torrents:
-                        # 当前种子 tags list
-                        current_torrent_tag_list = [element.strip() for element in torrent.labels]
-                        # tr 补充站点标签,交集第一个就是站点标签
-                        intersection = all_site_names.intersection(current_torrent_tag_list)
-                        site_name = None
-                        if intersection:
-                            site_name = list(intersection)[0]
-                        if all_site_name_id_map[site_name] in self._limit_sites:
-                            to_limit_torrent_hashs.append(torrent.hashString)
-                    if to_limit_torrent_hashs:
-                        downloader_obj.change_torrent(hash_string=to_limit_torrent_hashs, upload_limit=100)
-                        logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
         # 保存缓存
         self.__update_config()
         # 发送消息
