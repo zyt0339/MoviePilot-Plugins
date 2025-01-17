@@ -714,7 +714,7 @@ class ZYTIYUUflush(_PluginBase):
                     if torrent.state not in ['pausedUP', 'stoppedUP']:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
                     elif noautostart_set.intersection([element.strip() for element in torrent.tags.split(',')]):
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 [{torrent.tags}]")
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 [{torrent.tags}]")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
                 # 设置限速站点
@@ -762,7 +762,7 @@ class ZYTIYUUflush(_PluginBase):
                     if available < 100.0:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available}")
                     elif noautostart_set.intersection([element.strip() for element in torrent.labels]):
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不辅种标签 {torrent.labels}")
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {torrent.labels}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
