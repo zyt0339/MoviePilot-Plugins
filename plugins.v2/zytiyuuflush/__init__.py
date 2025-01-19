@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.9.4"
+    plugin_version = "2.5.0.9.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
