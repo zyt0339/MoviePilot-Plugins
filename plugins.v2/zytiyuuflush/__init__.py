@@ -62,7 +62,7 @@ class ZYTIYUUflush(_PluginBase):
     _downloaders = []
     _sites = []
     _limit_sites = []
-    _limit_sites_pause_threshold = 12  # 12小时
+    _limit_sites_pause_threshold = 12 * 60  # 12小时
     _notify = False
     _nolabels = None
     _noautostart = None
@@ -114,7 +114,7 @@ class ZYTIYUUflush(_PluginBase):
             self._downloaders = config.get("downloaders")
             self._sites = config.get("sites") or []
             self._limit_sites = config.get("limit_sites") or []
-            self._limit_sites_pause_threshold = config.get("limit_sites_pause_threshold") or 12  # 12小时
+            self._limit_sites_pause_threshold = config.get("limit_sites_pause_threshold") or 12 * 60  # 12小时
             self._notify = config.get("notify")
             self._nolabels = config.get("nolabels")
             self._noautostart = config.get("noautostart")
@@ -428,7 +428,7 @@ class ZYTIYUUflush(_PluginBase):
                                                'component': 'VTextField',
                                                'props': {
                                                    'model': 'limit_sites_pause_threshold',
-                                                   'label': '暂时时间(小时)',
+                                                   'label': '暂时时间(分钟)',
                                                    'placeholder': "限速后还活动就暂停"
                                                }
                                            }
@@ -593,7 +593,7 @@ class ZYTIYUUflush(_PluginBase):
                    "downloaders": [],
                    "sites": [],
                    "limit_sites": [],
-                   "limit_sites_pause_threshold": 12,
+                   "limit_sites_pause_threshold": 12 * 60,
                    "nopaths": "",
                    "nolabels": "",
                    "noautostart": "",
@@ -728,6 +728,8 @@ class ZYTIYUUflush(_PluginBase):
         #zyt开始所有辅种后暂停的种子
         logger.info(f"准备自动开始 {self._downloaders} 中暂停的种子 ...")
         noautostart_set = set(self._noautostart.split(',')) if self._noautostart else set()
+        noautostart_set_and_P100K = noautostart_set.copy()
+        noautostart_set_and_P100K.add("P100K")
         for service in self.service_infos.values():
             downloader = service.name
             downloader_obj = service.instance
@@ -738,14 +740,20 @@ class ZYTIYUUflush(_PluginBase):
                 # errored_torrents, _ = downloader_obj.get_torrents(status=["errored"])
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
-                    if torrent.state in ['pausedUP', 'stoppedUP'] and not noautostart_set.intersection([element.strip() for element in torrent.tags.split(',')]):
+                    # 当前种子 tags list
+                    current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
+                    if torrent.state in ['pausedUP', 'stoppedUP'] and not noautostart_set_and_P100K.intersection(current_torrent_tag_list):
                         pausedUP_torrent_hashs.append(torrent.hash)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
+                    # 当前种子 tags list
+                    current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                     if torrent.state not in ['pausedUP', 'stoppedUP']:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
-                    elif noautostart_set.intersection([element.strip() for element in torrent.tags.split(',')]):
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 [{torrent.tags}]")
+                    else:
+                        intersection = noautostart_set_and_P100K.intersection(current_torrent_tag_list)
+                        if intersection:
+                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
                 # 设置限速100K站点
@@ -756,7 +764,7 @@ class ZYTIYUUflush(_PluginBase):
                     to_pausedUP_hashs_cur = []
                     to_cancel_pausedUP_hashs_cur = []  # 暂停超过 12 小时又可以启动的种子
                     current_time = time.time()  # 当前时间戳
-                    _limit_sites_pause_threshold_s = int(self._limit_sites_pause_threshold) * 3600
+                    _limit_sites_pause_threshold_s = int(self._limit_sites_pause_threshold) * 60
                     for torrent in all_torrents:
                         # 当前种子 tags list
                         current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
@@ -779,16 +787,18 @@ class ZYTIYUUflush(_PluginBase):
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     if to_limit_torrent_hashs:
                         downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
-                        downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
+                        downloader_obj.set_torrents_tag(ids=to_limit_torrent_hashs, tag=["F100K"])
                         logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
                     # 限速100K仍然有上传就暂停:
                     if to_pausedUP_hashs_cur:
                         downloader_obj.stop_torrents(ids=to_pausedUP_hashs_cur)
+                        downloader_obj.set_torrents_tag(ids=to_pausedUP_hashs_cur, tag=["P100K"])
                         logger.info(f"{downloader} 暂停100K种子个数: {len(to_pausedUP_hashs_cur)}")
                         for t_hash in to_pausedUP_hashs_cur:
                             self.to_pausedUP_hashs[t_hash] = current_time
                     if to_cancel_pausedUP_hashs_cur:
                         downloader_obj.start_torrents(ids=to_cancel_pausedUP_hashs_cur)
+                        downloader_obj.remove_torrents_tag(ids=to_cancel_pausedUP_hashs_cur, tag=["P100K"])
                         logger.info(f"{downloader} 重新开始100K种子个数: {len(to_pausedUP_hashs_cur)}")
                         for t_hash in to_cancel_pausedUP_hashs_cur:
                             if t_hash in self.to_pausedUP_hashs:
@@ -805,16 +815,22 @@ class ZYTIYUUflush(_PluginBase):
                 # 继续过滤，只选 torrent.available == 100.0
                 pausedUP_torrent_hashs = []
                 for torrent in paused_torrents:
+                    # 当前种子 tags list
+                    current_torrent_tag_list = [element.strip() for element in torrent.labels]
                     available = torrent.available
-                    if available == 100.0 and not noautostart_set.intersection([element.strip() for element in torrent.labels]):
+                    if available == 100.0 and not noautostart_set.intersection(current_torrent_tag_list):
                         pausedUP_torrent_hashs.append(torrent.hashString)
                         logger.info(f"{downloader} 自动开始 {torrent.name}")
                 for torrent in paused_torrents:
+                    # 当前种子 tags list
+                    current_torrent_tag_list = [element.strip() for element in torrent.labels]
                     available = torrent.available
                     if available < 100.0:
                         logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available}")
-                    elif noautostart_set.intersection([element.strip() for element in torrent.labels]):
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {torrent.labels}")
+                    else:
+                        intersection2 = noautostart_set.intersection(current_torrent_tag_list)
+                        if intersection2:
+                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection2}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
                 # 设置限速站点
