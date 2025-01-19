@@ -1157,7 +1157,7 @@ class ZYTIYUUflush(_PluginBase):
         判断种子是否可以做种并处于暂停状态
         """
         try:
-            return torrent.get("state") == "pausedUP" if dl_type == "qbittorrent" \
+            return torrent.get("state") in ["pausedUP", "stoppedUP"] if dl_type == "qbittorrent" \
                 else (torrent.status.stopped and torrent.percent_done == 1)
         except Exception as e:
             print(str(e))
