@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.9.6"
+    plugin_version = "2.5.0.9.7"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -782,7 +782,7 @@ class ZYTIYUUflush(_PluginBase):
                             if is_in_limit_sites and "uploading" == state:
                                 to_pausedUP_hashs_cur.append(torrent.hash)
                             if is_in_limit_sites and state in ["pausedUP", "stoppedUP"] and not noautostart_set.intersection(current_torrent_tag_list):
-                                pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, default=0)
+                                pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
                                 if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     if to_limit_torrent_hashs:
