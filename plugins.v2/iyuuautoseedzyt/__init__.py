@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.5.0.9.5"
+    plugin_version = "2.5.0.9.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -755,7 +755,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                         if intersection:
                             logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection}")
                 if len(pausedUP_torrent_hashs) > 0:
-                    downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
+                    downloader_obj.start_torrents(pausedUP_torrent_hashs)
                 # 设置限速100K站点
                 if self._limit_sites:
                     all_torrents, _ = downloader_obj.get_torrents()
@@ -787,18 +787,18 @@ class IYUUAutoSeedzyt(_PluginBase):
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     if to_limit_torrent_hashs:
                         downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
-                        downloader_obj.set_torrents_tag(ids=to_limit_torrent_hashs, tag=["F100K"])
+                        downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
                         logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
                     # 限速100K仍然有上传就暂停:
                     if to_pausedUP_hashs_cur:
-                        downloader_obj.stop_torrents(ids=to_pausedUP_hashs_cur)
-                        downloader_obj.set_torrents_tag(ids=to_pausedUP_hashs_cur, tag=["P100K"])
+                        downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
+                        downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P100K"])
                         logger.info(f"{downloader} 暂停100K种子个数: {len(to_pausedUP_hashs_cur)}")
                         for t_hash in to_pausedUP_hashs_cur:
                             self.to_pausedUP_hashs[t_hash] = current_time
                     if to_cancel_pausedUP_hashs_cur:
-                        downloader_obj.start_torrents(ids=to_cancel_pausedUP_hashs_cur)
-                        downloader_obj.remove_torrents_tag(ids=to_cancel_pausedUP_hashs_cur, tag=["P100K"])
+                        downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
+                        downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P100K"])
                         logger.info(f"{downloader} 重新开始100K种子个数: {len(to_pausedUP_hashs_cur)}")
                         for t_hash in to_cancel_pausedUP_hashs_cur:
                             if t_hash in self.to_pausedUP_hashs:
