@@ -793,7 +793,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                     if to_pausedUP_hashs_cur:
                         downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
                         downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P100K"])
-                        logger.info(f"{downloader} 暂停100K种子个数: {len(to_pausedUP_hashs_cur)}")
+                        logger.info(f"{downloader} 增加暂停100K种子个数: {len(to_pausedUP_hashs_cur)}")
                         for t_hash in to_pausedUP_hashs_cur:
                             self.to_pausedUP_hashs[t_hash] = current_time
                     if to_cancel_pausedUP_hashs_cur:
