@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.5.0.9.7"
+    plugin_version = "2.5.0.10"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -799,7 +799,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                     if to_cancel_pausedUP_hashs_cur:
                         downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
                         downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P100K"])
-                        logger.info(f"{downloader} 重新开始100K种子个数: {len(to_pausedUP_hashs_cur)}")
+                        logger.info(f"{downloader} 重新开始P100K种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
                         for t_hash in to_cancel_pausedUP_hashs_cur:
                             if t_hash in self.to_pausedUP_hashs:
                                 del self.to_pausedUP_hashs[t_hash]
