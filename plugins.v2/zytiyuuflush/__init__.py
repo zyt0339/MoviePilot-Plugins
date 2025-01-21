@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.12"
+    plugin_version = "2.5.0.13"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -403,7 +403,7 @@ class ZYTIYUUflush(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                            'md': 10
+                                           'md': 10
                                        },
                                        'content': [
                                            {
@@ -952,23 +952,24 @@ class ZYTIYUUflush(_PluginBase):
                     continue
                 if not isinstance(seed, dict):
                     continue
-                if not seed.get("sid") or not seed.get("info_hash"):
+                seed_info_hash = seed.get("info_hash")
+                if not seed.get("sid") or not seed_info_hash:
                     continue
-                if seed.get("info_hash") in hashs:
-                    logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")
+                if seed_info_hash in hashs:
+                    logger.info(f"{seed_info_hash} 已在下载器中，跳过 ...")
                     continue
-                if seed.get("info_hash") in self._success_caches:
-                    logger.info(f"{seed.get('info_hash')} 已处理过辅种，跳过 ...")
+                if seed_info_hash in self._success_caches:
+                    logger.info(f"{seed_info_hash} 已处理过辅种，跳过 ...")
                     continue
-                if seed.get("info_hash") in self._error_caches or seed.get("info_hash") in self._permanent_error_caches:
-                    logger.info(f"种子 {seed.get('info_hash')} 辅种失败且已缓存，跳过 ...")
+                if seed_info_hash in self._error_caches or seed_info_hash in self._permanent_error_caches:
+                    logger.info(f"种子 {seed_info_hash} 辅种失败且已缓存，跳过 ...")
                     continue
                 # 添加任务
                 success = self.__download_torrent(seed=seed,
                                                   service=service,
                                                   save_path=save_paths.get(current_hash))
                 if success:
-                    success_torrents.append(seed.get("info_hash"))
+                    success_torrents.append(seed_info_hash)
 
             # 辅种成功的去重放入历史
             if len(success_torrents) > 0:
@@ -1118,7 +1119,7 @@ class ZYTIYUUflush(_PluginBase):
         downloader_obj = service.instance
         torrent_info, _ = downloader_obj.get_torrents(ids=[seed.get("info_hash")])
         if torrent_info:
-            logger.info(f"{seed.get('info_hash')} 已在下载器中，跳过 ...")
+            logger.info(f"{seed.get('info_hash')} 下载前查询已在下载器中，跳过 ...")
             self.exist += 1
             return False
         # 站点流控
