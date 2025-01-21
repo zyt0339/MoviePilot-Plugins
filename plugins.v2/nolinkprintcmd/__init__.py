@@ -22,7 +22,7 @@ class NoLinkPrintCmd(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -56,11 +56,11 @@ class NoLinkPrintCmd(_PluginBase):
             self._cmd = config.get("cmd")
 
             # 加载模块
-        if self._enabled:
+        if self._enabled or self._onlyonce:
             # 定时服务
             self._scheduler = BackgroundScheduler(timezone=settings.TZ)
 
-            if self._cron:
+            if self._enabled and self._cron:
                 try:
                     self._scheduler.add_job(
                         func=self.run,
