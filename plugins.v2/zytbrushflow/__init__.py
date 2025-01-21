@@ -260,7 +260,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.3"
+    plugin_version = "4.3.1.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -3413,6 +3413,9 @@ class ZYTBrushFlow(_PluginBase):
             tags = torrent.get("tags")
             # tracker
             tracker = torrent.get("tracker")
+            state = torrent.get("state")
+            if state in ['pausedUP', 'stoppedUP']:
+                dltime = 0
         # TR
         else:
             # ID
