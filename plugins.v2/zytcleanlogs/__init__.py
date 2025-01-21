@@ -95,20 +95,22 @@ class ZYTCleanLogs(_PluginBase):
                     os.remove(file_path)  # 使用 os 模块的 remove 方法删除文件
                     logger.info(f"已清理旧文件 {file_name} 全部日志")
                 elif file_path.endswith('.log'):
-                    log_path = file_path
-                    with open(log_path, 'r', encoding='utf-8') as file:
+                    # zytcleanlogs自身留 100 行
+                    keep_rows = 100 if(file_path.endswith('zytcleanlogs.log')) else self._rows
+
+                    with open(file_path, 'r', encoding='utf-8') as file:
                         lines = file.readlines()
 
-                    if self._rows == 0:
+                    if keep_rows == 0:
                         top_lines = []
                     else:
-                        top_lines = lines[-min(self._rows, len(lines)):]
+                        top_lines = lines[-min(keep_rows, len(lines)):]
 
-                    with open(log_path, 'w', encoding='utf-8') as file:
+                    with open(file_path, 'w', encoding='utf-8') as file:
                         file.writelines(top_lines)
 
-                    if (len(lines) - self._rows) > 0:
-                        logger.info(f"已清理 {file_name} {len(lines) - self._rows} 行日志")
+                    if (len(lines) - keep_rows) > 0:
+                        logger.info(f"已清理 {file_name} {len(lines) - keep_rows} 行日志")
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         return [
