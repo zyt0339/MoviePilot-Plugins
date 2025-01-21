@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-
+import re
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -26,7 +26,7 @@ class ZYTCleanLogs(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.1.2"
+    plugin_version = "1.1.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -89,21 +89,26 @@ class ZYTCleanLogs(_PluginBase):
         # 遍历文件夹下的文件
         for file_name in os.listdir(folder_path):
             file_path = os.path.join(folder_path, file_name)
-            if file_path.endswith('.log') and os.path.isfile(file_path):
-                log_path = file_path
-                with open(log_path, 'r', encoding='utf-8') as file:
-                    lines = file.readlines()
+            if os.path.isfile(file_path):
+                pattern = re.compile(r'\.log\.\d+$')  # 编译一个正则表达式，用于匹配以.log.数字结尾的字符串，\d+ 表示一个或多个数字，$ 表示结尾
+                if pattern.search(file_path):  # 使用 search 方法在字符串中查找是否存在匹配的部分
+                    os.remove(file_path)  # 使用 os 模块的 remove 方法删除文件
+                    logger.info(f"已清理旧文件 {file_name} 全部日志")
+                elif file_path.endswith('.log'):
+                    log_path = file_path
+                    with open(log_path, 'r', encoding='utf-8') as file:
+                        lines = file.readlines()
 
-                if self._rows == 0:
-                    top_lines = []
-                else:
-                    top_lines = lines[-min(self._rows, len(lines)):]
+                    if self._rows == 0:
+                        top_lines = []
+                    else:
+                        top_lines = lines[-min(self._rows, len(lines)):]
 
-                with open(log_path, 'w', encoding='utf-8') as file:
-                    file.writelines(top_lines)
+                    with open(log_path, 'w', encoding='utf-8') as file:
+                        file.writelines(top_lines)
 
-                if (len(lines) - self._rows) > 0:
-                    logger.info(f"已清理 {file_name} {len(lines) - self._rows} 行日志")
+                    if (len(lines) - self._rows) > 0:
+                        logger.info(f"已清理 {file_name} {len(lines) - self._rows} 行日志")
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         return [
@@ -152,7 +157,7 @@ class ZYTCleanLogs(_PluginBase):
                                        },
                                        'content': [
                                            {
-                                               'component': 'VTextField',
+                                               'component': 'VCronField',
                                                'props': {
                                                    'model': 'cron',
                                                    'label': '定时删除日志',
