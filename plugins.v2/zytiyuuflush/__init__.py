@@ -690,7 +690,7 @@ class ZYTIYUUflush(_PluginBase):
                     is_skip = False
                     for label in self._nolabels.split(','):
                         if label in torrent_labels:
-                            logger.info(f"种子 {hash_str} 含有不辅种标签 {label}，跳过 ...")
+                            # logger.info(f"种子 {hash_str} 含有不辅种标签 {label}，跳过 ...")
                             is_skip = True
                             break
                     if is_skip:
@@ -958,7 +958,7 @@ class ZYTIYUUflush(_PluginBase):
                 if not seed.get("sid") or not seed_info_hash:
                     continue
                 if seed_info_hash in all_hashs_in_cur_downloader:
-                    logger.info(f"{seed_info_hash} 已在下载器中，跳过 ...")
+                    # logger.info(f"{seed_info_hash} 已在下载器中，跳过 ...")
                     continue
                 if seed_info_hash in self._success_caches:
                     logger.info(f"{seed_info_hash} 已处理过辅种，跳过 ...")
