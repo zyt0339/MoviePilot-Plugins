@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.5.0.11"
+    plugin_version = "2.5.0.12"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -386,6 +386,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                                                'props': {
                                                    'chips': True,
                                                    'multiple': True,
+                                                   'clearable': True,
                                                    'model': 'sites',
                                                    'label': '辅种站点',
                                                    'items': site_options
@@ -410,6 +411,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                                                'props': {
                                                    'chips': True,
                                                    'multiple': True,
+                                                   'clearable': True,
                                                    'model': 'limit_sites',
                                                    'label': '限速100K站点',
                                                    'items': site_options
