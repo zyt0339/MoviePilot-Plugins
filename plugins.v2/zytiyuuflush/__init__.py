@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.5.0.13"
+    plugin_version = "2.5.0.14"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -706,6 +706,8 @@ class ZYTIYUUflush(_PluginBase):
                 })
             if hash_strs:
                 logger.info(f"总共需要辅种的种子数：{len(hash_strs)}")
+                # 下载器中的Hashs
+                hashs = [item.get("hash") for item in hash_strs]
                 # 分组处理，减少IYUU Api请求次数
                 chunk_size = 200
                 for i in range(0, len(hash_strs), chunk_size):
@@ -713,7 +715,7 @@ class ZYTIYUUflush(_PluginBase):
                     chunk = hash_strs[i:i + chunk_size]
                     # 处理分组
                     self.__seed_torrents(hash_strs=chunk,
-                                         service=service)
+                                         service=service, hashs=hashs)
                 # 触发校验检查
                 logger.info(f"下载器 {downloader} 辅种全部完成。")
                 self.check_recheck()
@@ -912,15 +914,13 @@ class ZYTIYUUflush(_PluginBase):
                 self._recheck_torrents[downloader] = []
         self._is_recheck_running = False
 
-    def __seed_torrents(self, hash_strs: list, service: ServiceInfo):
+    def __seed_torrents(self, hash_strs: list, service: ServiceInfo, hashs):
         """
         执行一批种子的辅种
         """
         if not hash_strs:
             return
         logger.info(f"下载器 {service.name} 开始查询辅种，数量：{len(hash_strs)} ...")
-        # 下载器中的Hashs
-        hashs = [item.get("hash") for item in hash_strs]
         # 每个Hash的保存目录
         save_paths = {}
         for item in hash_strs:
