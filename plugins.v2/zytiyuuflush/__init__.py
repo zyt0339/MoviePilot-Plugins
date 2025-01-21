@@ -660,12 +660,14 @@ class ZYTIYUUflush(_PluginBase):
                 logger.info(f"下载器 {downloader} 没有已完成种子")
                 continue
             hash_strs = []
+            all_hashs_in_cur_downloader = set()
             for torrent in torrents:
                 if self._event.is_set():
                     logger.info(f"辅种服务停止")
                     return
                 # 获取种子hash
                 hash_str = self.__get_hash(torrent=torrent, dl_type=service.type)
+                all_hashs_in_cur_downloader.add(hash_str)
                 if hash_str in self._error_caches or hash_str in self._permanent_error_caches:
                     logger.info(f"种子 {hash_str} 辅种失败且已缓存，跳过 ...")
                     continue
@@ -706,8 +708,6 @@ class ZYTIYUUflush(_PluginBase):
                 })
             if hash_strs:
                 logger.info(f"总共需要辅种的种子数：{len(hash_strs)}")
-                # 下载器中的Hashs
-                hashs = [item.get("hash") for item in hash_strs]
                 # 分组处理，减少IYUU Api请求次数
                 chunk_size = 200
                 for i in range(0, len(hash_strs), chunk_size):
@@ -715,7 +715,7 @@ class ZYTIYUUflush(_PluginBase):
                     chunk = hash_strs[i:i + chunk_size]
                     # 处理分组
                     self.__seed_torrents(hash_strs=chunk,
-                                         service=service, hashs=hashs)
+                                         service=service, all_hashs_in_cur_downloader=all_hashs_in_cur_downloader)
                 # 触发校验检查
                 logger.info(f"下载器 {downloader} 辅种全部完成。")
                 self.check_recheck()
@@ -914,13 +914,15 @@ class ZYTIYUUflush(_PluginBase):
                 self._recheck_torrents[downloader] = []
         self._is_recheck_running = False
 
-    def __seed_torrents(self, hash_strs: list, service: ServiceInfo, hashs):
+    def __seed_torrents(self, hash_strs: list, service: ServiceInfo, all_hashs_in_cur_downloader):
         """
         执行一批种子的辅种
         """
         if not hash_strs:
             return
         logger.info(f"下载器 {service.name} 开始查询辅种，数量：{len(hash_strs)} ...")
+        # 下载器中的Hashs
+        hashs = [item.get("hash") for item in hash_strs]
         # 每个Hash的保存目录
         save_paths = {}
         for item in hash_strs:
@@ -955,7 +957,7 @@ class ZYTIYUUflush(_PluginBase):
                 seed_info_hash = seed.get("info_hash")
                 if not seed.get("sid") or not seed_info_hash:
                     continue
-                if seed_info_hash in hashs:
+                if seed_info_hash in all_hashs_in_cur_downloader:
                     logger.info(f"{seed_info_hash} 已在下载器中，跳过 ...")
                     continue
                 if seed_info_hash in self._success_caches:
