@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.5.0.16"
+    plugin_version = "2.5.0.17"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -690,7 +690,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                     is_skip = False
                     for label in self._nolabels.split(','):
                         if label in torrent_labels:
-                            # logger.info(f"种子 {hash_str} 含有不辅种标签 {label}，跳过 ...")
+                            logger.debug(f"种子 {hash_str} 含有不辅种标签 {label}，跳过 ...")
                             is_skip = True
                             break
                     if is_skip:
@@ -958,7 +958,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                 if not seed.get("sid") or not seed_info_hash:
                     continue
                 if seed_info_hash in all_hashs_in_cur_downloader:
-                    # logger.info(f"{seed_info_hash} 已在下载器中，跳过 ...")
+                    logger.debug(f"{seed_info_hash} 已在下载器中，跳过 ...")
                     continue
                 if seed_info_hash in self._success_caches:
                     logger.info(f"{seed_info_hash} 已处理过辅种，跳过 ...")
@@ -1114,7 +1114,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             logger.debug(f"没有维护种子对应的站点：{site_url}")
             return False
         if self._sites and site_info.get('id') not in self._sites:
-            logger.info("当前站点不在选择的辅种站点范围，跳过 ...")
+            logger.debug("当前站点不在选择的辅种站点范围，跳过 ...")
             return False
         self.realtotal += 1
         # 查询hash值是否已经在下载器中
