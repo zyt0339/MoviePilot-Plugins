@@ -261,7 +261,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.5"
+    plugin_version = "4.3.1.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -294,10 +294,16 @@ class ZYTBrushFlow(_PluginBase):
     _scheduler = None
     # tabs
     _tabs = None
-
+    # 上次上传下载流量,用于计算本周期内速度
+    _pre_time_upload_size = 0
+    _pre_time_download_size = 0
+    _pre_time_upload_download = 0
     # endregion
 
     def init_plugin(self, config: dict = None):
+        self._pre_time_upload_size = 0
+        self._pre_time_download_size = 0
+        self._pre_time_upload_download = 0
         self.sites_helper = SitesHelper()
         self.site_oper = SiteOper()
         self.torrents_chain = TorrentsChain()
@@ -3611,29 +3617,60 @@ class ZYTBrushFlow(_PluginBase):
 
     def __get_average_bandwidth(self, sample_count: int = 5, interval: float = 3.0) \
             -> Tuple[Optional[float], Optional[float]]:
-        """
-        多次采样上传和下载带宽，取平均值
-        """
-        upload_speeds = []
-        download_speeds = []
-        start_time = time.time()
-        for _ in range(sample_count):
+        if self._pre_time_upload_size == 0 \
+                or self._pre_time_download_size == 0 \
+                or self._pre_time_upload_download == 0:
+            """
+            多次采样上传和下载带宽，取平均值
+            """
+            upload_speeds = []
+            download_speeds = []
+            start_time = time.time()
+            for _ in range(sample_count):
+                downloader_info = self.__get_downloader_info()
+                if downloader_info:
+                    upload_speeds.append(downloader_info.upload_speed or 0)
+                    download_speeds.append(downloader_info.download_speed or 0)
+                # 采样间隔
+                time.sleep(interval)
+            end_time = time.time()
+            total_duration = end_time - start_time
+            if not upload_speeds or not download_speeds:
+                return None, None
+            avg_upload_speed = sum(upload_speeds) / len(upload_speeds) if upload_speeds else 0
+            avg_download_speed = sum(download_speeds) / len(download_speeds) if download_speeds else 0
+            logger.debug(f"平均上传带宽 {StringUtils.str_filesize(avg_upload_speed)}, "
+                         f"平均下载带宽 {StringUtils.str_filesize(avg_download_speed)}, "
+                         f"采样次数={sample_count}, 时长={total_duration:.2f} 秒")
+            # 保存数据供下次循环使用
             downloader_info = self.__get_downloader_info()
             if downloader_info:
-                upload_speeds.append(downloader_info.upload_speed or 0)
-                download_speeds.append(downloader_info.download_speed or 0)
-            # 采样间隔
-            time.sleep(interval)
-        end_time = time.time()
-        total_duration = end_time - start_time
-        if not upload_speeds or not download_speeds:
-            return None, None
-        avg_upload_speed = sum(upload_speeds) / len(upload_speeds) if upload_speeds else 0
-        avg_download_speed = sum(download_speeds) / len(download_speeds) if download_speeds else 0
-        logger.debug(f"平均上传带宽 {StringUtils.str_filesize(avg_upload_speed)}, "
-                     f"平均下载带宽 {StringUtils.str_filesize(avg_download_speed)}, "
-                     f"采样次数={sample_count}, 时长={total_duration:.2f} 秒")
-        return avg_upload_speed, avg_download_speed
+                self._pre_time_upload_size = downloader_info.upload_size or 0
+                self._pre_time_download_size = downloader_info.download_size or 0
+                self._pre_time_upload_download = end_time
+            return avg_upload_speed, avg_download_speed
+        else:  # 通过两次数据量差值 时间区间计算平均速度
+            cur_downloader_info = self.__get_downloader_info()
+            if not cur_downloader_info:
+                return 0, 0
+            cur_upload_size = cur_downloader_info.upload_size or 0
+            cur_download_size = cur_downloader_info.download_size or 0
+            cur_time = time.time()
+            diff_upload_size = cur_upload_size - self._pre_time_upload_size
+            diff_download_size = cur_download_size - self._pre_time_download_size
+            diff_time = cur_time - self._pre_time_upload_download
+            avg_upload_speed = diff_upload_size/diff_time
+            avg_download_speed = diff_download_size/diff_time
+            logger.debug(f"上传增量 {StringUtils.str_filesize(diff_upload_size)}, "
+                         f"下载增量 {StringUtils.str_filesize(diff_download_size)}, "
+                         f"时间间隔 ={diff_time} 秒, "
+                         f"平均上传带宽 {StringUtils.str_filesize(avg_upload_speed)}, "
+                         f"平均下载带宽 {StringUtils.str_filesize(avg_download_speed)}")
+            # 保存数据供下次循环使用
+            self._pre_time_upload_size = cur_upload_size
+            self._pre_time_download_size = cur_download_size
+            self._pre_time_upload_download = cur_time
+            return avg_upload_speed, avg_download_speed
 
     def __get_downloader_info(self) -> schemas.DownloaderInfo:
         """
