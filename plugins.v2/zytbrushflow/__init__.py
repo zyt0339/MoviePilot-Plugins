@@ -261,7 +261,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.6"
+    plugin_version = "4.3.1.7"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -3639,7 +3639,7 @@ class ZYTBrushFlow(_PluginBase):
                 return None, None
             avg_upload_speed = sum(upload_speeds) / len(upload_speeds) if upload_speeds else 0
             avg_download_speed = sum(download_speeds) / len(download_speeds) if download_speeds else 0
-            logger.debug(f"平均上传带宽 {StringUtils.str_filesize(avg_upload_speed)}, "
+            logger.info(f"平均上传带宽 {StringUtils.str_filesize(avg_upload_speed)}, "
                          f"平均下载带宽 {StringUtils.str_filesize(avg_download_speed)}, "
                          f"采样次数={sample_count}, 时长={total_duration:.2f} 秒")
             # 保存数据供下次循环使用
@@ -3661,11 +3661,11 @@ class ZYTBrushFlow(_PluginBase):
             diff_time = cur_time - self._pre_time_upload_download
             avg_upload_speed = diff_upload_size/diff_time
             avg_download_speed = diff_download_size/diff_time
-            logger.debug(f"上传增量 {StringUtils.str_filesize(diff_upload_size)}, "
-                         f"下载增量 {StringUtils.str_filesize(diff_download_size)}, "
-                         f"时间间隔 ={diff_time} 秒, "
-                         f"平均上传带宽 {StringUtils.str_filesize(avg_upload_speed)}, "
-                         f"平均下载带宽 {StringUtils.str_filesize(avg_download_speed)}")
+            logger.info(f"平均上传带宽 {StringUtils.str_filesize(avg_upload_speed)}, "
+                        f"平均下载带宽 {StringUtils.str_filesize(avg_download_speed)}, "
+                        f"上传增量 {StringUtils.str_filesize(diff_upload_size)}, "
+                        f"下载增量 {StringUtils.str_filesize(diff_download_size)}, "
+                        f"时间间隔 ={diff_time} 秒")
             # 保存数据供下次循环使用
             self._pre_time_upload_size = cur_upload_size
             self._pre_time_download_size = cur_download_size
