@@ -3665,7 +3665,7 @@ class ZYTBrushFlow(_PluginBase):
                         f"平均下载带宽 {StringUtils.str_filesize(avg_download_speed)}, "
                         f"上传增量 {StringUtils.str_filesize(diff_upload_size)}, "
                         f"下载增量 {StringUtils.str_filesize(diff_download_size)}, "
-                        f"时间间隔 ={diff_time} 秒")
+                        f"时间间隔 ={diff_time: .2f} 秒")
             # 保存数据供下次循环使用
             self._pre_time_upload_size = cur_upload_size
             self._pre_time_download_size = cur_download_size
