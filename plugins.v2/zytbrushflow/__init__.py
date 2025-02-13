@@ -73,7 +73,6 @@ class BrushConfig:
         self.brush_sequential = config.get("brush_sequential", False)
         self.proxy_delete = config.get("proxy_delete", False)
         self.active_time_range = config.get("active_time_range")
-        self.active_time_range_site_config = config.get("active_time_range_site_config")
         self.cron = config.get("cron")  # 刷流周期,可能是int值或者cron
         self.cron_check = config.get("cron_check")  # 检查周期,可能是int值或者cron
         self.qb_category = config.get("qb_category")
@@ -261,7 +260,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.7"
+    plugin_version = "4.3.1.8"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1005,7 +1004,7 @@ class ZYTBrushFlow(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     "cols": 12,
-                                    "md": 2
+                                    "md": 3
                                 },
                                 'content': [
                                     {
@@ -1022,24 +1021,7 @@ class ZYTBrushFlow(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     "cols": 12,
-                                    "md": 2
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'active_time_range_site_config',
-                                            'label': '站点独立配置开启时间段',
-                                            'placeholder': '默认24小时开启'
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    "cols": 12,
-                                    "md": 2
+                                    "md": 3
                                 },
                                 'content': [
                                     {
@@ -2034,44 +2016,83 @@ class ZYTBrushFlow(_PluginBase):
             if not brush_config.brush_sequential:
                 random.shuffle(site_infos)
 
-            logger.info(f"即将针对站点 {', '.join(site.name for site in site_infos)} 开始刷流")
+            logger.info(f"即将针对站点 {', '.join(site.name for site in site_infos)} 开始刷流, 开始第一轮循环")
 
             # 获取订阅标题
             subscribe_titles = self.__get_subscribe_titles()
 
             # 处理所有站点
+            # 先尝试以独立配置(刷官种)获取种子,如果不够就取消独立配置(非官种)继续获取
+            foreach1_break = False
+            torrents_of_site = {}
+            siteinfos_of_site = {}
             for site in site_infos:
-                # 如果站点刷流没有正确响应，说明没有通过前置条件，其他站点也不需要继续刷流了
-                if not self.__brush_site_torrents(siteid=site.id, torrent_tasks=torrent_tasks,
-                                                  statistic_info=statistic_info,
-                                                  subscribe_titles=subscribe_titles):
-                    logger.info(f"站点 {site.name} 刷流中途结束，停止后续刷流")
-                    break
-                else:
-                    logger.info(f"站点 {site.name} 刷流完成")
-
+                torrents, siteinfo = self.__get_torrents_by_site(siteid=site.id)
+                if torrents:
+                    torrents_of_site[siteinfo.name] = torrents
+                    siteinfos_of_site[siteinfo.name] = siteinfo
+                    # 如果站点刷流没有正确响应，说明没有通过前置条件，其他站点也不需要继续刷流了
+                    if not self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
+                                                      torrent_tasks=torrent_tasks,
+                                                      statistic_info=statistic_info,
+                                                      subscribe_titles=subscribe_titles,
+                                                      ignore_include_exclude=False):
+                        logger.info(f"站点 {site.name} 刷流中途结束，停止后续刷流")
+                        foreach1_break = True
+                        break
+                    else:
+                        logger.info(f"站点 {site.name} 刷流完成")
+            # 如果站点独立配置打开, 且前面没有bread
+            if self._brush_config.enable_site_config and not foreach1_break:
+                logger.info(f"开始第二轮循环, 忽略站点独立配置中include/exclude字段")
+                for siteinfo_name, torrents in torrents_of_site.items():
+                    siteinfo = siteinfos_of_site[siteinfo_name]
+                    # 之前incloud or exclude 有值, 就忽略include继续寻找非官种种子刷流
+                    brush_config = self.__get_brush_config(siteinfo_name)
+                    if brush_config.include or brush_config.exclude:
+                        # 如果站点刷流没有正确响应，说明没有通过前置条件，其他站点也不需要继续刷流了
+                        if not self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
+                                                          torrent_tasks=torrent_tasks,
+                                                          statistic_info=statistic_info,
+                                                          subscribe_titles=subscribe_titles,
+                                                          ignore_include_exclude=True):
+                            logger.info(f"站点 {site.name} 第二轮刷流中途结束，停止后续刷流")
+                            break
+                        else:
+                            logger.info(f"站点 {site.name} 第二轮刷流完成")
+            torrents_of_site.clear()
+            siteinfos_of_site.clear()
             # 保存数据
             self.save_data("torrents", torrent_tasks)
             # 保存统计数据
             self.save_data("statistic", statistic_info)
             logger.info(f"刷流任务执行完成")
 
-    def __brush_site_torrents(self, siteid, torrent_tasks: Dict[str, dict], statistic_info: Dict[str, int],
-                              subscribe_titles: Set[str]) -> bool:
+    def __get_torrents_by_site(self, siteid):
         """
-        针对站点进行刷流
+        获取站点种子
         """
         siteinfo = self.site_oper.get(siteid)
         if not siteinfo:
             logger.warning(f"站点不存在：{siteid}")
-            return True
+            return None, siteinfo
 
         logger.info(f"开始获取站点 {siteinfo.name} 的新种子 ...")
         torrents = self.torrents_chain.browse(domain=siteinfo.domain)
         if not torrents:
             logger.info(f"站点 {siteinfo.name} 没有获取到种子")
-            return True
+            return None, siteinfo
 
+        # 按发布日期降序排列
+        torrents.sort(key=lambda x: x.pubdate or '', reverse=True)
+        logger.info(f"正在准备种子刷流，数量 {len(torrents)}")
+        return torrents, siteinfo
+
+    def __brush_site_torrents(self, torrents, siteinfo, torrent_tasks: Dict[str, dict], statistic_info: Dict[str, int],
+                              subscribe_titles: Set[str], ignore_include_exclude = False) -> bool:
+        """
+        针对站点进行刷流
+        """
         brush_config = self.__get_brush_config(sitename=siteinfo.name)
 
         if brush_config.site_hr_active:
@@ -2081,13 +2102,7 @@ class ZYTBrushFlow(_PluginBase):
         if brush_config.except_subscribe:
             torrents = self.__filter_torrents_contains_subscribe(torrents=torrents, subscribe_titles=subscribe_titles)
 
-        # 按发布日期降序排列
-        torrents.sort(key=lambda x: x.pubdate or '', reverse=True)
-
         torrents_size = self.__calculate_seeding_torrents_size(torrent_tasks=torrent_tasks)
-
-        logger.info(f"正在准备种子刷流，数量 {len(torrents)}")
-
         # 过滤种子
         for torrent in torrents:
             # 判断能否通过刷流前置条件
@@ -2107,7 +2122,8 @@ class ZYTBrushFlow(_PluginBase):
 
             # 判断能否通过刷流条件
             condition_passed, reason = self.__evaluate_conditions_for_brush(torrent=torrent,
-                                                                            torrent_tasks=torrent_tasks)
+                                                                            torrent_tasks=torrent_tasks,
+                                                                            ignore_include_exclude=ignore_include_exclude)
             self.__log_brush_conditions(passed=condition_passed, reason=reason, torrent=torrent)
             if not condition_passed:
                 continue
@@ -2221,6 +2237,7 @@ class ZYTBrushFlow(_PluginBase):
         """
         前置过滤不符合条件的种子
         """
+        time.sleep(1)
         reasons = [
             ("maxdlcount", lambda config: self.__get_downloading_count() >= int(config),
              lambda config: f"当前同时下载任务数已达到最大值 {config}，暂时停止新增任务")
@@ -2248,11 +2265,11 @@ class ZYTBrushFlow(_PluginBase):
 
         return True, None
 
-    def __evaluate_conditions_for_brush(self, torrent, torrent_tasks) -> Tuple[bool, Optional[str]]:
+    def __evaluate_conditions_for_brush(self, torrent, torrent_tasks, ignore_include_exclude) -> Tuple[bool, Optional[str]]:
         """
         过滤不符合条件的种子
         """
-        brush_config = self.__get_brush_config(torrent.site_name if self.__is_current_time_in_range_site_config() else None)
+        brush_config = self.__get_brush_config(torrent.site_name)
 
         # 排除重复种子
         # 默认根据标题和站点名称进行排除
@@ -2282,18 +2299,19 @@ class ZYTBrushFlow(_PluginBase):
         # H&R
         if brush_config.hr == "yes" and torrent.hit_and_run:
             return False, "存在H&R"
+        # 忽略include,用在第二轮循环上,第一轮获取官种后下载数量不够就第二轮再筛选一次
+        if ignore_include_exclude:
+            # 包含规则
+            if brush_config.include and not (
+                    re.search(brush_config.include, torrent.title, re.I) or re.search(brush_config.include,
+                                                                                      torrent.description, re.I)):
+                return False, "不符合包含规则"
 
-        # 包含规则
-        if brush_config.include and not (
-                re.search(brush_config.include, torrent.title, re.I) or re.search(brush_config.include,
-                                                                                  torrent.description, re.I)):
-            return False, "不符合包含规则"
-
-        # 排除规则
-        if brush_config.exclude and (
-                re.search(brush_config.exclude, torrent.title, re.I) or re.search(brush_config.exclude,
-                                                                                  torrent.description, re.I)):
-            return False, "符合排除规则"
+            # 排除规则
+            if brush_config.exclude and (
+                    re.search(brush_config.exclude, torrent.title, re.I) or re.search(brush_config.exclude,
+                                                                                      torrent.description, re.I)):
+                return False, "符合排除规则"
 
         # 种子大小（GB）
         if brush_config.size:
@@ -3024,11 +3042,6 @@ class ZYTBrushFlow(_PluginBase):
             self.__log_and_notify_error(f"站点刷流任务出错，开启时间段设置错误：{active_time_range}")
             config["active_time_range"] = None
             found_error = True  # 更新错误标志
-        active_time_range_site_config = config.get("active_time_range_site_config")
-        if active_time_range_site_config and not self.__is_valid_time_range(time_range=active_time_range_site_config):
-            self.__log_and_notify_error(f"站点独立配置开启时间段设置错误：{active_time_range_site_config}")
-            config["active_time_range_site_config"] = None
-            found_error = True  # 更新错误标志
 
         # 如果发现任何错误，返回False；否则返回True
         return not found_error
@@ -3079,7 +3092,6 @@ class ZYTBrushFlow(_PluginBase):
             "brush_sequential": brush_config.brush_sequential,
             "proxy_delete": brush_config.proxy_delete,
             "active_time_range": brush_config.active_time_range,
-            "active_time_range_site_config": brush_config.active_time_range_site_config,
             "cron": brush_config.cron,
             "cron_check": brush_config.cron_check,
             "qb_category": brush_config.qb_category,
@@ -3990,28 +4002,6 @@ class ZYTBrushFlow(_PluginBase):
             return True
 
         start_str, end_str = active_time_range.split('-')
-        start_time = datetime.strptime(start_str, '%H:%M').time()
-        end_time = datetime.strptime(end_str, '%H:%M').time()
-        now = datetime.now().time()
-
-        if start_time <= end_time:
-            # 情况1: 时间段不跨越午夜
-            return start_time <= now <= end_time
-        else:
-            # 情况2: 时间段跨越午夜
-            return now >= start_time or now <= end_time
-
-    def __is_current_time_in_range_site_config(self) -> bool:
-        """判断当前时间是否在开启时间区间内-站点独立配置开启时间段"""
-
-        brush_config = self.__get_brush_config()
-        active_time_range_site_config = brush_config.active_time_range_site_config
-
-        if not self.__is_valid_time_range(active_time_range_site_config):
-            # 如果时间范围格式不正确或不存在，说明当前没有开启时间段，返回True
-            return True
-
-        start_str, end_str = active_time_range_site_config.split('-')
         start_time = datetime.strptime(start_str, '%H:%M').time()
         end_time = datetime.strptime(end_str, '%H:%M').time()
         now = datetime.now().time()
