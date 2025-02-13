@@ -260,7 +260,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.8"
+    plugin_version = "4.3.1.9"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2056,10 +2056,10 @@ class ZYTBrushFlow(_PluginBase):
                                                           statistic_info=statistic_info,
                                                           subscribe_titles=subscribe_titles,
                                                           ignore_include_exclude=True):
-                            logger.info(f"站点 {site.name} 第二轮刷流中途结束，停止后续刷流")
+                            logger.info(f"站点 {siteinfo_name} 第二轮刷流中途结束，停止后续刷流")
                             break
                         else:
-                            logger.info(f"站点 {site.name} 第二轮刷流完成")
+                            logger.info(f"站点 {siteinfo_name} 第二轮刷流完成")
             torrents_of_site.clear()
             siteinfos_of_site.clear()
             # 保存数据
@@ -2089,7 +2089,7 @@ class ZYTBrushFlow(_PluginBase):
         return torrents, siteinfo
 
     def __brush_site_torrents(self, torrents, siteinfo, torrent_tasks: Dict[str, dict], statistic_info: Dict[str, int],
-                              subscribe_titles: Set[str], ignore_include_exclude = False) -> bool:
+                              subscribe_titles: Set[str], ignore_include_exclude) -> bool:
         """
         针对站点进行刷流
         """
@@ -2300,7 +2300,7 @@ class ZYTBrushFlow(_PluginBase):
         if brush_config.hr == "yes" and torrent.hit_and_run:
             return False, "存在H&R"
         # 忽略include,用在第二轮循环上,第一轮获取官种后下载数量不够就第二轮再筛选一次
-        if ignore_include_exclude:
+        if not ignore_include_exclude:
             # 包含规则
             if brush_config.include and not (
                     re.search(brush_config.include, torrent.title, re.I) or re.search(brush_config.include,
