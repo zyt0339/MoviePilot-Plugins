@@ -261,7 +261,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.93"
+    plugin_version = "4.3.1.94"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2072,7 +2072,7 @@ class ZYTBrushFlow(_PluginBase):
                     brush_config = self.__get_brush_config(siteinfo_name)
                     if brush_config.include or brush_config.exclude:
                         # 如果站点刷流没有正确响应，说明没有通过前置条件，其他站点也不需要继续刷流了
-                        passed, _ = self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
+                        passed, second = self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
                                                           torrent_tasks=torrent_tasks,
                                                           statistic_info=statistic_info,
                                                           subscribe_titles=subscribe_titles,
@@ -2112,7 +2112,7 @@ class ZYTBrushFlow(_PluginBase):
         return torrents, siteinfo
 
     def __brush_site_torrents(self, torrents, siteinfo, torrent_tasks: Dict[str, dict], statistic_info: Dict[str, int],
-                              subscribe_titles: Set[str], ignore_include_exclude, is_current_time_in_range_site_config):
+                              subscribe_titles: Set[str], ignore_include_exclude, is_current_time_in_range_site_config) -> Tuple[bool, list]:
         """
         针对站点进行刷流
         """
@@ -2151,8 +2151,8 @@ class ZYTBrushFlow(_PluginBase):
             self.__log_brush_conditions(passed=condition_passed, reason=reason, torrent=torrent)
             if not condition_passed:
                 # 第一轮收集不符合include/exclude条件的种子,第二轮刷流使用,只在第一轮收集,且斩断能独立配置打开,且在忽略include/exclude二轮筛种生效时间段
-                if not ignore_include_exclude and self._brush_config.enable_site_config and is_current_time_in_range_site_config and (
-                        "符合排除规则" == reason or "不符合包含规则" == reason):
+                if (not ignore_include_exclude and self._brush_config.enable_site_config and is_current_time_in_range_site_config 
+                        and reason is not None and ("符合排除规则" == reason or "不符合包含规则" == reason)):
                     refuse_by_include_exclude_torrents.append(torrent)
                 continue
 
@@ -2370,15 +2370,13 @@ class ZYTBrushFlow(_PluginBase):
             # 包含规则
             if brush_config.include and not (
                     re.search(brush_config.include, torrent.title, re.I) or re.search(brush_config.include,
-                                                                                      torrent.description,
-                                                                                      re.I)):
+                                                                                      torrent.description, re.I)):
                 return False, "不符合包含规则"
 
             # 排除规则
             if brush_config.exclude and (
                     re.search(brush_config.exclude, torrent.title, re.I) or re.search(brush_config.exclude,
-                                                                                      torrent.description,
-                                                                                      re.I)):
+                                                                                      torrent.description, re.I)):
                 return False, "符合排除规则"
         return True, None
 
