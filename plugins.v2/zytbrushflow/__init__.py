@@ -261,7 +261,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.92"
+    plugin_version = "4.3.1.93"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2044,24 +2044,27 @@ class ZYTBrushFlow(_PluginBase):
             foreach1_break = False
             torrents_of_site = {}
             siteinfos_of_site = {}
+            is_current_time_in_range_site_config = self.__is_current_time_in_range_site_config()
             for site in site_infos:
                 torrents, siteinfo = self.__get_torrents_by_site(siteid=site.id)
                 if torrents:
-                    torrents_of_site[siteinfo.name] = torrents
-                    siteinfos_of_site[siteinfo.name] = siteinfo
                     # 如果站点刷流没有正确响应，说明没有通过前置条件，其他站点也不需要继续刷流了
-                    if not self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
+                    passed, refuse_by_include_exclude_torrents = self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
                                                       torrent_tasks=torrent_tasks,
                                                       statistic_info=statistic_info,
                                                       subscribe_titles=subscribe_titles,
-                                                      ignore_include_exclude=False):
+                                                      ignore_include_exclude=False,
+                                                      is_current_time_in_range_site_config=is_current_time_in_range_site_config)
+                    if not passed:
                         logger.info(f"站点 {site.name} 刷流中途结束，停止后续刷流")
                         foreach1_break = True
                         break
                     else:
+                        torrents_of_site[siteinfo.name] = refuse_by_include_exclude_torrents
+                        siteinfos_of_site[siteinfo.name] = siteinfo
                         logger.info(f"站点 {site.name} 刷流完成")
             # 如果站点独立配置打开, 且前面没有bread, 并且在二轮筛种生效时间段(忽略include/exclude)内
-            if self._brush_config.enable_site_config and not foreach1_break and self.__is_current_time_in_range_site_config():
+            if not foreach1_break and self._brush_config.enable_site_config and is_current_time_in_range_site_config:
                 logger.info(f"开始第二轮循环, 忽略站点独立配置中include/exclude字段")
                 for siteinfo_name, torrents in torrents_of_site.items():
                     siteinfo = siteinfos_of_site[siteinfo_name]
@@ -2069,11 +2072,13 @@ class ZYTBrushFlow(_PluginBase):
                     brush_config = self.__get_brush_config(siteinfo_name)
                     if brush_config.include or brush_config.exclude:
                         # 如果站点刷流没有正确响应，说明没有通过前置条件，其他站点也不需要继续刷流了
-                        if not self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
+                        passed, _ = self.__brush_site_torrents(torrents=torrents, siteinfo=siteinfo,
                                                           torrent_tasks=torrent_tasks,
                                                           statistic_info=statistic_info,
                                                           subscribe_titles=subscribe_titles,
-                                                          ignore_include_exclude=True):
+                                                          ignore_include_exclude=True,
+                                                          is_current_time_in_range_site_config=is_current_time_in_range_site_config)
+                        if not passed:
                             logger.info(f"站点 {siteinfo_name} 第二轮刷流中途结束，停止后续刷流")
                             break
                         else:
@@ -2107,7 +2112,7 @@ class ZYTBrushFlow(_PluginBase):
         return torrents, siteinfo
 
     def __brush_site_torrents(self, torrents, siteinfo, torrent_tasks: Dict[str, dict], statistic_info: Dict[str, int],
-                              subscribe_titles: Set[str], ignore_include_exclude) -> bool:
+                              subscribe_titles: Set[str], ignore_include_exclude, is_current_time_in_range_site_config):
         """
         针对站点进行刷流
         """
@@ -2121,13 +2126,14 @@ class ZYTBrushFlow(_PluginBase):
             torrents = self.__filter_torrents_contains_subscribe(torrents=torrents, subscribe_titles=subscribe_titles)
 
         torrents_size = self.__calculate_seeding_torrents_size(torrent_tasks=torrent_tasks)
+        refuse_by_include_exclude_torrents = []
         # 过滤种子
         for torrent in torrents:
             # 判断能否通过刷流前置条件
             pre_condition_passed, reason = self.__evaluate_pre_conditions_for_brush(include_network_conditions=False)
             self.__log_brush_conditions(passed=pre_condition_passed, reason=reason)
             if not pre_condition_passed:
-                return False
+                return False, refuse_by_include_exclude_torrents
 
             logger.debug(f"种子详情：{torrent}")
 
@@ -2144,6 +2150,10 @@ class ZYTBrushFlow(_PluginBase):
                                                                             ignore_include_exclude=ignore_include_exclude)
             self.__log_brush_conditions(passed=condition_passed, reason=reason, torrent=torrent)
             if not condition_passed:
+                # 第一轮收集不符合include/exclude条件的种子,第二轮刷流使用,只在第一轮收集,且斩断能独立配置打开,且在忽略include/exclude二轮筛种生效时间段
+                if not ignore_include_exclude and self._brush_config.enable_site_config and is_current_time_in_range_site_config and (
+                        "符合排除规则" == reason or "不符合包含规则" == reason):
+                    refuse_by_include_exclude_torrents.append(torrent)
                 continue
 
             # 添加下载任务
@@ -2203,7 +2213,7 @@ class ZYTBrushFlow(_PluginBase):
             logger.info(f"站点 {siteinfo.name}，新增刷流种子下载：{torrent.title}|{torrent.description}")
             self.__send_add_message(torrent)
 
-        return True
+        return True, refuse_by_include_exclude_torrents
 
     def __evaluate_size_condition_for_brush(self, torrents_size: float,
                                             add_torrent_size: float = 0.0) -> Tuple[bool, Optional[str]]:
@@ -2317,19 +2327,6 @@ class ZYTBrushFlow(_PluginBase):
         # H&R
         if brush_config.hr == "yes" and torrent.hit_and_run:
             return False, "存在H&R"
-        # 忽略include,用在第二轮循环上,第一轮获取官种后下载数量不够就第二轮再筛选一次
-        if not ignore_include_exclude:
-            # 包含规则
-            if brush_config.include and not (
-                    re.search(brush_config.include, torrent.title, re.I) or re.search(brush_config.include,
-                                                                                      torrent.description, re.I)):
-                return False, "不符合包含规则"
-
-            # 排除规则
-            if brush_config.exclude and (
-                    re.search(brush_config.exclude, torrent.title, re.I) or re.search(brush_config.exclude,
-                                                                                      torrent.description, re.I)):
-                return False, "符合排除规则"
 
         # 种子大小（GB）
         if brush_config.size:
@@ -2368,6 +2365,21 @@ class ZYTBrushFlow(_PluginBase):
                 if not (pubtimes[0] <= pubdate_minutes <= pubtimes[1]):
                     return False, f"发布时间 {torrent.pubdate}，{pubdate_minutes:.0f} 分钟前，不在指定范围内"
 
+        # 这个条件要放在最后,结果用在第二轮循环上,第一轮获取官种后下载数量不够就第二轮再筛选一次
+        if not ignore_include_exclude:
+            # 包含规则
+            if brush_config.include and not (
+                    re.search(brush_config.include, torrent.title, re.I) or re.search(brush_config.include,
+                                                                                      torrent.description,
+                                                                                      re.I)):
+                return False, "不符合包含规则"
+
+            # 排除规则
+            if brush_config.exclude and (
+                    re.search(brush_config.exclude, torrent.title, re.I) or re.search(brush_config.exclude,
+                                                                                      torrent.description,
+                                                                                      re.I)):
+                return False, "符合排除规则"
         return True, None
 
     @staticmethod
