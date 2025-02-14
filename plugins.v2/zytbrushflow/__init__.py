@@ -261,7 +261,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.94"
+    plugin_version = "4.3.1.95"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -330,7 +330,7 @@ class ZYTBrushFlow(_PluginBase):
 
         # 这里先过滤掉已删除的站点并保存，特别注意的是，这里保留了界面选择站点时的顺序，以便后续站点随机刷流或顺序刷流
         if brush_config.brushsites:
-            site_id_to_public_status = {site.get("id"): site.get("public") for site in self.sites_helper.get_indexers()}
+            site_id_to_public_status = {dict(site).get("id"): dict(site).get("public") for site in self.sites_helper.get_indexers()}
             brush_config.brushsites = [
                 site_id for site_id in brush_config.brushsites
                 if site_id in site_id_to_public_status and not site_id_to_public_status[site_id]
@@ -2151,7 +2151,7 @@ class ZYTBrushFlow(_PluginBase):
             self.__log_brush_conditions(passed=condition_passed, reason=reason, torrent=torrent)
             if not condition_passed:
                 # 第一轮收集不符合include/exclude条件的种子,第二轮刷流使用,只在第一轮收集,且斩断能独立配置打开,且在忽略include/exclude二轮筛种生效时间段
-                if (not ignore_include_exclude and self._brush_config.enable_site_config and is_current_time_in_range_site_config 
+                if (not ignore_include_exclude and self._brush_config.enable_site_config and is_current_time_in_range_site_config
                         and reason is not None and ("符合排除规则" == reason or "不符合包含规则" == reason)):
                     refuse_by_include_exclude_torrents.append(torrent)
                 continue
