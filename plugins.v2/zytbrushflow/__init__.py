@@ -330,7 +330,7 @@ class ZYTBrushFlow(_PluginBase):
 
         # 这里先过滤掉已删除的站点并保存，特别注意的是，这里保留了界面选择站点时的顺序，以便后续站点随机刷流或顺序刷流
         if brush_config.brushsites:
-            site_id_to_public_status = {dict(site).get("id"): dict(site).get("public") for site in self.sites_helper.get_indexers()}
+            site_id_to_public_status = {site.get("id"): site.get("public") for site in self.sites_helper.get_indexers()}
             brush_config.brushsites = [
                 site_id for site_id in brush_config.brushsites
                 if site_id in site_id_to_public_status and not site_id_to_public_status[site_id]
