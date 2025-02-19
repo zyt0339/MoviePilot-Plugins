@@ -74,6 +74,7 @@ class BrushConfig:
         self.proxy_delete = config.get("proxy_delete", False)
         self.active_time_range = config.get("active_time_range")
         self.active_time_range_site_config = config.get("active_time_range_site_config")
+        self.qb_connec_prefs = config.get("qb_connec_prefs")
         self.cron = config.get("cron")  # 刷流周期,可能是int值或者cron
         self.cron_check = config.get("cron_check")  # 检查周期,可能是int值或者cron
         self.qb_category = config.get("qb_category")
@@ -261,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.95"
+    plugin_version = "4.3.1.96"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1692,7 +1693,7 @@ class ZYTBrushFlow(_PluginBase):
                                                 'component': 'VCol',
                                                 'props': {
                                                     "cols": 12,
-                                                    "md": 6
+                                                    "md": 3
                                                 },
                                                 'content': [
                                                     {
@@ -1701,6 +1702,23 @@ class ZYTBrushFlow(_PluginBase):
                                                             'model': 'active_time_range_site_config',
                                                             'label': '二轮筛种生效时间段(忽略include/exclude)',
                                                             'placeholder': '默认24小时开启,可以调整为冷清时间段'
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                'component': 'VCol',
+                                                'props': {
+                                                    "cols": 12,
+                                                    "md": 3
+                                                },
+                                                'content': [
+                                                    {
+                                                        'component': 'VTextField',
+                                                        'props': {
+                                                            'model': 'qb_connec_prefs',
+                                                            'label': 'qb连接限制数时间段',
+                                                            'placeholder': '09:00-22:00|500,100,50,20'
                                                         }
                                                     }
                                                 ]
@@ -2000,6 +2018,22 @@ class ZYTBrushFlow(_PluginBase):
         if not self.__is_current_time_in_range():
             logger.info(f"当前不在指定的刷流时间区间内，刷流操作将暂时暂停")
             return
+
+        # 判断是否限制连接数,检查是否在现实连接数时间范围内
+        qb_connec_prefs = brush_config.qb_connec_prefs
+        if qb_connec_prefs and '|' in qb_connec_prefs:
+            splits1 = qb_connec_prefs.split('|')[1].split(',')
+            if len(splits1) == 4 and self.__is_current_time_in_range_qb_connec_prefs():
+                service = self.service_info
+                if self.downloader_helper.is_downloader("qbittorrent", service=service):
+                    downloader_obj = service.instance
+                    downloader_obj.qbc.app_set_preferences(prefs={
+                        'max_connec': int(splits1[0]),
+                        'max_connec_per_torrent': int(splits1[1]),
+                        'max_uploads': int(splits1[2]),
+                        'max_uploads_per_torrent': int(splits1[3])
+                    })
+                    logger.info(f"当前时间在qb限制链接数时间区间内,设置成功 {qb_connec_prefs}")
 
         with lock:
             logger.info(f"开始执行刷流任务 ...")
@@ -3076,6 +3110,20 @@ class ZYTBrushFlow(_PluginBase):
             self.__log_and_notify_error(f"二轮筛种生效时间段(忽略include/exclude)设置错误：{active_time_range_site_config}")
             config["active_time_range_site_config"] = None
             found_error = True  # 更新错误标志
+        qb_connec_prefs = config.get("qb_connec_prefs")
+        if qb_connec_prefs and '|' in qb_connec_prefs:
+            splits0 = qb_connec_prefs.split('|')
+            qb_connec_prefs_time_range = splits0[0]
+            if qb_connec_prefs_time_range and not self.__is_valid_time_range(time_range=qb_connec_prefs_time_range):
+                self.__log_and_notify_error(f"qb连接限制数设置错误：{qb_connec_prefs}")
+                config["qb_connec_prefs"] = None
+                found_error = True  # 更新错误标志
+            splits1 = splits0[1].split(',')
+            if len(splits1) != 4:
+                self.__log_and_notify_error(f"qb连接限制数设置错误：{qb_connec_prefs}")
+                config["qb_connec_prefs"] = None
+                found_error = True  # 更新错误标志
+
         # 如果发现任何错误，返回False；否则返回True
         return not found_error
 
@@ -3126,6 +3174,7 @@ class ZYTBrushFlow(_PluginBase):
             "proxy_delete": brush_config.proxy_delete,
             "active_time_range": brush_config.active_time_range,
             "active_time_range_site_config": brush_config.active_time_range_site_config,
+            "qb_connec_prefs": brush_config.qb_connec_prefs,
             "cron": brush_config.cron,
             "cron_check": brush_config.cron_check,
             "qb_category": brush_config.qb_category,
@@ -4065,6 +4114,28 @@ class ZYTBrushFlow(_PluginBase):
         else:
             # 情况2: 时间段跨越午夜
             return now >= start_time or now <= end_time
+
+    def __is_current_time_in_range_qb_connec_prefs(self) -> bool:
+        """判断当前时间是否在开启时间区间内-qb限制链接数"""
+        brush_config = self.__get_brush_config()
+        qb_connec_prefs = brush_config.qb_connec_prefs
+        if qb_connec_prefs and '|' in qb_connec_prefs:
+            qb_connec_prefs_time_range = qb_connec_prefs.split('|')[0]
+            if not self.__is_valid_time_range(qb_connec_prefs_time_range):
+                # 如果时间范围格式不正确或不存在，说明当前没有开启时间段，返回True
+                return True
+
+            start_str, end_str = qb_connec_prefs_time_range.split('-')
+            start_time = datetime.strptime(start_str, '%H:%M').time()
+            end_time = datetime.strptime(end_str, '%H:%M').time()
+            now = datetime.now().time()
+            if start_time <= end_time:
+                # 情况1: 时间段不跨越午夜
+                return start_time <= now <= end_time
+            else:
+                # 情况2: 时间段跨越午夜
+                return now >= start_time or now <= end_time
+        return True
 
     def __get_site_by_torrent(self, torrent: Any) -> Tuple[int, str]:
         """
