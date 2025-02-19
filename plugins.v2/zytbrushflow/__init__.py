@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.96"
+    plugin_version = "4.3.1.97"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2023,17 +2023,26 @@ class ZYTBrushFlow(_PluginBase):
         qb_connec_prefs = brush_config.qb_connec_prefs
         if qb_connec_prefs and '|' in qb_connec_prefs:
             splits1 = qb_connec_prefs.split('|')[1].split(',')
-            if len(splits1) == 4 and self.__is_current_time_in_range_qb_connec_prefs():
+            if len(splits1) == 4:
                 service = self.service_info
                 if self.downloader_helper.is_downloader("qbittorrent", service=service):
                     downloader_obj = service.instance
-                    downloader_obj.qbc.app_set_preferences(prefs={
-                        'max_connec': int(splits1[0]),
-                        'max_connec_per_torrent': int(splits1[1]),
-                        'max_uploads': int(splits1[2]),
-                        'max_uploads_per_torrent': int(splits1[3])
-                    })
-                    logger.info(f"当前时间在qb限制链接数时间区间内,设置成功 {qb_connec_prefs}")
+                    if self.__is_current_time_in_range_qb_connec_prefs():
+                        downloader_obj.qbc.app_set_preferences(prefs={
+                            'max_connec': int(splits1[0]),
+                            'max_connec_per_torrent': int(splits1[1]),
+                            'max_uploads': int(splits1[2]),
+                            'max_uploads_per_torrent': int(splits1[3])
+                        })
+                        logger.info(f"当前时间在qb限制链接数区间内, 限制成功 {qb_connec_prefs}")
+                    else:
+                        downloader_obj.qbc.app_set_preferences(prefs={
+                            'max_connec': -1,
+                            'max_connec_per_torrent': -1,
+                            'max_uploads': -1,
+                            'max_uploads_per_torrent': -1
+                        })
+                        logger.info(f"当前时间不在qb限制链接数区间内, 取消限制")
 
         with lock:
             logger.info(f"开始执行刷流任务 ...")
