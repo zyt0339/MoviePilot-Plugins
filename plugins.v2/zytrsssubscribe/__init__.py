@@ -23,7 +23,7 @@ class ZYTRssSubscribe(_PluginBase):
     # 插件名称
     plugin_name = "RSS订阅下载"
     # 插件描述
-    plugin_desc = "定时刷新RSS报文，识别内容后下载种子。"
+    plugin_desc = "RSS订阅下载,只支持qbittorrent"
     # 插件图标
     plugin_icon = "rss.png"
     # 插件版本
