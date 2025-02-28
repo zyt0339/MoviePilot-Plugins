@@ -121,5 +121,17 @@
             "v1.1.1": "批量清理",
             "v1.1": "定时清理插件产生的日志"
         }
+    },
+    "ZYTRssSubscribe": {
+        "name": "RSS订阅下载",
+        "description": "RSS订阅下载,只支持qbittorrent",
+        "labels": "刷流",
+        "version": "1.0.0",
+        "icon": "Iyuu_A.png",
+        "author": "zyt",
+        "level": 2,
+        "history": {
+            "v1.0.0": "RSS订阅下载"
+        }
     }
 }
