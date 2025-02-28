@@ -127,7 +127,7 @@
         "description": "RSS订阅下载,只支持qbittorrent",
         "labels": "刷流",
         "version": "1.0.0",
-        "icon": "Iyuu_A.png",
+        "icon": "rss.png",
         "author": "zyt",
         "level": 2,
         "history": {
