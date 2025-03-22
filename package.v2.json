@@ -133,5 +133,17 @@
         "history": {
             "v1.0.0": "RSS订阅下载"
         }
+    },
+    "ZYTRepairSiteDates": {
+        "name": "修复站点数据",
+        "description": "修复站点数据为0的天数,用前一天数据填充",
+        "labels": "站点",
+        "version": "1.0.1",
+        "icon": "database.png",
+        "author": "zyt",
+        "level": 2,
+        "history": {
+            "v1.0.1": "修复站点数据为0的天数,用前一天数据填充"
+        }
     }
 }
