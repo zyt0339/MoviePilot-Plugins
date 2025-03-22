@@ -19,7 +19,7 @@ class ZYTRepairSiteDates(_PluginBase):
     # 插件图标
     plugin_icon = "database.png"
     # 插件版本
-    plugin_version = "1.0.2"
+    plugin_version = "1.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -37,6 +37,7 @@ class ZYTRepairSiteDates(_PluginBase):
     _cron = None
     _onlyonce = False
     _notify = False
+    _cmd = None
 
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
@@ -49,6 +50,7 @@ class ZYTRepairSiteDates(_PluginBase):
             self._cron = config.get("cron")
             self._notify = config.get("notify")
             self._onlyonce = config.get("onlyonce")
+            self._cmd = config.get("cmd")
 
             # 加载模块
         if self._enabled or self._onlyonce:
@@ -82,6 +84,7 @@ class ZYTRepairSiteDates(_PluginBase):
                         "cron": self._cron,
                         "enabled": self._enabled,
                         "notify": self._notify,
+                        "cmd": self._cmd,
                     }
                 )
 
@@ -121,13 +124,15 @@ class ZYTRepairSiteDates(_PluginBase):
                 logger.info('     未查询到前一日数据, 继续查询更前一日')
         return None
 
-    def update_rows(self, conn, rows):
+    def update_rows(self, conn, rows, ignore_domains):
         cursor = conn.cursor()
         for row in rows:
             row_id = row[0]
             domain = row[1]
+            if domain in ignore_domains:
+                continue
             current_date = row[2]
-            logger.info(f'---{domain} {current_date} upload = 0, 开始获取前一日数据覆盖到本天')
+            logger.info(f'{domain} {current_date} upload = 0, 开始获取前一日数据覆盖到本天')
 
             prev_row = self.get_previous_day_row(conn, domain, current_date)
             if prev_row:
@@ -143,11 +148,14 @@ class ZYTRepairSiteDates(_PluginBase):
         msg = ""
         success = True
         try:
+            ignore_domains = set()
+            for cmd in self._cmd.split("\n"):
+                ignore_domains.add(cmd.strip())
             db_path = "/config/user.db"  # 请替换为实际的数据库文件路径
             conn = self.connect_to_database(db_path)
             if conn:
                 upload_zero_rows = self.get_upload_zero_rows(conn)
-                self.update_rows(conn, upload_zero_rows)
+                self.update_rows(conn, upload_zero_rows, ignore_domains)
                 conn.close()
                 logger.info('SUCCESS')
         except subprocess.CalledProcessError as e:
@@ -235,6 +243,28 @@ class ZYTRepairSiteDates(_PluginBase):
                                            }
                                        ],
                                    },
+                               ],
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextarea",
+                                               "props": {
+                                                   "model": "cmd",
+                                                   "rows": "2",
+                                                   "label": "忽略站点",
+                                                   "placeholder": "配置domain，一行一条,可从日志查看",
+                                               },
+                                           }
+                                       ],
+                                   }
                                ],
                            },
                        ],
