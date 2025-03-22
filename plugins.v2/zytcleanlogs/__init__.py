@@ -8,14 +8,9 @@ from apscheduler.triggers.cron import CronTrigger
 from pathlib import Path
 from typing import List, Tuple, Dict, Any, Optional
 
-from app.utils.string import StringUtils
-from app.helper.plugin import PluginHelper
 from app.core.config import settings
-from app.core.plugin import PluginManager
-from app.db.systemconfig_oper import SystemConfigOper
 from app.log import logger
 from app.plugins import _PluginBase
-from app.schemas.types import SystemConfigKey
 
 
 class ZYTCleanLogs(_PluginBase):

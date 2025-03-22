@@ -71,12 +71,12 @@
         "name": "下载器标签清理&限速",
         "description": "定时执行,定制开发qb_delete_tag.py",
         "labels": "标签清理,限速",
-        "version": "1.0.4",
+        "version": "1.0.5",
         "icon": "clean.png",
         "author": "zyt",
         "level": 1,
         "history": {
-            "v1.0.4": "VCronField",
+            "v1.0.5": "VCronField",
             "v1.0.2": "换图标",
             "v1.0": "定时执行,定制开发qb_delete_tag.py"
         }
@@ -85,12 +85,12 @@
         "name": "下载器添加标签",
         "description": "定时执行,定制开发qb_torrent_mark.py",
         "labels": "标签",
-        "version": "1.0.5",
+        "version": "1.0.6",
         "icon": "clean.png",
         "author": "zyt",
         "level": 1,
         "history": {
-            "v1.0.5": "VCronField",
+            "v1.0.6": "VCronField",
             "v1.0.3": "清理旧日志",
             "v1.0": "定时执行,定制开发qb_torrent_mark.py"
         }
@@ -99,12 +99,12 @@
         "name": "emby下无硬链接&重复文件",
         "description": "打印emby下无硬链接&重复文件",
         "labels": "标签",
-        "version": "1.0.4",
+        "version": "1.0.5",
         "icon": "clean.png",
         "author": "zyt",
         "level": 1,
         "history": {
-            "v1.0.4": "VCronField",
+            "v1.0.5": "VCronField",
             "v1.0.2": "打印emby下无硬链接&重复文件"
         }
     },
@@ -138,12 +138,12 @@
         "name": "修复站点数据",
         "description": "修复站点数据为0的天数,用前一天数据填充",
         "labels": "站点",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "icon": "database.png",
         "author": "zyt",
         "level": 2,
         "history": {
-            "v1.0.1": "修复站点数据为0的天数,用前一天数据填充"
+            "v1.0.2": "修复站点数据为0的天数,用前一天数据填充"
         }
     }
 }

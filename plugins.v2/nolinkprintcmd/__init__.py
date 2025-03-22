@@ -3,12 +3,10 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from pathlib import Path
-from app.core.event import eventmanager, Event
 from app.core.config import settings
 from app.plugins import _PluginBase
 from typing import Any, List, Dict, Tuple, Optional
 from app.log import logger
-from app.schemas.types import EventType
 from app.schemas import NotificationType
 import subprocess
 import shlex
@@ -22,7 +20,7 @@ class NoLinkPrintCmd(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.0.4"
+    plugin_version = "1.0.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -96,14 +94,9 @@ class NoLinkPrintCmd(_PluginBase):
                 self._scheduler.print_jobs()
                 self._scheduler.start()
 
-    @eventmanager.register(EventType.PluginAction)
-    def run(self, event: Event = None):
+    def run(self):
         msg = ""
         success = True
-        if event:
-            event_data = event.event_data
-            if not event_data or event_data.get("action") != "nolinkprintcmd":
-                return
         # 清理旧日志
         try:
             log_path = settings.LOG_PATH / Path("plugins") / "nolinkprintcmd.log"
@@ -144,19 +137,7 @@ class NoLinkPrintCmd(_PluginBase):
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
-        """
-        定义远程控制命令
-        :return: 命令关键字、事件、描述、附带数据
-        """
-        return [
-            {
-                "cmd": "/nolinkprintcmd",
-                "event": EventType.PluginAction,
-                "desc": "打印emby下无硬链接&重复文件",
-                "category": "",
-                "data": {"action": "nolinkprintcmd"},
-            }
-        ]
+        pass
 
     def get_api(self) -> List[Dict[str, Any]]:
         pass
@@ -174,7 +155,7 @@ class NoLinkPrintCmd(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -187,7 +168,17 @@ class NoLinkPrintCmd(_PluginBase):
                                    },
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
+                                       "content": [
+                                           {
+                                               "component": "VCronField",
+                                               "props": {"model": "cron", "label": "执行周期"},
+                                           }
+                                       ],
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -200,7 +191,7 @@ class NoLinkPrintCmd(_PluginBase):
                                    },
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -211,23 +202,6 @@ class NoLinkPrintCmd(_PluginBase):
                                            }
                                        ],
                                    },
-                               ],
-                           },
-                           {
-                               "component": "VRow",
-                               "content": [
-                                   {
-                                       "component": "VCol",
-                                       "props": {
-                                           "cols": 12,
-                                       },
-                                       "content": [
-                                           {
-                                               "component": "VCronField",
-                                               "props": {"model": "cron", "label": "执行周期"},
-                                           }
-                                       ],
-                                   }
                                ],
                            },
                            {

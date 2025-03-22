@@ -2,12 +2,10 @@ from datetime import datetime, timedelta
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from app.core.event import eventmanager, Event
 from app.core.config import settings
 from app.plugins import _PluginBase
 from typing import Any, List, Dict, Tuple, Optional
 from app.log import logger
-from app.schemas.types import EventType
 from app.schemas import NotificationType
 import subprocess
 import shlex
@@ -21,7 +19,7 @@ class DeleteTagCmd(_PluginBase):
     # 插件图标
     plugin_icon = "clean.png"
     # 插件版本
-    plugin_version = "1.0.4"
+    plugin_version = "1.0.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -95,14 +93,9 @@ class DeleteTagCmd(_PluginBase):
                 self._scheduler.print_jobs()
                 self._scheduler.start()
 
-    @eventmanager.register(EventType.PluginAction)
-    def run(self, event: Event = None):
+    def run(self):
         msg = ""
         success = True
-        if event:
-            event_data = event.event_data
-            if not event_data or event_data.get("action") != "deletetagcmd":
-                return
         try:
             for cmd in self._cmd.split("\n"):
                 logger.info(f"执行命令行: {cmd}")
@@ -134,19 +127,7 @@ class DeleteTagCmd(_PluginBase):
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
-        """
-        定义远程控制命令
-        :return: 命令关键字、事件、描述、附带数据
-        """
-        return [
-            {
-                "cmd": "/deletetagcmd",
-                "event": EventType.PluginAction,
-                "desc": "下载器标签清理&限速",
-                "category": "",
-                "data": {"action": "deletetagcmd"},
-            }
-        ]
+        pass
 
     def get_api(self) -> List[Dict[str, Any]]:
         pass
@@ -164,7 +145,7 @@ class DeleteTagCmd(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -177,7 +158,17 @@ class DeleteTagCmd(_PluginBase):
                                    },
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
+                                       "content": [
+                                           {
+                                               "component": "VCronField",
+                                               "props": {"model": "cron", "label": "执行周期"},
+                                           }
+                                       ],
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -190,7 +181,7 @@ class DeleteTagCmd(_PluginBase):
                                    },
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -201,23 +192,6 @@ class DeleteTagCmd(_PluginBase):
                                            }
                                        ],
                                    },
-                               ],
-                           },
-                           {
-                               "component": "VRow",
-                               "content": [
-                                   {
-                                       "component": "VCol",
-                                       "props": {
-                                           "cols": 12,
-                                       },
-                                       "content": [
-                                           {
-                                               "component": "VCronField",
-                                               "props": {"model": "cron", "label": "执行周期"},
-                                           }
-                                       ],
-                                   }
                                ],
                            },
                            {
