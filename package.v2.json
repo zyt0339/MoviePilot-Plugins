@@ -146,5 +146,17 @@
             "v1.0.3": "增加忽略站点配置",
             "v1.0.2": "修复站点数据为0的天数,用前一天数据填充"
         }
+    },
+    "ZYTCloudflareIP": {
+        "name": "Cloudflare优选IP",
+        "description": "使用简单的python脚本",
+        "labels": "站点",
+        "version": "1.0.1",
+        "icon": "Cloudflare_A.png",
+        "author": "zyt",
+        "level": 2,
+        "history": {
+            "v1.0.1": "使用简单的python脚本"
+        }
     }
 }
