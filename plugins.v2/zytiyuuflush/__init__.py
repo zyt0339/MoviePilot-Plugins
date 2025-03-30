@@ -801,7 +801,11 @@ class ZYTIYUUflush(_PluginBase):
                             site_name = None
                             if intersection:
                                 site_name = list(intersection)[0]
-                            is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
+                            if site_name in all_site_name_id_map:
+                                is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
+                            else:
+                                is_in_limit_sites = None
+                                logger.error(f"{site_name} not in {all_site_name_id_map}")
                             if is_in_limit_sites:
                                 to_limit_torrent_hashs.append(torrent.hash)
                             # 限速100K仍然有上传就暂停:
@@ -840,7 +844,11 @@ class ZYTIYUUflush(_PluginBase):
                             site_name = None
                             if intersection:
                                 site_name = list(intersection)[0]
-                            is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
+                            if site_name in all_site_name_id_map:
+                                is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
+                            else:
+                                is_in_limit_sites = None
+                                logger.error(f"{site_name} not in {all_site_name_id_map}")
                             if is_in_limit_sites:
                                 to_limit_torrent_hashs.append(torrent.hash)
                         # to_limit_torrent_hashs 取消限速,删除标签
