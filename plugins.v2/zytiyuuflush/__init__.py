@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.13.1"
+    plugin_version = "2.13.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -63,6 +63,7 @@ class ZYTIYUUflush(_PluginBase):
     _sites = []
     _limit_sites = []
     _limit_sites_pause_threshold = 12 * 60  # 12小时
+    _active_time_range_site_config = None
     _notify = False
     _nolabels = None
     _noautostart = None
@@ -115,6 +116,7 @@ class ZYTIYUUflush(_PluginBase):
             self._sites = config.get("sites") or []
             self._limit_sites = config.get("limit_sites") or []
             self._limit_sites_pause_threshold = config.get("limit_sites_pause_threshold") or 12 * 60  # 12小时
+            self._active_time_range_site_config = config.get("active_time_range_site_config")
             self._notify = config.get("notify")
             self._nolabels = config.get("nolabels")
             self._noautostart = config.get("noautostart")
@@ -403,7 +405,7 @@ class ZYTIYUUflush(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 10
+                                           'md': 8
                                        },
                                        'content': [
                                            {
@@ -430,8 +432,25 @@ class ZYTIYUUflush(_PluginBase):
                                                'component': 'VTextField',
                                                'props': {
                                                    'model': 'limit_sites_pause_threshold',
-                                                   'label': '暂时时间(分钟)',
+                                                   'label': '限速暂停时间(分钟)',
                                                    'placeholder': "限速后还活动就暂停"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                           'md': 2
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VTextField',
+                                               'props': {
+                                                   'model': 'active_time_range_site_config',
+                                                   'label': '限速时间段',
+                                                   'placeholder': '限速后还活动就暂停,如：00:00-08:00,默认全天'
                                                }
                                            }
                                        ]
@@ -619,6 +638,7 @@ class ZYTIYUUflush(_PluginBase):
             "sites": self._sites,
             "limit_sites": self._limit_sites,
             "limit_sites_pause_threshold": self._limit_sites_pause_threshold,
+            "active_time_range_site_config": self._active_time_range_site_config,
             "notify": self._notify,
             "nolabels": self._nolabels,
             "noautostart": self._noautostart,
@@ -763,50 +783,73 @@ class ZYTIYUUflush(_PluginBase):
                 # 设置限速100K站点
                 if self._limit_sites:
                     all_torrents, _ = downloader_obj.get_torrents()
+                    # 限速100K站点内的种子
                     to_limit_torrent_hashs = []
-                    # 限速100K又活动就暂停
-                    to_pausedUP_hashs_cur = []
-                    to_cancel_pausedUP_hashs_cur = []  # 暂停超过 12 小时又可以启动的种子
-                    current_time = time.time()  # 当前时间戳
-                    _limit_sites_pause_threshold_s = int(self._limit_sites_pause_threshold) * 60
-                    for torrent in all_torrents:
-                        # 当前种子 tags list
-                        current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                        # qb 补充站点标签,交集第一个就是站点标签
-                        intersection = all_site_names.intersection(current_torrent_tag_list)
-                        site_name = None
-                        if intersection:
-                            site_name = list(intersection)[0]
-                        is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
-                        if is_in_limit_sites:
-                            to_limit_torrent_hashs.append(torrent.hash)
+                    # 判断当前是否在生效时间段内,如果在就执行限速,如果不在就取消限速
+                    if self.__is_current_time_in_range_site_config():
+                        # 限速100K中,且活动的种子
+                        to_pausedUP_hashs_cur = []
+                        # 已经暂停,时间超过 12 小时的种子
+                        to_cancel_pausedUP_hashs_cur = []  # 暂停超过 12 小时又可以启动的种子
+                        current_time = time.time()  # 当前时间戳
+                        _limit_sites_pause_threshold_s = int(self._limit_sites_pause_threshold) * 60
+                        for torrent in all_torrents:
+                            # 当前种子 tags list
+                            current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
+                            # qb 补充站点标签,交集第一个就是站点标签
+                            intersection = all_site_names.intersection(current_torrent_tag_list)
+                            site_name = None
+                            if intersection:
+                                site_name = list(intersection)[0]
+                            is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
+                            if is_in_limit_sites:
+                                to_limit_torrent_hashs.append(torrent.hash)
+                            # 限速100K仍然有上传就暂停:
+                            if _limit_sites_pause_threshold_s > 0:
+                                state = torrent.state  # str
+                                if is_in_limit_sites and "uploading" == state:
+                                    to_pausedUP_hashs_cur.append(torrent.hash)
+                                if is_in_limit_sites and state in ["pausedUP", "stoppedUP"] and "P100K" in current_torrent_tag_list and not noautostart_set.intersection(current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
+                        if to_limit_torrent_hashs:
+                            downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
+                            downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
+                            logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
                         # 限速100K仍然有上传就暂停:
-                        if _limit_sites_pause_threshold_s > 0:
-                            state = torrent.state  # str
-                            if is_in_limit_sites and "uploading" == state:
-                                to_pausedUP_hashs_cur.append(torrent.hash)
-                            if is_in_limit_sites and state in ["pausedUP", "stoppedUP"] and "P100K" in current_torrent_tag_list and not noautostart_set.intersection(current_torrent_tag_list):
-                                pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
-                                    to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                    if to_limit_torrent_hashs:
-                        downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
-                        downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
-                        logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
-                    # 限速100K仍然有上传就暂停:
-                    if to_pausedUP_hashs_cur:
-                        downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
-                        downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P100K"])
-                        logger.info(f"{downloader} 增加暂停100K种子个数: {len(to_pausedUP_hashs_cur)}")
-                        for t_hash in to_pausedUP_hashs_cur:
-                            self.to_pausedUP_hashs[t_hash] = current_time
-                    if to_cancel_pausedUP_hashs_cur:
-                        downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
-                        downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P100K"])
-                        logger.info(f"{downloader} 重新开始P100K种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
-                        for t_hash in to_cancel_pausedUP_hashs_cur:
-                            if t_hash in self.to_pausedUP_hashs:
-                                del self.to_pausedUP_hashs[t_hash]
+                        if to_pausedUP_hashs_cur:
+                            downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
+                            downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P100K"])
+                            logger.info(f"{downloader} 增加暂停100K种子个数: {len(to_pausedUP_hashs_cur)}")
+                            for t_hash in to_pausedUP_hashs_cur:
+                                self.to_pausedUP_hashs[t_hash] = current_time
+                        if to_cancel_pausedUP_hashs_cur:
+                            downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
+                            downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P100K"])
+                            logger.info(f"{downloader} 重新开始P100K种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
+                            for t_hash in to_cancel_pausedUP_hashs_cur:
+                                if t_hash in self.to_pausedUP_hashs:
+                                    del self.to_pausedUP_hashs[t_hash]
+                    else:
+                        for torrent in all_torrents:
+                            # 当前种子 tags list
+                            current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
+                            # qb 补充站点标签,交集第一个就是站点标签
+                            intersection = all_site_names.intersection(current_torrent_tag_list)
+                            site_name = None
+                            if intersection:
+                                site_name = list(intersection)[0]
+                            is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
+                            if is_in_limit_sites:
+                                to_limit_torrent_hashs.append(torrent.hash)
+                        # to_limit_torrent_hashs 取消限速,删除标签
+                        if to_limit_torrent_hashs:
+                            downloader_obj.qbc.torrents_set_upload_limit(0, to_limit_torrent_hashs)
+                            downloader_obj.remove_torrents_tag(to_limit_torrent_hashs, ["F100K", "P100K"])
+                            self.to_pausedUP_hashs.clear()
+                            logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
+                            logger.info(f"在非限速时间区间,{downloader} 解除限速100K种子个数{len(to_limit_torrent_hashs)}")
             elif dl_type == "transmission":
                 # logger.info(f"debug service={type(service)},downloader={type(downloader)},downloader_obj={type(downloader_obj)},")
                 # downloader_obj=<class 'app.modules.transmission.transmission.Transmission'>
@@ -870,6 +913,45 @@ class ZYTIYUUflush(_PluginBase):
                          f"{self.cached} 条失败记录已加入缓存"
                 )
         logger.info("辅种任务执行完成")
+
+    @staticmethod
+    def __is_valid_time_range(time_range: str) -> bool:
+        """检查时间范围字符串是否有效：格式为"HH:MM-HH:MM"，且时间有效"""
+        if not time_range:
+            return False
+
+        # 使用正则表达式匹配格式
+        pattern = re.compile(r'^\d{2}:\d{2}-\d{2}:\d{2}$')
+        if not pattern.match(time_range):
+            return False
+
+        try:
+            start_str, end_str = time_range.split('-')
+            datetime.strptime(start_str, '%H:%M').time()
+            datetime.strptime(end_str, '%H:%M').time()
+        except Exception as e:
+            print(str(e))
+            return False
+
+        return True
+
+    def __is_current_time_in_range_site_config(self) -> bool:
+        """判断当前时间是否在开启限速时间区间内-限速时间段"""
+        active_time_range_site_config = self._active_time_range_site_config
+        if not self.__is_valid_time_range(active_time_range_site_config):
+            # 如果时间范围格式不正确或不存在，说明当前没有开启时间段，返回True
+            return True
+
+        start_str, end_str = active_time_range_site_config.split('-')
+        start_time = datetime.strptime(start_str, '%H:%M').time()
+        end_time = datetime.strptime(end_str, '%H:%M').time()
+        now = datetime.now().time()
+        if start_time <= end_time:
+            # 情况1: 时间段不跨越午夜
+            return start_time <= now <= end_time
+        else:
+            # 情况2: 时间段跨越午夜
+            return now >= start_time or now <= end_time
 
     def check_recheck(self):
         """
