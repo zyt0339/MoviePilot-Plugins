@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.13.2"
+    plugin_version = "2.13.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -801,11 +801,11 @@ class ZYTIYUUflush(_PluginBase):
                             site_name = None
                             if intersection:
                                 site_name = list(intersection)[0]
-                            if site_name in all_site_name_id_map:
+                            if site_name:
                                 is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
                             else:
-                                is_in_limit_sites = None
-                                logger.error(f"{site_name} not in {all_site_name_id_map}")
+                                is_in_limit_sites = False
+                                logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                             if is_in_limit_sites:
                                 to_limit_torrent_hashs.append(torrent.hash)
                             # 限速100K仍然有上传就暂停:
