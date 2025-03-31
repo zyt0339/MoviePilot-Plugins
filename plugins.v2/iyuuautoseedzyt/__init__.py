@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.13.4"
+    plugin_version = "2.13.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -768,16 +768,16 @@ class IYUUAutoSeedzyt(_PluginBase):
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                     if torrent.state in ['pausedUP', 'stoppedUP'] and not noautostart_set_and_P100K.intersection(current_torrent_tag_list):
                         pausedUP_torrent_hashs.append(torrent.hash)
-                        logger.info(f"{downloader} 自动开始 {torrent.name}")
+                        logger.info(f"{downloader} 自动开始 {torrent.name} {current_torrent_tag_list}")
                 for torrent in paused_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                     if torrent.state not in ['pausedUP', 'stoppedUP']:
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state}")
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state} {current_torrent_tag_list}")
                     else:
                         intersection = noautostart_set_and_P100K.intersection(current_torrent_tag_list)
                         if intersection:
-                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection}")
+                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection} {current_torrent_tag_list}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(pausedUP_torrent_hashs)
                 # 设置限速100K站点
@@ -874,17 +874,17 @@ class IYUUAutoSeedzyt(_PluginBase):
                     available = torrent.available
                     if available == 100.0 and not noautostart_set.intersection(current_torrent_tag_list):
                         pausedUP_torrent_hashs.append(torrent.hashString)
-                        logger.info(f"{downloader} 自动开始 {torrent.name}")
+                        logger.info(f"{downloader} 自动开始 {torrent.name} {current_torrent_tag_list}")
                 for torrent in paused_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.labels]
                     available = torrent.available
                     if available < 100.0:
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available}")
+                        logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available} {current_torrent_tag_list}")
                     else:
                         intersection2 = noautostart_set.intersection(current_torrent_tag_list)
                         if intersection2:
-                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection2}")
+                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection2} {current_torrent_tag_list}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
                 # 设置限速站点
