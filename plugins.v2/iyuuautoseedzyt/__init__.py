@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.13.3"
+    plugin_version = "2.13.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -856,7 +856,6 @@ class IYUUAutoSeedzyt(_PluginBase):
                             downloader_obj.qbc.torrents_set_upload_limit(0, to_limit_torrent_hashs)
                             downloader_obj.remove_torrents_tag(to_limit_torrent_hashs, ["F100K", "P100K"])
                             self.to_pausedUP_hashs.clear()
-                            logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
                             logger.info(f"在非限速时间区间,{downloader} 解除限速100K种子个数{len(to_limit_torrent_hashs)}")
             elif dl_type == "transmission":
                 # logger.info(f"debug service={type(service)},downloader={type(downloader)},downloader_obj={type(downloader_obj)},")
