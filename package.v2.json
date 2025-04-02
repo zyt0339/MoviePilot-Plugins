@@ -149,5 +149,17 @@
             "v1.0.3": "增加忽略站点配置",
             "v1.0.2": "修复站点数据为0的天数,用前一天数据填充"
         }
+    },
+    "ZYTLimit": {
+        "name": "QB限速管理",
+        "description": "自定义时间点执行限速逻辑,只支持qb",
+        "labels": "限速",
+        "version": "1.0.1",
+        "icon": "Qbittorrent_A.png",
+        "author": "zyt",
+        "level": 2,
+        "history": {
+            "v1.0.1": "自定义时间点执行限速逻辑,只支持qb"
+        }
     }
 }
