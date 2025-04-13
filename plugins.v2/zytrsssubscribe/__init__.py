@@ -27,7 +27,7 @@ class ZYTRssSubscribe(_PluginBase):
     # 插件图标
     plugin_icon = "rss.png"
     # 插件版本
-    plugin_version = "1.0.0"
+    plugin_version = "1.0.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -441,6 +441,8 @@ class ZYTRssSubscribe(_PluginBase):
         return False
 
     def check(self):
+        logger.info(f"debug check..., _address={self._address}")
+
         if not self._address:
             return
         # 下载器实例
@@ -540,8 +542,9 @@ class ZYTRssSubscribe(_PluginBase):
             logger.info(f"RSS {url} 刷新完成")
         # 保存历史记录
         # self.save_data('history', history)
+        logger.info(f"debug check over")
 
-    def __log_and_notify_error(self, message):
+def __log_and_notify_error(self, message):
         """
         记录错误日志并发送系统通知
         """

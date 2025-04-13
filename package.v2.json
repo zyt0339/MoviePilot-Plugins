@@ -129,11 +129,12 @@
         "name": "RSS订阅下载",
         "description": "RSS订阅下载,只支持qbittorrent",
         "labels": "刷流",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "icon": "rss.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v1.0.1": "bugfix",
             "v1.0.0": "RSS订阅下载"
         }
     },
