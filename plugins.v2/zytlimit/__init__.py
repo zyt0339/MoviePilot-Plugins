@@ -27,7 +27,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "Qbittorrent_A.png"
     # 插件版本
-    plugin_version = "1.0.2"
+    plugin_version = "1.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -251,10 +251,10 @@ class ZYTLimit(_PluginBase):
                                                "component": "VSwitch",
                                                "props": {
                                                    "model": "enabled",
-                                                   "label": "启用插件",
-                                               },
+                                                   "label": "启用插件"
+                                               }
                                            }
-                                       ],
+                                       ]
                                    },
                                    {
                                        "component": "VCol",
@@ -264,10 +264,10 @@ class ZYTLimit(_PluginBase):
                                                "component": "VSwitch",
                                                "props": {
                                                    "model": "notify",
-                                                   "label": "开启通知",
-                                               },
+                                                   "label": "开启通知"
+                                               }
                                            }
-                                       ],
+                                       ]
                                    },
                                    {
                                        "component": "VCol",
@@ -277,32 +277,30 @@ class ZYTLimit(_PluginBase):
                                                "component": "VSwitch",
                                                "props": {
                                                    "model": "onlyonce",
-                                                   "label": "立即运行一次",
-                                               },
+                                                   "label": "立即运行一次"
+                                               }
                                            }
-                                       ],
-                                   },
-                               ],
+                                       ]
+                                   }
+                               ]
                            },
                            {
                                "component": "VRow",
                                "content": [
                                    {
-                                       'component': 'VCol',
+                                       "component": "VCol",
                                        "props": {"cols": 12, "md": 6},
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VSelect',
-                                               'props': {
-                                                   'chips': True,
-                                                   'multiple': True,
-                                                   'clearable': True,
-                                                   'model': 'downloaders',
-                                                   'label': '下载器',
-                                                   'items': [
-                                                       {"title": config.name, "value": config.name}
-                                                       for config in
-                                                       self.downloader_helper.get_configs().values()]
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders",
+                                                   "label": "下载器",
+                                                   'items': [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()]
                                                }
                                            }
                                        ]
@@ -313,65 +311,65 @@ class ZYTLimit(_PluginBase):
                                        "content": [
                                            {
                                                "component": "VCronField",
-                                               "props": {"model": "cron", "label": "执行周期"},
+                                               "props": {"model": "cron", "label": "执行周期"}
                                            }
-                                       ],
-                                   },
-                               ],
+                                       ]
+                                   }
+                               ]
                            },
                            {
-                               'component': 'VRow',
-                               'content': [
+                               "component": "VRow",
+                               "content": [
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 6
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VSelect',
-                                               'props': {
-                                                   'chips': True,
-                                                   'multiple': True,
-                                                   'clearable': True,
-                                                   'model': 'limit_sites1',
-                                                   'label': '限速站点1',
-                                                   'items': site_options
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites1",
+                                                   "label": "限速站点1",
+                                                   "items": site_options
                                                }
                                            }
                                        ]
                                    },
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 3
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'limit_speed1',
-                                                   'label': '上行速度(KB)',
-                                                   'placeholder': "例如100就是100K"
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed1",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": "例如100就是100K"
                                                }
                                            }
                                        ]
                                    },
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 3
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'active_time_range_site_config1',
-                                                   'label': '生效时间段',
-                                                   'placeholder': '如：00:00-08:00,默认全天'
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config1",
+                                                   "label": "生效时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
                                                }
                                            }
                                        ]
@@ -379,58 +377,58 @@ class ZYTLimit(_PluginBase):
                                ]
                            },
                            {
-                               'component': 'VRow',
-                               'content': [
+                               "component": "VRow",
+                               "content": [
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 6
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VSelect',
-                                               'props': {
-                                                   'chips': True,
-                                                   'multiple': True,
-                                                   'clearable': True,
-                                                   'model': 'limit_sites2',
-                                                   'label': '限速站点2',
-                                                   'items': site_options
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites2",
+                                                   "label": "限速站点2",
+                                                   "items": site_options
                                                }
                                            }
                                        ]
                                    },
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 3
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'limit_speed2',
-                                                   'label': '上行速度(KB)',
-                                                   'placeholder': "例如100就是100K"
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed2",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": "例如100就是100K"
                                                }
                                            }
                                        ]
                                    },
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 3
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'active_time_range_site_config2',
-                                                   'label': '生效时间段',
-                                                   'placeholder': '如：00:00-08:00,默认全天'
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config2",
+                                                   "label": "生效时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
                                                }
                                            }
                                        ]
@@ -438,65 +436,65 @@ class ZYTLimit(_PluginBase):
                                ]
                            },
                            {
-                               'component': 'VRow',
-                               'content': [
+                               "component": "VRow",
+                               "content": [
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 6
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VSelect',
-                                               'props': {
-                                                   'chips': True,
-                                                   'multiple': True,
-                                                   'clearable': True,
-                                                   'model': 'limit_sites3',
-                                                   'label': '限速站点3',
-                                                   'items': site_options
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites3",
+                                                   "label": "限速站点3",
+                                                   "items": site_options
                                                }
                                            }
                                        ]
                                    },
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 3
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'limit_speed3',
-                                                   'label': '上行速度(KB)',
-                                                   'placeholder': "例如100就是100K"
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed3",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": "例如100就是100K"
                                                }
                                            }
                                        ]
                                    },
                                    {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 3
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
                                        },
-                                       'content': [
+                                       "content": [
                                            {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'active_time_range_site_config3',
-                                                   'label': '生效时间段',
-                                                   'placeholder': '如：00:00-08:00,默认全天'
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config3",
+                                                   "label": "生效时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
                                                }
                                            }
                                        ]
                                    }
                                ]
-                           },
-                       ],
+                           }
+                       ]
                    }
                ], {
                    "enabled": False,
@@ -515,7 +513,7 @@ class ZYTLimit(_PluginBase):
                    "limit_sites3": [],
                    "limit_speed3": 0,
                    # "limit_sites_pause_threshold3": 0,
-                   "active_time_range_site_config3": None,
+                   "active_time_range_site_config3": None
                }
 
     def __update_config(self):
@@ -577,8 +575,7 @@ class ZYTLimit(_PluginBase):
                     cancel_limit_torrent_hashs_other = []
                     for torrent in all_torrents:
                         # 当前种子 tags list
-                        current_torrent_tag_list = [element.strip() for element in
-                                                    torrent.tags.split(',')]
+                        current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                         # qb 补充站点标签,交集第一个就是站点标签
                         intersection = all_site_names.intersection(current_torrent_tag_list)
                         site_name = None
@@ -613,20 +610,14 @@ class ZYTLimit(_PluginBase):
                         else:
                             cancel_limit_torrent_hashs_other.append(torrent.hash)
                     if to_limit_torrent_hashs1:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed1,
-                                                                     to_limit_torrent_hashs1)
-                        logger.info(
-                            f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
+                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed1, to_limit_torrent_hashs1)
+                        logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
                     if to_limit_torrent_hashs2:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed2,
-                                                                     to_limit_torrent_hashs2)
-                        logger.info(
-                            f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
+                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed2, to_limit_torrent_hashs2)
+                        logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
                     if to_limit_torrent_hashs3:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed3,
-                                                                     to_limit_torrent_hashs3)
-                        logger.info(
-                            f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
+                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed3, to_limit_torrent_hashs3)
+                        logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
                     # 其他的都是不限速的,塞到一个list吧
                     cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
                     logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
@@ -734,3 +725,5 @@ class ZYTLimit(_PluginBase):
                 self._scheduler = None
         except Exception as e:
             logger.error("退出插件失败：%s" % str(e))
+
+
