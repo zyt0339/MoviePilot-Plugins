@@ -154,11 +154,12 @@
         "name": "QB限速管理",
         "description": "自定义时间点执行限速逻辑,只支持qb",
         "labels": "限速",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "icon": "Qbittorrent_A.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v1.0.2": "fix bug",
             "v1.0.1": "自定义时间点执行限速逻辑,只支持qb"
         }
     }
