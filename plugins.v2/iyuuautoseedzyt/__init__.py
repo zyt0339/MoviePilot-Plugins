@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.14"
+    plugin_version = "2.14.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -785,6 +785,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                     all_torrents, _ = downloader_obj.get_torrents()
                     # 限速100K站点内的种子
                     to_limit_torrent_hashs = []
+                    to_cancel_limit_torrent_hashs = []
                     # 判断当前是否在生效时间段内,如果在就执行限速,如果不在就取消限速
                     if self.__is_current_time_in_range_site_config():
                         # 限速100K中,且活动的种子
@@ -808,6 +809,9 @@ class IYUUAutoSeedzyt(_PluginBase):
                                 logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                             if is_in_limit_sites:
                                 to_limit_torrent_hashs.append(torrent.hash)
+                            else:
+                                if torrent.uploadLimit != 0: # 去了限速标签,仍被被限速中的
+                                    to_cancel_limit_torrent_hashs.append(torrent.hash)
                             # 限速100K仍然有上传就暂停:
                             if _limit_sites_pause_threshold_s > 0:
                                 state = torrent.state  # str
@@ -821,6 +825,9 @@ class IYUUAutoSeedzyt(_PluginBase):
                             downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
                             downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
                             logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
+                        if to_cancel_limit_torrent_hashs:
+                            downloader_obj.qbc.torrents_set_upload_limit(0, to_cancel_limit_torrent_hashs)
+                            logger.info(f"{downloader} 从限速站点移除后,解除限速100K种子个数: {len(to_cancel_limit_torrent_hashs)}")
                         # 限速100K仍然有上传就暂停:
                         if to_pausedUP_hashs_cur:
                             downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
