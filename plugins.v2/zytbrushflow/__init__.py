@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.982"
+    plugin_version = "4.3.1.983"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -3772,14 +3772,13 @@ class ZYTBrushFlow(_PluginBase):
         获取活动种子数量
         """
         try:
-            brush_config = self.__get_brush_config()
+            # brush_config = self.__get_brush_config()
             downloader = self.downloader
             if not downloader:
                 return 0
-
-            # torrents = downloader.get_torrents(tags=brush_config.brush_tag)
-            torrents = downloader.get_torrents()
-            if torrents is None:
+            # torrents, error = downloader.get_torrents(tags=brush_config.brush_tag)
+            torrents, error = downloader.get_torrents()
+            if error or torrents is None:
                 logger.warning("获取活跃中数量失败，可能是下载器连接发生异常")
                 return 0
             count = 0
