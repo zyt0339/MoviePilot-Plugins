@@ -49,6 +49,7 @@ class BrushConfig:
         self.hr = config.get("hr", "no")
         self.maxupspeed = self.__parse_number(config.get("maxupspeed"))
         self.maxdlspeed = self.__parse_number(config.get("maxdlspeed"))
+        self.maxactivetorrents = self.__parse_number(config.get("maxactivetorrents"))
         self.maxdlcount = self.__parse_number(config.get("maxdlcount"))
         self.include = config.get("include")
         self.exclude = config.get("exclude")
@@ -261,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.98"
+    plugin_version = "4.3.1.981"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1196,9 +1197,9 @@ class ZYTBrushFlow(_PluginBase):
                                                     {
                                                         'component': 'VTextField',
                                                         'props': {
-                                                            'model': 'save_path',
-                                                            'label': '保存目录',
-                                                            'placeholder': '留空自动'
+                                                            'model': 'maxactivetorrents',
+                                                            'label': '活动种子个数',
+                                                            'placeholder': '达到后停止新增任务'
                                                         }
                                                     }
                                                 ]
@@ -1257,6 +1258,28 @@ class ZYTBrushFlow(_PluginBase):
                                                             'placeholder': '超过此天数后自动归档',
                                                             'type': 'number',
                                                             "min": "0"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        'component': 'VRow',
+                                        'content': [
+                                            {
+                                                'component': 'VCol',
+                                                'props': {
+                                                    "cols": 12,
+                                                    "md": 4
+                                                },
+                                                'content': [
+                                                    {
+                                                        'component': 'VTextField',
+                                                        'props': {
+                                                            'model': 'save_path',
+                                                            'label': '保存目录',
+                                                            'placeholder': '留空自动'
                                                         }
                                                     }
                                                 ]
@@ -2284,6 +2307,12 @@ class ZYTBrushFlow(_PluginBase):
                                     f"已达到最大值 {config} KB/s，暂时停止新增任务"),
                 ])
 
+        # 判断是否超过最大活跃种子数
+        reasons = [
+            ("maxactivetorrents", lambda config: self.__get_downloading_uploading_count() >= int(config),
+             lambda config: f"当前活动种子数已达到最大值 {config}，暂时停止新增任务")
+        ]
+
         brush_config = self.__get_brush_config()
         for condition, check, message in reasons:
             config_value = getattr(brush_config, condition, None)
@@ -2479,7 +2508,7 @@ class ZYTBrushFlow(_PluginBase):
                     need_delete_hashes.extend(not_proxy_delete_hashes)
 
                 if need_delete_hashes:
-                    # 把关联的辅种也计算出来,让他一起删除
+                    # 删辅种,把关联的辅种也计算出来,让他一起删除
                     # 先根据 hash 反查出 name, 再根据 name 凑齐 hash
                     need_delete_names = []
                     for hash, torrent in seeding_torrents_dict.items():
@@ -3737,6 +3766,25 @@ class ZYTBrushFlow(_PluginBase):
                 ret_info.upload_size += transfer_info.upload_size
 
         return ret_info
+
+    def __get_downloading_uploading_count(self) -> int:
+        """
+        获取活动种子数量
+        """
+        try:
+            brush_config = self.__get_brush_config()
+            downloader = self.downloader
+            if not downloader:
+                return 0
+
+            torrents = downloader.get_torrents(tags=brush_config.brush_tag, status=['downloading', 'uploading'])
+            if torrents is None:
+                logger.warning("获取活跃中数量失败，可能是下载器连接发生异常")
+                return 0
+            return len(torrents)
+        except Exception as e:
+            logger.error(f"获取活跃中数量发生异常: {e}")
+            return 0
 
     def __get_downloading_count(self) -> int:
         """
