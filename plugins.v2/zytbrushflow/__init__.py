@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.983"
+    plugin_version = "4.3.1.984"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2297,11 +2297,14 @@ class ZYTBrushFlow(_PluginBase):
         if include_network_conditions:
             # 获取平均带宽
             avg_upload_speed, avg_download_speed = self.__get_average_bandwidth()
-            if avg_upload_speed is not None and avg_download_speed is not None:
+            if avg_upload_speed is not None:
                 reasons.extend([
                     ("maxupspeed", lambda config: avg_upload_speed >= float(config) * 1024,
                      lambda config: f"当前总上传带宽 {StringUtils.str_filesize(avg_upload_speed)}，"
                                     f"已达到最大值 {config} KB/s，暂时停止新增任务"),
+                ])
+            if avg_download_speed is not None:
+                reasons.extend([
                     ("maxdlspeed", lambda config: avg_download_speed >= float(config) * 1024,
                      lambda config: f"当前总下载带宽 {StringUtils.str_filesize(avg_download_speed)}，"
                                     f"已达到最大值 {config} KB/s，暂时停止新增任务"),
