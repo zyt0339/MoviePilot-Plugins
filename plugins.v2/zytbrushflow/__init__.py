@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.986"
+    plugin_version = "4.3.1.9861"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2289,6 +2289,7 @@ class ZYTBrushFlow(_PluginBase):
         前置过滤不符合条件的种子
         """
         time.sleep(1)
+        logger.info(f"debug,__get_downloading_count={self.__get_downloading_count()}")
         reasons = [
             ("maxdlcount", lambda config: self.__get_downloading_count() >= int(config),
              lambda config: f"当前同时下载任务数已达到最大值 {config}，暂时停止新增任务")
@@ -2297,6 +2298,7 @@ class ZYTBrushFlow(_PluginBase):
         if include_network_conditions:
             # 获取平均带宽
             avg_upload_speed, avg_download_speed = self.__get_average_bandwidth()
+            logger.info(f"debug,avg_upload_speed={avg_upload_speed}，avg_download_speed={avg_download_speed} {avg_upload_speed is not None} {avg_download_speed is not None}")
             if avg_upload_speed is not None:
                 reasons.extend([
                     ("maxupspeed", lambda config: avg_upload_speed >= float(config) * 1024,
@@ -3062,6 +3064,7 @@ class ZYTBrushFlow(_PluginBase):
             "disksize": "保种体积",
             "maxupspeed": "总上传带宽",
             "maxdlspeed": "总下载带宽",
+            "maxactivetorrents": "活动种子个数",
             "maxdlcount": "同时下载任务数",
             "seed_time": "做种时间",
             "hr_seed_time": "H&R做种时间",
@@ -3133,6 +3136,7 @@ class ZYTBrushFlow(_PluginBase):
             "hr": brush_config.hr,
             "maxupspeed": brush_config.maxupspeed,
             "maxdlspeed": brush_config.maxdlspeed,
+            "maxactivetorrents": brush_config.maxactivetorrents,
             "maxdlcount": brush_config.maxdlcount,
             "include": brush_config.include,
             "exclude": brush_config.exclude,
