@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.9862"
+    plugin_version = "4.3.1.987"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2289,7 +2289,6 @@ class ZYTBrushFlow(_PluginBase):
         前置过滤不符合条件的种子
         """
         time.sleep(1)
-        logger.info(f"debug,__get_downloading_count={self.__get_downloading_count()}")
         reasons = []
         reasons.extend([
             ("maxdlcount", lambda config: self.__get_downloading_count() >= int(config),
@@ -2299,7 +2298,6 @@ class ZYTBrushFlow(_PluginBase):
         if include_network_conditions:
             # 获取平均带宽
             avg_upload_speed, avg_download_speed = self.__get_average_bandwidth()
-            logger.info(f"debug,avg_upload_speed={avg_upload_speed}，avg_download_speed={avg_download_speed} {avg_upload_speed is not None} {avg_download_speed is not None}")
             if avg_upload_speed is not None:
                 reasons.extend([
                     ("maxupspeed", lambda config: avg_upload_speed >= float(config) * 1024,
