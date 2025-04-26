@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.984"
+    plugin_version = "4.3.1.985"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2137,7 +2137,7 @@ class ZYTBrushFlow(_PluginBase):
     def __brush_site_torrents(self, torrents, siteinfo, torrent_tasks: Dict[str, dict], statistic_info: Dict[str, int],
                               subscribe_titles: Set[str], ignore_include_exclude, is_current_time_in_range_site_config) -> Tuple[bool, list]:
         """
-        针对站点进行刷流
+        针对站点进行刷流,第一二轮标识=ignore_include_exclude
         """
         brush_config = self.__get_brush_config(sitename=siteinfo.name)
 
@@ -3799,12 +3799,13 @@ class ZYTBrushFlow(_PluginBase):
         获取正在下载的任务数量
         """
         try:
-            brush_config = self.__get_brush_config()
+            # brush_config = self.__get_brush_config()
             downloader = self.downloader
             if not downloader:
                 return 0
 
-            torrents = downloader.get_downloading_torrents(tags=brush_config.brush_tag)
+            # torrents = downloader.get_downloading_torrents(tags=brush_config.brush_tag)
+            torrents = downloader.get_downloading_torrents()
             if torrents is None:
                 logger.warning("获取下载数量失败，可能是下载器连接发生异常")
                 return 0
