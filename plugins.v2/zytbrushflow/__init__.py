@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.9861"
+    plugin_version = "4.3.1.9862"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2290,10 +2290,11 @@ class ZYTBrushFlow(_PluginBase):
         """
         time.sleep(1)
         logger.info(f"debug,__get_downloading_count={self.__get_downloading_count()}")
-        reasons = [
+        reasons = []
+        reasons.extend([
             ("maxdlcount", lambda config: self.__get_downloading_count() >= int(config),
              lambda config: f"当前同时下载任务数已达到最大值 {config}，暂时停止新增任务")
-        ]
+        ])
 
         if include_network_conditions:
             # 获取平均带宽
@@ -2313,10 +2314,10 @@ class ZYTBrushFlow(_PluginBase):
                 ])
 
         # 判断是否超过最大活跃种子数
-        reasons = [
+        reasons.extend([
             ("maxactivetorrents", lambda config: self.__get_downloading_uploading_count() >= int(config),
              lambda config: f"当前活动种子数已达到最大值 {config}，暂时停止新增任务")
-        ]
+        ])
 
         brush_config = self.__get_brush_config()
         for condition, check, message in reasons:
