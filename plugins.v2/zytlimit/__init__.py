@@ -64,6 +64,16 @@ class ZYTLimit(_PluginBase):
     _limit_speed3 = 0
     # _limit_sites_pause_threshold3 = 0
     _active_time_range_site_config3 = None
+
+    _limit_sites4 = []
+    _limit_speed4 = 0
+    # _limit_sites_pause_threshold4 = 0
+    _active_time_range_site_config4 = None
+
+    _limit_sites5 = []
+    _limit_speed5 = 0
+    # _limit_sites_pause_threshold5 = 0
+    _active_time_range_site_config5 = None
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
 
@@ -95,6 +105,16 @@ class ZYTLimit(_PluginBase):
             self._limit_speed3 = config.get("limit_speed3") or 0
             # self._limit_sites_pause_threshold3 = config.get("limit_sites_pause_threshold3") or 0
             self._active_time_range_site_config3 = config.get("active_time_range_site_config3")
+
+            self._limit_sites4 = config.get("limit_sites4") or []
+            self._limit_speed4 = config.get("limit_speed4") or 0
+            # self._limit_sites_pause_threshold4 = config.get("limit_sites_pause_threshold4") or 0
+            self._active_time_range_site_config4 = config.get("active_time_range_site_config4")
+
+            self._limit_sites5 = config.get("limit_sites5") or []
+            self._limit_speed5 = config.get("limit_speed5") or 0
+            # self._limit_sites_pause_threshold5 = config.get("limit_sites_pause_threshold5") or 0
+            self._active_time_range_site_config5 = config.get("active_time_range_site_config5")
 
             # 加载模块
         if self._enabled or self._onlyonce:
@@ -492,28 +512,154 @@ class ZYTLimit(_PluginBase):
                                        ]
                                    }
                                ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites4",
+                                                   "label": "限速站点4",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed4",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": "例如100就是100K"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config4",
+                                                   "label": "生效时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites5",
+                                                   "label": "限速站点5",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed5",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": "例如100就是100K"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config5",
+                                                   "label": "生效时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
                            }
                        ]
                    }
                ], {
-                   "enabled": False,
-                   "onlyonce": False,
-                   "notify": False,
-                   "cron": "",
-                   "downloaders": [],
-                   "limit_sites1": [],
-                   "limit_speed1": 0,
-                   # "limit_sites_pause_threshold1": 0,
-                   "active_time_range_site_config1": None,
-                   "limit_sites2": [],
-                   "limit_speed2": 0,
-                   # "limit_sites_pause_threshold2": 0,
-                   "active_time_range_site_config2": None,
-                   "limit_sites3": [],
-                   "limit_speed3": 0,
-                   # "limit_sites_pause_threshold3": 0,
-                   "active_time_range_site_config3": None
-               }
+            "enabled": False,
+            "onlyonce": False,
+            "notify": False,
+            "cron": "",
+            "downloaders": [],
+            "limit_sites1": [],
+            "limit_speed1": 0,
+            # "limit_sites_pause_threshold1": 0,
+            "active_time_range_site_config1": None,
+            "limit_sites2": [],
+            "limit_speed2": 0,
+            # "limit_sites_pause_threshold2": 0,
+            "active_time_range_site_config2": None,
+            "limit_sites3": [],
+            "limit_speed3": 0,
+            # "limit_sites_pause_threshold3": 0,
+            "active_time_range_site_config3": None,
+            "limit_sites4": [],
+            "limit_speed4": 0,
+            # "limit_sites_pause_threshold4": 0,
+            "active_time_range_site_config4": None,
+            "limit_sites5": [],
+            "limit_speed5": 0,
+            # "limit_sites_pause_threshold5": 0,
+            "active_time_range_site_config5": None
+        }
 
     def __update_config(self):
         self.update_config({
@@ -534,6 +680,14 @@ class ZYTLimit(_PluginBase):
             "limit_speed3": self._limit_speed3,
             # "limit_sites_pause_threshold3": self._limit_sites_pause_threshold3,
             "active_time_range_site_config3": self._active_time_range_site_config3,
+            "limit_sites4": self._limit_sites4,
+            "limit_speed4": self._limit_speed4,
+            # "limit_sites_pause_threshold4": self._limit_sites_pause_threshold4,
+            "active_time_range_site_config4": self._active_time_range_site_config4,
+            "limit_sites5": self._limit_sites5,
+            "limit_speed5": self._limit_speed5,
+            # "limit_sites_pause_threshold5": self._limit_sites_pause_threshold5,
+            "active_time_range_site_config5": self._active_time_range_site_config5,
         })
 
     def auto_seed(self):
@@ -543,7 +697,9 @@ class ZYTLimit(_PluginBase):
         service_infos = self.service_infos
         if not service_infos:
             return
-        if not self._limit_sites1 and not self._limit_sites2 and not self._limit_sites3:
+        if self._limit_sites1 or self._limit_sites2 or self._limit_sites3 or self._limit_sites4 or self._limit_sites5:
+            pass
+        else:
             logger.warning("未设置限速站点,取消执行")
             return
         logger.info("开始执行限速逻辑 ...")
@@ -561,6 +717,23 @@ class ZYTLimit(_PluginBase):
             self._active_time_range_site_config2)
         is_in_time_range3 = self.__is_current_time_in_range_site_config(
             self._active_time_range_site_config3)
+        is_in_time_range4 = self.__is_current_time_in_range_site_config(
+            self._active_time_range_site_config4)
+        is_in_time_range5 = self.__is_current_time_in_range_site_config(
+            self._active_time_range_site_config5)
+
+        to_limit_torrent_hashs1 = []
+        cancel_limit_torrent_hashs1 = []
+        to_limit_torrent_hashs2 = []
+        cancel_limit_torrent_hashs2 = []
+        to_limit_torrent_hashs3 = []
+        cancel_limit_torrent_hashs3 = []
+        to_limit_torrent_hashs4 = []
+        cancel_limit_torrent_hashs4 = []
+        to_limit_torrent_hashs5 = []
+        cancel_limit_torrent_hashs5 = []
+
+        cancel_limit_torrent_hashs_other = []
 
         for service in service_infos.values():
             downloader = service.name
@@ -569,13 +742,6 @@ class ZYTLimit(_PluginBase):
             if dl_type == "qbittorrent":
                 logger.info(f"{downloader} 开始设置限速 ...")
                 all_torrents, _ = downloader_obj.get_torrents()
-                to_limit_torrent_hashs1 = []
-                cancel_limit_torrent_hashs1 = []
-                to_limit_torrent_hashs2 = []
-                cancel_limit_torrent_hashs2 = []
-                to_limit_torrent_hashs3 = []
-                cancel_limit_torrent_hashs3 = []
-                cancel_limit_torrent_hashs_other = []
                 for torrent in all_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
@@ -590,10 +756,14 @@ class ZYTLimit(_PluginBase):
                         is_in_limit_sites1 = site_id in self._limit_sites1
                         is_in_limit_sites2 = site_id in self._limit_sites2
                         is_in_limit_sites3 = site_id in self._limit_sites3
+                        is_in_limit_sites4 = site_id in self._limit_sites4
+                        is_in_limit_sites5 = site_id in self._limit_sites5
                     else:
                         is_in_limit_sites1 = False
                         is_in_limit_sites2 = False
                         is_in_limit_sites3 = False
+                        is_in_limit_sites4 = False
+                        is_in_limit_sites5 = False
                         logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                     if is_in_limit_sites1:
                         if is_in_time_range1:
@@ -610,6 +780,16 @@ class ZYTLimit(_PluginBase):
                             to_limit_torrent_hashs3.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs3.append(torrent.hash)
+                    elif is_in_limit_sites4:
+                        if is_in_time_range4:
+                            to_limit_torrent_hashs4.append(torrent.hash)
+                        else:
+                            cancel_limit_torrent_hashs4.append(torrent.hash)
+                    elif is_in_limit_sites5:
+                        if is_in_time_range5:
+                            to_limit_torrent_hashs5.append(torrent.hash)
+                        else:
+                            cancel_limit_torrent_hashs5.append(torrent.hash)
                     else:
                         cancel_limit_torrent_hashs_other.append(torrent.hash)
                 if to_limit_torrent_hashs1:
@@ -621,6 +801,12 @@ class ZYTLimit(_PluginBase):
                 if to_limit_torrent_hashs3:
                     downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed3), to_limit_torrent_hashs3)
                     logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
+                if to_limit_torrent_hashs4:
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed4), to_limit_torrent_hashs4)
+                    logger.info(f"{downloader} 限速{self._limit_speed4}K种子个数: {len(to_limit_torrent_hashs4)}")
+                if to_limit_torrent_hashs5:
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed5), to_limit_torrent_hashs5)
+                    logger.info(f"{downloader} 限速{self._limit_speed5}K种子个数: {len(to_limit_torrent_hashs5)}")
                 # 其他的都是不限速的,塞到一个list吧
                 cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
                 logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
@@ -631,13 +817,6 @@ class ZYTLimit(_PluginBase):
                 tr_client = downloader_obj.trc
                 all_torrents = tr_client.get_torrents(arguments=_trarg)
                 # all_torrents, _ = downloader_obj.get_torrents()
-                to_limit_torrent_hashs1 = []
-                cancel_limit_torrent_hashs1 = []
-                to_limit_torrent_hashs2 = []
-                cancel_limit_torrent_hashs2 = []
-                to_limit_torrent_hashs3 = []
-                cancel_limit_torrent_hashs3 = []
-                cancel_limit_torrent_hashs_other = []
                 for torrent in all_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.labels]
@@ -652,10 +831,14 @@ class ZYTLimit(_PluginBase):
                         is_in_limit_sites1 = site_id in self._limit_sites1
                         is_in_limit_sites2 = site_id in self._limit_sites2
                         is_in_limit_sites3 = site_id in self._limit_sites3
+                        is_in_limit_sites4 = site_id in self._limit_sites4
+                        is_in_limit_sites5 = site_id in self._limit_sites5
                     else:
                         is_in_limit_sites1 = False
                         is_in_limit_sites2 = False
                         is_in_limit_sites3 = False
+                        is_in_limit_sites4 = False
+                        is_in_limit_sites5 = False
                         logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                     if is_in_limit_sites1:
                         if is_in_time_range1:
@@ -672,6 +855,16 @@ class ZYTLimit(_PluginBase):
                             to_limit_torrent_hashs3.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs3.append(torrent.hashString)
+                    elif is_in_limit_sites4:
+                        if is_in_time_range4:
+                            to_limit_torrent_hashs4.append(torrent.hashString)
+                        else:
+                            cancel_limit_torrent_hashs4.append(torrent.hashString)
+                    elif is_in_limit_sites5:
+                        if is_in_time_range5:
+                            to_limit_torrent_hashs5.append(torrent.hashString)
+                        else:
+                            cancel_limit_torrent_hashs5.append(torrent.hashString)
                     else:
                         cancel_limit_torrent_hashs_other.append(torrent.hashString)
                 if to_limit_torrent_hashs1:
@@ -683,6 +876,12 @@ class ZYTLimit(_PluginBase):
                 if to_limit_torrent_hashs3:
                     tr_client.change_torrent(ids=to_limit_torrent_hashs3, upload_limit=int(self._limit_speed3), upload_limited=True)
                     logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
+                if to_limit_torrent_hashs4:
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs4, upload_limit=int(self._limit_speed4), upload_limited=True)
+                    logger.info(f"{downloader} 限速{self._limit_speed4}K种子个数: {len(to_limit_torrent_hashs4)}")
+                if to_limit_torrent_hashs5:
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs5, upload_limit=int(self._limit_speed5), upload_limited=True)
+                    logger.info(f"{downloader} 限速{self._limit_speed5}K种子个数: {len(to_limit_torrent_hashs5)}")
                 # 其他的都是不限速的,塞到一个list吧
                 cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
                 logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
