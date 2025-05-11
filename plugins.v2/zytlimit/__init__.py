@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.11"
+    plugin_version = "1.0.12"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -989,7 +989,7 @@ class ZYTLimit(_PluginBase):
 
             elif dl_type == "transmission":
                 logger.info(f"{downloader} 开始设置限速 ...")
-                _trarg = ["id", "name", "labels", "hashString", "status"]
+                _trarg = ["id", "name", "labels", "hashString", "status", "rateUpload"]
                 tr_client = downloader_obj.trc
                 all_torrents = tr_client.get_torrents(arguments=_trarg)
                 # all_torrents, _ = downloader_obj.get_torrents()
@@ -1010,7 +1010,7 @@ class ZYTLimit(_PluginBase):
                             # 限速后还活动就暂停
                             if self._limit_sites_pause_threshold1 > 0:
                                 state = torrent.status  # Enum
-                                if state.seeding:
+                                if state.seeding and torrent.rate_upload > 0:
                                     to_pausedUP_hashs_cur.append(torrent.hashString)
                                 elif state.stopped and ('暂停' not in current_torrent_tag_list):
                                     pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
@@ -1025,7 +1025,7 @@ class ZYTLimit(_PluginBase):
                             # 限速后还活动就暂停
                             if self._limit_sites_pause_threshold2 > 0:
                                 state = torrent.status  # Enum
-                                if state.seeding:
+                                if state.seeding and torrent.rate_upload > 0:
                                     to_pausedUP_hashs_cur.append(torrent.hashString)
                                 elif state.stopped and ('暂停' not in current_torrent_tag_list):
                                     pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
@@ -1040,7 +1040,7 @@ class ZYTLimit(_PluginBase):
                             # 限速后还活动就暂停
                             if self._limit_sites_pause_threshold3 > 0:
                                 state = torrent.status  # Enum
-                                if state.seeding:
+                                if state.seeding and torrent.rate_upload > 0:
                                     to_pausedUP_hashs_cur.append(torrent.hashString)
                                 elif state.stopped and ('暂停' not in current_torrent_tag_list):
                                     pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
@@ -1055,7 +1055,7 @@ class ZYTLimit(_PluginBase):
                             # 限速后还活动就暂停
                             if self._limit_sites_pause_threshold4 > 0:
                                 state = torrent.status  # Enum
-                                if state.seeding:
+                                if state.seeding and torrent.rate_upload > 0:
                                     to_pausedUP_hashs_cur.append(torrent.hashString)
                                 elif state.stopped and ('暂停' not in current_torrent_tag_list):
                                     pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
@@ -1070,7 +1070,7 @@ class ZYTLimit(_PluginBase):
                             # 限速后还活动就暂停
                             if self._limit_sites_pause_threshold5 > 0:
                                 state = torrent.status  # Enum
-                                if state.seeding:
+                                if state.seeding and torrent.rate_upload > 0:
                                     to_pausedUP_hashs_cur.append(torrent.hashString)
                                 elif state.stopped and ('暂停' not in current_torrent_tag_list):
                                     pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
