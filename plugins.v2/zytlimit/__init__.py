@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "Qbittorrent_A.png"
     # 插件版本
-    plugin_version = "1.0.4"
+    plugin_version = "1.0.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -125,7 +125,7 @@ class ZYTLimit(_PluginBase):
 
             # 启动任务
             if self._scheduler.get_jobs():
-                self._scheduler.logger.info_jobs()
+                self._scheduler.print_jobs()
                 self._scheduler.start()
 
     @property

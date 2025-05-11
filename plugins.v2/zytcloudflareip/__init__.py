@@ -26,7 +26,7 @@ class ZYTCloudflareIP(_PluginBase):
     # 插件图标
     plugin_icon = "Cloudflare_A.png"
     # 插件版本
-    plugin_version = "1.0.1"
+    plugin_version = "1.0.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -101,7 +101,7 @@ class ZYTCloudflareIP(_PluginBase):
 
             # 启动任务
             if self._scheduler.get_jobs():
-                self._scheduler.logger.info_jobs()
+                self._scheduler.print_jobs()
                 self._scheduler.start()
 
     def __os_install(self, download_url, release_version, gz_file_path, binary_file_path, unzip_command, _binary_name, cur_version_file_path):
