@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "Qbittorrent_A.png"
     # 插件版本
-    plugin_version = "1.0.5"
+    plugin_version = "1.0.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -609,13 +609,13 @@ class ZYTLimit(_PluginBase):
                         else:
                             cancel_limit_torrent_hashs_other.append(torrent.hash)
                     if to_limit_torrent_hashs1:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed1, to_limit_torrent_hashs1)
+                        downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed1), to_limit_torrent_hashs1)
                         logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
                     if to_limit_torrent_hashs2:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed2, to_limit_torrent_hashs2)
+                        downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed2), to_limit_torrent_hashs2)
                         logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
                     if to_limit_torrent_hashs3:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed3, to_limit_torrent_hashs3)
+                        downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed3), to_limit_torrent_hashs3)
                         logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
                     # 其他的都是不限速的,塞到一个list吧
                     cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
