@@ -6,7 +6,7 @@ import pytz
 from app.helper.sites import SitesHelper
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-
+import time
 from app.core.config import settings
 from app.core.event import eventmanager, Event
 from app.db.site_oper import SiteOper
@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.8"
+    plugin_version = "1.0.9"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -52,30 +52,31 @@ class ZYTLimit(_PluginBase):
     _downloaders = []
     _limit_sites1 = []
     _limit_speed1 = 0
-    # _limit_sites_pause_threshold1 = 0
+    _limit_sites_pause_threshold1 = 0
     _active_time_range_site_config1 = None
 
     _limit_sites2 = []
     _limit_speed2 = 0
-    # _limit_sites_pause_threshold2 = 0
+    _limit_sites_pause_threshold2 = 0
     _active_time_range_site_config2 = None
 
     _limit_sites3 = []
     _limit_speed3 = 0
-    # _limit_sites_pause_threshold3 = 0
+    _limit_sites_pause_threshold3 = 0
     _active_time_range_site_config3 = None
 
     _limit_sites4 = []
     _limit_speed4 = 0
-    # _limit_sites_pause_threshold4 = 0
+    _limit_sites_pause_threshold4 = 0
     _active_time_range_site_config4 = None
 
     _limit_sites5 = []
     _limit_speed5 = 0
-    # _limit_sites_pause_threshold5 = 0
+    _limit_sites_pause_threshold5 = 0
     _active_time_range_site_config5 = None
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
+    to_pausedUP_hashs = {}
 
     def init_plugin(self, config: dict = None):
         self.sites_helper = SitesHelper()
@@ -84,6 +85,7 @@ class ZYTLimit(_PluginBase):
         self.downloader_helper = DownloaderHelper()
         # 停止现有任务
         self.stop_service()
+        self.to_pausedUP_hashs = {}  # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
         if config:
             self._enabled = config.get("enabled")
             self._onlyonce = config.get("onlyonce")
@@ -93,27 +95,27 @@ class ZYTLimit(_PluginBase):
 
             self._limit_sites1 = config.get("limit_sites1") or []
             self._limit_speed1 = config.get("limit_speed1") or 0
-            # self._limit_sites_pause_threshold1 = config.get("limit_sites_pause_threshold1") or 0
+            self._limit_sites_pause_threshold1 = config.get("limit_sites_pause_threshold1") or 0
             self._active_time_range_site_config1 = config.get("active_time_range_site_config1")
 
             self._limit_sites2 = config.get("limit_sites2") or []
             self._limit_speed2 = config.get("limit_speed2") or 0
-            # self._limit_sites_pause_threshold2 = config.get("limit_sites_pause_threshold2") or 0
+            self._limit_sites_pause_threshold2 = config.get("limit_sites_pause_threshold2") or 0
             self._active_time_range_site_config2 = config.get("active_time_range_site_config2")
 
             self._limit_sites3 = config.get("limit_sites3") or []
             self._limit_speed3 = config.get("limit_speed3") or 0
-            # self._limit_sites_pause_threshold3 = config.get("limit_sites_pause_threshold3") or 0
+            self._limit_sites_pause_threshold3 = config.get("limit_sites_pause_threshold3") or 0
             self._active_time_range_site_config3 = config.get("active_time_range_site_config3")
 
             self._limit_sites4 = config.get("limit_sites4") or []
             self._limit_speed4 = config.get("limit_speed4") or 0
-            # self._limit_sites_pause_threshold4 = config.get("limit_sites_pause_threshold4") or 0
+            self._limit_sites_pause_threshold4 = config.get("limit_sites_pause_threshold4") or 0
             self._active_time_range_site_config4 = config.get("active_time_range_site_config4")
 
             self._limit_sites5 = config.get("limit_sites5") or []
             self._limit_speed5 = config.get("limit_speed5") or 0
-            # self._limit_sites_pause_threshold5 = config.get("limit_sites_pause_threshold5") or 0
+            self._limit_sites_pause_threshold5 = config.get("limit_sites_pause_threshold5") or 0
             self._active_time_range_site_config5 = config.get("active_time_range_site_config5")
 
             # 加载模块
@@ -362,8 +364,8 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -379,8 +381,25 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold1",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": "例如100就是100K"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -421,8 +440,8 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -438,8 +457,25 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold2",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": "例如100就是100K"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -480,8 +516,8 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -497,8 +533,25 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold3",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": "例如100就是100K"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -539,8 +592,8 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -556,8 +609,25 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold4",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": "例如100就是100K"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -598,8 +668,8 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -615,8 +685,25 @@ class ZYTLimit(_PluginBase):
                                    {
                                        "component": "VCol",
                                        "props": {
-                                           "cols": 12,
-                                           "md": 3
+                                           "cols": 4,
+                                           "md": 2
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold5",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": "例如100就是100K"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 4,
+                                           "md": 2
                                        },
                                        "content": [
                                            {
@@ -691,23 +778,23 @@ class ZYTLimit(_PluginBase):
             "downloaders": self._downloaders,
             "limit_sites1": self._limit_sites1,
             "limit_speed1": self._limit_speed1,
-            # "limit_sites_pause_threshold1": self._limit_sites_pause_threshold1,
+            "limit_sites_pause_threshold1": self._limit_sites_pause_threshold1,
             "active_time_range_site_config1": self._active_time_range_site_config1,
             "limit_sites2": self._limit_sites2,
             "limit_speed2": self._limit_speed2,
-            # "limit_sites_pause_threshold2": self._limit_sites_pause_threshold2,
+            "limit_sites_pause_threshold2": self._limit_sites_pause_threshold2,
             "active_time_range_site_config2": self._active_time_range_site_config2,
             "limit_sites3": self._limit_sites3,
             "limit_speed3": self._limit_speed3,
-            # "limit_sites_pause_threshold3": self._limit_sites_pause_threshold3,
+            "limit_sites_pause_threshold3": self._limit_sites_pause_threshold3,
             "active_time_range_site_config3": self._active_time_range_site_config3,
             "limit_sites4": self._limit_sites4,
             "limit_speed4": self._limit_speed4,
-            # "limit_sites_pause_threshold4": self._limit_sites_pause_threshold4,
+            "limit_sites_pause_threshold4": self._limit_sites_pause_threshold4,
             "active_time_range_site_config4": self._active_time_range_site_config4,
             "limit_sites5": self._limit_sites5,
             "limit_speed5": self._limit_speed5,
-            # "limit_sites_pause_threshold5": self._limit_sites_pause_threshold5,
+            "limit_sites_pause_threshold5": self._limit_sites_pause_threshold5,
             "active_time_range_site_config5": self._active_time_range_site_config5,
         })
 
@@ -742,21 +829,36 @@ class ZYTLimit(_PluginBase):
             self._active_time_range_site_config4)
         is_in_time_range5 = self.__is_current_time_in_range_site_config(
             self._active_time_range_site_config5)
-
-        to_limit_torrent_hashs1 = []
-        cancel_limit_torrent_hashs1 = []
-        to_limit_torrent_hashs2 = []
-        cancel_limit_torrent_hashs2 = []
-        to_limit_torrent_hashs3 = []
-        cancel_limit_torrent_hashs3 = []
-        to_limit_torrent_hashs4 = []
-        cancel_limit_torrent_hashs4 = []
-        to_limit_torrent_hashs5 = []
-        cancel_limit_torrent_hashs5 = []
-
-        cancel_limit_torrent_hashs_other = []
-
+        #
         for service in service_infos.values():
+            # 设置限速
+            to_limit_torrent_hashs1 = []
+            cancel_limit_torrent_hashs1 = []
+            to_limit_torrent_hashs2 = []
+            cancel_limit_torrent_hashs2 = []
+            to_limit_torrent_hashs3 = []
+            cancel_limit_torrent_hashs3 = []
+            to_limit_torrent_hashs4 = []
+            cancel_limit_torrent_hashs4 = []
+            to_limit_torrent_hashs5 = []
+            cancel_limit_torrent_hashs5 = []
+
+            cancel_limit_torrent_hashs_other = []
+
+            # 限速后仍然活动种子处理↓
+            # 限速100K中,且活动的种子,本次要暂停
+            to_pausedUP_hashs_cur = []
+            # 已经暂停,暂停时间超过x分钟的种子,本次要重新开始
+            to_cancel_pausedUP_hashs_cur = []
+            # 当前时间戳
+            current_time = time.time()
+            _limit_sites_pause_threshold1_s = int(self._limit_sites_pause_threshold1) * 60
+            _limit_sites_pause_threshold2_s = int(self._limit_sites_pause_threshold2) * 60
+            _limit_sites_pause_threshold3_s = int(self._limit_sites_pause_threshold3) * 60
+            _limit_sites_pause_threshold4_s = int(self._limit_sites_pause_threshold4) * 60
+            _limit_sites_pause_threshold5_s = int(self._limit_sites_pause_threshold5) * 60
+            # 限速后仍然活动种子处理↑
+
             downloader = service.name
             downloader_obj = service.instance
             dl_type = service.type
@@ -777,28 +879,78 @@ class ZYTLimit(_PluginBase):
                     if site_id in self._limit_sites1:
                         if is_in_time_range1:
                             to_limit_torrent_hashs1.append(torrent.hash)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold1 > 0:
+                                state = torrent.state  # str
+                                if "uploading" == state:
+                                    to_pausedUP_hashs_cur.append(torrent.hash)
+                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold1_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs1.append(torrent.hash)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     elif site_id in self._limit_sites2:
                         if is_in_time_range2:
                             to_limit_torrent_hashs2.append(torrent.hash)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold2 > 0:
+                                state = torrent.state  # str
+                                if "uploading" == state:
+                                    to_pausedUP_hashs_cur.append(torrent.hash)
+                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold2_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs2.append(torrent.hash)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     elif site_id in self._limit_sites3:
                         if is_in_time_range3:
                             to_limit_torrent_hashs3.append(torrent.hash)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold3 > 0:
+                                state = torrent.state  # str
+                                if "uploading" == state:
+                                    to_pausedUP_hashs_cur.append(torrent.hash)
+                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold3_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs3.append(torrent.hash)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     elif site_id in self._limit_sites4:
                         if is_in_time_range4:
                             to_limit_torrent_hashs4.append(torrent.hash)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold4 > 0:
+                                state = torrent.state  # str
+                                if "uploading" == state:
+                                    to_pausedUP_hashs_cur.append(torrent.hash)
+                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold4_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs4.append(torrent.hash)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     elif site_id in self._limit_sites5:
                         if is_in_time_range5:
                             to_limit_torrent_hashs5.append(torrent.hash)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold5 > 0:
+                                state = torrent.state  # str
+                                if "uploading" == state:
+                                    to_pausedUP_hashs_cur.append(torrent.hash)
+                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold5_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs5.append(torrent.hash)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     else:
                         cancel_limit_torrent_hashs_other.append(torrent.hash)
                 if to_limit_torrent_hashs1:
@@ -820,6 +972,22 @@ class ZYTLimit(_PluginBase):
                 cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
                 logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
                 downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
+
+                # 限速中仍然有上传就暂停
+                if to_pausedUP_hashs_cur:
+                    downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
+                    # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
+                    logger.info(f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
+                    for t_hash in to_pausedUP_hashs_cur:
+                        self.to_pausedUP_hashs[t_hash] = current_time
+                if to_cancel_pausedUP_hashs_cur:
+                    downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
+                    # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
+                    logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
+                    for t_hash in to_cancel_pausedUP_hashs_cur:
+                        if t_hash in self.to_pausedUP_hashs:
+                            del self.to_pausedUP_hashs[t_hash]
+
             elif dl_type == "transmission":
                 logger.info(f"{downloader} 开始设置限速 ...")
                 _trarg = ["id", "name", "labels", "hashString"]
@@ -840,28 +1008,78 @@ class ZYTLimit(_PluginBase):
                     if site_id in self._limit_sites1:
                         if is_in_time_range1:
                             to_limit_torrent_hashs1.append(torrent.hashString)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold1 > 0:
+                                state = torrent.status  # Enum
+                                if state.seeding:
+                                    to_pausedUP_hashs_cur.append(torrent.hashString)
+                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold1_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs1.append(torrent.hashString)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     elif site_id in self._limit_sites2:
                         if is_in_time_range2:
                             to_limit_torrent_hashs2.append(torrent.hashString)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold2 > 0:
+                                state = torrent.status  # Enum
+                                if state.seeding:
+                                    to_pausedUP_hashs_cur.append(torrent.hashString)
+                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold2_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs2.append(torrent.hashString)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     elif site_id in self._limit_sites3:
                         if is_in_time_range3:
                             to_limit_torrent_hashs3.append(torrent.hashString)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold3 > 0:
+                                state = torrent.status  # Enum
+                                if state.seeding:
+                                    to_pausedUP_hashs_cur.append(torrent.hashString)
+                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold3_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs3.append(torrent.hashString)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     elif site_id in self._limit_sites4:
                         if is_in_time_range4:
                             to_limit_torrent_hashs4.append(torrent.hashString)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold4 > 0:
+                                state = torrent.status  # Enum
+                                if state.seeding:
+                                    to_pausedUP_hashs_cur.append(torrent.hashString)
+                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold4_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs4.append(torrent.hashString)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     elif site_id in self._limit_sites5:
                         if is_in_time_range5:
                             to_limit_torrent_hashs5.append(torrent.hashString)
+                            # 限速后还活动就暂停
+                            if self._limit_sites_pause_threshold5 > 0:
+                                state = torrent.status  # Enum
+                                if state.seeding:
+                                    to_pausedUP_hashs_cur.append(torrent.hashString)
+                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
+                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
+                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold5_s:
+                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs5.append(torrent.hashString)
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     else:
                         cancel_limit_torrent_hashs_other.append(torrent.hashString)
                 if to_limit_torrent_hashs1:
@@ -883,6 +1101,21 @@ class ZYTLimit(_PluginBase):
                 cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
                 logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
                 tr_client.change_torrent(ids=cancel_limit_list_all, upload_limit=0, upload_limited=False)
+
+                # 限速中仍然有上传就暂停
+                if to_pausedUP_hashs_cur:
+                    downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
+                    # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
+                    logger.info(f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
+                    for t_hash in to_pausedUP_hashs_cur:
+                        self.to_pausedUP_hashs[t_hash] = current_time
+                if to_cancel_pausedUP_hashs_cur:
+                    downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
+                    # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
+                    logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
+                    for t_hash in to_cancel_pausedUP_hashs_cur:
+                        if t_hash in self.to_pausedUP_hashs:
+                            del self.to_pausedUP_hashs[t_hash]
         # 保存缓存
         # self.__update_config()
         logger.info("限速执行完成")
