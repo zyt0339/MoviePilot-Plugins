@@ -1,6 +1,5 @@
 import re
 from datetime import datetime, timedelta
-from threading import Event
 from typing import Any, Dict, List, Optional, Tuple
 
 import pytz
@@ -27,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "Qbittorrent_A.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
