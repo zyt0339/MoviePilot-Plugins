@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.9"
+    plugin_version = "1.0.10"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -94,28 +94,28 @@ class ZYTLimit(_PluginBase):
             self._downloaders = config.get("downloaders")
 
             self._limit_sites1 = config.get("limit_sites1") or []
-            self._limit_speed1 = config.get("limit_speed1") or 0
-            self._limit_sites_pause_threshold1 = config.get("limit_sites_pause_threshold1") or 0
+            self._limit_speed1 = int(config.get("limit_speed1") or 0)
+            self._limit_sites_pause_threshold1 = int(config.get("limit_sites_pause_threshold1") or 0)
             self._active_time_range_site_config1 = config.get("active_time_range_site_config1")
 
             self._limit_sites2 = config.get("limit_sites2") or []
-            self._limit_speed2 = config.get("limit_speed2") or 0
-            self._limit_sites_pause_threshold2 = config.get("limit_sites_pause_threshold2") or 0
+            self._limit_speed2 = int(config.get("limit_speed2") or 0)
+            self._limit_sites_pause_threshold2 = int(config.get("limit_sites_pause_threshold2") or 0)
             self._active_time_range_site_config2 = config.get("active_time_range_site_config2")
 
             self._limit_sites3 = config.get("limit_sites3") or []
-            self._limit_speed3 = config.get("limit_speed3") or 0
-            self._limit_sites_pause_threshold3 = config.get("limit_sites_pause_threshold3") or 0
+            self._limit_speed3 = int(config.get("limit_speed3") or 0)
+            self._limit_sites_pause_threshold3 = int(config.get("limit_sites_pause_threshold3") or 0)
             self._active_time_range_site_config3 = config.get("active_time_range_site_config3")
 
             self._limit_sites4 = config.get("limit_sites4") or []
-            self._limit_speed4 = config.get("limit_speed4") or 0
-            self._limit_sites_pause_threshold4 = config.get("limit_sites_pause_threshold4") or 0
+            self._limit_speed4 = int(config.get("limit_speed4") or 0)
+            self._limit_sites_pause_threshold4 = int(config.get("limit_sites_pause_threshold4") or 0)
             self._active_time_range_site_config4 = config.get("active_time_range_site_config4")
 
             self._limit_sites5 = config.get("limit_sites5") or []
-            self._limit_speed5 = config.get("limit_speed5") or 0
-            self._limit_sites_pause_threshold5 = config.get("limit_sites_pause_threshold5") or 0
+            self._limit_speed5 = int(config.get("limit_speed5") or 0)
+            self._limit_sites_pause_threshold5 = int(config.get("limit_sites_pause_threshold5") or 0)
             self._active_time_range_site_config5 = config.get("active_time_range_site_config5")
 
             # 加载模块
@@ -373,7 +373,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_speed1",
                                                    "label": "上行速度(KB)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -390,7 +390,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_sites_pause_threshold1",
                                                    "label": "限速暂停(分钟)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -449,7 +449,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_speed2",
                                                    "label": "上行速度(KB)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -466,7 +466,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_sites_pause_threshold2",
                                                    "label": "限速暂停(分钟)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -525,7 +525,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_speed3",
                                                    "label": "上行速度(KB)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -542,7 +542,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_sites_pause_threshold3",
                                                    "label": "限速暂停(分钟)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -601,7 +601,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_speed4",
                                                    "label": "上行速度(KB)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -618,7 +618,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_sites_pause_threshold4",
                                                    "label": "限速暂停(分钟)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -677,7 +677,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_speed5",
                                                    "label": "上行速度(KB)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -694,7 +694,7 @@ class ZYTLimit(_PluginBase):
                                                "props": {
                                                    "model": "limit_sites_pause_threshold5",
                                                    "label": "限速暂停(分钟)",
-                                                   "placeholder": "例如100就是100K"
+                                                   "placeholder": ""
                                                }
                                            }
                                        ]
@@ -732,7 +732,7 @@ class ZYTLimit(_PluginBase):
                                                'props': {
                                                    'type': 'info',
                                                    'variant': 'tonal',
-                                                   'text': '站点重复时前面行优先级最高; 限速暂停时间(分钟):限速后还活动就暂停x分钟'
+                                                   'text': '站点重复时前面行优先级最高。限速暂停时间(分钟):限速后还活动就暂停x分钟。限速时间段默认全天开启'
                                                }
                                            }
                                        ]
@@ -852,11 +852,11 @@ class ZYTLimit(_PluginBase):
             to_cancel_pausedUP_hashs_cur = []
             # 当前时间戳
             current_time = time.time()
-            _limit_sites_pause_threshold1_s = int(self._limit_sites_pause_threshold1) * 60
-            _limit_sites_pause_threshold2_s = int(self._limit_sites_pause_threshold2) * 60
-            _limit_sites_pause_threshold3_s = int(self._limit_sites_pause_threshold3) * 60
-            _limit_sites_pause_threshold4_s = int(self._limit_sites_pause_threshold4) * 60
-            _limit_sites_pause_threshold5_s = int(self._limit_sites_pause_threshold5) * 60
+            _limit_sites_pause_threshold1_s = self._limit_sites_pause_threshold1 * 60
+            _limit_sites_pause_threshold2_s = self._limit_sites_pause_threshold2 * 60
+            _limit_sites_pause_threshold3_s = self._limit_sites_pause_threshold3 * 60
+            _limit_sites_pause_threshold4_s = self._limit_sites_pause_threshold4 * 60
+            _limit_sites_pause_threshold5_s = self._limit_sites_pause_threshold5 * 60
             # 限速后仍然活动种子处理↑
 
             downloader = service.name
@@ -954,19 +954,19 @@ class ZYTLimit(_PluginBase):
                     else:
                         cancel_limit_torrent_hashs_other.append(torrent.hash)
                 if to_limit_torrent_hashs1:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed1), to_limit_torrent_hashs1)
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed1, to_limit_torrent_hashs1)
                     logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
                 if to_limit_torrent_hashs2:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed2), to_limit_torrent_hashs2)
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed2, to_limit_torrent_hashs2)
                     logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
                 if to_limit_torrent_hashs3:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed3), to_limit_torrent_hashs3)
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed3, to_limit_torrent_hashs3)
                     logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
                 if to_limit_torrent_hashs4:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed4), to_limit_torrent_hashs4)
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed4, to_limit_torrent_hashs4)
                     logger.info(f"{downloader} 限速{self._limit_speed4}K种子个数: {len(to_limit_torrent_hashs4)}")
                 if to_limit_torrent_hashs5:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed5), to_limit_torrent_hashs5)
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed5, to_limit_torrent_hashs5)
                     logger.info(f"{downloader} 限速{self._limit_speed5}K种子个数: {len(to_limit_torrent_hashs5)}")
                 # 其他的都是不限速的,塞到一个list吧
                 cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
@@ -1083,19 +1083,19 @@ class ZYTLimit(_PluginBase):
                     else:
                         cancel_limit_torrent_hashs_other.append(torrent.hashString)
                 if to_limit_torrent_hashs1:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs1, upload_limit=int(self._limit_speed1), upload_limited=True)
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs1, upload_limit=self._limit_speed1, upload_limited=True)
                     logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
                 if to_limit_torrent_hashs2:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs2, upload_limit=int(self._limit_speed2), upload_limited=True)
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs2, upload_limit=self._limit_speed2, upload_limited=True)
                     logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
                 if to_limit_torrent_hashs3:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs3, upload_limit=int(self._limit_speed3), upload_limited=True)
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs3, upload_limit=self._limit_speed3, upload_limited=True)
                     logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
                 if to_limit_torrent_hashs4:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs4, upload_limit=int(self._limit_speed4), upload_limited=True)
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs4, upload_limit=self._limit_speed4, upload_limited=True)
                     logger.info(f"{downloader} 限速{self._limit_speed4}K种子个数: {len(to_limit_torrent_hashs4)}")
                 if to_limit_torrent_hashs5:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs5, upload_limit=int(self._limit_speed5), upload_limited=True)
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs5, upload_limit=self._limit_speed5, upload_limited=True)
                     logger.info(f"{downloader} 限速{self._limit_speed5}K种子个数: {len(to_limit_torrent_hashs5)}")
                 # 其他的都是不限速的,塞到一个list吧
                 cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other

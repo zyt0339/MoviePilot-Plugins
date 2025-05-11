@@ -162,12 +162,12 @@
         "name": "QB&TR上传限速",
         "description": "自定义时间点执行限速逻辑",
         "labels": "限速",
-        "version": "1.0.9",
+        "version": "1.0.10",
         "icon": "upload.png",
         "author": "zyt",
         "level": 2,
         "history": {
-            "v1.0.9": "支持限速暂停",
+            "v1.0.10": "支持限速暂停",
             "v1.0.8": "支持 tr",
             "v1.0.6": "fix bug",
             "v1.0.1": "自定义时间点执行限速逻辑,只支持qb"
