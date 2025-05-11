@@ -20,13 +20,13 @@ from app.schemas.types import EventType
 
 class ZYTLimit(_PluginBase):
     # 插件名称
-    plugin_name = "QB限速管理"
+    plugin_name = "QB&TR上传限速"
     # 插件描述
     plugin_desc = "自定义时间点执行限速逻辑,只支持qb"
     # 插件图标
-    plugin_icon = "Qbittorrent_A.png"
+    plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.6"
+    plugin_version = "1.0.7"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -106,18 +106,18 @@ class ZYTLimit(_PluginBase):
                     self._scheduler.add_job(
                         func=self.run,
                         trigger=CronTrigger.from_crontab(self._cron),
-                        name="QB限速管理",
+                        name="QB&TR上传限速",
                     )
                 except Exception as err:
                     logger.error(f"定时任务配置错误：{str(err)}")
 
             if self._onlyonce:
-                logger.info(f"QB限速管理服务启动，立即运行一次")
+                logger.info(f"QB&TR上传限速服务启动，立即运行一次")
                 self._scheduler.add_job(
                     func=self.run,
                     trigger="date",
                     run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3),
-                    name="QB限速管理",
+                    name="QB&TR上传限速",
                 )
                 # 关闭一次性开关
                 self._onlyonce = False
@@ -167,14 +167,14 @@ class ZYTLimit(_PluginBase):
         # - update_config() 更新配置信息
         # - init_plugin() 生效配置信息
         # - get_data_path() 获取插件数据保存目录
-        logger.debug(f"QB限速管理 run...")
+        logger.debug(f"QB&TR上传限速 run...")
         if event:
             event_data = event.event_data
             if not event_data or event_data.get("action") != "limit":
                 return
-            logger.info("收到limit命令，开始QB限速管理 ...")
+            logger.info("收到limit命令，开始QB&TR上传限速 ...")
             self.post_message(
-                mtype=NotificationType.SiteMessage, title=f"开始QB限速管理 ...")
+                mtype=NotificationType.SiteMessage, title=f"开始QB&TR上传限速 ...")
 
         if not self.service_infos:
             return
@@ -186,16 +186,16 @@ class ZYTLimit(_PluginBase):
             success = True
         except Exception as e:
             success = False
-            logger.error(f"QB限速管理出错: {e}")
+            logger.error(f"QB&TR上传限速出错: {e}")
             msg = f"{e}"
         # 发送通知
         if self._notify:
             if success:
                 self.post_message(
-                    mtype=NotificationType.SiteMessage, title=f"【QB限速管理成功】")
+                    mtype=NotificationType.SiteMessage, title=f"【QB&TR限速成功】")
             else:
                 self.post_message(
-                    mtype=NotificationType.SiteMessage, title=f"【QB限速管理出错】", text=msg
+                    mtype=NotificationType.SiteMessage, title=f"【QB&TR限速出错】", text=msg
                 )
 
     @staticmethod
@@ -207,7 +207,7 @@ class ZYTLimit(_PluginBase):
         return [{
             "cmd": "/limit",
             "event": EventType.PluginAction,
-            "desc": "QB限速管理",
+            "desc": "QB&TR上传限速",
             "data": {
                 "action": "limit"
             }
