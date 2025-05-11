@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.10"
+    plugin_version = "1.0.11"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -989,7 +989,7 @@ class ZYTLimit(_PluginBase):
 
             elif dl_type == "transmission":
                 logger.info(f"{downloader} 开始设置限速 ...")
-                _trarg = ["id", "name", "labels", "hashString"]
+                _trarg = ["id", "name", "labels", "hashString", "status"]
                 tr_client = downloader_obj.trc
                 all_torrents = tr_client.get_torrents(arguments=_trarg)
                 # all_torrents, _ = downloader_obj.get_torrents()
