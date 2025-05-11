@@ -76,7 +76,7 @@ class ZYTLimit(_PluginBase):
     _active_time_range_site_config5 = None
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
-    to_pausedUP_hashs = {}
+    to_pausedUP_hashs = {}  # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
 
     def init_plugin(self, config: dict = None):
         self.sites_helper = SitesHelper()
@@ -85,7 +85,6 @@ class ZYTLimit(_PluginBase):
         self.downloader_helper = DownloaderHelper()
         # 停止现有任务
         self.stop_service()
-        self.to_pausedUP_hashs = {}  # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
         if config:
             self._enabled = config.get("enabled")
             self._onlyonce = config.get("onlyonce")

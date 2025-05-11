@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.14.1"
+    plugin_version = "2.14.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -98,13 +98,12 @@ class IYUUAutoSeedzyt(_PluginBase):
     exist = 0
     fail = 0
     cached = 0
-
+    to_pausedUP_hashs = {} # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
     def init_plugin(self, config: dict = None):
         self.sites_helper = SitesHelper()
         self.site_oper = SiteOper()
         self.torrent_helper = TorrentHelper()
         self.downloader_helper = DownloaderHelper()
-        self.to_pausedUP_hashs = {}  # 位于限速100K站点中因活动而暂停的种子hash,value=和最后活动时间
         # 读取配置
         if config:
             self._enabled = config.get("enabled")
@@ -815,12 +814,13 @@ class IYUUAutoSeedzyt(_PluginBase):
                             # 限速100K仍然有上传就暂停:
                             if _limit_sites_pause_threshold_s > 0:
                                 state = torrent.state  # str
-                                if is_in_limit_sites and "uploading" == state:
-                                    to_pausedUP_hashs_cur.append(torrent.hash)
-                                if is_in_limit_sites and state in ["pausedUP", "stoppedUP"] and "P100K" in current_torrent_tag_list and not noautostart_set.intersection(current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
+                                if is_in_limit_sites:
+                                    if "uploading" == state:
+                                        to_pausedUP_hashs_cur.append(torrent.hash)
+                                    elif state in ["pausedUP", "stoppedUP"] and "P100K" in current_torrent_tag_list and not noautostart_set.intersection(current_torrent_tag_list):
+                                        pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                        if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
+                                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                         if to_limit_torrent_hashs:
                             downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
                             downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
