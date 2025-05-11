@@ -543,6 +543,9 @@ class ZYTLimit(_PluginBase):
         service_infos = self.service_infos
         if not service_infos:
             return
+        if not self._limit_sites1 and not self._limit_sites2 and not self._limit_sites3:
+            logger.warning("未设置限速站点,取消执行")
+            return
         logger.info("开始执行限速逻辑 ...")
         # 站点name:id {}
         all_site_name_id_map = {}
@@ -551,122 +554,138 @@ class ZYTLimit(_PluginBase):
         for site in self.__custom_sites():
             all_site_name_id_map[site.get("name")] = site.get("id")
         all_site_names = set(all_site_name_id_map.keys())
+
+        is_in_time_range1 = self.__is_current_time_in_range_site_config(
+            self._active_time_range_site_config1)
+        is_in_time_range2 = self.__is_current_time_in_range_site_config(
+            self._active_time_range_site_config2)
+        is_in_time_range3 = self.__is_current_time_in_range_site_config(
+            self._active_time_range_site_config3)
+
         for service in service_infos.values():
             downloader = service.name
             downloader_obj = service.instance
             dl_type = service.type
             if dl_type == "qbittorrent":
-                if self._limit_sites1 or self._limit_sites2 or self._limit_sites3:
-                    logger.info("开始设置限速1 ...")
-                    is_in_time_range1 = self.__is_current_time_in_range_site_config(
-                        self._active_time_range_site_config1)
-                    is_in_time_range2 = self.__is_current_time_in_range_site_config(
-                        self._active_time_range_site_config2)
-                    is_in_time_range3 = self.__is_current_time_in_range_site_config(
-                        self._active_time_range_site_config3)
-                    all_torrents, _ = downloader_obj.get_torrents()
-                    to_limit_torrent_hashs1 = []
-                    cancel_limit_torrent_hashs1 = []
-                    to_limit_torrent_hashs2 = []
-                    cancel_limit_torrent_hashs2 = []
-                    to_limit_torrent_hashs3 = []
-                    cancel_limit_torrent_hashs3 = []
-                    cancel_limit_torrent_hashs_other = []
-                    for torrent in all_torrents:
-                        # 当前种子 tags list
-                        current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                        # qb 补充站点标签,交集第一个就是站点标签
-                        intersection = all_site_names.intersection(current_torrent_tag_list)
-                        site_name = None
-                        if intersection:
-                            site_name = list(intersection)[0]
+                logger.info(f"{downloader} 开始设置限速 ...")
+                all_torrents, _ = downloader_obj.get_torrents()
+                to_limit_torrent_hashs1 = []
+                cancel_limit_torrent_hashs1 = []
+                to_limit_torrent_hashs2 = []
+                cancel_limit_torrent_hashs2 = []
+                to_limit_torrent_hashs3 = []
+                cancel_limit_torrent_hashs3 = []
+                cancel_limit_torrent_hashs_other = []
+                for torrent in all_torrents:
+                    # 当前种子 tags list
+                    current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
+                    # qb 补充站点标签,交集第一个就是站点标签
+                    intersection = all_site_names.intersection(current_torrent_tag_list)
+                    site_name = None
+                    if intersection:
+                        site_name = list(intersection)[0]
 
-                        if site_name:
-                            site_id = all_site_name_id_map[site_name]
-                            is_in_limit_sites1 = site_id in self._limit_sites1
-                            is_in_limit_sites2 = site_id in self._limit_sites2
-                            is_in_limit_sites3 = site_id in self._limit_sites3
+                    if site_name:
+                        site_id = all_site_name_id_map[site_name]
+                        is_in_limit_sites1 = site_id in self._limit_sites1
+                        is_in_limit_sites2 = site_id in self._limit_sites2
+                        is_in_limit_sites3 = site_id in self._limit_sites3
+                    else:
+                        is_in_limit_sites1 = False
+                        is_in_limit_sites2 = False
+                        is_in_limit_sites3 = False
+                        logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
+                    if is_in_limit_sites1:
+                        if is_in_time_range1:
+                            to_limit_torrent_hashs1.append(torrent.hash)
                         else:
-                            is_in_limit_sites1 = False
-                            is_in_limit_sites2 = False
-                            is_in_limit_sites3 = False
-                            logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
-                        if is_in_limit_sites1:
-                            if is_in_time_range1:
-                                to_limit_torrent_hashs1.append(torrent.hash)
-                            else:
-                                cancel_limit_torrent_hashs1.append(torrent.hash)
-                        elif is_in_limit_sites2:
-                            if is_in_time_range2:
-                                to_limit_torrent_hashs2.append(torrent.hash)
-                            else:
-                                cancel_limit_torrent_hashs2.append(torrent.hash)
-                        elif is_in_limit_sites3:
-                            if is_in_time_range3:
-                                to_limit_torrent_hashs3.append(torrent.hash)
-                            else:
-                                cancel_limit_torrent_hashs3.append(torrent.hash)
+                            cancel_limit_torrent_hashs1.append(torrent.hash)
+                    elif is_in_limit_sites2:
+                        if is_in_time_range2:
+                            to_limit_torrent_hashs2.append(torrent.hash)
                         else:
-                            cancel_limit_torrent_hashs_other.append(torrent.hash)
-                    if to_limit_torrent_hashs1:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed1), to_limit_torrent_hashs1)
-                        logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
-                    if to_limit_torrent_hashs2:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed2), to_limit_torrent_hashs2)
-                        logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
-                    if to_limit_torrent_hashs3:
-                        downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed3), to_limit_torrent_hashs3)
-                        logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
-                    # 其他的都是不限速的,塞到一个list吧
-                    cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
-                    logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
-                    downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
+                            cancel_limit_torrent_hashs2.append(torrent.hash)
+                    elif is_in_limit_sites3:
+                        if is_in_time_range3:
+                            to_limit_torrent_hashs3.append(torrent.hash)
+                        else:
+                            cancel_limit_torrent_hashs3.append(torrent.hash)
+                    else:
+                        cancel_limit_torrent_hashs_other.append(torrent.hash)
+                if to_limit_torrent_hashs1:
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed1), to_limit_torrent_hashs1)
+                    logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
+                if to_limit_torrent_hashs2:
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed2), to_limit_torrent_hashs2)
+                    logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
+                if to_limit_torrent_hashs3:
+                    downloader_obj.qbc.torrents_set_upload_limit(1024 * int(self._limit_speed3), to_limit_torrent_hashs3)
+                    logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
+                # 其他的都是不限速的,塞到一个list吧
+                cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
+                logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
+                downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
+            elif dl_type == "transmission":
+                logger.info(f"{downloader} 开始设置限速 ...")
+                # _trarg = ["id", "name", "labels", "hashString"]
+                all_torrents, _ = downloader_obj.get_torrents()
+                tr_client = downloader_obj.trc
+                to_limit_torrent_hashs1 = []
+                cancel_limit_torrent_hashs1 = []
+                to_limit_torrent_hashs2 = []
+                cancel_limit_torrent_hashs2 = []
+                to_limit_torrent_hashs3 = []
+                cancel_limit_torrent_hashs3 = []
+                cancel_limit_torrent_hashs_other = []
+                for torrent in all_torrents:
+                    # 当前种子 tags list
+                    current_torrent_tag_list = [element.strip() for element in torrent.labels]
+                    # qb 补充站点标签,交集第一个就是站点标签
+                    intersection = all_site_names.intersection(current_torrent_tag_list)
+                    site_name = None
+                    if intersection:
+                        site_name = list(intersection)[0]
 
-                    # 判断当前是否在生效时间段内,如果在就执行限速,如果不在就取消限速
-                    # if self.__is_current_time_in_range_site_config(self._active_time_range_site_config1):
-                    #     for torrent in all_torrents:
-                    #         # 当前种子 tags list
-                    #         current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                    #         # qb 补充站点标签,交集第一个就是站点标签
-                    #         intersection = all_site_names.intersection(current_torrent_tag_list)
-                    #         site_name = None
-                    #         if intersection:
-                    #             site_name = list(intersection)[0]
-                    #         if site_name:
-                    #             is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites1
-                    #         else:
-                    #             is_in_limit_sites = False
-                    #             logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
-                    #         if is_in_limit_sites:
-                    #             to_limit_torrent_hashs1.append(torrent.hash)
-                    #     if to_limit_torrent_hashs1:
-                    #         downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs1)
-                    #         downloader_obj.set_torrents_tag(to_limit_torrent_hashs1, ["F100K"])
-                    #         logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs1)}")
-                    # else:  #
-                    #     for torrent in all_torrents:
-                    #         # 当前种子 tags list
-                    #         current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                    #         # qb 补充站点标签,交集第一个就是站点标签
-                    #         intersection = all_site_names.intersection(current_torrent_tag_list)
-                    #         site_name = None
-                    #         if intersection:
-                    #             site_name = list(intersection)[0]
-                    #         if site_name in all_site_name_id_map:
-                    #             is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
-                    #         else:
-                    #             is_in_limit_sites = None
-                    #             logger.error(f"{site_name} not in {all_site_name_id_map}")
-                    #         if is_in_limit_sites:
-                    #             to_limit_torrent_hashs1.append(torrent.hash)
-                    #     # to_limit_torrent_hashs1 取消限速,删除标签
-                    #     if to_limit_torrent_hashs1:
-                    #         downloader_obj.qbc.torrents_set_upload_limit(0, to_limit_torrent_hashs1)
-                    #         downloader_obj.remove_torrents_tag(to_limit_torrent_hashs1, ["F100K", "P100K"])
-                    #         self.to_pausedUP_hashs.clear()
-                    #         logger.info(f"在非限速时间区间,{downloader} 解除限速100K种子个数{len(to_limit_torrent_hashs1)}")
-            # elif dl_type == "transmission":
-            #     pass
+                    if site_name:
+                        site_id = all_site_name_id_map[site_name]
+                        is_in_limit_sites1 = site_id in self._limit_sites1
+                        is_in_limit_sites2 = site_id in self._limit_sites2
+                        is_in_limit_sites3 = site_id in self._limit_sites3
+                    else:
+                        is_in_limit_sites1 = False
+                        is_in_limit_sites2 = False
+                        is_in_limit_sites3 = False
+                        logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
+                    if is_in_limit_sites1:
+                        if is_in_time_range1:
+                            to_limit_torrent_hashs1.append(torrent.hash)
+                        else:
+                            cancel_limit_torrent_hashs1.append(torrent.hash)
+                    elif is_in_limit_sites2:
+                        if is_in_time_range2:
+                            to_limit_torrent_hashs2.append(torrent.hash)
+                        else:
+                            cancel_limit_torrent_hashs2.append(torrent.hash)
+                    elif is_in_limit_sites3:
+                        if is_in_time_range3:
+                            to_limit_torrent_hashs3.append(torrent.hash)
+                        else:
+                            cancel_limit_torrent_hashs3.append(torrent.hash)
+                    else:
+                        cancel_limit_torrent_hashs_other.append(torrent.hash)
+                if to_limit_torrent_hashs1:
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs1, upload_limit=int(self._limit_speed1), upload_limited=True)
+                    logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
+                if to_limit_torrent_hashs2:
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs2, upload_limit=int(self._limit_speed2), upload_limited=True)
+                    logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
+                if to_limit_torrent_hashs3:
+                    tr_client.change_torrent(ids=to_limit_torrent_hashs3, upload_limit=int(self._limit_speed3), upload_limited=True)
+                    logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
+                # 其他的都是不限速的,塞到一个list吧
+                cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
+                logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
+                tr_client.change_torrent(ids=cancel_limit_list_all, upload_limit=0, upload_limited=False)
         # 保存缓存
         # self.__update_config()
         logger.info("限速执行完成")
