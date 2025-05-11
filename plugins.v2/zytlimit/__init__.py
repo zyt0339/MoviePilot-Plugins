@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.7"
+    plugin_version = "1.0.8"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -627,9 +627,10 @@ class ZYTLimit(_PluginBase):
                 downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
             elif dl_type == "transmission":
                 logger.info(f"{downloader} 开始设置限速 ...")
-                # _trarg = ["id", "name", "labels", "hashString"]
-                all_torrents, _ = downloader_obj.get_torrents()
+                _trarg = ["id", "name", "labels", "hashString"]
                 tr_client = downloader_obj.trc
+                all_torrents = tr_client.get_torrents(arguments=_trarg)
+                # all_torrents, _ = downloader_obj.get_torrents()
                 to_limit_torrent_hashs1 = []
                 cancel_limit_torrent_hashs1 = []
                 to_limit_torrent_hashs2 = []
@@ -658,21 +659,21 @@ class ZYTLimit(_PluginBase):
                         logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                     if is_in_limit_sites1:
                         if is_in_time_range1:
-                            to_limit_torrent_hashs1.append(torrent.hash)
+                            to_limit_torrent_hashs1.append(torrent.hashString)
                         else:
-                            cancel_limit_torrent_hashs1.append(torrent.hash)
+                            cancel_limit_torrent_hashs1.append(torrent.hashString)
                     elif is_in_limit_sites2:
                         if is_in_time_range2:
-                            to_limit_torrent_hashs2.append(torrent.hash)
+                            to_limit_torrent_hashs2.append(torrent.hashString)
                         else:
-                            cancel_limit_torrent_hashs2.append(torrent.hash)
+                            cancel_limit_torrent_hashs2.append(torrent.hashString)
                     elif is_in_limit_sites3:
                         if is_in_time_range3:
-                            to_limit_torrent_hashs3.append(torrent.hash)
+                            to_limit_torrent_hashs3.append(torrent.hashString)
                         else:
-                            cancel_limit_torrent_hashs3.append(torrent.hash)
+                            cancel_limit_torrent_hashs3.append(torrent.hashString)
                     else:
-                        cancel_limit_torrent_hashs_other.append(torrent.hash)
+                        cancel_limit_torrent_hashs_other.append(torrent.hashString)
                 if to_limit_torrent_hashs1:
                     tr_client.change_torrent(ids=to_limit_torrent_hashs1, upload_limit=int(self._limit_speed1), upload_limited=True)
                     logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
