@@ -387,7 +387,7 @@ class ZYTLimit(_PluginBase):
                                                "component": "VTextField",
                                                "props": {
                                                    "model": "active_time_range_site_config1",
-                                                   "label": "生效时间段",
+                                                   "label": "限速时间段",
                                                    "placeholder": "如：00:00-08:00,默认全天"
                                                }
                                            }
@@ -446,7 +446,7 @@ class ZYTLimit(_PluginBase):
                                                "component": "VTextField",
                                                "props": {
                                                    "model": "active_time_range_site_config2",
-                                                   "label": "生效时间段",
+                                                   "label": "限速时间段",
                                                    "placeholder": "如：00:00-08:00,默认全天"
                                                }
                                            }
@@ -505,7 +505,7 @@ class ZYTLimit(_PluginBase):
                                                "component": "VTextField",
                                                "props": {
                                                    "model": "active_time_range_site_config3",
-                                                   "label": "生效时间段",
+                                                   "label": "限速时间段",
                                                    "placeholder": "如：00:00-08:00,默认全天"
                                                }
                                            }
@@ -564,7 +564,7 @@ class ZYTLimit(_PluginBase):
                                                "component": "VTextField",
                                                "props": {
                                                    "model": "active_time_range_site_config4",
-                                                   "label": "生效时间段",
+                                                   "label": "限速时间段",
                                                    "placeholder": "如：00:00-08:00,默认全天"
                                                }
                                            }
@@ -623,8 +623,29 @@ class ZYTLimit(_PluginBase):
                                                "component": "VTextField",
                                                "props": {
                                                    "model": "active_time_range_site_config5",
-                                                   "label": "生效时间段",
+                                                   "label": "限速时间段",
                                                    "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {
+                                           'cols': 12,
+                                       },
+                                       'content': [
+                                           {
+                                               'component': 'VAlert',
+                                               'props': {
+                                                   'type': 'info',
+                                                   'variant': 'tonal',
+                                                   'text': '站点重复时前面行优先级最高; 限速暂停时间(分钟):限速后还活动就暂停x分钟'
                                                }
                                            }
                                        ]
