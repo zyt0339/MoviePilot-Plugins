@@ -747,45 +747,33 @@ class ZYTLimit(_PluginBase):
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                     # qb 补充站点标签,交集第一个就是站点标签
                     intersection = all_site_names.intersection(current_torrent_tag_list)
-                    site_name = None
                     if intersection:
                         site_name = list(intersection)[0]
-
-                    if site_name:
-                        site_id = all_site_name_id_map[site_name]
-                        is_in_limit_sites1 = site_id in self._limit_sites1
-                        is_in_limit_sites2 = site_id in self._limit_sites2
-                        is_in_limit_sites3 = site_id in self._limit_sites3
-                        is_in_limit_sites4 = site_id in self._limit_sites4
-                        is_in_limit_sites5 = site_id in self._limit_sites5
+                        site_id = all_site_name_id_map[site_name] or -1
                     else:
-                        is_in_limit_sites1 = False
-                        is_in_limit_sites2 = False
-                        is_in_limit_sites3 = False
-                        is_in_limit_sites4 = False
-                        is_in_limit_sites5 = False
+                        site_id = -1
                         logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
-                    if is_in_limit_sites1:
+                    if site_id in self._limit_sites1:
                         if is_in_time_range1:
                             to_limit_torrent_hashs1.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs1.append(torrent.hash)
-                    elif is_in_limit_sites2:
+                    elif site_id in self._limit_sites2:
                         if is_in_time_range2:
                             to_limit_torrent_hashs2.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs2.append(torrent.hash)
-                    elif is_in_limit_sites3:
+                    elif site_id in self._limit_sites3:
                         if is_in_time_range3:
                             to_limit_torrent_hashs3.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs3.append(torrent.hash)
-                    elif is_in_limit_sites4:
+                    elif site_id in self._limit_sites4:
                         if is_in_time_range4:
                             to_limit_torrent_hashs4.append(torrent.hash)
                         else:
                             cancel_limit_torrent_hashs4.append(torrent.hash)
-                    elif is_in_limit_sites5:
+                    elif site_id in self._limit_sites5:
                         if is_in_time_range5:
                             to_limit_torrent_hashs5.append(torrent.hash)
                         else:
@@ -822,45 +810,33 @@ class ZYTLimit(_PluginBase):
                     current_torrent_tag_list = [element.strip() for element in torrent.labels]
                     # qb 补充站点标签,交集第一个就是站点标签
                     intersection = all_site_names.intersection(current_torrent_tag_list)
-                    site_name = None
                     if intersection:
                         site_name = list(intersection)[0]
-
-                    if site_name:
-                        site_id = all_site_name_id_map[site_name]
-                        is_in_limit_sites1 = site_id in self._limit_sites1
-                        is_in_limit_sites2 = site_id in self._limit_sites2
-                        is_in_limit_sites3 = site_id in self._limit_sites3
-                        is_in_limit_sites4 = site_id in self._limit_sites4
-                        is_in_limit_sites5 = site_id in self._limit_sites5
+                        site_id = all_site_name_id_map[site_name] or -1
                     else:
-                        is_in_limit_sites1 = False
-                        is_in_limit_sites2 = False
-                        is_in_limit_sites3 = False
-                        is_in_limit_sites4 = False
-                        is_in_limit_sites5 = False
+                        site_id = -1
                         logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
-                    if is_in_limit_sites1:
+                    if site_id in self._limit_sites1:
                         if is_in_time_range1:
                             to_limit_torrent_hashs1.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs1.append(torrent.hashString)
-                    elif is_in_limit_sites2:
+                    elif site_id in self._limit_sites2:
                         if is_in_time_range2:
                             to_limit_torrent_hashs2.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs2.append(torrent.hashString)
-                    elif is_in_limit_sites3:
+                    elif site_id in self._limit_sites3:
                         if is_in_time_range3:
                             to_limit_torrent_hashs3.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs3.append(torrent.hashString)
-                    elif is_in_limit_sites4:
+                    elif site_id in self._limit_sites4:
                         if is_in_time_range4:
                             to_limit_torrent_hashs4.append(torrent.hashString)
                         else:
                             cancel_limit_torrent_hashs4.append(torrent.hashString)
-                    elif is_in_limit_sites5:
+                    elif site_id in self._limit_sites5:
                         if is_in_time_range5:
                             to_limit_torrent_hashs5.append(torrent.hashString)
                         else:
