@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.987"
+    plugin_version = "4.3.1.988"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1165,7 +1165,7 @@ class ZYTBrushFlow(_PluginBase):
                                                         'props': {
                                                             'model': 'maxupspeed',
                                                             'label': '总上传带宽（KB/s）',
-                                                            'placeholder': '达到后停止新增任务'
+                                                            'placeholder': '达到后停止新增任务,会自动判断上传限速*80%'
                                                         }
                                                     }
                                                 ]
@@ -2298,11 +2298,13 @@ class ZYTBrushFlow(_PluginBase):
         if include_network_conditions:
             # 获取平均带宽
             avg_upload_speed, avg_download_speed = self.__get_average_bandwidth()
+            # 获取qb上传限速的 80%
+            qb_up_limit_80_percent = self.__get_qb_up_limit_80_percent()
             if avg_upload_speed is not None:
                 reasons.extend([
-                    ("maxupspeed", lambda config: avg_upload_speed >= float(config) * 1024,
+                    ("maxupspeed", lambda config: avg_upload_speed >= min(float(config) * 1024, qb_up_limit_80_percent),
                      lambda config: f"当前总上传带宽 {StringUtils.str_filesize(avg_upload_speed)}，"
-                                    f"已达到最大值 {config} KB/s，暂时停止新增任务"),
+                                    f"已达到最大值 {config if float(config) * 1024 < qb_up_limit_80_percent else f'(上传限速80%){int(qb_up_limit_80_percent/1024)}'} KB/s，暂时停止新增任务"),
                 ])
             if avg_download_speed is not None:
                 reasons.extend([
@@ -3772,6 +3774,23 @@ class ZYTBrushFlow(_PluginBase):
                 ret_info.upload_size += transfer_info.upload_size
 
         return ret_info
+
+    def __get_qb_up_limit_80_percent(self) -> float:
+        """
+        获取qb全局上传限速 * 80%,单位byte
+        """
+        try:
+            qb_service_info = self.service_info
+            if self.downloader_helper.is_downloader("qbittorrent", service=qb_service_info):
+                downloader_obj = qb_service_info.instance
+                qb_client = downloader_obj.qbc
+                upload_limit = qb_client.app_preferences().up_limit
+                if upload_limit == 0:
+                    return 999999999
+                return upload_limit * 0.8
+        except Exception as e:
+            logger.error(f"获取qb全局上传限速: {e}")
+        return 999999999
 
     def __get_downloading_uploading_count(self) -> int:
         """
