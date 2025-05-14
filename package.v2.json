@@ -173,5 +173,18 @@
             "v1.0.6": "fix bug",
             "v1.0.1": "自定义时间点执行限速逻辑,只支持qb"
         }
+    },
+    "ZYTInvitesSignin": {
+        "name": "药丸签到(zyt)",
+        "description": "药丸论坛签到。",
+        "labels": "站点",
+        "version": "1.4.1",
+        "icon": "invites.png",
+        "author": "zyt",
+        "level": 2,
+        "history": {
+            "v1.4.1": "更新签到域名前缀,增加只发送失败通知",
+            "v1.4": "自定义保留消息天数"
+        }
     }
 }
