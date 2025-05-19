@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.988"
+    plugin_version = "4.3.1.989"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2516,15 +2516,15 @@ class ZYTBrushFlow(_PluginBase):
                 if need_delete_hashes:
                     # 删辅种,把关联的辅种也计算出来,让他一起删除
                     # 先根据 hash 反查出 name, 再根据 name 凑齐 hash
-                    need_delete_names = []
+                    need_delete_name_size_list = []
                     for hash, torrent in seeding_torrents_dict.items():
                         if hash in need_delete_hashes:
-                            need_delete_names.append(torrent.name)
+                            need_delete_name_size_list.append(f'{torrent.name}|{torrent.total_size}')
                     need_delete_hashes_contain_subsidiary = []
                     for hash, torrent in seeding_torrents_dict.items():
-                        if torrent.name in need_delete_names:
+                        if f'{torrent.name}|{torrent.total_size}' in need_delete_name_size_list:
                             need_delete_hashes_contain_subsidiary.append(hash)
-                    logger.info(f"关联辅种删除,共{len(need_delete_hashes_contain_subsidiary)}个, {need_delete_names}")
+                    logger.info(f"关联辅种删除,共{len(need_delete_hashes_contain_subsidiary)}个, {need_delete_name_size_list}")
                     need_delete_hashes_contain_subsidiary.extend(need_delete_hashes)
                     # zyt 如果是QB，则重新汇报Tracker
                     if self.downloader_helper.is_downloader("qbittorrent", service=self.service_info):
