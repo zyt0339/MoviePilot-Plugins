@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.18"
+    plugin_version = "1.0.19"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1146,7 +1146,7 @@ class ZYTLimit(_PluginBase):
         infos = [
             (self._downloaders1, self._limit_sites1, self._limit_speed1, self._limit_sites_pause_threshold1,
              self._active_time_range_site_config1),
-            (self._downloaders3, self._limit_sites2, self._limit_speed2, self._limit_sites_pause_threshold2,
+            (self._downloaders2, self._limit_sites2, self._limit_speed2, self._limit_sites_pause_threshold2,
              self._active_time_range_site_config2),
             (self._downloaders3, self._limit_sites3, self._limit_speed3, self._limit_sites_pause_threshold3,
              self._active_time_range_site_config3),
@@ -1201,7 +1201,7 @@ class ZYTLimit(_PluginBase):
                     site_id = all_site_name_id_map[site_name] or -1
                 else:
                     site_id = -1
-                    logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
+                    logger.error(f"{downloader} {torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                 if site_id in limit_sites:
                     if is_in_time_range:
                         to_limit_torrent_hashs.append(torrent.hash)
