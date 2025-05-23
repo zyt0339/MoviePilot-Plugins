@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.14"
+    plugin_version = "1.0.15"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -369,7 +369,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 2},
+                                       "props": {"cols": 12, "md": 4},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -380,7 +380,8 @@ class ZYTLimit(_PluginBase):
                                                    "model": "downloaders1",
                                                    "label": "下载器",
                                                    'items': [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()]
+                                                             for config in
+                                                             self.downloader_helper.get_configs().values()]
                                                }
                                            }
                                        ]
@@ -389,7 +390,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 4
+                                           "md": 8
                                        },
                                        "content": [
                                            {
@@ -404,12 +405,17 @@ class ZYTLimit(_PluginBase):
                                                }
                                            }
                                        ]
-                                   },
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
                                    {
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -426,7 +432,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -443,7 +449,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -482,7 +488,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 2},
+                                       "props": {"cols": 12, "md": 4},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -503,7 +509,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 4
+                                           "md": 8
                                        },
                                        "content": [
                                            {
@@ -518,12 +524,17 @@ class ZYTLimit(_PluginBase):
                                                }
                                            }
                                        ]
-                                   },
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
                                    {
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -540,7 +551,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -557,7 +568,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -596,7 +607,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 2},
+                                       "props": {"cols": 12, "md": 4},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -617,7 +628,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 4
+                                           "md": 8
                                        },
                                        "content": [
                                            {
@@ -632,12 +643,17 @@ class ZYTLimit(_PluginBase):
                                                }
                                            }
                                        ]
-                                   },
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
                                    {
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -654,7 +670,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -671,7 +687,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -710,7 +726,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 2},
+                                       "props": {"cols": 12, "md": 4},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -731,7 +747,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 4
+                                           "md": 8
                                        },
                                        "content": [
                                            {
@@ -746,12 +762,17 @@ class ZYTLimit(_PluginBase):
                                                }
                                            }
                                        ]
-                                   },
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
                                    {
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -768,7 +789,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -785,7 +806,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -824,7 +845,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 2},
+                                       "props": {"cols": 12, "md": 4},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -845,7 +866,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 4
+                                           "md": 8
                                        },
                                        "content": [
                                            {
@@ -860,12 +881,17 @@ class ZYTLimit(_PluginBase):
                                                }
                                            }
                                        ]
-                                   },
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
                                    {
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -882,7 +908,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -899,7 +925,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 4,
-                                           "md": 2
+                                           "md": 4
                                        },
                                        "content": [
                                            {
