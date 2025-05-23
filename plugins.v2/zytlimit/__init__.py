@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.17"
+    plugin_version = "1.0.18"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -379,7 +379,7 @@ class ZYTLimit(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                'props': {'cols': 12, "md": 3},
+                                'props': {'cols': 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VTextField",
@@ -393,7 +393,7 @@ class ZYTLimit(_PluginBase):
                             },
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VSelect",
@@ -414,7 +414,7 @@ class ZYTLimit(_PluginBase):
                                 "component": "VCol",
                                 "props": {
                                     "cols": 12,
-                                    "md": 6
+                                    "md": 12
                                 },
                                 "content": [
                                     {
@@ -512,7 +512,7 @@ class ZYTLimit(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                'props': {'cols': 12, "md": 3},
+                                'props': {'cols': 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VTextField",
@@ -526,7 +526,7 @@ class ZYTLimit(_PluginBase):
                             },
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VSelect",
@@ -547,7 +547,7 @@ class ZYTLimit(_PluginBase):
                                 "component": "VCol",
                                 "props": {
                                     "cols": 12,
-                                    "md": 6
+                                    "md": 12
                                 },
                                 "content": [
                                     {
@@ -645,7 +645,7 @@ class ZYTLimit(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                'props': {'cols': 12, "md": 3},
+                                'props': {'cols': 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VTextField",
@@ -659,7 +659,7 @@ class ZYTLimit(_PluginBase):
                             },
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VSelect",
@@ -680,7 +680,7 @@ class ZYTLimit(_PluginBase):
                                 "component": "VCol",
                                 "props": {
                                     "cols": 12,
-                                    "md": 6
+                                    "md": 12
                                 },
                                 "content": [
                                     {
@@ -778,7 +778,7 @@ class ZYTLimit(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                'props': {'cols': 12, "md": 3},
+                                'props': {'cols': 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VTextField",
@@ -792,7 +792,7 @@ class ZYTLimit(_PluginBase):
                             },
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VSelect",
@@ -813,7 +813,7 @@ class ZYTLimit(_PluginBase):
                                 "component": "VCol",
                                 "props": {
                                     "cols": 12,
-                                    "md": 6
+                                    "md": 12
                                 },
                                 "content": [
                                     {
@@ -911,7 +911,7 @@ class ZYTLimit(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                'props': {'cols': 12, "md": 3},
+                                'props': {'cols': 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VTextField",
@@ -925,7 +925,7 @@ class ZYTLimit(_PluginBase):
                             },
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 6},
                                 "content": [
                                     {
                                         "component": "VSelect",
@@ -946,7 +946,7 @@ class ZYTLimit(_PluginBase):
                                 "component": "VCol",
                                 "props": {
                                     "cols": 12,
-                                    "md": 6
+                                    "md": 12
                                 },
                                 "content": [
                                     {
