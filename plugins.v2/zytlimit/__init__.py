@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.12"
+    plugin_version = "1.0.13"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -49,27 +49,32 @@ class ZYTLimit(_PluginBase):
     _onlyonce = False
     _notify = False
     _cron = None
-    _downloaders = []
+    # _downloaders = []
+    _downloaders1 = []
     _limit_sites1 = []
     _limit_speed1 = 0
     _limit_sites_pause_threshold1 = 0
     _active_time_range_site_config1 = None
 
+    _downloaders2 = []
     _limit_sites2 = []
     _limit_speed2 = 0
     _limit_sites_pause_threshold2 = 0
     _active_time_range_site_config2 = None
 
+    _downloaders3 = []
     _limit_sites3 = []
     _limit_speed3 = 0
     _limit_sites_pause_threshold3 = 0
     _active_time_range_site_config3 = None
 
+    _downloaders4 = []
     _limit_sites4 = []
     _limit_speed4 = 0
     _limit_sites_pause_threshold4 = 0
     _active_time_range_site_config4 = None
 
+    _downloaders5 = []
     _limit_sites5 = []
     _limit_speed5 = 0
     _limit_sites_pause_threshold5 = 0
@@ -90,28 +95,33 @@ class ZYTLimit(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._notify = config.get("notify")
             self._cron = config.get("cron")
-            self._downloaders = config.get("downloaders")
+            # self._downloaders = config.get("downloaders")
 
+            self._downloaders1 = config.get("downloaders1")
             self._limit_sites1 = config.get("limit_sites1") or []
             self._limit_speed1 = int(config.get("limit_speed1") or 0)
             self._limit_sites_pause_threshold1 = int(config.get("limit_sites_pause_threshold1") or 0)
             self._active_time_range_site_config1 = config.get("active_time_range_site_config1")
 
+            self._downloaders2 = config.get("downloaders2")
             self._limit_sites2 = config.get("limit_sites2") or []
             self._limit_speed2 = int(config.get("limit_speed2") or 0)
             self._limit_sites_pause_threshold2 = int(config.get("limit_sites_pause_threshold2") or 0)
             self._active_time_range_site_config2 = config.get("active_time_range_site_config2")
 
+            self._downloaders3 = config.get("downloaders3")
             self._limit_sites3 = config.get("limit_sites3") or []
             self._limit_speed3 = int(config.get("limit_speed3") or 0)
             self._limit_sites_pause_threshold3 = int(config.get("limit_sites_pause_threshold3") or 0)
             self._active_time_range_site_config3 = config.get("active_time_range_site_config3")
 
+            self._downloaders4 = config.get("downloaders4")
             self._limit_sites4 = config.get("limit_sites4") or []
             self._limit_speed4 = int(config.get("limit_speed4") or 0)
             self._limit_sites_pause_threshold4 = int(config.get("limit_sites_pause_threshold4") or 0)
             self._active_time_range_site_config4 = config.get("active_time_range_site_config4")
 
+            self._downloaders5 = config.get("downloaders5")
             self._limit_sites5 = config.get("limit_sites5") or []
             self._limit_speed5 = int(config.get("limit_speed5") or 0)
             self._limit_sites_pause_threshold5 = int(config.get("limit_sites_pause_threshold5") or 0)
@@ -122,15 +132,15 @@ class ZYTLimit(_PluginBase):
             # 定时服务
             self._scheduler = BackgroundScheduler(timezone=settings.TZ)
 
-            if self._enabled and self._cron:
-                try:
-                    self._scheduler.add_job(
-                        func=self.run,
-                        trigger=CronTrigger.from_crontab(self._cron),
-                        name="QB&TR上传限速",
-                    )
-                except Exception as err:
-                    logger.error(f"定时任务配置错误：{str(err)}")
+            # if self._enabled and self._cron:
+            #     try:
+            #         self._scheduler.add_job(
+            #             func=self.run,
+            #             trigger=CronTrigger.from_crontab(self._cron),
+            #             name="QB&TR上传限速",
+            #         )
+            #     except Exception as err:
+            #         logger.error(f"定时任务配置错误：{str(err)}")
 
             if self._onlyonce:
                 logger.info(f"QB&TR上传限速服务启动，立即运行一次")
@@ -142,23 +152,22 @@ class ZYTLimit(_PluginBase):
                 )
                 # 关闭一次性开关
                 self._onlyonce = False
-                self.__update_config()
+            self.__update_config()
 
             # 启动任务
-            if self._scheduler.get_jobs():
-                self._scheduler.print_jobs()
-                self._scheduler.start()
+            # if self._scheduler.get_jobs():
+            self._scheduler.print_jobs()
+            self._scheduler.start()
 
-    @property
-    def service_infos(self) -> Optional[Dict[str, ServiceInfo]]:
+    def get_downloader_service_infos(self, downloaders) -> Optional[Dict[str, ServiceInfo]]:
         """
         服务信息
         """
-        if not self._downloaders:
+        if not downloaders:
             logger.warning("尚未配置下载器，请检查配置")
             return None
 
-        services = self.downloader_helper.get_services(name_filters=self._downloaders)
+        services = self.downloader_helper.get_services(name_filters=downloaders)
         if not services:
             logger.warning("获取下载器实例失败，请检查配置")
             return None
@@ -174,9 +183,6 @@ class ZYTLimit(_PluginBase):
             logger.warning("没有已连接的下载器，请检查配置")
             return None
         return active_services
-
-    def get_state(self) -> bool:
-        return True if self._enabled and self._downloaders else False
 
     @eventmanager.register(EventType.PluginAction)
     def run(self, event: Event = None):
@@ -197,13 +203,12 @@ class ZYTLimit(_PluginBase):
             self.post_message(
                 mtype=NotificationType.SiteMessage, title=f"开始QB&TR上传限速 ...")
 
-        if not self.service_infos:
-            return
+        # if not self.get_downloader_service_infos:
+        #     return
 
         msg = ""
-        success = False
         try:
-            self.auto_seed()
+            self.limit()
             success = True
         except Exception as e:
             success = False
@@ -236,6 +241,29 @@ class ZYTLimit(_PluginBase):
 
     def get_api(self) -> List[Dict[str, Any]]:
         pass
+
+    def get_service(self) -> List[Dict[str, Any]]:
+        """
+        注册插件公共服务
+        [{
+            "id": "服务ID",
+            "name": "服务名称",
+            "trigger": "触发器：cron/interval/date/CronTrigger.from_crontab()",
+            "func": self.xxx,
+            "kwargs": {} # 定时器参数
+        }]
+        """
+        if self._enabled and self._cron:
+            logger.info(f"QB&TR限速服务重新启动，执行周期 {self._cron}")
+            return [{
+                "id": "ZYTLimit",
+                "name": "QB&TR限速",
+                "trigger": CronTrigger.from_crontab(self._cron),
+                "func": self.run,
+                "kwargs": {}
+            }]
+        logger.info("QB&TR限速服务未开启")
+        return []
 
     def __custom_sites(self) -> List[Any]:
         custom_sites = []
@@ -301,33 +329,10 @@ class ZYTLimit(_PluginBase):
                                                }
                                            }
                                        ]
-                                   }
-                               ]
-                           },
-                           {
-                               "component": "VRow",
-                               "content": [
-                                   {
-                                       "component": "VCol",
-                                       "props": {"cols": 12, "md": 6},
-                                       "content": [
-                                           {
-                                               "component": "VSelect",
-                                               "props": {
-                                                   "chips": True,
-                                                   "multiple": True,
-                                                   "clearable": True,
-                                                   "model": "downloaders",
-                                                   "label": "下载器",
-                                                   'items': [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()]
-                                               }
-                                           }
-                                       ]
                                    },
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 6},
+                                       "props": {"cols": 12, "md": 12},
                                        "content": [
                                            {
                                                "component": "VCronField",
@@ -338,13 +343,50 @@ class ZYTLimit(_PluginBase):
                                ]
                            },
                            {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {'cols': 12},
+                                       'content': [
+                                           {
+                                               'component': 'VAlert',
+                                               'props': {
+                                                   'type': 'info',
+                                                   'variant': 'tonal',
+                                                   'text': '限速一'
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
                                "component": "VRow",
                                "content": [
                                    {
                                        "component": "VCol",
+                                       "props": {"cols": 12, "md": 2},
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders1",
+                                                   "label": "下载器",
+                                                   'items': [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 6
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -414,13 +456,51 @@ class ZYTLimit(_PluginBase):
                                ]
                            },
                            {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {'cols': 12},
+                                       'content': [
+                                           {
+                                               'component': 'VAlert',
+                                               'props': {
+                                                   'type': 'info',
+                                                   'variant': 'tonal',
+                                                   'text': '限速二'
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
                                "component": "VRow",
                                "content": [
                                    {
                                        "component": "VCol",
+                                       "props": {"cols": 12, "md": 2},
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders2",
+                                                   "label": "下载器",
+                                                   'items': [{"title": config.name, "value": config.name}
+                                                             for config in
+                                                             self.downloader_helper.get_configs().values()]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 6
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -490,13 +570,51 @@ class ZYTLimit(_PluginBase):
                                ]
                            },
                            {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {'cols': 12},
+                                       'content': [
+                                           {
+                                               'component': 'VAlert',
+                                               'props': {
+                                                   'type': 'info',
+                                                   'variant': 'tonal',
+                                                   'text': '限速三'
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
                                "component": "VRow",
                                "content": [
                                    {
                                        "component": "VCol",
+                                       "props": {"cols": 12, "md": 2},
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders3",
+                                                   "label": "下载器",
+                                                   'items': [{"title": config.name, "value": config.name}
+                                                             for config in
+                                                             self.downloader_helper.get_configs().values()]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 6
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -566,13 +684,51 @@ class ZYTLimit(_PluginBase):
                                ]
                            },
                            {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {'cols': 12},
+                                       'content': [
+                                           {
+                                               'component': 'VAlert',
+                                               'props': {
+                                                   'type': 'info',
+                                                   'variant': 'tonal',
+                                                   'text': '限速四'
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
                                "component": "VRow",
                                "content": [
                                    {
                                        "component": "VCol",
+                                       "props": {"cols": 12, "md": 2},
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders4",
+                                                   "label": "下载器",
+                                                   'items': [{"title": config.name, "value": config.name}
+                                                             for config in
+                                                             self.downloader_helper.get_configs().values()]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 6
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -642,13 +798,51 @@ class ZYTLimit(_PluginBase):
                                ]
                            },
                            {
+                               'component': 'VRow',
+                               'content': [
+                                   {
+                                       'component': 'VCol',
+                                       'props': {'cols': 12},
+                                       'content': [
+                                           {
+                                               'component': 'VAlert',
+                                               'props': {
+                                                   'type': 'info',
+                                                   'variant': 'tonal',
+                                                   'text': '限速五'
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
                                "component": "VRow",
                                "content": [
                                    {
                                        "component": "VCol",
+                                       "props": {"cols": 12, "md": 2},
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders5",
+                                                   "label": "下载器",
+                                                   'items': [{"title": config.name, "value": config.name}
+                                                             for config in
+                                                             self.downloader_helper.get_configs().values()]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 6
+                                           "md": 4
                                        },
                                        "content": [
                                            {
@@ -731,7 +925,7 @@ class ZYTLimit(_PluginBase):
                                                'props': {
                                                    'type': 'info',
                                                    'variant': 'tonal',
-                                                   'text': '站点重复时前面行优先级最高。限速暂停时间(分钟):限速后还活动就暂停x分钟。限速时间段默认全天开启'
+                                                   'text': '配置重复时后面会覆盖前面。限速暂停时间(分钟):限速后还活动就暂停x分钟。限速时间段默认全天开启。'
                                                }
                                            }
                                        ]
@@ -745,23 +939,28 @@ class ZYTLimit(_PluginBase):
             "onlyonce": False,
             "notify": False,
             "cron": "",
-            "downloaders": [],
+            # "downloaders": [],
+            "downloaders1": [],
             "limit_sites1": [],
             "limit_speed1": 0,
             # "limit_sites_pause_threshold1": 0,
             "active_time_range_site_config1": None,
+            "downloaders2": [],
             "limit_sites2": [],
             "limit_speed2": 0,
             # "limit_sites_pause_threshold2": 0,
             "active_time_range_site_config2": None,
+            "downloaders3": [],
             "limit_sites3": [],
             "limit_speed3": 0,
             # "limit_sites_pause_threshold3": 0,
             "active_time_range_site_config3": None,
+            "downloaders4": [],
             "limit_sites4": [],
             "limit_speed4": 0,
             # "limit_sites_pause_threshold4": 0,
             "active_time_range_site_config4": None,
+            "downloaders5": [],
             "limit_sites5": [],
             "limit_speed5": 0,
             # "limit_sites_pause_threshold5": 0,
@@ -774,35 +973,42 @@ class ZYTLimit(_PluginBase):
             "onlyonce": False,
             "notify": self._notify,
             "cron": self._cron,
-            "downloaders": self._downloaders,
+            # "downloaders": self._downloaders,
+            "downloaders1": self._downloaders1,
             "limit_sites1": self._limit_sites1,
             "limit_speed1": self._limit_speed1,
             "limit_sites_pause_threshold1": self._limit_sites_pause_threshold1,
             "active_time_range_site_config1": self._active_time_range_site_config1,
+            "downloaders2": self._downloaders2,
             "limit_sites2": self._limit_sites2,
             "limit_speed2": self._limit_speed2,
             "limit_sites_pause_threshold2": self._limit_sites_pause_threshold2,
             "active_time_range_site_config2": self._active_time_range_site_config2,
+            "downloaders3": self._downloaders3,
             "limit_sites3": self._limit_sites3,
             "limit_speed3": self._limit_speed3,
             "limit_sites_pause_threshold3": self._limit_sites_pause_threshold3,
             "active_time_range_site_config3": self._active_time_range_site_config3,
+            "downloaders4": self._downloaders4,
             "limit_sites4": self._limit_sites4,
             "limit_speed4": self._limit_speed4,
             "limit_sites_pause_threshold4": self._limit_sites_pause_threshold4,
             "active_time_range_site_config4": self._active_time_range_site_config4,
+            "downloaders5": self._downloaders5,
             "limit_sites5": self._limit_sites5,
             "limit_speed5": self._limit_speed5,
             "limit_sites_pause_threshold5": self._limit_sites_pause_threshold5,
             "active_time_range_site_config5": self._active_time_range_site_config5,
         })
 
-    def auto_seed(self):
+    def limit(self):
         """
         开始限速
         """
-        service_infos = self.service_infos
-        if not service_infos:
+        if self._downloaders1 or self._downloaders2 or self._downloaders3 or self._downloaders4 or self._downloaders5:
+            pass
+        else:
+            logger.warning("未设置下载器,取消执行")
             return
         if self._limit_sites1 or self._limit_sites2 or self._limit_sites3 or self._limit_sites4 or self._limit_sites5:
             pass
@@ -818,306 +1024,157 @@ class ZYTLimit(_PluginBase):
             all_site_name_id_map[site.get("name")] = site.get("id")
         all_site_names = set(all_site_name_id_map.keys())
 
-        is_in_time_range1 = self.__is_current_time_in_range_site_config(
-            self._active_time_range_site_config1)
-        is_in_time_range2 = self.__is_current_time_in_range_site_config(
-            self._active_time_range_site_config2)
-        is_in_time_range3 = self.__is_current_time_in_range_site_config(
-            self._active_time_range_site_config3)
-        is_in_time_range4 = self.__is_current_time_in_range_site_config(
-            self._active_time_range_site_config4)
-        is_in_time_range5 = self.__is_current_time_in_range_site_config(
-            self._active_time_range_site_config5)
-        #
-        for service in service_infos.values():
-            # 设置限速
-            to_limit_torrent_hashs1 = []
-            cancel_limit_torrent_hashs1 = []
-            to_limit_torrent_hashs2 = []
-            cancel_limit_torrent_hashs2 = []
-            to_limit_torrent_hashs3 = []
-            cancel_limit_torrent_hashs3 = []
-            to_limit_torrent_hashs4 = []
-            cancel_limit_torrent_hashs4 = []
-            to_limit_torrent_hashs5 = []
-            cancel_limit_torrent_hashs5 = []
-
-            cancel_limit_torrent_hashs_other = []
-
-            # 限速后仍然活动种子处理↓
-            # 限速100K中,且活动的种子,本次要暂停
-            to_pausedUP_hashs_cur = []
-            # 已经暂停,暂停时间超过x分钟的种子,本次要重新开始
-            to_cancel_pausedUP_hashs_cur = []
-            # 当前时间戳
-            current_time = time.time()
-            _limit_sites_pause_threshold1_s = self._limit_sites_pause_threshold1 * 60
-            _limit_sites_pause_threshold2_s = self._limit_sites_pause_threshold2 * 60
-            _limit_sites_pause_threshold3_s = self._limit_sites_pause_threshold3 * 60
-            _limit_sites_pause_threshold4_s = self._limit_sites_pause_threshold4 * 60
-            _limit_sites_pause_threshold5_s = self._limit_sites_pause_threshold5 * 60
-            # 限速后仍然活动种子处理↑
-
-            downloader = service.name
-            downloader_obj = service.instance
-            dl_type = service.type
-            if dl_type == "qbittorrent":
-                logger.info(f"{downloader} 开始设置限速 ...")
-                all_torrents, _ = downloader_obj.get_torrents()
-                for torrent in all_torrents:
-                    # 当前种子 tags list
-                    current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                    # qb 补充站点标签,交集第一个就是站点标签
-                    intersection = all_site_names.intersection(current_torrent_tag_list)
-                    if intersection:
-                        site_name = list(intersection)[0]
-                        site_id = all_site_name_id_map[site_name] or -1
-                    else:
-                        site_id = -1
-                        logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
-                    if site_id in self._limit_sites1:
-                        if is_in_time_range1:
-                            to_limit_torrent_hashs1.append(torrent.hash)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold1 > 0:
-                                state = torrent.state  # str
-                                if "uploading" == state:
-                                    to_pausedUP_hashs_cur.append(torrent.hash)
-                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold1_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                        else:
-                            cancel_limit_torrent_hashs1.append(torrent.hash)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                    elif site_id in self._limit_sites2:
-                        if is_in_time_range2:
-                            to_limit_torrent_hashs2.append(torrent.hash)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold2 > 0:
-                                state = torrent.state  # str
-                                if "uploading" == state:
-                                    to_pausedUP_hashs_cur.append(torrent.hash)
-                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold2_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                        else:
-                            cancel_limit_torrent_hashs2.append(torrent.hash)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                    elif site_id in self._limit_sites3:
-                        if is_in_time_range3:
-                            to_limit_torrent_hashs3.append(torrent.hash)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold3 > 0:
-                                state = torrent.state  # str
-                                if "uploading" == state:
-                                    to_pausedUP_hashs_cur.append(torrent.hash)
-                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold3_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                        else:
-                            cancel_limit_torrent_hashs3.append(torrent.hash)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                    elif site_id in self._limit_sites4:
-                        if is_in_time_range4:
-                            to_limit_torrent_hashs4.append(torrent.hash)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold4 > 0:
-                                state = torrent.state  # str
-                                if "uploading" == state:
-                                    to_pausedUP_hashs_cur.append(torrent.hash)
-                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold4_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                        else:
-                            cancel_limit_torrent_hashs4.append(torrent.hash)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                    elif site_id in self._limit_sites5:
-                        if is_in_time_range5:
-                            to_limit_torrent_hashs5.append(torrent.hash)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold5 > 0:
-                                state = torrent.state  # str
-                                if "uploading" == state:
-                                    to_pausedUP_hashs_cur.append(torrent.hash)
-                                elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold5_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                        else:
-                            cancel_limit_torrent_hashs5.append(torrent.hash)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                    else:
-                        cancel_limit_torrent_hashs_other.append(torrent.hash)
-                if to_limit_torrent_hashs1:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed1, to_limit_torrent_hashs1)
-                    logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
-                if to_limit_torrent_hashs2:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed2, to_limit_torrent_hashs2)
-                    logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
-                if to_limit_torrent_hashs3:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed3, to_limit_torrent_hashs3)
-                    logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
-                if to_limit_torrent_hashs4:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed4, to_limit_torrent_hashs4)
-                    logger.info(f"{downloader} 限速{self._limit_speed4}K种子个数: {len(to_limit_torrent_hashs4)}")
-                if to_limit_torrent_hashs5:
-                    downloader_obj.qbc.torrents_set_upload_limit(1024 * self._limit_speed5, to_limit_torrent_hashs5)
-                    logger.info(f"{downloader} 限速{self._limit_speed5}K种子个数: {len(to_limit_torrent_hashs5)}")
-                # 其他的都是不限速的,塞到一个list吧
-                cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
-                logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
-                downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
-
-                # 限速中仍然有上传就暂停
-                if to_pausedUP_hashs_cur:
-                    downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
-                    # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
-                    logger.info(f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
-                    for t_hash in to_pausedUP_hashs_cur:
-                        self.to_pausedUP_hashs[t_hash] = current_time
-                if to_cancel_pausedUP_hashs_cur:
-                    downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
-                    # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
-                    logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
-                    for t_hash in to_cancel_pausedUP_hashs_cur:
-                        if t_hash in self.to_pausedUP_hashs:
-                            del self.to_pausedUP_hashs[t_hash]
-
-            elif dl_type == "transmission":
-                logger.info(f"{downloader} 开始设置限速 ...")
-                _trarg = ["id", "name", "labels", "hashString", "status", "rateUpload"]
-                tr_client = downloader_obj.trc
-                all_torrents = tr_client.get_torrents(arguments=_trarg)
-                # all_torrents, _ = downloader_obj.get_torrents()
-                for torrent in all_torrents:
-                    # 当前种子 tags list
-                    current_torrent_tag_list = [element.strip() for element in torrent.labels]
-                    # qb 补充站点标签,交集第一个就是站点标签
-                    intersection = all_site_names.intersection(current_torrent_tag_list)
-                    if intersection:
-                        site_name = list(intersection)[0]
-                        site_id = all_site_name_id_map[site_name] or -1
-                    else:
-                        site_id = -1
-                        logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
-                    if site_id in self._limit_sites1:
-                        if is_in_time_range1:
-                            to_limit_torrent_hashs1.append(torrent.hashString)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold1 > 0:
-                                state = torrent.status  # Enum
-                                if state.seeding and torrent.rate_upload > 0:
-                                    to_pausedUP_hashs_cur.append(torrent.hashString)
-                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold1_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                        else:
-                            cancel_limit_torrent_hashs1.append(torrent.hashString)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                    elif site_id in self._limit_sites2:
-                        if is_in_time_range2:
-                            to_limit_torrent_hashs2.append(torrent.hashString)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold2 > 0:
-                                state = torrent.status  # Enum
-                                if state.seeding and torrent.rate_upload > 0:
-                                    to_pausedUP_hashs_cur.append(torrent.hashString)
-                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold2_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                        else:
-                            cancel_limit_torrent_hashs2.append(torrent.hashString)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                    elif site_id in self._limit_sites3:
-                        if is_in_time_range3:
-                            to_limit_torrent_hashs3.append(torrent.hashString)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold3 > 0:
-                                state = torrent.status  # Enum
-                                if state.seeding and torrent.rate_upload > 0:
-                                    to_pausedUP_hashs_cur.append(torrent.hashString)
-                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold3_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                        else:
-                            cancel_limit_torrent_hashs3.append(torrent.hashString)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                    elif site_id in self._limit_sites4:
-                        if is_in_time_range4:
-                            to_limit_torrent_hashs4.append(torrent.hashString)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold4 > 0:
-                                state = torrent.status  # Enum
-                                if state.seeding and torrent.rate_upload > 0:
-                                    to_pausedUP_hashs_cur.append(torrent.hashString)
-                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold4_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                        else:
-                            cancel_limit_torrent_hashs4.append(torrent.hashString)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                    elif site_id in self._limit_sites5:
-                        if is_in_time_range5:
-                            to_limit_torrent_hashs5.append(torrent.hashString)
-                            # 限速后还活动就暂停
-                            if self._limit_sites_pause_threshold5 > 0:
-                                state = torrent.status  # Enum
-                                if state.seeding and torrent.rate_upload > 0:
-                                    to_pausedUP_hashs_cur.append(torrent.hashString)
-                                elif state.stopped and ('暂停' not in current_torrent_tag_list):
-                                    pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
-                                    if (current_time - pausedUPTime) > _limit_sites_pause_threshold5_s:
-                                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                        else:
-                            cancel_limit_torrent_hashs5.append(torrent.hashString)
-                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
-                    else:
-                        cancel_limit_torrent_hashs_other.append(torrent.hashString)
-                if to_limit_torrent_hashs1:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs1, upload_limit=self._limit_speed1, upload_limited=True)
-                    logger.info(f"{downloader} 限速{self._limit_speed1}K种子个数: {len(to_limit_torrent_hashs1)}")
-                if to_limit_torrent_hashs2:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs2, upload_limit=self._limit_speed2, upload_limited=True)
-                    logger.info(f"{downloader} 限速{self._limit_speed2}K种子个数: {len(to_limit_torrent_hashs2)}")
-                if to_limit_torrent_hashs3:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs3, upload_limit=self._limit_speed3, upload_limited=True)
-                    logger.info(f"{downloader} 限速{self._limit_speed3}K种子个数: {len(to_limit_torrent_hashs3)}")
-                if to_limit_torrent_hashs4:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs4, upload_limit=self._limit_speed4, upload_limited=True)
-                    logger.info(f"{downloader} 限速{self._limit_speed4}K种子个数: {len(to_limit_torrent_hashs4)}")
-                if to_limit_torrent_hashs5:
-                    tr_client.change_torrent(ids=to_limit_torrent_hashs5, upload_limit=self._limit_speed5, upload_limited=True)
-                    logger.info(f"{downloader} 限速{self._limit_speed5}K种子个数: {len(to_limit_torrent_hashs5)}")
-                # 其他的都是不限速的,塞到一个list吧
-                cancel_limit_list_all = cancel_limit_torrent_hashs1 + cancel_limit_torrent_hashs2 + cancel_limit_torrent_hashs3 + cancel_limit_torrent_hashs_other
-                logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
-                tr_client.change_torrent(ids=cancel_limit_list_all, upload_limit=0, upload_limited=False)
-
-                # 限速中仍然有上传就暂停
-                if to_pausedUP_hashs_cur:
-                    downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
-                    # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
-                    logger.info(f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
-                    for t_hash in to_pausedUP_hashs_cur:
-                        self.to_pausedUP_hashs[t_hash] = current_time
-                if to_cancel_pausedUP_hashs_cur:
-                    downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
-                    # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
-                    logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
-                    for t_hash in to_cancel_pausedUP_hashs_cur:
-                        if t_hash in self.to_pausedUP_hashs:
-                            del self.to_pausedUP_hashs[t_hash]
+        infos = [
+            (self._downloaders1, self._limit_sites1, self._limit_speed1, self._limit_sites_pause_threshold1, self._active_time_range_site_config1),
+            (self._downloaders3, self._limit_sites2, self._limit_speed2, self._limit_sites_pause_threshold2, self._active_time_range_site_config2),
+            (self._downloaders3, self._limit_sites3, self._limit_speed3, self._limit_sites_pause_threshold3, self._active_time_range_site_config3),
+            (self._downloaders4, self._limit_sites4, self._limit_speed4, self._limit_sites_pause_threshold4, self._active_time_range_site_config4),
+            (self._downloaders5, self._limit_sites5, self._limit_speed5, self._limit_sites_pause_threshold5, self._active_time_range_site_config5),
+        ]
+        for info in infos:
+            downloaders, limit_sites, limit_speed, limit_sites_pause_threshold, active_time_range_site_config = info
+            is_in_time_range = self.__is_current_time_in_range_site_config(active_time_range_site_config)
+            if not downloaders or not limit_sites:
+                return
+            downloader_service_infos = self.get_downloader_service_infos(downloaders)
+            if not downloader_service_infos:
+                return
+            for downloader_service_info in downloader_service_infos.values():
+                self.limit_per_downloader(all_site_name_id_map, all_site_names, downloader_service_info,
+                                          limit_sites, limit_speed, limit_sites_pause_threshold, is_in_time_range)
         # 保存缓存
         # self.__update_config()
         logger.info("限速执行完成")
+
+    def limit_per_downloader(self, all_site_name_id_map, all_site_names, downloader_service_info,
+                                          limit_sites, limit_speed, limit_sites_pause_threshold, is_in_time_range):
+        downloader = downloader_service_info.name
+        downloader_obj = downloader_service_info.instance
+        dl_type = downloader_service_info.type
+        # 设置限速
+        to_limit_torrent_hashs = []
+        cancel_limit_torrent_hashs = []
+        cancel_limit_torrent_hashs_other = []
+        # 限速后仍然活动种子处理↓
+        # 限速100K中,且活动的种子,本次要暂停
+        to_pausedUP_hashs_cur = []
+        # 已经暂停,暂停时间超过x分钟的种子,本次要重新开始
+        to_cancel_pausedUP_hashs_cur = []
+        # 当前时间戳
+        current_time = time.time()
+        _limit_sites_pause_threshold_s = limit_sites_pause_threshold * 60
+        # 限速后仍然活动种子处理↑
+        if dl_type == "qbittorrent":
+            logger.info(f"{downloader} 开始设置限速 ...")
+            all_torrents, _ = downloader_obj.get_torrents()
+            for torrent in all_torrents:
+                # 当前种子 tags list
+                current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
+                # qb 补充站点标签,交集第一个就是站点标签
+                intersection = all_site_names.intersection(current_torrent_tag_list)
+                if intersection:
+                    site_name = list(intersection)[0]
+                    site_id = all_site_name_id_map[site_name] or -1
+                else:
+                    site_id = -1
+                    logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
+                if site_id in limit_sites:
+                    if is_in_time_range:
+                        to_limit_torrent_hashs.append(torrent.hash)
+                        # 限速后还活动就暂停
+                        if limit_sites_pause_threshold > 0:
+                            state = torrent.state  # str
+                            if "uploading" == state:
+                                to_pausedUP_hashs_cur.append(torrent.hash)
+                            elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                                pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
+                                if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
+                                    to_cancel_pausedUP_hashs_cur.append(torrent.hash)
+                    else:
+                        cancel_limit_torrent_hashs.append(torrent.hash)
+                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
+                else:
+                    cancel_limit_torrent_hashs_other.append(torrent.hash)
+            if to_limit_torrent_hashs:
+                downloader_obj.qbc.torrents_set_upload_limit(1024 * limit_speed, to_limit_torrent_hashs)
+                logger.info(f"{downloader} 限速{limit_speed}K种子个数: {len(to_limit_torrent_hashs)}")
+            # 其他的都是不限速的,塞到一个list吧
+            cancel_limit_list_all = cancel_limit_torrent_hashs + cancel_limit_torrent_hashs_other
+            logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
+            downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
+
+            # 限速中仍然有上传就暂停
+            if to_pausedUP_hashs_cur:
+                downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
+                # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
+                logger.info(f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
+                for t_hash in to_pausedUP_hashs_cur:
+                    self.to_pausedUP_hashs[t_hash] = current_time
+            if to_cancel_pausedUP_hashs_cur:
+                downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
+                # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
+                logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
+                for t_hash in to_cancel_pausedUP_hashs_cur:
+                    if t_hash in self.to_pausedUP_hashs:
+                        del self.to_pausedUP_hashs[t_hash]
+
+        elif dl_type == "transmission":
+            logger.info(f"{downloader} 开始设置限速 ...")
+            _trarg = ["id", "name", "labels", "hashString", "status", "rateUpload"]
+            tr_client = downloader_obj.trc
+            all_torrents = tr_client.get_torrents(arguments=_trarg)
+            # all_torrents, _ = downloader_obj.get_torrents()
+            for torrent in all_torrents:
+                # 当前种子 tags list
+                current_torrent_tag_list = [element.strip() for element in torrent.labels]
+                # qb 补充站点标签,交集第一个就是站点标签
+                intersection = all_site_names.intersection(current_torrent_tag_list)
+                if intersection:
+                    site_name = list(intersection)[0]
+                    site_id = all_site_name_id_map[site_name] or -1
+                else:
+                    site_id = -1
+                    logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
+                if site_id in limit_sites:
+                    if is_in_time_range:
+                        to_limit_torrent_hashs.append(torrent.hashString)
+                        # 限速后还活动就暂停
+                        if limit_sites_pause_threshold > 0:
+                            state = torrent.status  # Enum
+                            if state.seeding and torrent.rate_upload > 0:
+                                to_pausedUP_hashs_cur.append(torrent.hashString)
+                            elif state.stopped and ('暂停' not in current_torrent_tag_list):
+                                pausedUPTime = self.to_pausedUP_hashs.get(torrent.hashString, 0)
+                                if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
+                                    to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
+                    else:
+                        cancel_limit_torrent_hashs.append(torrent.hashString)
+                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
+                else:
+                    cancel_limit_torrent_hashs_other.append(torrent.hashString)
+            if to_limit_torrent_hashs:
+                tr_client.change_torrent(ids=to_limit_torrent_hashs, upload_limit=limit_speed,
+                                         upload_limited=True)
+                logger.info(f"{downloader} 限速{limit_speed}K种子个数: {len(to_limit_torrent_hashs)}")
+            # 其他的都是不限速的,塞到一个list吧
+            cancel_limit_list_all = cancel_limit_torrent_hashs + cancel_limit_torrent_hashs_other
+            logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
+            tr_client.change_torrent(ids=cancel_limit_list_all, upload_limit=0, upload_limited=False)
+
+            # 限速中仍然有上传就暂停
+            if to_pausedUP_hashs_cur:
+                downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
+                # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
+                logger.info(f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
+                for t_hash in to_pausedUP_hashs_cur:
+                    self.to_pausedUP_hashs[t_hash] = current_time
+            if to_cancel_pausedUP_hashs_cur:
+                downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
+                # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
+                logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
+                for t_hash in to_cancel_pausedUP_hashs_cur:
+                    if t_hash in self.to_pausedUP_hashs:
+                        del self.to_pausedUP_hashs[t_hash]
 
     def __is_current_time_in_range_site_config(self, active_time_range_site_config) -> bool:
         """判断当前时间是否在时间区间内-默认全天"""
