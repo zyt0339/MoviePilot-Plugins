@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.19"
+    plugin_version = "1.0.20"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1201,7 +1201,7 @@ class ZYTLimit(_PluginBase):
                     site_id = all_site_name_id_map[site_name] or -1
                 else:
                     site_id = -1
-                    logger.error(f"{downloader} {torrent.name} 没有添加站点标签{current_torrent_tag_list}")
+                    logger.info(f"{downloader} {torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                 if site_id in limit_sites:
                     if is_in_time_range:
                         to_limit_torrent_hashs.append(torrent.hash)
@@ -1224,20 +1224,22 @@ class ZYTLimit(_PluginBase):
                 logger.info(f"{downloader} 限速{limit_speed}K种子个数: {len(to_limit_torrent_hashs)}")
             # 其他的都是不限速的,塞到一个list吧
             cancel_limit_list_all = cancel_limit_torrent_hashs + cancel_limit_torrent_hashs_other
-            logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
-            downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
+            if cancel_limit_list_all:
+                logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
+                downloader_obj.qbc.torrents_set_upload_limit(0, cancel_limit_list_all)
 
             # 限速中仍然有上传就暂停
             if to_pausedUP_hashs_cur:
                 downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
-                # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
+                downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
                 logger.info(f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
                 for t_hash in to_pausedUP_hashs_cur:
                     self.to_pausedUP_hashs[t_hash] = current_time
             if to_cancel_pausedUP_hashs_cur:
                 downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
-                # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
-                logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
+                downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
+                temp_reason = "到达暂停时间" if is_in_time_range else "非限速区间"
+                logger.info(f"{downloader} {temp_reason},重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
                 for t_hash in to_cancel_pausedUP_hashs_cur:
                     if t_hash in self.to_pausedUP_hashs:
                         del self.to_pausedUP_hashs[t_hash]
@@ -1258,7 +1260,7 @@ class ZYTLimit(_PluginBase):
                     site_id = all_site_name_id_map[site_name] or -1
                 else:
                     site_id = -1
-                    logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
+                    logger.info(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                 if site_id in limit_sites:
                     if is_in_time_range:
                         to_limit_torrent_hashs.append(torrent.hashString)
@@ -1282,8 +1284,9 @@ class ZYTLimit(_PluginBase):
                 logger.info(f"{downloader} 限速{limit_speed}K种子个数: {len(to_limit_torrent_hashs)}")
             # 其他的都是不限速的,塞到一个list吧
             cancel_limit_list_all = cancel_limit_torrent_hashs + cancel_limit_torrent_hashs_other
-            logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
-            tr_client.change_torrent(ids=cancel_limit_list_all, upload_limit=0, upload_limited=False)
+            if cancel_limit_list_all:
+                logger.info(f"{downloader} 取消限速种子个数{len(cancel_limit_list_all)}")
+                tr_client.change_torrent(ids=cancel_limit_list_all, upload_limit=0, upload_limited=False)
 
             # 限速中仍然有上传就暂停
             if to_pausedUP_hashs_cur:
@@ -1295,7 +1298,8 @@ class ZYTLimit(_PluginBase):
             if to_cancel_pausedUP_hashs_cur:
                 downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
                 # downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P"])
-                logger.info(f"{downloader} 到达暂停时间,重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
+                temp_reason = "到达暂停时间" if is_in_time_range else "非限速区间"
+                logger.info(f"{downloader} {temp_reason},重新开始种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
                 for t_hash in to_cancel_pausedUP_hashs_cur:
                     if t_hash in self.to_pausedUP_hashs:
                         del self.to_pausedUP_hashs[t_hash]

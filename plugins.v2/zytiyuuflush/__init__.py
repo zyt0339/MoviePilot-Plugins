@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.14.2"
+    plugin_version = "2.14.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -754,6 +754,7 @@ class ZYTIYUUflush(_PluginBase):
         noautostart_set = set(self._noautostart.split(',')) if self._noautostart else set()
         noautostart_set_and_P100K = noautostart_set.copy()
         noautostart_set_and_P100K.add("P100K")
+        noautostart_set_and_P100K.add("P")
         for service in self.service_infos.values():
             downloader = service.name
             downloader_obj = service.instance
