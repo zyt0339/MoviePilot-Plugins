@@ -23,7 +23,7 @@ class ZYTInvitesSignin(_PluginBase):
     # 插件图标
     plugin_icon = "invites.png"
     # 插件版本
-    plugin_version = "1.4.1"
+    plugin_version = "1.4.1.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -370,6 +370,7 @@ class ZYTInvitesSignin(_PluginBase):
                    "enabled": False,
                    "onlyonce": False,
                    "notify": False,
+                   "only_notify_error": False,
                    "cookie": "",
                    "history_days": 30,
                    "cron": "0 9 * * *"
