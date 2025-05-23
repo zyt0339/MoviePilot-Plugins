@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.990"
+    plugin_version = "4.3.1.991"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1014,7 +1014,7 @@ class ZYTBrushFlow(_PluginBase):
                                         'props': {
                                             'model': 'active_time_range',
                                             'label': '开启时间段',
-                                            'placeholder': '如：00:00-08:00'
+                                            'placeholder': '00:00-08:00,18:00-20:00'
                                         }
                                     }
                                 ]
@@ -3102,15 +3102,15 @@ class ZYTBrushFlow(_PluginBase):
                 found_error = True  # 更新错误标志
 
         active_time_range = config.get("active_time_range")
-        if active_time_range and not self.__is_valid_time_range(time_range=active_time_range):
+        if active_time_range and not self.__is_valid_time_range_list(time_range=active_time_range):
             self.__log_and_notify_error(f"站点刷流任务出错，开启时间段设置错误：{active_time_range}")
-            config["active_time_range"] = None
+            # config["active_time_range"] = None
             found_error = True  # 更新错误标志
 
         active_time_range_site_config = config.get("active_time_range_site_config")
         if active_time_range_site_config and not self.__is_valid_time_range(time_range=active_time_range_site_config):
             self.__log_and_notify_error(f"二轮筛种生效时间段(忽略include/exclude)设置错误：{active_time_range_site_config}")
-            config["active_time_range_site_config"] = None
+            # config["active_time_range_site_config"] = None
             found_error = True  # 更新错误标志
         # 如果发现任何错误，返回False；否则返回True
         return not found_error
@@ -4083,6 +4083,28 @@ class ZYTBrushFlow(_PluginBase):
         return statistic_info
 
     @staticmethod
+    def __is_valid_time_range_list(time_range: str) -> bool:
+        """列表形式,检查时间范围字符串是否有效：格式为"HH:MM-HH:MM"，且时间有效"""
+        if not time_range:
+            return False
+        # 使用正则表达式匹配格式
+        time_range_list = [item for item in time_range.replace('，', ',').split(',') if item]
+        if not time_range_list:
+            return False
+        pattern = re.compile(r'^\d{2}:\d{2}-\d{2}:\d{2}$')
+        for range_item in time_range_list:
+            if not pattern.match(range_item):
+                return False
+            try:
+                start_str, end_str = range_item.split('-')
+                datetime.strptime(start_str, '%H:%M').time()
+                datetime.strptime(end_str, '%H:%M').time()
+            except Exception as e:
+                print(str(e))
+                return False
+        return True
+
+    @staticmethod
     def __is_valid_time_range(time_range: str) -> bool:
         """检查时间范围字符串是否有效：格式为"HH:MM-HH:MM"，且时间有效"""
         if not time_range:
@@ -4100,30 +4122,34 @@ class ZYTBrushFlow(_PluginBase):
         except Exception as e:
             print(str(e))
             return False
-
         return True
 
     def __is_current_time_in_range(self) -> bool:
-        """判断当前时间是否在开启时间区间内"""
+        """判断当前时间是否在开启时间区间内,active_time_range是时间段列表"""
 
         brush_config = self.__get_brush_config()
         active_time_range = brush_config.active_time_range
 
-        if not self.__is_valid_time_range(active_time_range):
-            # 如果时间范围格式不正确或不存在，说明当前没有开启时间段，返回True
-            return True
-
-        start_str, end_str = active_time_range.split('-')
-        start_time = datetime.strptime(start_str, '%H:%M').time()
-        end_time = datetime.strptime(end_str, '%H:%M').time()
+        if not self.__is_valid_time_range_list(active_time_range):
+            # 如果时间范围格式不正确或不存在，说明当前没有开启时间段，返回False
+            return False
+        time_range_list = [item for item in active_time_range.replace('，', ',').split(',') if item]
         now = datetime.now().time()
-
-        if start_time <= end_time:
-            # 情况1: 时间段不跨越午夜
-            return start_time <= now <= end_time
-        else:
-            # 情况2: 时间段跨越午夜
-            return now >= start_time or now <= end_time
+        for range_item in time_range_list:
+            start_str, end_str = range_item.split('-')
+            start_time = datetime.strptime(start_str, '%H:%M').time()
+            end_time = datetime.strptime(end_str, '%H:%M').time()
+            if start_time <= end_time:
+                # 情况1: 时间段不跨越午夜
+                contain = start_time <= now <= end_time
+                if contain:
+                    return True
+            else:
+                # 情况2: 时间段跨越午夜
+                contain = start_time or now <= end_time
+                if contain:
+                    return True
+        return False
 
     def __is_current_time_in_range_site_config(self) -> bool:
         """判断当前时间是否在开启时间区间内-二轮筛种生效时间段(忽略include/exclude)"""
