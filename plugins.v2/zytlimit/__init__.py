@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.15"
+    plugin_version = "1.0.16"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -55,30 +55,35 @@ class ZYTLimit(_PluginBase):
     _limit_speed1 = 0
     _limit_sites_pause_threshold1 = 0
     _active_time_range_site_config1 = None
+    _mark1 = None
 
     _downloaders2 = []
     _limit_sites2 = []
     _limit_speed2 = 0
     _limit_sites_pause_threshold2 = 0
     _active_time_range_site_config2 = None
+    _mark2 = None
 
     _downloaders3 = []
     _limit_sites3 = []
     _limit_speed3 = 0
     _limit_sites_pause_threshold3 = 0
     _active_time_range_site_config3 = None
+    _mark3 = None
 
     _downloaders4 = []
     _limit_sites4 = []
     _limit_speed4 = 0
     _limit_sites_pause_threshold4 = 0
     _active_time_range_site_config4 = None
+    _mark4 = None
 
     _downloaders5 = []
     _limit_sites5 = []
     _limit_speed5 = 0
     _limit_sites_pause_threshold5 = 0
     _active_time_range_site_config5 = None
+    _mark5 = None
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
     to_pausedUP_hashs = {}  # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
@@ -102,30 +107,35 @@ class ZYTLimit(_PluginBase):
             self._limit_speed1 = int(config.get("limit_speed1") or 0)
             self._limit_sites_pause_threshold1 = int(config.get("limit_sites_pause_threshold1") or 0)
             self._active_time_range_site_config1 = config.get("active_time_range_site_config1")
+            self._mark1 = config.get("mark1")
 
             self._downloaders2 = config.get("downloaders2")
             self._limit_sites2 = config.get("limit_sites2") or []
             self._limit_speed2 = int(config.get("limit_speed2") or 0)
             self._limit_sites_pause_threshold2 = int(config.get("limit_sites_pause_threshold2") or 0)
             self._active_time_range_site_config2 = config.get("active_time_range_site_config2")
+            self._mark2 = config.get("mark2")
 
             self._downloaders3 = config.get("downloaders3")
             self._limit_sites3 = config.get("limit_sites3") or []
             self._limit_speed3 = int(config.get("limit_speed3") or 0)
             self._limit_sites_pause_threshold3 = int(config.get("limit_sites_pause_threshold3") or 0)
             self._active_time_range_site_config3 = config.get("active_time_range_site_config3")
+            self._mark3 = config.get("mark3")
 
             self._downloaders4 = config.get("downloaders4")
             self._limit_sites4 = config.get("limit_sites4") or []
             self._limit_speed4 = int(config.get("limit_speed4") or 0)
             self._limit_sites_pause_threshold4 = int(config.get("limit_sites_pause_threshold4") or 0)
             self._active_time_range_site_config4 = config.get("active_time_range_site_config4")
+            self._mark4 = config.get("mark4")
 
             self._downloaders5 = config.get("downloaders5")
             self._limit_sites5 = config.get("limit_sites5") or []
             self._limit_speed5 = int(config.get("limit_speed5") or 0)
             self._limit_sites_pause_threshold5 = int(config.get("limit_sites_pause_threshold5") or 0)
             self._active_time_range_site_config5 = config.get("active_time_range_site_config5")
+            self._mark5 = config.get("mark5")
 
             # 加载模块
         if self._enabled or self._onlyonce:
@@ -296,7 +306,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -309,7 +319,17 @@ class ZYTLimit(_PluginBase):
                                    },
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
+                                       "content": [
+                                           {
+                                               "component": "VCronField",
+                                               "props": {"model": "cron", "label": "执行周期"}
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -322,7 +342,7 @@ class ZYTLimit(_PluginBase):
                                    },
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                       "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSwitch",
@@ -330,16 +350,6 @@ class ZYTLimit(_PluginBase):
                                                    "model": "onlyonce",
                                                    "label": "立即运行一次"
                                                }
-                                           }
-                                       ]
-                                   },
-                                   {
-                                       "component": "VCol",
-                                       "props": {"cols": 12, "md": 12},
-                                       "content": [
-                                           {
-                                               "component": "VCronField",
-                                               "props": {"model": "cron", "label": "执行周期"}
                                            }
                                        ]
                                    }
@@ -350,7 +360,7 @@ class ZYTLimit(_PluginBase):
                                'content': [
                                    {
                                        'component': 'VCol',
-                                       'props': {'cols': 12},
+                                       'props': {'cols': 3, "md": 3},
                                        'content': [
                                            {
                                                'component': 'VAlert',
@@ -358,6 +368,20 @@ class ZYTLimit(_PluginBase):
                                                    'type': 'info',
                                                    'variant': 'tonal',
                                                    'text': '限速一'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       'props': {'cols': 9, "md": 9},
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark1",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
                                                }
                                            }
                                        ]
@@ -369,7 +393,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                        "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -390,7 +414,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 8
+                                           "md": 9
                                        },
                                        "content": [
                                            {
@@ -469,7 +493,7 @@ class ZYTLimit(_PluginBase):
                                'content': [
                                    {
                                        'component': 'VCol',
-                                       'props': {'cols': 12},
+                                       'props': {'cols': 3, "md": 3},
                                        'content': [
                                            {
                                                'component': 'VAlert',
@@ -477,6 +501,20 @@ class ZYTLimit(_PluginBase):
                                                    'type': 'info',
                                                    'variant': 'tonal',
                                                    'text': '限速二'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       'props': {'cols': 9, "md": 9},
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark2",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
                                                }
                                            }
                                        ]
@@ -488,7 +526,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                        "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -509,7 +547,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 8
+                                           "md": 9
                                        },
                                        "content": [
                                            {
@@ -588,7 +626,7 @@ class ZYTLimit(_PluginBase):
                                'content': [
                                    {
                                        'component': 'VCol',
-                                       'props': {'cols': 12},
+                                       'props': {'cols': 3, "md": 3},
                                        'content': [
                                            {
                                                'component': 'VAlert',
@@ -596,6 +634,20 @@ class ZYTLimit(_PluginBase):
                                                    'type': 'info',
                                                    'variant': 'tonal',
                                                    'text': '限速三'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       'props': {'cols': 9, "md": 9},
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark3",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
                                                }
                                            }
                                        ]
@@ -607,7 +659,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                        "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -628,7 +680,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 8
+                                           "md": 9
                                        },
                                        "content": [
                                            {
@@ -707,7 +759,7 @@ class ZYTLimit(_PluginBase):
                                'content': [
                                    {
                                        'component': 'VCol',
-                                       'props': {'cols': 12},
+                                       'props': {'cols': 3, "md": 3},
                                        'content': [
                                            {
                                                'component': 'VAlert',
@@ -715,6 +767,20 @@ class ZYTLimit(_PluginBase):
                                                    'type': 'info',
                                                    'variant': 'tonal',
                                                    'text': '限速四'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       'props': {'cols': 9, "md": 9},
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark4",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
                                                }
                                            }
                                        ]
@@ -726,7 +792,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                        "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -747,7 +813,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 8
+                                           "md": 9
                                        },
                                        "content": [
                                            {
@@ -826,7 +892,7 @@ class ZYTLimit(_PluginBase):
                                'content': [
                                    {
                                        'component': 'VCol',
-                                       'props': {'cols': 12},
+                                       'props': {'cols': 3, "md": 3},
                                        'content': [
                                            {
                                                'component': 'VAlert',
@@ -834,6 +900,20 @@ class ZYTLimit(_PluginBase):
                                                    'type': 'info',
                                                    'variant': 'tonal',
                                                    'text': '限速五'
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       'props': {'cols': 9, "md": 9},
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark5",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
                                                }
                                            }
                                        ]
@@ -845,7 +925,7 @@ class ZYTLimit(_PluginBase):
                                "content": [
                                    {
                                        "component": "VCol",
-                                       "props": {"cols": 12, "md": 4},
+                                        "props": {"cols": 12, "md": 3},
                                        "content": [
                                            {
                                                "component": "VSelect",
@@ -866,7 +946,7 @@ class ZYTLimit(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 8
+                                           "md": 9
                                        },
                                        "content": [
                                            {
@@ -972,28 +1052,33 @@ class ZYTLimit(_PluginBase):
             "downloaders1": [],
             "limit_sites1": [],
             "limit_speed1": 0,
-            # "limit_sites_pause_threshold1": 0,
+            "limit_sites_pause_threshold1": 0,
             "active_time_range_site_config1": None,
+            "mark1": None,
             "downloaders2": [],
             "limit_sites2": [],
             "limit_speed2": 0,
-            # "limit_sites_pause_threshold2": 0,
+            "limit_sites_pause_threshold2": 0,
             "active_time_range_site_config2": None,
+            "mark2": None,
             "downloaders3": [],
             "limit_sites3": [],
             "limit_speed3": 0,
-            # "limit_sites_pause_threshold3": 0,
+            "limit_sites_pause_threshold3": 0,
             "active_time_range_site_config3": None,
+            "mark3": None,
             "downloaders4": [],
             "limit_sites4": [],
             "limit_speed4": 0,
-            # "limit_sites_pause_threshold4": 0,
+            "limit_sites_pause_threshold4": 0,
             "active_time_range_site_config4": None,
+            "mark4": None,
             "downloaders5": [],
             "limit_sites5": [],
             "limit_speed5": 0,
-            # "limit_sites_pause_threshold5": 0,
-            "active_time_range_site_config5": None
+            "limit_sites_pause_threshold5": 0,
+            "active_time_range_site_config5": None,
+            "mark5": None
         }
 
     def __update_config(self):
@@ -1008,26 +1093,31 @@ class ZYTLimit(_PluginBase):
             "limit_speed1": self._limit_speed1,
             "limit_sites_pause_threshold1": self._limit_sites_pause_threshold1,
             "active_time_range_site_config1": self._active_time_range_site_config1,
+            "mark1": self._mark1,
             "downloaders2": self._downloaders2,
             "limit_sites2": self._limit_sites2,
             "limit_speed2": self._limit_speed2,
             "limit_sites_pause_threshold2": self._limit_sites_pause_threshold2,
             "active_time_range_site_config2": self._active_time_range_site_config2,
+            "mark2": self._mark2,
             "downloaders3": self._downloaders3,
             "limit_sites3": self._limit_sites3,
             "limit_speed3": self._limit_speed3,
             "limit_sites_pause_threshold3": self._limit_sites_pause_threshold3,
             "active_time_range_site_config3": self._active_time_range_site_config3,
+            "mark3": self._mark3,
             "downloaders4": self._downloaders4,
             "limit_sites4": self._limit_sites4,
             "limit_speed4": self._limit_speed4,
             "limit_sites_pause_threshold4": self._limit_sites_pause_threshold4,
             "active_time_range_site_config4": self._active_time_range_site_config4,
+            "mark4": self._mark4,
             "downloaders5": self._downloaders5,
             "limit_sites5": self._limit_sites5,
             "limit_speed5": self._limit_speed5,
             "limit_sites_pause_threshold5": self._limit_sites_pause_threshold5,
             "active_time_range_site_config5": self._active_time_range_site_config5,
+            "mark5": self._mark5
         })
 
     def limit(self):
