@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.13"
+    plugin_version = "1.0.14"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -183,6 +183,9 @@ class ZYTLimit(_PluginBase):
             logger.warning("没有已连接的下载器，请检查配置")
             return None
         return active_services
+
+    def get_state(self) -> bool:
+        return True if self._enabled and self._cron else False
 
     @eventmanager.register(EventType.PluginAction)
     def run(self, event: Event = None):
