@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.989"
+    plugin_version = "4.3.1.990"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -3808,8 +3808,7 @@ class ZYTBrushFlow(_PluginBase):
                 return 0
             count = 0
             for torrent in torrents:
-                # if torrent.state in ['downloading', 'uploading'] and torrent.upspeed >= 1024:
-                if torrent.state in ['downloading', 'uploading']:
+                if torrent.state in ['downloading', 'uploading'] and torrent.upspeed > 10240:
                     count = count + 1
             return count
         except Exception as e:
