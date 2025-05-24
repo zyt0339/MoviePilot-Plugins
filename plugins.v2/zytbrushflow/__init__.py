@@ -262,7 +262,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.991"
+    plugin_version = "4.3.1.992"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2015,15 +2015,12 @@ class ZYTBrushFlow(_PluginBase):
         """
         定时刷流，添加下载任务
         """
+        if not self.__is_current_time_in_range():
+            logger.info(f"当前不在开启时间段区间内，刷流任务暂时暂停")
+            return
         brush_config = self.__get_brush_config()
-
         if not brush_config.brushsites or not brush_config.downloader or not self.downloader:
             return
-
-        if not self.__is_current_time_in_range():
-            logger.info(f"当前不在指定的刷流时间区间内，刷流操作将暂时暂停")
-            return
-
         with lock:
             logger.info(f"开始执行刷流任务 ...")
 
@@ -2434,6 +2431,10 @@ class ZYTBrushFlow(_PluginBase):
         """
         定时检查，删除下载任务
         """
+        if not self.__is_current_time_in_range():
+            logger.info(f"当前不在开启时间段区间内，检查任务暂时暂停")
+            return
+
         brush_config = self.__get_brush_config()
 
         if not brush_config.downloader or not self.downloader:
