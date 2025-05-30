@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.22"
+    plugin_version = "1.0.23"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1184,8 +1184,10 @@ class ZYTLimit(_PluginBase):
                 self.limit_per_downloader(all_site_name_id_map, all_site_names, downloader_service_info,
                                           limit_sites, limit_speed, limit_sites_pause_threshold, is_in_time_range, limit_speed <= 0)
         # 给downloader_site_record中未设置限速的站点,设置不限速
-        logger.info("其余种子不限速----------")
+        logger.info("其余站点种子不限速----------")
         for downloader, sites in downloader_site_record.items():
+            if sites:
+                logger.info(f"{downloader} {sites} 种子不限速")
             downloader_service_info = self.downloader_helper.get_service(name=downloader)
             self.limit_per_downloader(all_site_name_id_map, all_site_names, downloader_service_info, sites, 0, 0, False, True)
 
