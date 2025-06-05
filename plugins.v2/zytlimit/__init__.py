@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.24"
+    plugin_version = "1.0.25"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1230,6 +1230,7 @@ class ZYTLimit(_PluginBase):
                     site_id = -1
                     self.logger_info(cancel_limit, f"{downloader} {torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                 if site_id in limit_site_ids:
+                    state = torrent.state  # str
                     if cancel_limit:
                         to_cancel_limit_torrent_hashs.append(torrent.hash)
                         to_cancel_pausedUP_hashs_cur.append(torrent.hash)
@@ -1237,7 +1238,6 @@ class ZYTLimit(_PluginBase):
                         to_limit_torrent_hashs.append(torrent.hash)
                         # 限速后还活动就暂停,不限速的除外
                         if limit_sites_pause_threshold > 0 and limit_speed > 0:
-                            state = torrent.state  # str
                             if "uploading" == state:
                                 to_pausedUP_hashs_cur.append(torrent.hash)
                             elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
@@ -1246,7 +1246,8 @@ class ZYTLimit(_PluginBase):
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     else:  # 非限速区间,解除限速,解除暂停
                         to_cancel_limit_torrent_hashs.append(torrent.hash)
-                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
+                        if state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                 # else:  # 配置站点外,解除限速,会将前面已经设置的也误解除,如何办? 初始记录{downloader:all_sites,},限速的站点从all_sites中减去,剩余的设置一轮0速度
                 #     cancel_limit_torrent_hashs_other.append(torrent.hash)
             if to_limit_torrent_hashs:
@@ -1298,6 +1299,7 @@ class ZYTLimit(_PluginBase):
                     site_id = -1
                     self.logger_info(cancel_limit, f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                 if site_id in limit_site_ids:
+                    state = torrent.status  # Enum
                     if cancel_limit:
                         to_cancel_limit_torrent_hashs.append(torrent.hashString)
                         to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
@@ -1305,7 +1307,6 @@ class ZYTLimit(_PluginBase):
                         to_limit_torrent_hashs.append(torrent.hashString)
                         # 限速后还活动就暂停
                         if limit_sites_pause_threshold > 0:
-                            state = torrent.status  # Enum
                             if state.seeding and torrent.rate_upload > 0:
                                 to_pausedUP_hashs_cur.append(torrent.hashString)
                             elif state.stopped and ('暂停' not in current_torrent_tag_list):
@@ -1314,7 +1315,8 @@ class ZYTLimit(_PluginBase):
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     else:
                         to_cancel_limit_torrent_hashs.append(torrent.hashString)
-                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
+                        if state.stopped and ('暂停' not in current_torrent_tag_list):
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                 # else:
                 #     cancel_limit_torrent_hashs_other.append(torrent.hashString)
             if to_limit_torrent_hashs:
