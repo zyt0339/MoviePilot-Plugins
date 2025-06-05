@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.14.3"
+    plugin_version = "2.14.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -687,8 +687,11 @@ class IYUUAutoSeedzyt(_PluginBase):
                 # 获取种子hash
                 hash_str = self.__get_hash(torrent=torrent, dl_type=service.type)
                 all_hashs_in_cur_downloader.add(hash_str)
+                # 获取种子标签
+                torrent_labels = self.__get_label(torrent=torrent, dl_type=service.type)
+                log_torrent_tag = f"{torrent.name} {torrent_labels}"
                 if hash_str in self._error_caches or hash_str in self._permanent_error_caches:
-                    logger.info(f"种子 {hash_str} 辅种失败且已缓存，跳过 ...")
+                    logger.info(f"{log_torrent_tag} 辅种失败且已缓存，跳过 ...")
                     continue
                 save_path = self.__get_save_path(torrent=torrent, dl_type=service.type)
 
@@ -697,19 +700,17 @@ class IYUUAutoSeedzyt(_PluginBase):
                     nopath_skip = False
                     for nopath in self._nopaths.split('\n'):
                         if os.path.normpath(save_path).startswith(os.path.normpath(nopath)):
-                            logger.info(f"种子 {hash_str} 保存路径 {save_path} 不需要辅种，跳过 ...")
+                            logger.info(f"{log_torrent_tag} 保存路径 {save_path} 不需要辅种，跳过 ...")
                             nopath_skip = True
                             break
                     if nopath_skip:
                         continue
 
-                # 获取种子标签
-                torrent_labels = self.__get_label(torrent=torrent, dl_type=service.type)
                 if torrent_labels and self._nolabels:
                     is_skip = False
                     for label in self._nolabels.split(','):
                         if label in torrent_labels:
-                            logger.debug(f"种子 {hash_str} 含有不辅种标签 {label}，跳过 ...")
+                            logger.debug(f"{log_torrent_tag} 含有不辅种标签 {label}，跳过 ...")
                             is_skip = True
                             break
                     if is_skip:
@@ -718,8 +719,13 @@ class IYUUAutoSeedzyt(_PluginBase):
                 # 体积排除辅种
                 torrent_size = self.__get_torrent_size(torrent=torrent, dl_type=service.type) / 1024 / 1024 / 1024
                 if self._size and torrent_size < self._size:
-                    logger.info(f"种子 {hash_str} 大小:{torrent_size:.2f}GB，小于设定 {self._size}GB，跳过 ...")
+                    logger.info(f"{log_torrent_tag} 大小:{torrent_size:.2f}GB，小于设定 {self._size}GB，跳过 ...")
                     continue
+                # 拆包种子排除辅种
+                if service.type == "qbittorrent":
+                    if torrent.availability != -1 and torrent.availability < 1:
+                        logger.info(f"{log_torrent_tag} 下载不完整，跳过 ...")
+                        continue
 
                 hash_strs.append({
                     "hash": hash_str,

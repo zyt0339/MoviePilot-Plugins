@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.14.3"
+    plugin_version = "2.14.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -99,7 +99,6 @@ class ZYTIYUUflush(_PluginBase):
     fail = 0
     cached = 0
     to_pausedUP_hashs = {} # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
-
     def init_plugin(self, config: dict = None):
         self.sites_helper = SitesHelper()
         self.site_oper = SiteOper()
@@ -688,8 +687,11 @@ class ZYTIYUUflush(_PluginBase):
                 # 获取种子hash
                 hash_str = self.__get_hash(torrent=torrent, dl_type=service.type)
                 all_hashs_in_cur_downloader.add(hash_str)
+                # 获取种子标签
+                torrent_labels = self.__get_label(torrent=torrent, dl_type=service.type)
+                log_torrent_tag = f"{torrent.name} {torrent_labels}"
                 if hash_str in self._error_caches or hash_str in self._permanent_error_caches:
-                    logger.info(f"种子 {hash_str} 辅种失败且已缓存，跳过 ...")
+                    logger.info(f"{log_torrent_tag} 辅种失败且已缓存，跳过 ...")
                     continue
                 save_path = self.__get_save_path(torrent=torrent, dl_type=service.type)
 
@@ -698,19 +700,17 @@ class ZYTIYUUflush(_PluginBase):
                     nopath_skip = False
                     for nopath in self._nopaths.split('\n'):
                         if os.path.normpath(save_path).startswith(os.path.normpath(nopath)):
-                            logger.info(f"种子 {hash_str} 保存路径 {save_path} 不需要辅种，跳过 ...")
+                            logger.info(f"{log_torrent_tag} 保存路径 {save_path} 不需要辅种，跳过 ...")
                             nopath_skip = True
                             break
                     if nopath_skip:
                         continue
 
-                # 获取种子标签
-                torrent_labels = self.__get_label(torrent=torrent, dl_type=service.type)
                 if torrent_labels and self._nolabels:
                     is_skip = False
                     for label in self._nolabels.split(','):
                         if label in torrent_labels:
-                            logger.debug(f"种子 {hash_str} 含有不辅种标签 {label}，跳过 ...")
+                            logger.debug(f"{log_torrent_tag} 含有不辅种标签 {label}，跳过 ...")
                             is_skip = True
                             break
                     if is_skip:
@@ -719,8 +719,13 @@ class ZYTIYUUflush(_PluginBase):
                 # 体积排除辅种
                 torrent_size = self.__get_torrent_size(torrent=torrent, dl_type=service.type) / 1024 / 1024 / 1024
                 if self._size and torrent_size < self._size:
-                    logger.info(f"种子 {hash_str} 大小:{torrent_size:.2f}GB，小于设定 {self._size}GB，跳过 ...")
+                    logger.info(f"{log_torrent_tag} 大小:{torrent_size:.2f}GB，小于设定 {self._size}GB，跳过 ...")
                     continue
+                # 拆包种子排除辅种
+                if service.type == "qbittorrent":
+                    if torrent.availability != -1 and torrent.availability < 1:
+                        logger.info(f"{log_torrent_tag} 下载不完整，跳过 ...")
+                        continue
 
                 hash_strs.append({
                     "hash": hash_str,
@@ -811,7 +816,7 @@ class ZYTIYUUflush(_PluginBase):
                             if is_in_limit_sites:
                                 to_limit_torrent_hashs.append(torrent.hash)
                             else:
-                                if torrent.uploadLimit != 0:  # 去了限速标签,仍被被限速中的
+                                if torrent.uploadLimit != 0: # 去了限速标签,仍被被限速中的
                                     to_cancel_limit_torrent_hashs.append(torrent.hash)
                             # 限速100K仍然有上传就暂停:
                             if _limit_sites_pause_threshold_s > 0:
@@ -829,8 +834,7 @@ class ZYTIYUUflush(_PluginBase):
                             logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
                         if to_cancel_limit_torrent_hashs:
                             downloader_obj.qbc.torrents_set_upload_limit(0, to_cancel_limit_torrent_hashs)
-                            logger.info(
-                                f"{downloader} 从限速站点移除后,解除限速100K种子个数: {len(to_cancel_limit_torrent_hashs)}")
+                            logger.info(f"{downloader} 从限速站点移除后,解除限速100K种子个数: {len(to_cancel_limit_torrent_hashs)}")
                         # 限速100K仍然有上传就暂停:
                         if to_pausedUP_hashs_cur:
                             downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
