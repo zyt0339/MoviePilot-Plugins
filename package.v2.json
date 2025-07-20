@@ -187,11 +187,12 @@
         "name": "药丸签到(zyt)",
         "description": "药丸论坛签到。",
         "labels": "站点",
-        "version": "1.4.1.1",
+        "version": "1.4.1.2",
         "icon": "invites.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v1.4.1.2": "fix",
             "v1.4.1.1": "保存通知设置",
             "v1.4.1": "更新签到域名前缀,增加只发送失败通知",
             "v1.4": "自定义保留消息天数"
