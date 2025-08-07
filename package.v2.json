@@ -170,11 +170,12 @@
         "name": "QB&TR上传限速",
         "description": "自定义时间点执行限速逻辑",
         "labels": "限速",
-        "version": "1.0.25",
+        "version": "1.0.26",
         "icon": "upload.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v1.0.26": "bugfix 不该开始的开始了",
             "v1.0.25": "bugfix",
             "v1.0.21": "支持备注",
             "v1.0.15": "支持分散下载器",

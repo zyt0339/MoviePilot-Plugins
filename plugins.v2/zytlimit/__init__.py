@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.25"
+    plugin_version = "1.0.26"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1233,7 +1233,8 @@ class ZYTLimit(_PluginBase):
                     state = torrent.state  # str
                     if cancel_limit:
                         to_cancel_limit_torrent_hashs.append(torrent.hash)
-                        to_cancel_pausedUP_hashs_cur.append(torrent.hash)
+                        if torrent.state in ['pausedUP', 'stoppedUP'] and ('暂停' not in current_torrent_tag_list):
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     elif is_in_time_range:
                         to_limit_torrent_hashs.append(torrent.hash)
                         # 限速后还活动就暂停,不限速的除外
@@ -1302,7 +1303,8 @@ class ZYTLimit(_PluginBase):
                     state = torrent.status  # Enum
                     if cancel_limit:
                         to_cancel_limit_torrent_hashs.append(torrent.hashString)
-                        to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
+                        if state.stopped and ('暂停' not in current_torrent_tag_list):
+                            to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     elif is_in_time_range:
                         to_limit_torrent_hashs.append(torrent.hashString)
                         # 限速后还活动就暂停
