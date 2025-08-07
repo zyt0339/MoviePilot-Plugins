@@ -256,13 +256,13 @@ class ZYTBrushFlow(_PluginBase):
     # region 全局定义
 
     # 插件名称
-    plugin_name = "站点刷流(删辅种)"
+    plugin_name = "站点刷流(zyt)"
     # 插件描述
     plugin_desc = "自动托管刷流，将会提高对应站点的访问频率。"
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.992"
+    plugin_version = "4.3.1.993"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -354,7 +354,7 @@ class ZYTBrushFlow(_PluginBase):
 
         # 如果站点都没有配置，则不开启定时刷流服务
         if not brush_config.brushsites:
-            logger.info(f"站点刷流定时服务停止，没有配置站点")
+            logger.info(f"刷流服务停止，没有配置站点")
 
         # 如果开启&存在站点时，才需要启用后台任务
         self._task_brush_enable = brush_config.enabled and brush_config.brushsites
@@ -363,7 +363,7 @@ class ZYTBrushFlow(_PluginBase):
         if not brush_config.downloader:
             brush_config.enabled = False
             self.__update_config()
-            logger.info(f"站点刷流服务停止，没有配置下载器")
+            logger.info(f"刷流服务停止，没有配置下载器")
             return
 
         if not self.service_info:
@@ -373,19 +373,19 @@ class ZYTBrushFlow(_PluginBase):
         if brush_config.onlyonce:
             self._scheduler = BackgroundScheduler(timezone=settings.TZ)
 
-            logger.info(f"站点刷流服务启动，立即运行一次")
+            logger.info(f"刷流服务启动，立即运行一次")
             self._scheduler.add_job(self.brush, "date",
                                     run_date=datetime.now(
                                         tz=pytz.timezone(settings.TZ)
                                     ) + timedelta(seconds=3),
-                                    name="站点刷流服务")
+                                    name="刷流服务")
 
-            logger.info(f"站点刷流检查服务启动，立即运行一次")
+            logger.info(f"检查服务启动，立即运行一次")
             self._scheduler.add_job(self.check, "date",
                                     run_date=datetime.now(
                                         tz=pytz.timezone(settings.TZ)
                                     ) + timedelta(seconds=3),
-                                    name="站点刷流检查服务")
+                                    name="检查服务")
 
             # 关闭一次性开关
             brush_config.onlyonce = False
@@ -405,11 +405,11 @@ class ZYTBrushFlow(_PluginBase):
         brush_config = self.__get_brush_config()
         service = self.downloader_helper.get_service(name=brush_config.downloader)
         if not service:
-            self.__log_and_notify_error("站点刷流任务出错，获取下载器实例失败，请检查配置")
+            self.__log_and_notify_error("站点刷流出错，获取下载器实例失败，请检查配置")
             return None
 
         if service.instance.is_inactive():
-            self.__log_and_notify_error("站点刷流任务出错，下载器未连接")
+            self.__log_and_notify_error("站点刷流出错，下载器未连接")
             return None
 
         return service
@@ -448,36 +448,39 @@ class ZYTBrushFlow(_PluginBase):
         brush_config = self.__get_brush_config()
         if not brush_config:
             return services
-
         if self._task_brush_enable:
             if brush_config.cron:
                 if not is_int(brush_config.cron):
-                    values = brush_config.cron.split()
-                    values[0] = f"{datetime.now().minute % 10}/10"
-                    cron = " ".join(values)
-                    logger.info(f"站点刷流定时服务启动，执行周期 {cron}")
-                    cron_trigger = CronTrigger.from_crontab(cron)
-                    services.append({
-                        "id": "ZYTBrushFlow",
-                        "name": "站点刷流服务",
-                        "trigger": cron_trigger,
-                        "func": self.brush
-                    })
+                    # values = brush_config.cron.split()
+                    # values[0] = f"{datetime.now().minute % 10}/10"
+                    # cron = " ".join(values)
+                    cron = brush_config.cron
+                    logger.info(f"刷流服务启动，执行周期 {cron}")
+                    try:
+                        cron_trigger = CronTrigger.from_crontab(cron)
+                        services.append({
+                            "id": "ZYTBrushFlow",
+                            "name": "刷流服务",
+                            "trigger": cron_trigger,
+                            "func": self.brush
+                        })
+                    except Exception as err:
+                        logger.error(f"刷流定时配置错误：{str(err)}")
                 else:
                     minute_brush = int(brush_config.cron)
-                    logger.info(f"站点刷流定时服务启动，时间间隔 {minute_brush} 分钟")
+                    logger.info(f"刷流服务启动，时间间隔 {minute_brush} 分钟")
                     services.append({
                         "id": "ZYTBrushFlow",
-                        "name": "站点刷流服务",
+                        "name": "刷流服务",
                         "trigger": "interval",
                         "func": self.brush,
                         "kwargs": {"minutes": minute_brush}
                     })
             else:
-                logger.info(f"站点刷流定时服务启动，默认时间间隔 {self._brush_interval} 分钟")
+                logger.info(f"刷流服务启动，默认时间间隔 {self._brush_interval} 分钟")
                 services.append({
                     "id": "ZYTBrushFlow",
-                    "name": "站点刷流服务",
+                    "name": "刷流服务",
                     "trigger": "interval",
                     "func": self.brush,
                     "kwargs": {"minutes": self._brush_interval}
@@ -486,39 +489,43 @@ class ZYTBrushFlow(_PluginBase):
         if brush_config.enabled:
             if brush_config.cron_check:
                 if not is_int(brush_config.cron_check):
-                    values2 = brush_config.cron_check.split()
-                    values2[0] = f"{datetime.now().minute % 10}/10"
-                    cron_check = " ".join(values2)
-                    logger.info(f"站点刷流检查定时服务启动，执行周期 {cron_check}")
-                    cron_check_trigger = CronTrigger.from_crontab(cron_check)
-                    services.append({
-                        "id": "ZYTBrushFlowCheck",
-                        "name": "站点刷流检查服务",
-                        "trigger": cron_check_trigger,
-                        "func": self.check
-                    })
+                    # values2 = brush_config.cron_check.split()
+                    # values2[0] = f"{datetime.now().minute % 10}/10"
+                    # cron_check = " ".join(values2)
+                    cron_check = brush_config.cron_check
+                    logger.info(f"检查服务启动，执行周期 {cron_check}")
+                    try:
+                        cron_check_trigger = CronTrigger.from_crontab(cron_check)
+                        services.append({
+                            "id": "ZYTBrushFlowCheck",
+                            "name": "检查服务",
+                            "trigger": cron_check_trigger,
+                            "func": self.check
+                        })
+                    except Exception as err:
+                        logger.error(f"检查配置错误：{str(err)}")
                 else:
                     minute_check = int(brush_config.cron_check)
-                    logger.info(f"站点刷流检查定时服务启动，时间间隔 {minute_check} 分钟")
+                    logger.info(f"检查服务启动，时间间隔 {minute_check} 分钟")
                     services.append({
                         "id": "ZYTBrushFlowCheck",
-                        "name": "站点刷流检查服务",
+                        "name": "检查服务",
                         "trigger": "interval",
                         "func": self.check,
                         "kwargs": {"minutes": minute_check}
                     })
             else:
-                logger.info(f"站点刷流检查定时服务启动，默认时间间隔 {self._check_interval} 分钟")
+                logger.info(f"检查服务启动，默认时间间隔 {self._check_interval} 分钟")
                 services.append({
                     "id": "ZYTBrushFlowCheck",
-                    "name": "站点刷流检查服务",
+                    "name": "检查服务",
                     "trigger": "interval",
                     "func": self.check,
                     "kwargs": {"minutes": self._check_interval}
                 })
 
         if not services:
-            logger.info("站点刷流服务未开启")
+            logger.info("刷流服务未开启")
 
         return services
 
