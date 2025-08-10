@@ -4,6 +4,7 @@ import random
 import re
 import threading
 import time
+import requests
 from datetime import datetime, timedelta
 from typing import Any, List, Dict, Tuple, Optional, Union, Set
 from urllib.parse import urlparse, parse_qs, unquote, parse_qsl, urlencode, urlunparse
@@ -122,7 +123,8 @@ class BrushConfig:
             "proxy_delete",
             "qb_category",
             "site_hr_active",
-            "site_skip_tips"
+            "site_skip_tips",
+            "site_visit_limit"  # 站点请求频控请求地址 http://localhost:xxx/check_site_visit_limit?site_name=example.com&last_time=2025-08-10T23:22:28&check_time=600
             # 当新增支持字段时，仅在此处添加字段名
         }
         try:
@@ -262,7 +264,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.993"
+    plugin_version = "4.3.1.994"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2073,6 +2075,12 @@ class ZYTBrushFlow(_PluginBase):
             siteinfos_of_site = {}
             is_current_time_in_range_site_config = self.__is_current_time_in_range_site_config()
             for site in site_infos:
+                site_visit_limit = brush_config.group_site_configs.get('site_visit_limit', None)
+                if site_visit_limit:
+                    check_pass = self.__check_site_visit(site_visit_limit, site.name, 600)
+                    if not check_pass:
+                        logger.info(f"站点 {site.name} 触发频控，停止本轮刷流")
+                        continue
                 torrents, siteinfo = self.__get_torrents_by_site(siteid=site.id)
                 if torrents:
                     # 如果站点刷流没有正确响应，说明没有通过前置条件，其他站点也不需要继续刷流了
@@ -2117,6 +2125,23 @@ class ZYTBrushFlow(_PluginBase):
             # 保存统计数据
             self.save_data("statistic", statistic_info)
             logger.info(f"刷流任务执行完成")
+
+    def __check_site_visit(self, url, site_name, check_time_sec=600):
+        params = {
+            "site_name": site_name,
+            "last_time": datetime.now().replace(microsecond=0).isoformat(),
+            "check_time": check_time_sec  # 频控时间默认10min
+        }
+        try:
+            response = requests.get(url, params=params)
+            if response.status_code == 200:
+                return response.json()["check_pass"]
+            else:
+                logger.info(f"频控接口请求失败: {response.status_code} - {response.text}")
+                return False
+        except Exception as e:
+            logger.info(f"频控接口请求异常: {str(e)}")
+            return False
 
     def __get_torrents_by_site(self, siteid):
         """
