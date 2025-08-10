@@ -268,7 +268,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.996"
+    plugin_version = "4.3.1.997"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2137,7 +2137,7 @@ class ZYTBrushFlow(_PluginBase):
             "check_time": check_time_sec  # 频控时间默认10min
         }
         try:
-            response = requests.get(f"http://{url}", params=params)
+            response = requests.get(url, params=params)
             if response.status_code == 200:
                 return response.json()["check_pass"]
             else:
