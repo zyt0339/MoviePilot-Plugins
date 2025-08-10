@@ -268,7 +268,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.998"
+    plugin_version = "4.3.2.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
