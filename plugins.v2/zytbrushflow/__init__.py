@@ -81,6 +81,7 @@ class BrushConfig:
         self.qb_category = config.get("qb_category")
         self.site_hr_active = config.get("site_hr_active", False)
         self.site_skip_tips = config.get("site_skip_tips", False)
+        self.site_visit_limit = config.get("site_visit_limit", None)
 
         self.brush_tag = "刷流"
         # 站点独立配置
@@ -190,7 +191,8 @@ class BrushConfig:
     "proxy_delete": false,
     "qb_category": "刷流",
     "site_hr_active": true,
-    "site_skip_tips": true
+    "site_skip_tips": true,
+    "site_visit_limit": ""
 }]"""
         return desc + config
 
@@ -264,7 +266,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.994"
+    plugin_version = "4.3.1.995"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2075,7 +2077,7 @@ class ZYTBrushFlow(_PluginBase):
             siteinfos_of_site = {}
             is_current_time_in_range_site_config = self.__is_current_time_in_range_site_config()
             for site in site_infos:
-                site_visit_limit = brush_config.group_site_configs.get('site_visit_limit', None)
+                site_visit_limit = brush_config.site_visit_limit
                 if site_visit_limit:
                     check_pass = self.__check_site_visit(site_visit_limit, site.name, 600)
                     if not check_pass:
