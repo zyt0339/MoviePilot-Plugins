@@ -2080,7 +2080,7 @@ class ZYTBrushFlow(_PluginBase):
             is_current_time_in_range_site_config = self.__is_current_time_in_range_site_config()
             for site in site_infos:
                 site_visit_limit = self.__get_brush_config(site.name).site_visit_limit
-                logger.info(f"站点 {site.name} 频控url: {site_visit_limit}")
+                logger.debug(f"站点 {site.name} 频控url: {site_visit_limit}")
                 if site_visit_limit:
                     check_pass = self.__check_site_visit(site_visit_limit, site.name, 600)
                     logger.info(f"站点 {site.name} 触发频控检查，check_pass={check_pass}")
