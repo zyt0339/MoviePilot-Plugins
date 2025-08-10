@@ -268,7 +268,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.1.997"
+    plugin_version = "4.3.1.998"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2079,11 +2079,12 @@ class ZYTBrushFlow(_PluginBase):
             siteinfos_of_site = {}
             is_current_time_in_range_site_config = self.__is_current_time_in_range_site_config()
             for site in site_infos:
-                site_visit_limit = brush_config.site_visit_limit
+                site_visit_limit = self.__get_brush_config(site.name).site_visit_limit
+                logger.info(f"站点 {site.name} 频控url: {site_visit_limit}")
                 if site_visit_limit:
                     check_pass = self.__check_site_visit(site_visit_limit, site.name, 600)
+                    logger.info(f"站点 {site.name} 触发频控检查，check_pass={check_pass}")
                     if not check_pass:
-                        logger.info(f"站点 {site.name} 触发频控，停止本轮刷流")
                         continue
                 torrents, siteinfo = self.__get_torrents_by_site(siteid=site.id)
                 if torrents:
