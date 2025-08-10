@@ -268,7 +268,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.2.1"
+    plugin_version = "4.3.2.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2135,7 +2135,8 @@ class ZYTBrushFlow(_PluginBase):
         params = {
             "site_name": site_name,
             "last_time": datetime.now().replace(microsecond=0).isoformat(),
-            "check_time": check_time_sec  # 频控时间默认10min
+            "check_time": check_time_sec,  # 频控时间默认10min
+            "downloader": self.service_info.name
         }
         try:
             response = requests.get(url, params=params)
