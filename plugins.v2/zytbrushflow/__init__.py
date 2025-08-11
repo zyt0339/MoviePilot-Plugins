@@ -268,7 +268,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.2.2"
+    plugin_version = "4.3.2.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -2083,7 +2083,6 @@ class ZYTBrushFlow(_PluginBase):
                 logger.debug(f"站点 {site.name} 频控url: {site_visit_limit}")
                 if site_visit_limit:
                     check_pass = self.__check_site_visit(site_visit_limit, site.name, 600)
-                    logger.info(f"站点 {site.name} 触发频控检查，check_pass={check_pass}")
                     if not check_pass:
                         continue
                 torrents, siteinfo = self.__get_torrents_by_site(siteid=site.id)
@@ -2136,12 +2135,15 @@ class ZYTBrushFlow(_PluginBase):
             "site_name": site_name,
             "last_time": datetime.now().replace(microsecond=0).isoformat(),
             "check_time": check_time_sec,  # 频控时间默认10min
-            "downloader": self.service_info.name
+            "downloader": self.service_info.name,
+            "request_id":  str(time.time())
         }
         try:
-            response = requests.get(url, params=params)
+            response = requests.get(url, params=params, timeout=(5, 10))# 连接超时5秒，读取超时10秒
+            check_pass = response.json()["check_pass"]
+            logger.info(f"站点 {site_name} 触发频控检查，check_pass={check_pass}")
             if response.status_code == 200:
-                return response.json()["check_pass"]
+                return check_pass
             else:
                 logger.info(f"频控接口请求失败: {response.status_code} - {response.text}")
                 return False
