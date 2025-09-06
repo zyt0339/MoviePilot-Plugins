@@ -23,7 +23,7 @@ class ZYTInvitesSignin(_PluginBase):
     # 插件图标
     plugin_icon = "invites.png"
     # 插件版本
-    plugin_version = "1.4.1.2"
+    plugin_version = "1.4.1.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -40,7 +40,6 @@ class ZYTInvitesSignin(_PluginBase):
     # 任务执行间隔
     _cron = None
     _cookie = None
-    _user_agent = None
     _onlyonce = False
     _notify = False
     _only_notify_error = False
@@ -57,7 +56,6 @@ class ZYTInvitesSignin(_PluginBase):
             self._enabled = config.get("enabled")
             self._cron = config.get("cron")
             self._cookie = config.get("cookie")
-            self._user_agent = config.get("user_agent")
             self._notify = config.get("notify")
             self._only_notify_error = config.get("only_notify_error")
             self._onlyonce = config.get("onlyonce")
@@ -77,7 +75,6 @@ class ZYTInvitesSignin(_PluginBase):
                 "cron": self._cron,
                 "enabled": self._enabled,
                 "cookie": self._cookie,
-                "user_agent": self._user_agent,
                 "notify": self._notify,
                 "only_notify_error": self._only_notify_error,
                 "history_days": self._history_days,
@@ -118,35 +115,10 @@ class ZYTInvitesSignin(_PluginBase):
             self.send_error_notify("未找到userId")
             return
 
-        # headers = {
-        #     "X-Csrf-Token": csrfToken,
-        #     "X-Http-Method-Override": "PATCH",
-        #     "Cookie": self._cookie
-        # }
-        # 请求头信息
         headers = {
-            "authority": "invites.fun",
-            "method": "POST",
-            "path": "/api/users/" + userId,
-            "scheme": "https",
-            "accept": "*/*",
-            "accept-encoding": "gzip, deflate, br, zstd",
-            "accept-language": "zh-CN,zh;q=0.9",
-            "content-type": "application/json; charset=UTF-8",
-            "cookie": self._cookie,
-            "dnt": "1",
-            # "origin": self.my_site.mirror,
-            # "referer": self.my_site.mirror,
-            # "sec-ch-ua": "\"Google Chrome\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\"",
-            # "sec-ch-ua-mobile": "?1",
-            # "sec-ch-ua-platform": "\"Android\"",
-            # "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "sec-gpc": "1",
-            "user-agent": self._user_agent,  # todo 代理
-            "x-csrf-token": csrfToken,
-            "x-http-method-override": "PATCH"
+            "X-Csrf-Token": csrfToken,
+            "X-Http-Method-Override": "PATCH",
+            "Cookie": self._cookie
         }
 
         data = {
@@ -154,14 +126,11 @@ class ZYTInvitesSignin(_PluginBase):
                 "type": "users",
                 "attributes": {
                     "canCheckin": False,
-                    "totalContinuousCheckIn": 1
+                    "totalContinuousCheckIn": 2
                 },
                 "id": userId
             }
         }
-
-        # 请求的 URL "api/users/{}"
-        # check_in_url = self.site.page_sign_in.format(user_id)
 
         # 开始签到
         res = RequestUtils(headers=headers).post_res(url=f"https://www.invites.fun/api/users/{userId}", json=data)
@@ -360,7 +329,7 @@ class ZYTInvitesSignin(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 3
+                                           'md': 6
                                        },
                                        'content': [
                                            {
@@ -368,22 +337,6 @@ class ZYTInvitesSignin(_PluginBase):
                                                'props': {
                                                    'model': 'cookie',
                                                    'label': '药丸cookie'
-                                               }
-                                           }
-                                       ]
-                                   },
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 3
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'user_agent',
-                                                   'label': 'user_agent'
                                                }
                                            }
                                        ]
