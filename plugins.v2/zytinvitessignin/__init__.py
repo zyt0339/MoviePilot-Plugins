@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+
 from app.core.config import settings
 from app.plugins import _PluginBase
 from typing import Any, List, Dict, Tuple, Optional
@@ -22,7 +23,7 @@ class ZYTInvitesSignin(_PluginBase):
     # 插件图标
     plugin_icon = "invites.png"
     # 插件版本
-    plugin_version = "1.4.1.3"
+    plugin_version = "1.4.1.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -41,11 +42,9 @@ class ZYTInvitesSignin(_PluginBase):
     _cookie = None
     _user_agent = None
     _onlyonce = False
-    _use_proxy = False
     _notify = False
     _only_notify_error = False
     _history_days = None
-    _main_url = None
 
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
@@ -59,20 +58,17 @@ class ZYTInvitesSignin(_PluginBase):
             self._cron = config.get("cron")
             self._cookie = config.get("cookie")
             self._user_agent = config.get("user_agent")
-            self._use_proxy = config.get("use_proxy")
             self._notify = config.get("notify")
             self._only_notify_error = config.get("only_notify_error")
             self._onlyonce = config.get("onlyonce")
             self._history_days = config.get("history_days") or 30
-            self._main_url = config.get("main_url") or 'https://.www.invites.fun'
 
         if self._onlyonce:
             # 定时服务
             self._scheduler = BackgroundScheduler(timezone=settings.TZ)
             logger.info(f"药丸签到服务启动，立即运行一次")
             self._scheduler.add_job(func=self.__signin, trigger='date',
-                                    run_date=datetime.now(
-                                        tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3),
+                                    run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3),
                                     name="药丸签到")
             # 关闭一次性开关
             self._onlyonce = False
@@ -82,11 +78,9 @@ class ZYTInvitesSignin(_PluginBase):
                 "enabled": self._enabled,
                 "cookie": self._cookie,
                 "user_agent": self._user_agent,
-                "use_proxy": self._use_proxy,
                 "notify": self._notify,
                 "only_notify_error": self._only_notify_error,
                 "history_days": self._history_days,
-                "main_url": self._main_url,
             })
 
             # 启动任务
@@ -98,15 +92,7 @@ class ZYTInvitesSignin(_PluginBase):
         """
         药丸签到
         """
-        # res = RequestUtils(
-        #     cookies=site.get("cookie"),
-        #     ua=site.get("ua") or settings.USER_AGENT,
-        #     proxies=settings.PROXY if site.get("proxy") else None
-        # ).get_res(url=page_url)
-
-        res = RequestUtils(cookies=self._cookie, ua=self._user_agent,
-                           proxies=settings.PROXY if self._use_proxy else None).get_res(
-            url=self._main_url)
+        res = RequestUtils(cookies=self._cookie).get_res(url="https://www.invites.fun")
         if not res or res.status_code != 200:
             self.send_error_notify("请求药丸错误")
             return
@@ -139,7 +125,7 @@ class ZYTInvitesSignin(_PluginBase):
         # }
         # 请求头信息
         headers = {
-            "authority": self._main_url.replace('https://', '', 1),
+            "authority": "invites.fun",
             "method": "POST",
             "path": "/api/users/" + userId,
             "scheme": "https",
@@ -149,8 +135,8 @@ class ZYTInvitesSignin(_PluginBase):
             "content-type": "application/json; charset=UTF-8",
             "cookie": self._cookie,
             "dnt": "1",
-            "origin": self._main_url,  # https://www.invites.fun
-            "referer": self._main_url,
+            # "origin": self.my_site.mirror,
+            # "referer": self.my_site.mirror,
             # "sec-ch-ua": "\"Google Chrome\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\"",
             # "sec-ch-ua-mobile": "?1",
             # "sec-ch-ua-platform": "\"Android\"",
@@ -158,7 +144,7 @@ class ZYTInvitesSignin(_PluginBase):
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
             "sec-gpc": "1",
-            "user-agent": self._user_agent,
+            "user-agent": self._user_agent,  # todo 代理
             "x-csrf-token": csrfToken,
             "x-http-method-override": "PATCH"
         }
@@ -178,11 +164,7 @@ class ZYTInvitesSignin(_PluginBase):
         # check_in_url = self.site.page_sign_in.format(user_id)
 
         # 开始签到
-        # POST请求
-        res = RequestUtils(cookies=self._cookie, ua=self._user_agent,
-                           proxies=settings.PROXY if self._use_proxy else None,
-                           headers=headers).post_res(url=f"{self._main_url}/api/users/{userId}",
-                                                     json=data)
+        res = RequestUtils(headers=headers).post_res(url=f"https://www.invites.fun/api/users/{userId}", json=data)
 
         if not res or res.status_code != 200:
             logger.error("药丸签到失败")
@@ -277,7 +259,7 @@ class ZYTInvitesSignin(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 2
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -293,23 +275,7 @@ class ZYTInvitesSignin(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 2
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VSwitch',
-                                               'props': {
-                                                   'model': 'use_proxy',
-                                                   'label': '代理',
-                                               }
-                                           }
-                                       ]
-                                   },
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 2
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -362,7 +328,7 @@ class ZYTInvitesSignin(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 2
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -378,7 +344,7 @@ class ZYTInvitesSignin(_PluginBase):
                                        'component': 'VCol',
                                        'props': {
                                            'cols': 12,
-                                           'md': 2
+                                           'md': 3
                                        },
                                        'content': [
                                            {
@@ -386,22 +352,6 @@ class ZYTInvitesSignin(_PluginBase):
                                                'props': {
                                                    'model': 'history_days',
                                                    'label': '保留历史天数'
-                                               }
-                                           }
-                                       ]
-                                   },
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 2
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'main_url',
-                                                   'label': 'https://www.invites.fun'
                                                }
                                            }
                                        ]
@@ -466,12 +416,10 @@ class ZYTInvitesSignin(_PluginBase):
                ], {
                    "enabled": False,
                    "onlyonce": False,
-                   "use_proxy": False,
                    "notify": False,
                    "only_notify_error": False,
                    "cookie": "",
                    "history_days": 30,
-                   "main_url": 'https://www.invites.fun',
                    "cron": "0 9 * * *"
                }
 
