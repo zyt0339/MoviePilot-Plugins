@@ -268,7 +268,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.2.3"
+    plugin_version = "4.3.2.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -4187,7 +4187,7 @@ class ZYTBrushFlow(_PluginBase):
                     return True
             else:
                 # 情况2: 时间段跨越午夜
-                contain = start_time or now <= end_time
+                contain = now >= start_time or now <= end_time
                 if contain:
                     return True
         return False
