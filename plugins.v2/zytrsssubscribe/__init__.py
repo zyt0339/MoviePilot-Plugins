@@ -26,7 +26,7 @@ class ZYTRssSubscribe(_PluginBase):
     # 插件图标
     plugin_icon = "seed.png"
     # 插件版本
-    plugin_version = "1.0.2"
+    plugin_version = "1.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -47,6 +47,7 @@ class ZYTRssSubscribe(_PluginBase):
     # 配置属性
     _enabled: bool = False
     _cron: str = ""
+    _simulate: bool = True
     _notify: bool = False
     _onlyonce: bool = False
     _address: str = ""
@@ -67,6 +68,7 @@ class ZYTRssSubscribe(_PluginBase):
             self.__validate_and_fix_config(config=config)
             self._enabled = config.get("enabled")
             self._cron = config.get("cron")
+            self._simulate = config.get("simulate")
             self._notify = config.get("notify")
             self._onlyonce = config.get("onlyonce")
             self._address = config.get("address")
@@ -156,7 +158,7 @@ class ZYTRssSubscribe(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     'cols': 12,
-                                    'md': 4
+                                    'md': 3
                                 },
                                 'content': [
                                     {
@@ -172,7 +174,23 @@ class ZYTRssSubscribe(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     'cols': 12,
-                                    'md': 4
+                                    'md': 3
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VSwitch',
+                                        'props': {
+                                            'model': 'simulate',
+                                            'label': '模拟下载',
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                    'md': 3
                                 },
                                 'content': [
                                     {
@@ -188,7 +206,7 @@ class ZYTRssSubscribe(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     'cols': 12,
-                                    'md': 4
+                                    'md': 3
                                 },
                                 'content': [
                                     {
@@ -341,6 +359,7 @@ class ZYTRssSubscribe(_PluginBase):
         ], {
             "enabled": False,
             "notify": True,
+            "simulate": True,
             "onlyonce": False,
             "cron": "*/30 * * * *",
             "address": "",
@@ -372,6 +391,7 @@ class ZYTRssSubscribe(_PluginBase):
         """
         self.update_config({
             "enabled": self._enabled,
+            "simulate": self._simulate,
             "notify": self._notify,
             "onlyonce": self._onlyonce,
             "cron": self._cron,
@@ -518,12 +538,17 @@ class ZYTRssSubscribe(_PluginBase):
                             logger.info(f"{title} - 种子大小不在指定范围")
                             continue
                     # 添加下载任务
-                    result = self.__download(service=service, torrent_content=enclosure, torrent_title=title,
-                                             site_ua=site.ua, site_cookie=site.cookie)
-                    if result:
-                        logger.info(f"{title} 添加下载成功！")
+                    simulate_prefix = ''
+                    if self._simulate:
+                        result = True
+                        simulate_prefix = '(模拟)'
                     else:
-                        logger.warning(f"{title} 添加下载失败！")
+                        result = self.__download(service=service, torrent_content=enclosure, torrent_title=title,
+                                                 site_ua=site.ua, site_cookie=site.cookie)
+                    if result:
+                        logger.info(f"{simulate_prefix}{title} 添加下载成功！")
+                    else:
+                        logger.warning(f"{simulate_prefix}{title} 添加下载失败！")
                         continue
                     # 存储历史记录,todo 站点 标题 发布时间 大小 做种人数
                     # history.append({
