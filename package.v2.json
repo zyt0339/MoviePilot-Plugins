@@ -142,20 +142,6 @@
             "v1.1": "定时清理插件产生的日志"
         }
     },
-    "ZYTRssSubscribe": {
-        "name": "RSS订阅下载",
-        "description": "RSS订阅下载,只支持qbittorrent",
-        "labels": "刷流",
-        "version": "1.0.4",
-        "icon": "seed.png",
-        "author": "zyt",
-        "level": 2,
-        "history": {
-            "v1.0.4": "模拟订阅下载2",
-            "v1.0.1": "bugfix",
-            "v1.0.0": "RSS订阅下载"
-        }
-    },
     "ZYTRepairSiteDates": {
         "name": "修复站点数据",
         "description": "修复站点数据为0的天数,用前一天数据填充",
