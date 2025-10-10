@@ -1,7 +1,6 @@
 import datetime
 import re
 import traceback
-from pathlib import Path
 from typing import Optional, Any, List, Dict, Tuple
 
 import pytz
@@ -25,9 +24,9 @@ class ZYTRssSubscribe(_PluginBase):
     # 插件描述
     plugin_desc = "RSS订阅下载,只支持qbittorrent"
     # 插件图标
-    plugin_icon = "rss.png"
+    plugin_icon = "seed.png"
     # 插件版本
-    plugin_version = "1.0.1"
+    plugin_version = "1.0.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -544,12 +543,12 @@ class ZYTRssSubscribe(_PluginBase):
         # self.save_data('history', history)
         logger.info(f"debug check over")
 
-def __log_and_notify_error(self, message):
+    def __log_and_notify_error(self, message):
         """
         记录错误日志并发送系统通知
         """
         logger.error(message)
-        self.systemmessage.put(message, title="RSS订阅下载")
+        # self.systemmessage.put(message, title="RSS订阅下载")
 
     def __validate_and_fix_config(self, config: dict = None) -> bool:
         """
