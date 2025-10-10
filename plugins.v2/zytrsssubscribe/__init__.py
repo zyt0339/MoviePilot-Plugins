@@ -26,7 +26,7 @@ class ZYTRssSubscribe(_PluginBase):
     # 插件图标
     plugin_icon = "seed.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -467,9 +467,11 @@ class ZYTRssSubscribe(_PluginBase):
         # 下载器实例
         service = self.service_info
         if not service:
+            logger.error(f"未获取到下载器实例")
             return
-
-        for url in self._address.split("\n"):
+        urls = self._address.split("\n")
+        logger.info(f"RSS 返回个数：{len(urls)} ...")
+        for url in urls:
             # 处理每一个RSS链接
             if not url:
                 continue
@@ -516,6 +518,7 @@ class ZYTRssSubscribe(_PluginBase):
                     # 检查是否处理过 todo
                     # if not title or title in [h.get("key") for h in history]:
                     if not title:
+                        logger.error(f"获取title失败,跳过")
                         continue
                     if not enclosure:
                         logger.error(f"获取下载链接失败：{title}")
