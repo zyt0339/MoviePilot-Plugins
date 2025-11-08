@@ -189,5 +189,17 @@
             "v1.4.1": "更新签到域名前缀,增加只发送失败通知",
             "v1.4": "自定义保留消息天数"
         }
+    },
+    "ZYTModifyTracker": {
+        "name": "QB&TR修改tracker",
+        "description": "修改tracker",
+        "labels": "站点",
+        "version": "1.0.1",
+        "icon": "upload.png",
+        "author": "zyt",
+        "level": 2,
+        "history": {
+            "v1.0.1": "QB&TR修改tracker"
+        }
     }
 }
