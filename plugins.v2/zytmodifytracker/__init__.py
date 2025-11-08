@@ -20,7 +20,7 @@ class ZYTModifyTracker(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -264,22 +264,7 @@ class ZYTModifyTracker(_PluginBase):
         logger.info("QB&TR修改tracker服务未开启")
         return []
 
-    def __custom_sites(self) -> List[Any]:
-        custom_sites = []
-        custom_sites_config = self.get_config("CustomSites")
-        if custom_sites_config and custom_sites_config.get("enabled"):
-            custom_sites = custom_sites_config.get("sites")
-        return custom_sites
-
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
-        # 站点的可选项（内置站点 + 自定义站点）
-        customSites = self.__custom_sites()
-
-        # 站点的可选项
-        site_options = ([{"title": site.name, "value": site.id}
-                         for site in self.site_oper.list_order_by_pri()]
-                        + [{"title": site.get("name"), "value": site.get("id")}
-                           for site in customSites])
         """
         拼装插件配置页面，需要返回两块数据：1、页面配置；2、数据结构
         """
