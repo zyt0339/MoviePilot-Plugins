@@ -194,11 +194,12 @@
         "name": "QB&TR修改tracker",
         "description": "修改tracker",
         "labels": "站点",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "icon": "upload.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v1.0.2": "bugfix",
             "v1.0.1": "QB&TR修改tracker"
         }
     }

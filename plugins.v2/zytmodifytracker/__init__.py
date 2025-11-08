@@ -238,6 +238,9 @@ class ZYTModifyTracker(_PluginBase):
     def get_api(self) -> List[Dict[str, Any]]:
         pass
 
+    def get_page(self) -> List[dict]:
+        pass
+
     def get_service(self) -> List[Dict[str, Any]]:
         """
         注册插件公共服务
