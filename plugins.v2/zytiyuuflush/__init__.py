@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.14.4"
+    plugin_version = "2.14.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -666,6 +666,7 @@ class ZYTIYUUflush(_PluginBase):
         self.exist = 0
         self.fail = 0
         self.cached = 0
+        nolabel_set = {label.strip() for label in self._nolabels.split(',') if label.strip()}
         # 扫描下载器辅种
         for service in self.service_infos.values():
             downloader = service.name
@@ -706,15 +707,10 @@ class ZYTIYUUflush(_PluginBase):
                     if nopath_skip:
                         continue
 
-                if torrent_labels and self._nolabels:
-                    is_skip = False
-                    for label in self._nolabels.split(','):
-                        if label in torrent_labels:
-                            logger.debug(f"{log_torrent_tag} 含有不辅种标签 {label}，跳过 ...")
-                            is_skip = True
-                            break
-                    if is_skip:
-                        continue
+                torrent_nolabel = nolabel_set & set(torrent_labels)
+                if torrent_nolabel:
+                    logger.info(f"{log_torrent_tag} 含有不辅种标签 {torrent_nolabel}，跳过 ...")
+                    continue
 
                 # 体积排除辅种
                 torrent_size = self.__get_torrent_size(torrent=torrent, dl_type=service.type) / 1024 / 1024 / 1024

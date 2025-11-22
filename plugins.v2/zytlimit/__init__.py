@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.26"
+    plugin_version = "1.0.27"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -49,6 +49,8 @@ class ZYTLimit(_PluginBase):
     _onlyonce = False
     _notify = False
     _cron = None
+    _nolabels = None  # 不限速标签
+
     # _downloaders = []
     _downloaders1 = []
     _limit_sites1 = []
@@ -100,6 +102,7 @@ class ZYTLimit(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._notify = config.get("notify")
             self._cron = config.get("cron")
+            self._nolabels = config.get("nolabels")
             # self._downloaders = config.get("downloaders")
 
             self._downloaders1 = config.get("downloaders1")
@@ -353,6 +356,28 @@ class ZYTLimit(_PluginBase):
                                     }
                                 ]
                             }
+                        ]
+                    },
+                    {
+                        'component': 'VRow',
+                        'content': [
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                    'md': 12
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VTextField',
+                                        'props': {
+                                            'model': 'nolabels',
+                                            'label': '不限速标签',
+                                            'placeholder': '使用,分隔多个标签,含有其中一个就不做限速处理,去手动管理'
+                                        }
+                                    }
+                                ]
+                            },
                         ]
                     },
                     {
@@ -1048,6 +1073,7 @@ class ZYTLimit(_PluginBase):
             "onlyonce": False,
             "notify": False,
             "cron": "",
+            "nolabels": "",
             # "downloaders": [],
             "downloaders1": [],
             "limit_sites1": [],
@@ -1087,6 +1113,7 @@ class ZYTLimit(_PluginBase):
             "onlyonce": False,
             "notify": self._notify,
             "cron": self._cron,
+            "nolabels": self._nolabels,
             # "downloaders": self._downloaders,
             "downloaders1": self._downloaders1,
             "limit_sites1": self._limit_sites1,
@@ -1215,12 +1242,17 @@ class ZYTLimit(_PluginBase):
         current_time = time.time()
         _limit_sites_pause_threshold_s = limit_sites_pause_threshold * 60
         # 限速后仍然活动种子处理↑
+        nolabel_set = {label.strip() for label in self._nolabels.split(',') if label.strip()}
         if dl_type == "qbittorrent":
             self.logger_info(cancel_limit, f"{downloader} 开始设置限速")
             all_torrents, _ = downloader_obj.get_torrents()
             for torrent in all_torrents:
                 # 当前种子 tags list
                 current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
+                torrent_nolabel = nolabel_set & set(current_torrent_tag_list)
+                if torrent_nolabel:
+                    logger.info(f"{downloader} {torrent.name} 含有不限速标签{torrent_nolabel}，跳过 ...")
+                    continue
                 # qb 补充站点标签,交集第一个就是站点标签
                 intersection = all_site_names.intersection(current_torrent_tag_list)
                 if intersection:
@@ -1291,6 +1323,10 @@ class ZYTLimit(_PluginBase):
             for torrent in all_torrents:
                 # 当前种子 tags list
                 current_torrent_tag_list = [element.strip() for element in torrent.labels]
+                torrent_nolabel = nolabel_set & set(current_torrent_tag_list)
+                if torrent_nolabel:
+                    logger.info(f"{downloader} {torrent.name} 含有不限速标签{torrent_nolabel}，跳过 ...")
+                    continue
                 # qb 补充站点标签,交集第一个就是站点标签
                 intersection = all_site_names.intersection(current_torrent_tag_list)
                 if intersection:
