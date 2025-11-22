@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.27"
+    plugin_version = "1.0.28"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -49,7 +49,7 @@ class ZYTLimit(_PluginBase):
     _onlyonce = False
     _notify = False
     _cron = None
-    _nolabels = None  # 不限速标签
+    _nolabels = ""  # 不限速标签
 
     # _downloaders = []
     _downloaders1 = []
@@ -102,7 +102,7 @@ class ZYTLimit(_PluginBase):
             self._onlyonce = config.get("onlyonce")
             self._notify = config.get("notify")
             self._cron = config.get("cron")
-            self._nolabels = config.get("nolabels")
+            self._nolabels = config.get("nolabels") or ""
             # self._downloaders = config.get("downloaders")
 
             self._downloaders1 = config.get("downloaders1")
