@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.28"
+    plugin_version = "1.1.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -86,6 +86,13 @@ class ZYTLimit(_PluginBase):
     _limit_sites_pause_threshold5 = 0
     _active_time_range_site_config5 = None
     _mark5 = None
+
+    _downloaders6 = []
+    _limit_sites6 = []
+    _limit_speed6 = 0
+    _limit_sites_pause_threshold6 = 0
+    _active_time_range_site_config6 = None
+    _mark6 = None
     # 定时器
     _scheduler: Optional[BackgroundScheduler] = None
     to_pausedUP_hashs = {}  # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
@@ -139,6 +146,13 @@ class ZYTLimit(_PluginBase):
             self._limit_sites_pause_threshold5 = int(config.get("limit_sites_pause_threshold5") or 0)
             self._active_time_range_site_config5 = config.get("active_time_range_site_config5")
             self._mark5 = config.get("mark5")
+
+            self._downloaders6 = config.get("downloaders6")
+            self._limit_sites6 = config.get("limit_sites6") or []
+            self._limit_speed6 = int(config.get("limit_speed6") or 0)
+            self._limit_sites_pause_threshold6 = int(config.get("limit_sites_pause_threshold6") or 0)
+            self._active_time_range_site_config6 = config.get("active_time_range_site_config6")
+            self._mark5 = config.get("mark6")
 
             # 加载模块
         if self._enabled or self._onlyonce:
@@ -301,765 +315,898 @@ class ZYTLimit(_PluginBase):
         拼装插件配置页面，需要返回两块数据：1、页面配置；2、数据结构
         """
         return [
-            {
-                "component": "VForm",
-                "content": [
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 2},
-                                "content": [
-                                    {
-                                        "component": "VSwitch",
-                                        "props": {
-                                            "model": "enabled",
-                                            "label": "启用插件"
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
-                                "content": [
-                                    {
-                                        "component": "VCronField",
-                                        "props": {"model": "cron", "label": "执行周期"}
-                                    }
-                                ]
-                            },
-                            {
-                                'component': 'VCol',
-                                'props': {'cols': 12, 'md': 3},
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'nolabels',
-                                            'label': '不限速标签',
-                                            'placeholder': '使用,分隔多个标签,含有其中一个就不做限速处理,去手动管理'
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 2},
-                                "content": [
-                                    {
-                                        "component": "VSwitch",
-                                        "props": {
-                                            "model": "notify",
-                                            "label": "开启通知"
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 2},
-                                "content": [
-                                    {
-                                        "component": "VSwitch",
-                                        "props": {
-                                            "model": "onlyonce",
-                                            "label": "立即运行一次"
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {'cols': 12, "md": 12},
-                                'content': [
-                                    {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '限速一'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                'props': {'cols': 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "mark1",
-                                            "label": "备注",
-                                            "placeholder": "备注"
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "downloaders1",
-                                            "label": "下载器",
-                                            'items': [{"title": config.name, "value": config.name}
-                                                      for config in
-                                                      self.downloader_helper.get_configs().values()]
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 12
-                                },
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "limit_sites1",
-                                            "label": "限速站点1",
-                                            "items": site_options
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_speed1",
-                                            "label": "上行速度(KB)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_sites_pause_threshold1",
-                                            "label": "限速暂停(分钟)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 6
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "active_time_range_site_config1",
-                                            "label": "限速时间段",
-                                            "placeholder": "如：00:00-08:00,默认全天"
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {'cols': 12, "md": 12},
-                                'content': [
-                                    {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '限速二'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                'props': {'cols': 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "mark2",
-                                            "label": "备注",
-                                            "placeholder": "备注"
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "downloaders2",
-                                            "label": "下载器",
-                                            'items': [{"title": config.name, "value": config.name}
-                                                      for config in
-                                                      self.downloader_helper.get_configs().values()]
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 12
-                                },
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "limit_sites2",
-                                            "label": "限速站点2",
-                                            "items": site_options
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_speed2",
-                                            "label": "上行速度(KB)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_sites_pause_threshold2",
-                                            "label": "限速暂停(分钟)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 6
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "active_time_range_site_config2",
-                                            "label": "限速时间段",
-                                            "placeholder": "如：00:00-08:00,默认全天"
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {'cols': 12, "md": 12},
-                                'content': [
-                                    {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '限速三'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                'props': {'cols': 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "mark3",
-                                            "label": "备注",
-                                            "placeholder": "备注"
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "downloaders3",
-                                            "label": "下载器",
-                                            'items': [{"title": config.name, "value": config.name}
-                                                      for config in
-                                                      self.downloader_helper.get_configs().values()]
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 12
-                                },
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "limit_sites3",
-                                            "label": "限速站点3",
-                                            "items": site_options
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_speed3",
-                                            "label": "上行速度(KB)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_sites_pause_threshold3",
-                                            "label": "限速暂停(分钟)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 6
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "active_time_range_site_config3",
-                                            "label": "限速时间段",
-                                            "placeholder": "如：00:00-08:00,默认全天"
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {'cols': 12, "md": 12},
-                                'content': [
-                                    {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '限速四'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                'props': {'cols': 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "mark4",
-                                            "label": "备注",
-                                            "placeholder": "备注"
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "downloaders4",
-                                            "label": "下载器",
-                                            'items': [{"title": config.name, "value": config.name}
-                                                      for config in
-                                                      self.downloader_helper.get_configs().values()]
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 12
-                                },
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "limit_sites4",
-                                            "label": "限速站点4",
-                                            "items": site_options
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_speed4",
-                                            "label": "上行速度(KB)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_sites_pause_threshold4",
-                                            "label": "限速暂停(分钟)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 6
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "active_time_range_site_config4",
-                                            "label": "限速时间段",
-                                            "placeholder": "如：00:00-08:00,默认全天"
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {'cols': 12, "md": 12},
-                                'content': [
-                                    {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '限速五'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                'props': {'cols': 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "mark5",
-                                            "label": "备注",
-                                            "placeholder": "备注"
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 6},
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "downloaders5",
-                                            "label": "下载器",
-                                            'items': [{"title": config.name, "value": config.name}
-                                                      for config in
-                                                      self.downloader_helper.get_configs().values()]
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 12
-                                },
-                                "content": [
-                                    {
-                                        "component": "VSelect",
-                                        "props": {
-                                            "chips": True,
-                                            "multiple": True,
-                                            "clearable": True,
-                                            "model": "limit_sites5",
-                                            "label": "限速站点5",
-                                            "items": site_options
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "component": "VRow",
-                        "content": [
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_speed5",
-                                            "label": "上行速度(KB)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 6,
-                                    "md": 3
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "limit_sites_pause_threshold5",
-                                            "label": "限速暂停(分钟)",
-                                            "placeholder": ""
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {
-                                    "cols": 12,
-                                    "md": 6
-                                },
-                                "content": [
-                                    {
-                                        "component": "VTextField",
-                                        "props": {
-                                            "model": "active_time_range_site_config5",
-                                            "label": "限速时间段",
-                                            "placeholder": "如：00:00-08:00,默认全天"
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VAlert',
-                                        'props': {
-                                            'type': 'info',
-                                            'variant': 'tonal',
-                                            'text': '配置重复时后面会覆盖前面。限速暂停时间(分钟):限速后还活动就暂停x分钟。限速时间段默认全天开启。'
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
+           {
+               "component": "VForm",
+               "content": [
+                   {
+                       "component": "VRow",
+                       "content": [
+                           {
+                               "component": "VCol",
+                               "props": {
+                                   "cols": 12,
+                                   "md": 2
+                               },
+                               "content": [
+                                   {
+                                       "component": "VSwitch",
+                                       "props": {
+                                           "model": "enabled",
+                                           "label": "启用插件"
+                                       }
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VCol",
+                               "props": {
+                                   "cols": 12,
+                                   "md": 3
+                               },
+                               "content": [
+                                   {
+                                       "component": "VCronField",
+                                       "props": {
+                                           "model": "cron",
+                                           "label": "执行周期"
+                                       }
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VCol",
+                               "props": {
+                                   "cols": 12,
+                                   "md": 3
+                               },
+                               "content": [
+                                   {
+                                       "component": "VTextField",
+                                       "props": {
+                                           "model": "nolabels",
+                                           "label": "不限速标签",
+                                           "placeholder": "使用,分隔多个标签,含有其中一个就不做限速处理,去手动管理"
+                                       }
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VCol",
+                               "props": {
+                                   "cols": 12,
+                                   "md": 2
+                               },
+                               "content": [
+                                   {
+                                       "component": "VSwitch",
+                                       "props": {
+                                           "model": "notify",
+                                           "label": "开启通知"
+                                       }
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VCol",
+                               "props": {
+                                   "cols": 12,
+                                   "md": 2
+                               },
+                               "content": [
+                                   {
+                                       "component": "VSwitch",
+                                       "props": {
+                                           "model": "onlyonce",
+                                           "label": "立即运行一次"
+                                       }
+                                   }
+                               ]
+                           }
+                       ]
+                   },
+                   {
+                       "component": "VCard",
+                       "props": {
+                           "title": "限速一",
+                           "variant": "outlined",
+                           "class": "mb-4"
+                       },
+                       "content": [
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark1",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders1",
+                                                   "label": "下载器",
+                                                   "items": [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()
+                                                             ]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites1",
+                                                   "label": "限速站点1",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed1",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold1",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config1",
+                                                   "label": "限速时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           }
+                       ]
+                   }
+                   {
+                       "component": "VCard",
+                       "props": {
+                           "title": "限速二",
+                           "variant": "outlined",
+                           "class": "mb-4"
+                       },
+                       "content": [
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark2",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders2",
+                                                   "label": "下载器",
+                                                   "items": [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()
+                                                             ]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites2",
+                                                   "label": "限速站点2",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed2",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold2",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config2",
+                                                   "label": "限速时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           }
+                       ]
+                   },
+                   {
+                       "component": "VCard",
+                       "props": {
+                           "title": "限速三",
+                           "variant": "outlined",
+                           "class": "mb-4"
+                       },
+                       "content": [
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark3",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders3",
+                                                   "label": "下载器",
+                                                   "items": [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()
+                                                             ]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites3",
+                                                   "label": "限速站点3",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed3",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold3",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config3",
+                                                   "label": "限速时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           }
+                       ]
+                   },
+                   {
+                       "component": "VCard",
+                       "props": {
+                           "title": "限速四",
+                           "variant": "outlined",
+                           "class": "mb-4"
+                       },
+                       "content": [
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark4",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders4",
+                                                   "label": "下载器",
+                                                   "items": [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()
+                                                             ]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites4",
+                                                   "label": "限速站点4",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed4",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold4",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config4",
+                                                   "label": "限速时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           }
+                       ]
+                   },
+                   {
+                       "component": "VCard",
+                       "props": {
+                           "title": "限速五",
+                           "variant": "outlined",
+                           "class": "mb-4"
+                       },
+                       "content": [
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark5",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders5",
+                                                   "label": "下载器",
+                                                   "items": [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()
+                                                             ]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites5",
+                                                   "label": "限速站点5",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed5",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold5",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config5",
+                                                   "label": "限速时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           }
+                       ]
+                   },
+                   {
+                       "component": "VCard",
+                       "props": {
+                           "title": "限速六",
+                           "variant": "outlined",
+                           "class": "mb-4"
+                       },
+                       "content": [
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "mark6",
+                                                   "label": "备注",
+                                                   "placeholder": "备注"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "downloaders6",
+                                                   "label": "下载器",
+                                                   "items": [{"title": config.name, "value": config.name}
+                                                             for config in self.downloader_helper.get_configs().values()
+                                                             ]
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VSelect",
+                                               "props": {
+                                                   "chips": True,
+                                                   "multiple": True,
+                                                   "clearable": True,
+                                                   "model": "limit_sites6",
+                                                   "label": "限速站点6",
+                                                   "items": site_options
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_speed6",
+                                                   "label": "上行速度(KB)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 6,
+                                           "md": 3
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "limit_sites_pause_threshold6",
+                                                   "label": "限速暂停(分钟)",
+                                                   "placeholder": ""
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 6
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "active_time_range_site_config6",
+                                                   "label": "限速时间段",
+                                                   "placeholder": "如：00:00-08:00,默认全天"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           }
+                       ]
+                   },
+                   {
+                       "component": "VRow",
+                       "content": [
+                           {
+                               "component": "VCol",
+                               "props": {
+                                   "cols": 12
+                               },
+                               "content": [
+                                   {
+                                       "component": "VAlert",
+                                       "props": {
+                                           "type": "info",
+                                           "variant": "tonal",
+                                           "text": "配置重复时后面会覆盖前面。限速暂停时间(分钟):限速后还活动就暂停x分钟。限速时间段默认全天开启。"
+                                       }
+                                   }
+                               ]
+                           }
+                       ]
+                   }
+               ]
+           }
         ], {
             "enabled": False,
             "onlyonce": False,
@@ -1096,7 +1243,13 @@ class ZYTLimit(_PluginBase):
             "limit_speed5": 0,
             "limit_sites_pause_threshold5": 0,
             "active_time_range_site_config5": None,
-            "mark5": None
+            "mark5": None,
+            "downloaders6": [],
+            "limit_sites6": [],
+            "limit_speed6": 0,
+            "limit_sites_pause_threshold6": 0,
+            "active_time_range_site_config6": None,
+            "mark6": None
         }
 
     def __update_config(self):
@@ -1136,7 +1289,13 @@ class ZYTLimit(_PluginBase):
             "limit_speed5": self._limit_speed5,
             "limit_sites_pause_threshold5": self._limit_sites_pause_threshold5,
             "active_time_range_site_config5": self._active_time_range_site_config5,
-            "mark5": self._mark5
+            "mark5": self._mark5,
+            "downloaders6": self._downloaders6,
+            "limit_sites6": self._limit_sites6,
+            "limit_speed6": self._limit_speed6,
+            "limit_sites_pause_threshold6": self._limit_sites_pause_threshold6,
+            "active_time_range_site_config6": self._active_time_range_site_config6,
+            "mark6": self._mark6
         })
 
     def logger_info(self, cancel_limit, msg):
@@ -1147,12 +1306,12 @@ class ZYTLimit(_PluginBase):
         """
         开始限速
         """
-        if self._downloaders1 or self._downloaders2 or self._downloaders3 or self._downloaders4 or self._downloaders5:
+        if self._downloaders1 or self._downloaders2 or self._downloaders3 or self._downloaders4 or self._downloaders5 or self._downloaders6:
             pass
         else:
             logger.warning("未设置下载器,取消执行")
             return
-        if self._limit_sites1 or self._limit_sites2 or self._limit_sites3 or self._limit_sites4 or self._limit_sites5:
+        if self._limit_sites1 or self._limit_sites2 or self._limit_sites3 or self._limit_sites4 or self._limit_sites5 or self._limit_sites6:
             pass
         else:
             logger.warning("未设置限速站点,取消执行")
@@ -1177,6 +1336,8 @@ class ZYTLimit(_PluginBase):
              self._active_time_range_site_config4),
             (self._downloaders5, self._limit_sites5, self._limit_speed5, self._limit_sites_pause_threshold5,
              self._active_time_range_site_config5),
+            (self._downloaders6, self._limit_sites6, self._limit_speed6, self._limit_sites_pause_threshold6,
+             self._active_time_range_site_config6),
         ]
 
         # 初始记录{downloader:all_sites,},限速的站点从all_sites中减去,剩余的设置一轮0速度
