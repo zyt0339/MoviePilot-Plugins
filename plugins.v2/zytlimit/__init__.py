@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.1"
+    plugin_version = "1.1.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -533,7 +533,7 @@ class ZYTLimit(_PluginBase):
                                ]
                            }
                        ]
-                   }
+                   },
                    {
                        "component": "VCard",
                        "props": {
