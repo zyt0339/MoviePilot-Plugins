@@ -309,7 +309,7 @@ class ZYTLimit(_PluginBase):
                         "content": [
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 2},
                                 "content": [
                                     {
                                         "component": "VSwitch",
@@ -331,8 +331,22 @@ class ZYTLimit(_PluginBase):
                                 ]
                             },
                             {
+                                'component': 'VCol',
+                                'props': {'cols': 12, 'md': 3},
+                                'content': [
+                                    {
+                                        'component': 'VTextField',
+                                        'props': {
+                                            'model': 'nolabels',
+                                            'label': '不限速标签',
+                                            'placeholder': '使用,分隔多个标签,含有其中一个就不做限速处理,去手动管理'
+                                        }
+                                    }
+                                ]
+                            },
+                            {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 2},
                                 "content": [
                                     {
                                         "component": "VSwitch",
@@ -345,7 +359,7 @@ class ZYTLimit(_PluginBase):
                             },
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 3},
+                                "props": {"cols": 12, "md": 2},
                                 "content": [
                                     {
                                         "component": "VSwitch",
@@ -356,28 +370,6 @@ class ZYTLimit(_PluginBase):
                                     }
                                 ]
                             }
-                        ]
-                    },
-                    {
-                        'component': 'VRow',
-                        'content': [
-                            {
-                                'component': 'VCol',
-                                'props': {
-                                    'cols': 12,
-                                    'md': 12
-                                },
-                                'content': [
-                                    {
-                                        'component': 'VTextField',
-                                        'props': {
-                                            'model': 'nolabels',
-                                            'label': '不限速标签',
-                                            'placeholder': '使用,分隔多个标签,含有其中一个就不做限速处理,去手动管理'
-                                        }
-                                    }
-                                ]
-                            },
                         ]
                     },
                     {
