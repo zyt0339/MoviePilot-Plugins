@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.4"
+    plugin_version = "1.1.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -152,7 +152,7 @@ class ZYTLimit(_PluginBase):
             self._limit_speed6 = int(config.get("limit_speed6") or 0)
             self._limit_sites_pause_threshold6 = int(config.get("limit_sites_pause_threshold6") or 0)
             self._active_time_range_site_config6 = config.get("active_time_range_site_config6")
-            self._mark5 = config.get("mark6")
+            self._mark6 = config.get("mark6")
 
             # 加载模块
         if self._enabled or self._onlyonce:

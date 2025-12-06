@@ -161,12 +161,12 @@
         "name": "QB&TR上传限速",
         "description": "自定义时间点执行限速逻辑",
         "labels": "限速",
-        "version": "1.1.4",
+        "version": "1.1.5",
         "icon": "upload.png",
         "author": "zyt",
         "level": 2,
         "history": {
-            "v1.1.4": "vcard",
+            "v1.1.5": "vcard",
             "v1.0.28": "支持不自动限速标签",
             "v1.0.8": "支持 tr",
             "v1.0.1": "自定义时间点执行限速逻辑,只支持qb"
