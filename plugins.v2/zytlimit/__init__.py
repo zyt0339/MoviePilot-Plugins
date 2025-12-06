@@ -26,7 +26,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.3"
+    plugin_version = "1.1.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -341,7 +341,7 @@ class ZYTLimit(_PluginBase):
                                "component": "VCol",
                                "props": {
                                    "cols": 12,
-                                   "md": 3
+                                   "md": 2
                                },
                                "content": [
                                    {
@@ -390,7 +390,7 @@ class ZYTLimit(_PluginBase):
                                "component": "VCol",
                                "props": {
                                    "cols": 12,
-                                   "md": 2
+                                   "md": 3
                                },
                                "content": [
                                    {
@@ -409,7 +409,7 @@ class ZYTLimit(_PluginBase):
                        "props": {
                            "title": "限速一",
                            "variant": "outlined",
-                           "class": "mt-4 mb-4 pl-1 pr-1 pb-1"
+                           "class": "mt-4 mb-4 pl-1 pr-1 pb-2"
                        },
                        "content": [
                            {
@@ -539,7 +539,7 @@ class ZYTLimit(_PluginBase):
                        "props": {
                            "title": "限速二",
                            "variant": "outlined",
-                           "class": "mb-4 pl-1 pr-1 pb-1"
+                           "class": "mb-4 pl-1 pr-1 pb-2"
                        },
                        "content": [
                            {
@@ -669,7 +669,7 @@ class ZYTLimit(_PluginBase):
                        "props": {
                            "title": "限速三",
                            "variant": "outlined",
-                           "class": "mb-4 pl-1 pr-1 pb-1"
+                           "class": "mb-4 pl-1 pr-1 pb-2"
                        },
                        "content": [
                            {
@@ -799,7 +799,7 @@ class ZYTLimit(_PluginBase):
                        "props": {
                            "title": "限速四",
                            "variant": "outlined",
-                           "class": "mb-4 pl-1 pr-1 pb-1"
+                           "class": "mb-4 pl-1 pr-1 pb-2"
                        },
                        "content": [
                            {
@@ -929,7 +929,7 @@ class ZYTLimit(_PluginBase):
                        "props": {
                            "title": "限速五",
                            "variant": "outlined",
-                           "class": "mb-4 pl-1 pr-1 pb-1"
+                           "class": "mb-4 pl-1 pr-1 pb-2"
                        },
                        "content": [
                            {
@@ -1059,7 +1059,7 @@ class ZYTLimit(_PluginBase):
                        "props": {
                            "title": "限速六",
                            "variant": "outlined",
-                           "class": "mb-4 pl-1 pr-1 pb-1"
+                           "class": "mb-4 pl-1 pr-1 pb-2"
                        },
                        "content": [
                            {
