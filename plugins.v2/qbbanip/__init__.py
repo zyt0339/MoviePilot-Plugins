@@ -23,7 +23,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.1"
+    plugin_version = "1.0.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -507,7 +507,7 @@ class QBBanIp(_PluginBase):
         ips_to_block = set()
         # 获取下载中，非下载状态跳过
         torrents = qbt_client.torrents_info(status_filter=TorrentState.DOWNLOADING)
-        print(f"🌱 {downloader_name}下载状态共 {len(torrents)} 个种子")
+        logger.info(f"🌱 {downloader_name}下载状态共 {len(torrents)} 个种子")
 
         for torrent in torrents:
             # if torrent.state_enum.is_downloading:
@@ -515,19 +515,19 @@ class QBBanIp(_PluginBase):
             # 体积 10G 以下跳过
             total_size = torrent.total_size
             if total_size < TARGET_TORRENT_SIZE:
-                print(
+                logger.info(
                     f"---种子'{torrent['name'][:30]}...'体积{self.readable_file_size(total_size)},小于配置值({self.readable_file_size(TARGET_TORRENT_SIZE, False)}),跳过")
                 continue
             # 添加时间超过30天跳过
             # added_on_s = int(start - torrent.added_on)
             # if added_on_s > cost:
-            # print(f'---种子添加超过 {added_on_s} 秒')
+            # logger.info(f'---种子添加超过 {added_on_s} 秒')
 
             current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
             if TARGET_TAG and TARGET_TAG not in current_torrent_tag_list:
-                print(f"---种子'{torrent['name'][:30]}...'标签不包含{TARGET_TAG},跳过")
+                logger.info(f"---种子'{torrent['name'][:30]}...'标签不包含{TARGET_TAG},跳过")
                 continue
-            # print(f'---种子标签 {current_torrent_tag_list}')
+            # logger.info(f'---种子标签 {current_torrent_tag_list}')
 
             # tracker 不匹配猪跳过
             working_trackers = [tracker for tracker in torrent.trackers if
@@ -539,7 +539,7 @@ class QBBanIp(_PluginBase):
                     contanin_tracker = True
                     break
             if not contanin_tracker:
-                print(f"---种子'{torrent['name'][:30]}...'tracker不包含'{TARGET_TRACKER}',跳过")
+                logger.info(f"---种子'{torrent['name'][:30]}...'tracker不包含'{TARGET_TRACKER}',跳过")
                 continue
 
             # 获取其peer 连接到的IP端口,不在白名单的添加到 ips_to_block
@@ -551,21 +551,22 @@ class QBBanIp(_PluginBase):
                 # country = dict1['country']  # 中国大陆
                 # dl_speed = dict1['dl_speed']  # int
                 # up_speed = dict1['up_speed']  # int
-                # print(f"------peer:{ip}:{port},dl_speed={dl_speed},up_speed={up_speed}")
+                # logger.info(f"------peer:{ip}:{port},dl_speed={dl_speed},up_speed={up_speed}")
                 if not ip or not port:
                     continue
                 # 检查端口是否在允许范围内
                 if port not in TARGET_PORT_RANGE:
                     ips_to_block.add(ip)
                     cur_to_block_count = cur_to_block_count + 1
-            print(f"---种子'{torrent['name'][:30]}...'共{len(peers)}个peer,待屏蔽{cur_to_block_count}个")
+            logger.info(
+                f"---种子'{torrent['name'][:30]}...'共{len(peers)}个peer,待屏蔽{cur_to_block_count}个")
 
             if ips_to_block:
-                # print(f"🎯 发现 {len(ips_to_block)} 个需要屏蔽的IP:")
+                # logger.info(f"🎯 发现 {len(ips_to_block)} 个需要屏蔽的IP:")
                 # for ip in sorted(ips_to_block)[:10]:  # 闲情只显示前10个
-                #     print(f"  {ip}")
+                #     logger.info(f"  {ip}")
                 # if len(ips_to_block) > 10:
-                #     print(f"  ... 以及另外 {len(ips_to_block) - 10} 个IP")
+                #     logger.info(f"  ... 以及另外 {len(ips_to_block) - 10} 个IP")
 
                 # 更新黑名单
                 # 获取当前黑名单
@@ -579,9 +580,10 @@ class QBBanIp(_PluginBase):
 
                 # 应用更新
                 qbt_client.app.set_preferences({"banned_IPs": updated_blocklist})
-                print(f"✅ {downloader_name}成功更新IP黑名单,本次新增 {len(ips_to_block)} 个IP,下载器中共 {len(updated_ips)} 个IP")
+                logger.info(
+                    f"✅ {downloader_name}成功更新IP黑名单,本次新增 {len(ips_to_block)} 个IP,下载器中共 {len(updated_ips)} 个IP")
             else:
-                print(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
+                logger.info(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
 
     def get_page(self) -> List[dict]:
         pass
