@@ -23,7 +23,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.0"
+    plugin_version = "1.0.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -318,23 +318,6 @@ class QBBanIp(_PluginBase):
                                            {
                                                "component": "VTextField",
                                                "props": {
-                                                   "model": "tracker_ports",
-                                                   "label": "端口白名单",
-                                                   "placeholder": "多个用英文逗号分隔"
-                                               }
-                                           }
-                                       ]
-                                   },
-                                   {
-                                       "component": "VCol",
-                                       "props": {
-                                           "cols": 12,
-                                           "md": 2
-                                       },
-                                       "content": [
-                                           {
-                                               "component": "VTextField",
-                                               "props": {
                                                    "model": "tracker_domain",
                                                    "label": "tracker过滤",
                                                    "placeholder": "只处理tracker域名包含此值的种子"
@@ -346,7 +329,7 @@ class QBBanIp(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 2
+                                           "md": 3
                                        },
                                        "content": [
                                            {
@@ -363,7 +346,7 @@ class QBBanIp(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
-                                           "md": 2
+                                           "md": 3
                                        },
                                        "content": [
                                            {
@@ -372,6 +355,60 @@ class QBBanIp(_PluginBase):
                                                    "model": "no_torrent_size",
                                                    "label": "种子体积过滤(GB)",
                                                    "placeholder": "只处理体积大于此值的种子"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "tracker_ports",
+                                                   "label": "端口白名单",
+                                                   "placeholder": "多个用英文逗号分隔"
+                                               }
+                                           }
+                                       ]
+                                   }
+                               ]
+                           },
+                           {
+                               "component": "VRow",
+                               "content": [
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VAlert",
+                                               "props": {
+                                                   "type": "info",
+                                                   "variant": "tonal",
+                                                   "text": "只处理下载器中,tracker包含输入项,且标签包含输入项,且体积大于输入项的种子"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VAlert",
+                                               "props": {
+                                                   "type": "info",
+                                                   "variant": "tonal",
+                                                   "text": "不在端口白名单中的IP会加入QB黑名单"
                                                }
                                            }
                                        ]
@@ -384,7 +421,7 @@ class QBBanIp(_PluginBase):
                    "enabled": False,
                    "onlyonce": False,
                    "notify": False,
-                   "cron": "*/10 * * * *",
+                   "cron": "*/3 * * * *",
                    "tracker_ports": "63222,63223,63224",
                    "tracker_domain": "piggo",
                    "nolabels": "牛马",
@@ -427,7 +464,7 @@ class QBBanIp(_PluginBase):
             dl_type = downloader_service_info.type
             logger.info(f"开始扫描下载器: {downloader}")
             if dl_type == "qbittorrent":
-                self.limit_per_downloader(downloader_obj, downloader)
+                self.limit_per_downloader(downloader_obj.qbc, downloader)
             else:
                 logger.warning(f"暂不支持 {dl_type} 类型下载器 {downloader}")
         logger.info(f"执行完成")
