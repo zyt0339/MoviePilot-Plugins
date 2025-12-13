@@ -23,7 +23,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.2"
+    plugin_version = "1.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -503,12 +503,14 @@ class QBBanIp(_PluginBase):
             for port in self._tracker_ports.split(',')
             if port.strip()  # 过滤空字符串（如",,80,,"的情况）
         ]
+        DOWNLOADLIMIT_SPEED = 11 * 1024 * 1024
         # 获取需要屏蔽的IP
         ips_to_block = set()
         # 获取下载中，非下载状态跳过
         torrents = qbt_client.torrents_info(status_filter=TorrentState.DOWNLOADING)
         logger.info(f"🌱 {downloader_name}下载状态共 {len(torrents)} 个种子")
 
+        to_limit_hashs = []
         for torrent in torrents:
             # if torrent.state_enum.is_downloading:
             #     print()
@@ -541,6 +543,7 @@ class QBBanIp(_PluginBase):
             if not contanin_tracker:
                 logger.info(f"---种子'{torrent['name'][:30]}...'tracker不包含'{TARGET_TRACKER}',跳过")
                 continue
+            to_limit_hashs.append(torrent.hash)
 
             # 获取其peer 连接到的IP端口,不在白名单的添加到 ips_to_block
             peers = qbt_client.sync.torrent_peers(torrent.hash).peers
@@ -561,29 +564,32 @@ class QBBanIp(_PluginBase):
             logger.info(
                 f"---种子'{torrent['name'][:30]}...'共{len(peers)}个peer,待屏蔽{cur_to_block_count}个")
 
-            if ips_to_block:
-                # logger.info(f"🎯 发现 {len(ips_to_block)} 个需要屏蔽的IP:")
-                # for ip in sorted(ips_to_block)[:10]:  # 闲情只显示前10个
-                #     logger.info(f"  {ip}")
-                # if len(ips_to_block) > 10:
-                #     logger.info(f"  ... 以及另外 {len(ips_to_block) - 10} 个IP")
+        if to_limit_hashs:
+            qbt_client.torrents_set_download_limit(DOWNLOADLIMIT_SPEED, to_limit_hashs)  # 11M
 
-                # 更新黑名单
-                # 获取当前黑名单
-                current_prefs = qbt_client.app_preferences()
-                current_blocklist = current_prefs.get("banned_IPs", "")
-                current_ips = set(filter(None, current_blocklist.split('\n')))
+        if ips_to_block:
+            # logger.info(f"🎯 发现 {len(ips_to_block)} 个需要屏蔽的IP:")
+            # for ip in sorted(ips_to_block)[:10]:  # 闲情只显示前10个
+            #     logger.info(f"  {ip}")
+            # if len(ips_to_block) > 10:
+            #     logger.info(f"  ... 以及另外 {len(ips_to_block) - 10} 个IP")
 
-                # 添加新IP
-                updated_ips = current_ips.union(ips_to_block)
-                updated_blocklist = "\n".join(updated_ips)
+            # 更新黑名单
+            # 获取当前黑名单
+            current_prefs = qbt_client.app_preferences()
+            current_blocklist = current_prefs.get("banned_IPs", "")
+            current_ips = set(filter(None, current_blocklist.split('\n')))
 
-                # 应用更新
-                qbt_client.app.set_preferences({"banned_IPs": updated_blocklist})
-                logger.info(
-                    f"✅ {downloader_name}成功更新IP黑名单,本次新增 {len(ips_to_block)} 个IP,下载器中共 {len(updated_ips)} 个IP")
-            else:
-                logger.info(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
+            # 添加新IP
+            updated_ips = current_ips.union(ips_to_block)
+            updated_blocklist = "\n".join(updated_ips)
+
+            # 应用更新
+            qbt_client.app.set_preferences({"banned_IPs": updated_blocklist})
+            logger.info(
+                f"✅ {downloader_name}成功更新IP黑名单,本次新增 {len(ips_to_block)} 个IP,下载器中共 {len(updated_ips)} 个IP")
+        else:
+            logger.info(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
 
     def get_page(self) -> List[dict]:
         pass
