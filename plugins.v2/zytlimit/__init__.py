@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
 import pytz
-from app.helper.sites import SitesHelper
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import time
@@ -11,7 +10,6 @@ from app.core.config import settings
 from app.core.event import eventmanager, Event
 from app.db.site_oper import SiteOper
 from app.helper.downloader import DownloaderHelper
-from app.helper.torrent import TorrentHelper
 from app.log import logger
 from app.plugins import _PluginBase
 from app.schemas import NotificationType, ServiceInfo
@@ -26,7 +24,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.5"
+    plugin_version = "1.1.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -37,11 +35,6 @@ class ZYTLimit(_PluginBase):
     plugin_order = 4
     # 可使用的用户级别
     auth_level = 2
-
-    downloader_helper = None
-    sites_helper = None
-    site_oper = None
-    torrent_helper = None
 
     # 私有属性
     _enabled = False
@@ -98,10 +91,6 @@ class ZYTLimit(_PluginBase):
     to_pausedUP_hashs = {}  # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
 
     def init_plugin(self, config: dict = None):
-        self.sites_helper = SitesHelper()
-        self.site_oper = SiteOper()
-        self.torrent_helper = TorrentHelper()
-        self.downloader_helper = DownloaderHelper()
         # 停止现有任务
         self.stop_service()
         if config:
@@ -194,7 +183,7 @@ class ZYTLimit(_PluginBase):
             logger.warning("尚未配置下载器，请检查配置")
             return None
 
-        services = self.downloader_helper.get_services(name_filters=downloaders)
+        services = DownloaderHelper().get_services(name_filters=downloaders)
         if not services:
             logger.warning("获取下载器实例失败，请检查配置")
             return None
@@ -305,10 +294,11 @@ class ZYTLimit(_PluginBase):
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         # 站点的可选项（内置站点 + 自定义站点）
         customSites = self.__custom_sites()
+        downloader_helper = DownloaderHelper()
 
         # 站点的可选项
         site_options = ([{"title": site.name, "value": site.id}
-                         for site in self.site_oper.list_order_by_pri()]
+                         for site in SiteOper().list_order_by_pri()]
                         + [{"title": site.get("name"), "value": site.get("id")}
                            for site in customSites])
         """
@@ -448,7 +438,7 @@ class ZYTLimit(_PluginBase):
                                                    "model": "downloaders1",
                                                    "label": "下载器",
                                                    "items": [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()
+                                                             for config in downloader_helper.get_configs().values()
                                                              ]
                                                }
                                            }
@@ -578,7 +568,7 @@ class ZYTLimit(_PluginBase):
                                                    "model": "downloaders2",
                                                    "label": "下载器",
                                                    "items": [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()
+                                                             for config in downloader_helper.get_configs().values()
                                                              ]
                                                }
                                            }
@@ -708,7 +698,7 @@ class ZYTLimit(_PluginBase):
                                                    "model": "downloaders3",
                                                    "label": "下载器",
                                                    "items": [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()
+                                                             for config in downloader_helper.get_configs().values()
                                                              ]
                                                }
                                            }
@@ -838,7 +828,7 @@ class ZYTLimit(_PluginBase):
                                                    "model": "downloaders4",
                                                    "label": "下载器",
                                                    "items": [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()
+                                                             for config in downloader_helper.get_configs().values()
                                                              ]
                                                }
                                            }
@@ -968,7 +958,7 @@ class ZYTLimit(_PluginBase):
                                                    "model": "downloaders5",
                                                    "label": "下载器",
                                                    "items": [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()
+                                                             for config in downloader_helper.get_configs().values()
                                                              ]
                                                }
                                            }
@@ -1098,7 +1088,7 @@ class ZYTLimit(_PluginBase):
                                                    "model": "downloaders6",
                                                    "label": "下载器",
                                                    "items": [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()
+                                                             for config in downloader_helper.get_configs().values()
                                                              ]
                                                }
                                            }
@@ -1319,7 +1309,7 @@ class ZYTLimit(_PluginBase):
         logger.info(f"----------开始执行限速逻辑----------")
         # 站点name:id {}
         all_site_name_id_map = {}
-        for site in self.site_oper.list_order_by_pri():
+        for site in SiteOper().list_order_by_pri():
             all_site_name_id_map[site.name] = site.id
         for site in self.__custom_sites():
             all_site_name_id_map[site.get("name")] = site.get("id")
@@ -1368,7 +1358,7 @@ class ZYTLimit(_PluginBase):
         for downloader, sites in downloader_site_record.items():
             if sites:  # names
                 logger.debug(f"{downloader} {','.join(sites)} 种子不限速")
-                downloader_service_info = self.downloader_helper.get_service(name=downloader)
+                downloader_service_info = DownloaderHelper().get_service(name=downloader)
                 limit_site_ids = [all_site_name_id_map[site_name] for site_name in sites]
                 self.limit_per_downloader(all_site_name_id_map, all_site_names, downloader_service_info, limit_site_ids, 0, 0, False, True)
 
