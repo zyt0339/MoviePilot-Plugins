@@ -49,10 +49,6 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 私有属性
     _scheduler = None
     iyuu_helper = None
-    downloader_helper = None
-    sites_helper = None
-    site_oper = None
-    torrent_helper = None
     # 开关
     _enabled = False
     _cron = None
@@ -100,10 +96,6 @@ class IYUUAutoSeedzyt(_PluginBase):
     cached = 0
     to_pausedUP_hashs = {} # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
     def init_plugin(self, config: dict = None):
-        self.sites_helper = SitesHelper()
-        self.site_oper = SiteOper()
-        self.torrent_helper = TorrentHelper()
-        self.downloader_helper = DownloaderHelper()
         # 读取配置
         if config:
             self._enabled = config.get("enabled")
@@ -130,7 +122,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             self._success_caches = [] if self._clearcache else config.get("success_caches") or []
 
             # 过滤掉已删除的站点
-            all_sites = [site.id for site in self.site_oper.list_order_by_pri()] + [site.get("id") for site in
+            all_sites = [site.id for site in SiteOper().list_order_by_pri()] + [site.get("id") for site in
                                                                                     self.__custom_sites()]
             self._sites = [site_id for site_id in all_sites if site_id in self._sites]
             self._limit_sites = [site_id for site_id in all_sites if site_id in self._limit_sites]
@@ -174,7 +166,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             logger.warning("尚未配置下载器，请检查配置")
             return None
 
-        services = self.downloader_helper.get_services(name_filters=self._downloaders)
+        services = DownloaderHelper().get_services(name_filters=self._downloaders)
         if not services:
             logger.warning("获取下载器实例失败，请检查配置")
             return None
@@ -232,7 +224,7 @@ class IYUUAutoSeedzyt(_PluginBase):
 
         # 站点的可选项
         site_options = ([{"title": site.name, "value": site.id}
-                         for site in self.site_oper.list_order_by_pri()]
+                         for site in SiteOper().list_order_by_pri()]
                         + [{"title": site.get("name"), "value": site.get("id")}
                            for site in customSites])
         return [
@@ -349,7 +341,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                                                    'model': 'downloaders',
                                                    'label': '下载器',
                                                    'items': [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()]
+                                                             for config in DownloaderHelper().get_configs().values()]
                                                }
                                            }
                                        ]
@@ -744,7 +736,7 @@ class IYUUAutoSeedzyt(_PluginBase):
                 logger.info(f"没有需要辅种的种子")
         # 限速需要 开始
         all_site_name_id_map = {}
-        for site in self.site_oper.list_order_by_pri():
+        for site in SiteOper().list_order_by_pri():
             all_site_name_id_map[site.name] = site.id
         for site in self.__custom_sites():
             all_site_name_id_map[site.get("name")] = site.get("id")
@@ -1208,7 +1200,8 @@ class IYUUAutoSeedzyt(_PluginBase):
         # 查询站点
         site_domain = StringUtils.get_url_domain(site_url)
         # 站点信息
-        site_info = self.sites_helper.get_indexer(site_domain)
+        sites_helper = SitesHelper()
+        site_info = sites_helper.get_indexer(site_domain)
         if not site_info or not site_info.get('url'):
             logger.debug(f"没有维护种子对应的站点：{site_url}")
             return False
@@ -1224,7 +1217,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             self.exist += 1
             return False
         # 站点流控
-        check, checkmsg = self.sites_helper.check(site_domain)
+        check, checkmsg = sites_helper.check(site_domain)
         if check:
             logger.warn(checkmsg)
             self.fail += 1
@@ -1246,7 +1239,7 @@ class IYUUAutoSeedzyt(_PluginBase):
             else:
                 torrent_url += "?https=1"
         # 下载种子文件
-        _, content, _, _, error_msg = self.torrent_helper.download_torrent(
+        _, content, _, _, error_msg = TorrentHelper().download_torrent(
             url=torrent_url,
             cookie=site_info.get("cookie"),
             ua=site_info.get("ua") or settings.USER_AGENT,
