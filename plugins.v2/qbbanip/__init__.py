@@ -23,7 +23,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -34,11 +34,6 @@ class QBBanIp(_PluginBase):
     plugin_order = 4
     # 可使用的用户级别
     auth_level = 2
-
-    downloader_helper = None
-    sites_helper = None
-    site_oper = None
-    torrent_helper = None
 
     # 私有属性
     _enabled = False
@@ -58,7 +53,6 @@ class QBBanIp(_PluginBase):
     _scheduler: Optional[BackgroundScheduler] = None
 
     def init_plugin(self, config: dict = None):
-        self.downloader_helper = DownloaderHelper()
         # 停止现有任务
         self.stop_service()
         if config:
@@ -103,7 +97,7 @@ class QBBanIp(_PluginBase):
             logger.warning("尚未配置下载器，请检查配置")
             return None
 
-        services = self.downloader_helper.get_services(name_filters=downloaders)
+        services = DownloaderHelper().get_services(name_filters=downloaders)
         if not services:
             logger.warning("获取下载器实例失败，请检查配置")
             return None
@@ -302,7 +296,7 @@ class QBBanIp(_PluginBase):
                                                    "items": [
                                                        {"title": config.name, "value": config.name}
                                                        for config in
-                                                       self.downloader_helper.get_configs().values()
+                                                       DownloaderHelper().get_configs().values()
                                                    ]
                                                }
                                            }
