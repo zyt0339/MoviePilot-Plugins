@@ -268,7 +268,7 @@ class ZYTBrushFlow(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "4.3.2.4"
+    plugin_version = "4.3.4.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -280,12 +280,6 @@ class ZYTBrushFlow(_PluginBase):
     # 可使用的用户级别
     auth_level = 2
 
-    # 私有属性
-    sites_helper = None
-    site_oper = None
-    torrents_chain = None
-    subscribe_oper = None
-    downloader_helper = None
     # 刷流配置
     _brush_config = None
     # Brush任务是否启动
@@ -311,11 +305,6 @@ class ZYTBrushFlow(_PluginBase):
         self._pre_time_upload_size = 0
         self._pre_time_download_size = 0
         self._pre_time_upload_download = 0
-        self.sites_helper = SitesHelper()
-        self.site_oper = SiteOper()
-        self.torrents_chain = TorrentsChain()
-        self.subscribe_oper = SubscribeOper()
-        self.downloader_helper = DownloaderHelper()
         self._task_brush_enable = False
 
         if not config:
@@ -337,7 +326,7 @@ class ZYTBrushFlow(_PluginBase):
 
         # 这里先过滤掉已删除的站点并保存，特别注意的是，这里保留了界面选择站点时的顺序，以便后续站点随机刷流或顺序刷流
         if brush_config.brushsites:
-            site_id_to_public_status = {site.get("id"): site.get("public") for site in self.sites_helper.get_indexers()}
+            site_id_to_public_status = {site.get("id"): site.get("public") for site in SitesHelper().get_indexers()}
             brush_config.brushsites = [
                 site_id for site_id in brush_config.brushsites
                 if site_id in site_id_to_public_status and not site_id_to_public_status[site_id]
@@ -409,7 +398,7 @@ class ZYTBrushFlow(_PluginBase):
         服务信息
         """
         brush_config = self.__get_brush_config()
-        service = self.downloader_helper.get_service(name=brush_config.downloader)
+        service = DownloaderHelper().get_service(name=brush_config.downloader)
         if not service:
             self.__log_and_notify_error("站点刷流出错，获取下载器实例失败，请检查配置")
             return None
@@ -876,10 +865,10 @@ class ZYTBrushFlow(_PluginBase):
 
         # 站点选项
         site_options = [{"title": site.get("name"), "value": site.get("id")}
-                        for site in self.sites_helper.get_indexers()]
+                        for site in SitesHelper().get_indexers()]
         # 下载器选项
         downloader_options = [{"title": config.name, "value": config.name}
-                              for config in self.downloader_helper.get_configs().values()]
+                              for config in DownloaderHelper().get_configs().values()]
         return [
             {
                 'component': 'VForm',
@@ -2059,7 +2048,7 @@ class ZYTBrushFlow(_PluginBase):
             # 获取所有站点的信息，并过滤掉不存在的站点
             site_infos = []
             for siteid in brush_config.brushsites:
-                siteinfo = self.site_oper.get(siteid)
+                siteinfo = SiteOper().get(siteid)
                 if siteinfo:
                     site_infos.append(siteinfo)
 
@@ -2155,13 +2144,13 @@ class ZYTBrushFlow(_PluginBase):
         """
         获取站点种子
         """
-        siteinfo = self.site_oper.get(siteid)
+        siteinfo = SiteOper().get(siteid)
         if not siteinfo:
             logger.warning(f"站点不存在：{siteid}")
             return None, siteinfo
 
         logger.info(f"开始获取站点 {siteinfo.name} 的新种子 ...")
-        torrents = self.torrents_chain.browse(domain=siteinfo.domain)
+        torrents = TorrentsChain().browse(domain=siteinfo.domain)
         if not torrents:
             logger.info(f"站点 {siteinfo.name} 没有获取到种子")
             return None, siteinfo
@@ -2568,7 +2557,7 @@ class ZYTBrushFlow(_PluginBase):
                     logger.info(f"关联辅种删除,共{len(need_delete_hashes_contain_subsidiary)}个, {need_delete_name_size_list}")
                     need_delete_hashes_contain_subsidiary.extend(need_delete_hashes)
                     # zyt 如果是QB，则重新汇报Tracker
-                    if self.downloader_helper.is_downloader("qbittorrent", service=self.service_info):
+                    if DownloaderHelper().is_downloader("qbittorrent", service=self.service_info):
                         self.__qb_torrents_reannounce(torrent_hashes=need_delete_hashes_contain_subsidiary)
                     # 删除种子
                     if downloader.delete_torrents(ids=need_delete_hashes_contain_subsidiary, delete_file=True):
@@ -2610,7 +2599,7 @@ class ZYTBrushFlow(_PluginBase):
                                              seeding_torrents_dict: Dict[str, Any]):
         brush_config = self.__get_brush_config()
 
-        if not self.downloader_helper.is_downloader("qbittorrent", service=self.service_info):
+        if not DownloaderHelper().is_downloader("qbittorrent", service=self.service_info):
             logger.info("同步种子刷流标签记录目前仅支持qbittorrent")
             return
 
@@ -3279,7 +3268,7 @@ class ZYTBrushFlow(_PluginBase):
             if not torrent_url or torrent_url.startswith("magnet"):
                 return torrent_url
 
-            indexers = self.sites_helper.get_indexers()
+            indexers = SitesHelper().get_indexers()
             if not indexers:
                 return torrent_url
 
@@ -3344,7 +3333,8 @@ class ZYTBrushFlow(_PluginBase):
         if not downloader:
             return None
 
-        if self.downloader_helper.is_downloader("qbittorrent", service=self.service_info):
+        downloader_helper = DownloaderHelper()
+        if downloader_helper.is_downloader("qbittorrent", service=self.service_info):
             # 限速值转为bytes
             up_speed = up_speed * 1024 if up_speed else None
             down_speed = down_speed * 1024 if down_speed else None
@@ -3378,7 +3368,7 @@ class ZYTBrushFlow(_PluginBase):
                     return torrent_hash
             return None
 
-        elif self.downloader_helper.is_downloader("transmission", service=self.service_info):
+        elif downloader_helper.is_downloader("transmission", service=self.service_info):
             # 如果开启代理下载以及种子地址不是磁力地址，则请求种子到内存再传入下载器
             if not torrent_content.startswith("magnet"):
                 response = RequestUtils(cookies=cookies,
@@ -3426,7 +3416,7 @@ class ZYTBrushFlow(_PluginBase):
         获取种子hash
         """
         try:
-            return torrent.get("hash") if self.downloader_helper.is_downloader("qbittorrent", service=self.service_info) \
+            return torrent.get("hash") if DownloaderHelper().is_downloader("qbittorrent", service=self.service_info) \
                 else torrent.hashString
         except Exception as e:
             print(str(e))
@@ -3443,7 +3433,7 @@ class ZYTBrushFlow(_PluginBase):
             all_hashes = []
             for torrent in torrents:
                 # 根据下载器类型获取Hash值
-                hash_value = torrent.get("hash") if self.downloader_helper.is_downloader("qbittorrent",
+                hash_value = torrent.get("hash") if DownloaderHelper().is_downloader("qbittorrent",
                                                                                          service=self.service_info) \
                     else torrent.hashString
                 if hash_value:
@@ -3459,7 +3449,7 @@ class ZYTBrushFlow(_PluginBase):
         """
         try:
             return [str(tag).strip() for tag in torrent.get("tags").split(',')] \
-                if self.downloader_helper.is_downloader("qbittorrent",
+                if DownloaderHelper().is_downloader("qbittorrent",
                                                         service=self.service_info) else torrent.labels or []
         except Exception as e:
             print(str(e))
@@ -3471,7 +3461,7 @@ class ZYTBrushFlow(_PluginBase):
         """
         date_now = int(time.time())
         # QB
-        if self.downloader_helper.is_downloader("qbittorrent", service=self.service_info):
+        if DownloaderHelper().is_downloader("qbittorrent", service=self.service_info):
             """
             {
               "added_on": 1693359031,
@@ -3822,7 +3812,7 @@ class ZYTBrushFlow(_PluginBase):
         """
         try:
             qb_service_info = self.service_info
-            if self.downloader_helper.is_downloader("qbittorrent", service=qb_service_info):
+            if DownloaderHelper().is_downloader("qbittorrent", service=qb_service_info):
                 downloader_obj = qb_service_info.instance
                 qb_client = downloader_obj.qbc
                 upload_limit = qb_client.app_preferences().up_limit
@@ -3953,7 +3943,7 @@ class ZYTBrushFlow(_PluginBase):
         if not self._subscribe_infos:
             self._subscribe_infos = {}
 
-        subscribes = self.subscribe_oper.list()
+        subscribes = SubscribeOper().list()
         if subscribes:
             # 遍历订阅
             for subscribe in subscribes:
@@ -4254,7 +4244,7 @@ class ZYTBrushFlow(_PluginBase):
                 # 使用StringUtils工具类获取tracker的域名
                 domain = StringUtils.get_url_domain(tracker)
 
-            site_info = self.sites_helper.get_indexer(domain)
+            site_info = SitesHelper().get_indexer(domain)
             if site_info:
                 return site_info.get("id"), site_info.get("name")
 
