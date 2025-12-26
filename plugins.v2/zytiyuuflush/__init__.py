@@ -1,9 +1,9 @@
 import os
 import re
-import time
 from datetime import datetime, timedelta
 from threading import Event
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urljoin
 
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.14.5"
+    plugin_version = "2.15.1"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -49,10 +49,6 @@ class ZYTIYUUflush(_PluginBase):
     # 私有属性
     _scheduler = None
     iyuu_helper = None
-    downloader_helper = None
-    sites_helper = None
-    site_oper = None
-    torrent_helper = None
     # 开关
     _enabled = False
     _cron = None
@@ -61,9 +57,6 @@ class ZYTIYUUflush(_PluginBase):
     _token = None
     _downloaders = []
     _sites = []
-    _limit_sites = []
-    _limit_sites_pause_threshold = 12 * 60  # 12小时
-    _active_time_range_site_config = None
     _notify = False
     _nolabels = None
     _noautostart = None
@@ -98,12 +91,7 @@ class ZYTIYUUflush(_PluginBase):
     exist = 0
     fail = 0
     cached = 0
-    to_pausedUP_hashs = {} # 位于限速站点中因活动而暂停的种子hash,value=和最后活动时间
     def init_plugin(self, config: dict = None):
-        self.sites_helper = SitesHelper()
-        self.site_oper = SiteOper()
-        self.torrent_helper = TorrentHelper()
-        self.downloader_helper = DownloaderHelper()
         # 读取配置
         if config:
             self._enabled = config.get("enabled")
@@ -113,9 +101,6 @@ class ZYTIYUUflush(_PluginBase):
             self._token = config.get("token")
             self._downloaders = config.get("downloaders")
             self._sites = config.get("sites") or []
-            self._limit_sites = config.get("limit_sites") or []
-            self._limit_sites_pause_threshold = config.get("limit_sites_pause_threshold") or 12 * 60  # 12小时
-            self._active_time_range_site_config = config.get("active_time_range_site_config")
             self._notify = config.get("notify")
             self._nolabels = config.get("nolabels")
             self._noautostart = config.get("noautostart")
@@ -130,10 +115,9 @@ class ZYTIYUUflush(_PluginBase):
             self._success_caches = [] if self._clearcache else config.get("success_caches") or []
 
             # 过滤掉已删除的站点
-            all_sites = [site.id for site in self.site_oper.list_order_by_pri()] + [site.get("id") for site in
-                                                                                    self.__custom_sites()]
+            all_sites = [site.id for site in SiteOper().list_order_by_pri()] + [site.get("id") for site in
+                                                                                self.__custom_sites()]
             self._sites = [site_id for site_id in all_sites if site_id in self._sites]
-            self._limit_sites = [site_id for site_id in all_sites if site_id in self._limit_sites]
             self.__update_config()
 
         # 停止现有任务
@@ -174,7 +158,7 @@ class ZYTIYUUflush(_PluginBase):
             logger.warning("尚未配置下载器，请检查配置")
             return None
 
-        services = self.downloader_helper.get_services(name_filters=self._downloaders)
+        services = DownloaderHelper().get_services(name_filters=self._downloaders)
         if not services:
             logger.warning("获取下载器实例失败，请检查配置")
             return None
@@ -213,10 +197,10 @@ class ZYTIYUUflush(_PluginBase):
         }]
         """
         if self.get_state():
-            logger.info(f"IYUU刷流辅种服务重新启动，执行周期 {self._cron}")
+            logger.info(f"IYUU自动辅种服务重新启动，执行周期 {self._cron}")
             return [{
-                "id": "ZYTIYUUflush",
-                "name": "IYUU刷流辅种",
+                "id": "IYUUAutoSeedzyt",
+                "name": "IYUU自动辅种服务",
                 "trigger": CronTrigger.from_crontab(self._cron),
                 "func": self.auto_seed,
                 "kwargs": {}
@@ -232,7 +216,7 @@ class ZYTIYUUflush(_PluginBase):
 
         # 站点的可选项
         site_options = ([{"title": site.name, "value": site.id}
-                         for site in self.site_oper.list_order_by_pri()]
+                         for site in SiteOper().list_order_by_pri()]
                         + [{"title": site.get("name"), "value": site.get("id")}
                            for site in customSites])
         return [
@@ -349,7 +333,7 @@ class ZYTIYUUflush(_PluginBase):
                                                    'model': 'downloaders',
                                                    'label': '下载器',
                                                    'items': [{"title": config.name, "value": config.name}
-                                                             for config in self.downloader_helper.get_configs().values()]
+                                                             for config in DownloaderHelper().get_configs().values()]
                                                }
                                            }
                                        ]
@@ -391,65 +375,6 @@ class ZYTIYUUflush(_PluginBase):
                                                    'model': 'sites',
                                                    'label': '辅种站点',
                                                    'items': site_options
-                                               }
-                                           }
-                                       ]
-                                   }
-                               ]
-                           },
-                           {
-                               'component': 'VRow',
-                               'content': [
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 8
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VSelect',
-                                               'props': {
-                                                   'chips': True,
-                                                   'multiple': True,
-                                                   'clearable': True,
-                                                   'model': 'limit_sites',
-                                                   'label': '限速100K站点',
-                                                   'items': site_options
-                                               }
-                                           }
-                                       ]
-                                   },
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 2
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'limit_sites_pause_threshold',
-                                                   'label': '限速暂停时间(分钟)',
-                                                   'placeholder': "限速后还活动就暂停"
-                                               }
-                                           }
-                                       ]
-                                   },
-                                   {
-                                       'component': 'VCol',
-                                       'props': {
-                                           'cols': 12,
-                                           'md': 2
-                                       },
-                                       'content': [
-                                           {
-                                               'component': 'VTextField',
-                                               'props': {
-                                                   'model': 'active_time_range_site_config',
-                                                   'label': '限速时间段',
-                                                   'placeholder': '限速后还活动就暂停,如：00:00-08:00,默认全天'
                                                }
                                            }
                                        ]
@@ -612,8 +537,6 @@ class ZYTIYUUflush(_PluginBase):
                    "token": "",
                    "downloaders": [],
                    "sites": [],
-                   "limit_sites": [],
-                   "limit_sites_pause_threshold": 12 * 60,
                    "nopaths": "",
                    "nolabels": "",
                    "noautostart": "",
@@ -635,9 +558,6 @@ class ZYTIYUUflush(_PluginBase):
             "token": self._token,
             "downloaders": self._downloaders,
             "sites": self._sites,
-            "limit_sites": self._limit_sites,
-            "limit_sites_pause_threshold": self._limit_sites_pause_threshold,
-            "active_time_range_site_config": self._active_time_range_site_config,
             "notify": self._notify,
             "nolabels": self._nolabels,
             "noautostart": self._noautostart,
@@ -744,7 +664,7 @@ class ZYTIYUUflush(_PluginBase):
                 logger.info(f"没有需要辅种的种子")
         # 限速需要 开始
         all_site_name_id_map = {}
-        for site in self.site_oper.list_order_by_pri():
+        for site in SiteOper().list_order_by_pri():
             all_site_name_id_map[site.name] = site.id
         for site in self.__custom_sites():
             all_site_name_id_map[site.get("name")] = site.get("id")
@@ -782,91 +702,6 @@ class ZYTIYUUflush(_PluginBase):
                             logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection} {current_torrent_tag_list}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(pausedUP_torrent_hashs)
-                # 设置限速100K站点
-                if self._limit_sites:
-                    all_torrents, _ = downloader_obj.get_torrents()
-                    # 限速100K站点内的种子
-                    to_limit_torrent_hashs = []
-                    to_cancel_limit_torrent_hashs = []
-                    # 判断当前是否在生效时间段内,如果在就执行限速,如果不在就取消限速
-                    if self.__is_current_time_in_range_site_config():
-                        # 限速100K中,且活动的种子
-                        to_pausedUP_hashs_cur = []
-                        # 已经暂停,时间超过 12 小时的种子
-                        to_cancel_pausedUP_hashs_cur = []  # 暂停超过 12 小时又可以启动的种子
-                        current_time = time.time()  # 当前时间戳
-                        _limit_sites_pause_threshold_s = int(self._limit_sites_pause_threshold) * 60
-                        for torrent in all_torrents:
-                            # 当前种子 tags list
-                            current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                            # qb 补充站点标签,交集第一个就是站点标签
-                            intersection = all_site_names.intersection(current_torrent_tag_list)
-                            site_name = None
-                            if intersection:
-                                site_name = list(intersection)[0]
-                            if site_name:
-                                is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
-                            else:
-                                is_in_limit_sites = False
-                                logger.error(f"{torrent.name} 没有添加站点标签{current_torrent_tag_list}")
-                            if is_in_limit_sites:
-                                to_limit_torrent_hashs.append(torrent.hash)
-                            else:
-                                if torrent.uploadLimit != 0: # 去了限速标签,仍被被限速中的
-                                    to_cancel_limit_torrent_hashs.append(torrent.hash)
-                            # 限速100K仍然有上传就暂停:
-                            if _limit_sites_pause_threshold_s > 0:
-                                state = torrent.state  # str
-                                if is_in_limit_sites:
-                                    if "uploading" == state:
-                                        to_pausedUP_hashs_cur.append(torrent.hash)
-                                    elif state in ["pausedUP", "stoppedUP"] and "P100K" in current_torrent_tag_list and not noautostart_set.intersection(current_torrent_tag_list):
-                                        pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
-                                        if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
-                                            to_cancel_pausedUP_hashs_cur.append(torrent.hash)
-                        if to_limit_torrent_hashs:
-                            downloader_obj.qbc.torrents_set_upload_limit(102400, to_limit_torrent_hashs)
-                            downloader_obj.set_torrents_tag(to_limit_torrent_hashs, ["F100K"])
-                            logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
-                        if to_cancel_limit_torrent_hashs:
-                            downloader_obj.qbc.torrents_set_upload_limit(0, to_cancel_limit_torrent_hashs)
-                            logger.info(f"{downloader} 从限速站点移除后,解除限速100K种子个数: {len(to_cancel_limit_torrent_hashs)}")
-                        # 限速100K仍然有上传就暂停:
-                        if to_pausedUP_hashs_cur:
-                            downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
-                            downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P100K"])
-                            logger.info(f"{downloader} 增加暂停100K种子个数: {len(to_pausedUP_hashs_cur)}")
-                            for t_hash in to_pausedUP_hashs_cur:
-                                self.to_pausedUP_hashs[t_hash] = current_time
-                        if to_cancel_pausedUP_hashs_cur:
-                            downloader_obj.start_torrents(to_cancel_pausedUP_hashs_cur)
-                            downloader_obj.remove_torrents_tag(to_cancel_pausedUP_hashs_cur, ["P100K"])
-                            logger.info(f"{downloader} 重新开始P100K种子个数: {len(to_cancel_pausedUP_hashs_cur)}")
-                            for t_hash in to_cancel_pausedUP_hashs_cur:
-                                if t_hash in self.to_pausedUP_hashs:
-                                    del self.to_pausedUP_hashs[t_hash]
-                    else:
-                        for torrent in all_torrents:
-                            # 当前种子 tags list
-                            current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                            # qb 补充站点标签,交集第一个就是站点标签
-                            intersection = all_site_names.intersection(current_torrent_tag_list)
-                            site_name = None
-                            if intersection:
-                                site_name = list(intersection)[0]
-                            if site_name in all_site_name_id_map:
-                                is_in_limit_sites = all_site_name_id_map[site_name] in self._limit_sites
-                            else:
-                                is_in_limit_sites = None
-                                logger.error(f"{site_name} not in {all_site_name_id_map}")
-                            if is_in_limit_sites:
-                                to_limit_torrent_hashs.append(torrent.hash)
-                        # to_limit_torrent_hashs 取消限速,删除标签
-                        if to_limit_torrent_hashs:
-                            downloader_obj.qbc.torrents_set_upload_limit(0, to_limit_torrent_hashs)
-                            downloader_obj.remove_torrents_tag(to_limit_torrent_hashs, ["F100K", "P100K"])
-                            self.to_pausedUP_hashs.clear()
-                            logger.info(f"在非限速时间区间,{downloader} 解除限速100K种子个数{len(to_limit_torrent_hashs)}")
             elif dl_type == "transmission":
                 # logger.info(f"debug service={type(service)},downloader={type(downloader)},downloader_obj={type(downloader_obj)},")
                 # downloader_obj=<class 'app.modules.transmission.transmission.Transmission'>
@@ -897,23 +732,6 @@ class ZYTIYUUflush(_PluginBase):
                             logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection2} {current_torrent_tag_list}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
-                # 设置限速站点
-                if self._limit_sites:
-                    all_torrents, _ = downloader_obj.get_torrents()
-                    to_limit_torrent_hashs = []
-                    for torrent in all_torrents:
-                        # 当前种子 tags list
-                        current_torrent_tag_list = [element.strip() for element in torrent.labels]
-                        # tr 补充站点标签,交集第一个就是站点标签
-                        intersection = all_site_names.intersection(current_torrent_tag_list)
-                        site_name = None
-                        if intersection:
-                            site_name = list(intersection)[0]
-                        if all_site_name_id_map[site_name] in self._limit_sites:
-                            to_limit_torrent_hashs.append(torrent.hashString)
-                    if to_limit_torrent_hashs:
-                        downloader_obj.change_torrent(hash_string=to_limit_torrent_hashs, upload_limit=100)
-                        logger.info(f"{downloader} 限速100K种子个数: {len(to_limit_torrent_hashs)}")
         # 保存缓存
         self.__update_config()
         # 发送消息
@@ -921,7 +739,7 @@ class ZYTIYUUflush(_PluginBase):
             if self.success or self.fail:
                 self.post_message(
                     mtype=NotificationType.SiteMessage,
-                    title="【IYUU刷流辅种】",
+                    title="【IYUU自动辅种任务完成】",
                     text=f"服务器返回可辅种总数：{self.total}\n"
                          f"实际可辅种数：{self.realtotal}\n"
                          f"已存在：{self.exist}\n"
@@ -951,24 +769,6 @@ class ZYTIYUUflush(_PluginBase):
             return False
 
         return True
-
-    def __is_current_time_in_range_site_config(self) -> bool:
-        """判断当前时间是否在开启限速时间区间内-限速时间段"""
-        active_time_range_site_config = self._active_time_range_site_config
-        if not self.__is_valid_time_range(active_time_range_site_config):
-            # 如果时间范围格式不正确或不存在，说明当前没有开启时间段，返回True
-            return True
-
-        start_str, end_str = active_time_range_site_config.split('-')
-        start_time = datetime.strptime(start_str, '%H:%M').time()
-        end_time = datetime.strptime(end_str, '%H:%M').time()
-        now = datetime.now().time()
-        if start_time <= end_time:
-            # 情况1: 时间段不跨越午夜
-            return start_time <= now <= end_time
-        else:
-            # 情况2: 时间段跨越午夜
-            return now >= start_time or now <= end_time
 
     def check_recheck(self):
         """
@@ -1208,7 +1008,8 @@ class ZYTIYUUflush(_PluginBase):
         # 查询站点
         site_domain = StringUtils.get_url_domain(site_url)
         # 站点信息
-        site_info = self.sites_helper.get_indexer(site_domain)
+        sites_helper = SitesHelper()
+        site_info = sites_helper.get_indexer(site_domain)
         if not site_info or not site_info.get('url'):
             logger.debug(f"没有维护种子对应的站点：{site_url}")
             return False
@@ -1224,7 +1025,7 @@ class ZYTIYUUflush(_PluginBase):
             self.exist += 1
             return False
         # 站点流控
-        check, checkmsg = self.sites_helper.check(site_domain)
+        check, checkmsg = sites_helper.check(site_domain)
         if check:
             logger.warn(checkmsg)
             self.fail += 1
@@ -1246,7 +1047,7 @@ class ZYTIYUUflush(_PluginBase):
             else:
                 torrent_url += "?https=1"
         # 下载种子文件
-        _, content, _, _, error_msg = self.torrent_helper.download_torrent(
+        _, content, _, _, error_msg = TorrentHelper().download_torrent(
             url=torrent_url,
             cookie=site_info.get("cookie"),
             ua=site_info.get("ua") or settings.USER_AGENT,
@@ -1373,6 +1174,12 @@ class ZYTIYUUflush(_PluginBase):
             """
             return True if "monikadesign." in url else False
 
+        def __is_gpw(url: str):
+            """
+            判断是否为gpw站点
+            """
+            return True if "greatposterwall." in url else False
+
         def __get_mteam_enclosure(tid: str, apikey: str):
             """
             获取mteam种子下载链接
@@ -1413,6 +1220,68 @@ class ZYTIYUUflush(_PluginBase):
             rsskey = rss_match.group(1)
             return f"{site.get('url')}torrents/download/{tid}.{rsskey}"
 
+        def __get_gpw_torrent_url_from_page(seed: dict, site: dict):
+            """
+            从详情页面获取下载链接
+            """
+            if not site.get('url'):
+                logger.warn(f"站点 {site.get('name')} 未获取站点地址，无法获取种子下载链接")
+                return None
+
+            try:
+                page_url = f"{site.get('url')}torrents.php?torrentid={seed.get('torrent_id')}&hit=1"
+                logger.info(f"正在获取种子下载链接：{page_url} ...")
+
+                res = RequestUtils(
+                    cookies=site.get("cookie"),
+                    ua=site.get("ua") or settings.USER_AGENT,
+                    proxies=settings.PROXY if site.get("proxy") else None
+                ).get_res(url=page_url)
+
+                if res is None or res.status_code not in (200, 500):
+                    logger.error(f"获取种子下载链接失败，请求失败：{page_url}，{res.status_code if res else ''}")
+                    return None
+                # Fix encoding
+                if "charset=utf-8" in res.text or "charset=UTF-8" in res.text:
+                    res.encoding = "UTF-8"
+                else:
+                    res.encoding = res.apparent_encoding
+
+                if not res.text:
+                    logger.warn(f"获取种子下载链接失败，页面内容为空：{page_url}")
+                    return None
+                    # 使用xpath从页面中获取下载链接
+                html = etree.HTML(res.text)
+                if html is None:
+                    logger.warning(f"解析页面失败：{page_url}")
+                    return None
+
+                xpath = "//a[contains(@href, 'torrents.php?action=download')]/@href"
+                urls = html.xpath(xpath)
+
+                if not urls:
+                    logger.warning(f"获取种子下载链接失败，未找到下载链接：{page_url}")
+                    return None
+
+                torrent_id = str(seed.get("torrent_id"))
+                matched_url = None
+                # Strict match using regex id=xxxx
+                for u in urls:
+                    if re.search(rf"id={torrent_id}(?:&|$)", u):
+                        matched_url = u
+                        break
+                if not matched_url:
+                    logger.warning(f"未找到与 torrent_id={torrent_id} 对应的下载链接")
+                    return None
+
+                final_url = urljoin(site['url'], matched_url)
+
+                logger.info(f"获取种子下载链接成功：{final_url}")
+                return final_url
+            except Exception as e:
+                logger.warn(f"获取种子下载链接失败：{str(e)}")
+                return None
+
         def __is_special_site(url: str):
             """
             判断是否为特殊站点
@@ -1437,6 +1306,9 @@ class ZYTIYUUflush(_PluginBase):
             if __is_monika(site.get('url')):
                 # 返回种子id和站点配置中所Monika的rss链接
                 return __get_monika_torrent(tid=seed.get("torrent_id"), rssurl=site.get("rss"))
+            if __is_gpw(site.get('url')):
+                # 从详情页面获取下载链接
+                return __get_gpw_torrent_url_from_page(seed=seed, site=site)
             elif __is_special_site(site.get('url')):
                 # 从详情页面获取下载链接
                 return self.__get_torrent_url_from_page(seed=seed, site=site)
@@ -1547,27 +1419,21 @@ class ZYTIYUUflush(_PluginBase):
         config = self.get_config()
         if config:
             sites = config.get("sites")
-            limit_sites = config.get("limit_sites")
             if sites:
                 if isinstance(sites, str):
                     sites = [sites]
-                if isinstance(limit_sites, str):
-                    limit_sites = [limit_sites]
 
                 # 删除对应站点
                 if site_id:
                     sites = [site for site in sites if int(site) != int(site_id)]
-                    limit_sites = [site for site in limit_sites if int(site) != int(site_id)]
                 else:
                     # 清空
                     sites = []
-                    limit_sites = []
 
                 # 若无站点，则停止
                 if len(sites) == 0:
                     self._enabled = False
 
                 self._sites = sites
-                self._limit_sites = limit_sites
                 # 保存配置
                 self.__update_config()
