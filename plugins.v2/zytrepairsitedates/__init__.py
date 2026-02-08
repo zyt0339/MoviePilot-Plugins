@@ -19,7 +19,7 @@ class ZYTRepairSiteDates(_PluginBase):
     # 插件图标
     plugin_icon = "database.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -108,40 +108,64 @@ class ZYTRepairSiteDates(_PluginBase):
         rows = cursor.fetchall()
         return rows
 
+    # 向前查7天，并返回日期
     def get_previous_day_row(self, conn, domain, current_date):
         current_date_obj = datetime.strptime(current_date, '%Y-%m-%d')
-        for _ in range(3):
+        for _ in range(7):
             current_date_obj -= timedelta(days=1)
             previous_date = current_date_obj.strftime('%Y-%m-%d')
             cursor = conn.cursor()
-            query = "SELECT upload, bonus, download, ratio, seeding, leeching, seeding_size, seeding_info, err_msg " \
-                    "FROM siteuserdata WHERE domain =? AND updated_day =?"
+            query = """
+            SELECT upload, bonus, download, ratio, seeding,
+                   leeching, seeding_size, seeding_info, err_msg
+            FROM siteuserdata
+            WHERE domain = ? AND updated_day = ?
+            """
             cursor.execute(query, (domain, previous_date))
             row = cursor.fetchone()
             if row and row[0] != 0:
-                return row
+                return row, previous_date
             else:
                 logger.info('     未查询到前一日数据, 继续查询更前一日')
-        return None
+        return None, None
 
+    # 批量填充连续空白天
     def update_rows(self, conn, rows, ignore_domains):
         cursor = conn.cursor()
         for row in rows:
-            row_id = row[0]
             domain = row[1]
             if domain in ignore_domains:
                 continue
             current_date = row[2]
             logger.info(f'{domain} {current_date} upload = 0, 开始获取前一日数据覆盖到本天')
 
-            prev_row = self.get_previous_day_row(conn, domain, current_date)
+            prev_row, prev_date = self.get_previous_day_row(conn, domain, current_date)
             if prev_row:
-                logger.info('     查询到前一(迭代)日数据, 执行覆盖成功')
-                update_query = "UPDATE siteuserdata SET upload =?, bonus =?, download =?, ratio =?, seeding =?, " \
-                               "leeching =?, seeding_size =?, seeding_info =?, err_msg =? WHERE id =?"
-                cursor.execute(update_query, (*prev_row, row_id))
+                logger.info(f'     查询到前一日数据,日期: {prev_date}，开始批量覆盖')
+
+                start_date = datetime.strptime(prev_date, '%Y-%m-%d') + timedelta(days=1)
+                end_date = datetime.strptime(current_date, '%Y-%m-%d')
+
+                update_query = """
+                UPDATE siteuserdata
+                SET upload = ?, bonus = ?, download = ?, ratio = ?,
+                    seeding = ?, leeching = ?, seeding_size = ?,
+                    seeding_info = ?, err_msg = ?
+                WHERE domain = ? AND updated_day = ?
+                """
+
+                while start_date <= end_date:
+                    fill_date = start_date.strftime('%Y-%m-%d')
+                    logger.info(f'         覆盖日期: {fill_date}')
+
+                    cursor.execute(
+                        update_query,
+                        (*prev_row, domain, fill_date)
+                    )
+                    start_date += timedelta(days=1)
             else:
-                logger.info('     未查询到前一(迭代)日数据, 取消覆盖')
+                logger.info('     未查询到前一日数据, 取消覆盖')
+
         conn.commit()
 
     def run(self):
@@ -149,9 +173,11 @@ class ZYTRepairSiteDates(_PluginBase):
         success = True
         try:
             ignore_domains = set()
-            for cmd in self._cmd.split("\n"):
-                ignore_domains.add(cmd.strip())
-            db_path = "/config/user.db"  # 请替换为实际的数据库文件路径
+            if self._cmd:
+                for cmd in self._cmd.split("\n"):
+                    ignore_domains.add(cmd.strip())
+
+            db_path = "/config/user.db"
             conn = self.connect_to_database(db_path)
             if conn:
                 upload_zero_rows = self.get_upload_zero_rows(conn)
