@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.15.1"
+    plugin_version = "2.15.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -629,13 +629,13 @@ class IYUUAutoSeedzyt(_PluginBase):
 
                 torrent_nolabel = nolabel_set & set(torrent_labels)
                 if torrent_nolabel:
-                    logger.info(f"{log_torrent_tag} 含有不辅种标签 {torrent_nolabel}，跳过 ...")
+                    logger.debug(f"{log_torrent_tag} 含有不辅种标签 {torrent_nolabel}，跳过 ...")
                     continue
 
                 # 体积排除辅种
                 torrent_size = self.__get_torrent_size(torrent=torrent, dl_type=service.type) / 1024 / 1024 / 1024
                 if self._size and torrent_size < self._size:
-                    logger.info(f"{log_torrent_tag} 大小:{torrent_size:.2f}GB，小于设定 {self._size}GB，跳过 ...")
+                    logger.debug(f"{log_torrent_tag} 大小:{torrent_size:.2f}GB，小于设定 {self._size}GB，跳过 ...")
                     continue
                 # 拆包种子排除辅种
                 if service.type == "qbittorrent":
@@ -690,16 +690,16 @@ class IYUUAutoSeedzyt(_PluginBase):
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                     if torrent.state in ['pausedUP', 'stoppedUP'] and not noautostart_set_and_P100K.intersection(current_torrent_tag_list):
                         pausedUP_torrent_hashs.append(torrent.hash)
-                        logger.info(f"{downloader} 自动开始 {torrent.name} {current_torrent_tag_list}")
+                        logger.debug(f"{downloader} 自动开始 {torrent.name} {current_torrent_tag_list}")
                 for torrent in paused_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                     if torrent.state not in ['pausedUP', 'stoppedUP']:
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state} {current_torrent_tag_list}")
+                        logger.debug(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state} {current_torrent_tag_list}")
                     else:
                         intersection = noautostart_set_and_P100K.intersection(current_torrent_tag_list)
                         if intersection:
-                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection} {current_torrent_tag_list}")
+                            logger.debug(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection} {current_torrent_tag_list}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(pausedUP_torrent_hashs)
             elif dl_type == "transmission":
@@ -719,17 +719,17 @@ class IYUUAutoSeedzyt(_PluginBase):
                     available = torrent.available
                     if available == 100.0 and not noautostart_set.intersection(current_torrent_tag_list):
                         pausedUP_torrent_hashs.append(torrent.hashString)
-                        logger.info(f"{downloader} 自动开始 {torrent.name} {current_torrent_tag_list}")
+                        logger.debug(f"{downloader} 自动开始 {torrent.name} {current_torrent_tag_list}")
                 for torrent in paused_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.labels]
                     available = torrent.available
                     if available < 100.0:
-                        logger.info(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available} {current_torrent_tag_list}")
+                        logger.debug(f"{downloader} 不自动开始 {torrent.name}, torrent.available={available} {current_torrent_tag_list}")
                     else:
                         intersection2 = noautostart_set.intersection(current_torrent_tag_list)
                         if intersection2:
-                            logger.info(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection2} {current_torrent_tag_list}")
+                            logger.debug(f"{downloader} 不自动开始 {torrent.name}, 含有不开始标签 {intersection2} {current_torrent_tag_list}")
                 if len(pausedUP_torrent_hashs) > 0:
                     downloader_obj.start_torrents(ids=pausedUP_torrent_hashs)
         # 保存缓存
@@ -860,10 +860,10 @@ class IYUUAutoSeedzyt(_PluginBase):
                     logger.debug(f"{seed_info_hash} 已在下载器中，跳过 ...")
                     continue
                 if seed_info_hash in self._success_caches:
-                    logger.info(f"{seed_info_hash} 已处理过辅种，跳过 ...")
+                    logger.debug(f"{seed_info_hash} 已处理过辅种，跳过 ...")
                     continue
                 if seed_info_hash in self._error_caches or seed_info_hash in self._permanent_error_caches:
-                    logger.info(f"种子 {seed_info_hash} 辅种失败且已缓存，跳过 ...")
+                    logger.debug(f"种子 {seed_info_hash} 辅种失败且已缓存，跳过 ...")
                     continue
                 # 添加任务
                 success = self.__download_torrent(seed=seed,
@@ -1021,7 +1021,7 @@ class IYUUAutoSeedzyt(_PluginBase):
         downloader_obj = service.instance
         torrent_info, _ = downloader_obj.get_torrents(ids=[seed.get("info_hash")])
         if torrent_info:
-            logger.info(f"{seed.get('info_hash')} 下载前查询已在下载器中，跳过 ...")
+            logger.debug(f"{seed.get('info_hash')} 下载前查询已在下载器中，跳过 ...")
             self.exist += 1
             return False
         # 站点流控
