@@ -24,7 +24,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.6"
+    plugin_version = "1.1.7"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1290,7 +1290,7 @@ class ZYTLimit(_PluginBase):
 
     def logger_info(self, cancel_limit, msg):
         if not cancel_limit:
-            logger.info(msg)
+            logger.debug(msg)
 
     def limit(self):
         """
@@ -1345,7 +1345,7 @@ class ZYTLimit(_PluginBase):
             for downloader_service_info in downloader_service_infos.values():
                 if downloader_service_info.name not in downloader_site_record:
                     downloader_site_record[downloader_service_info.name] = all_site_names.copy()
-            logger.info(f"限速{index + 1}")
+            logger.debug(f"限速{index + 1}")
             for downloader_service_info in downloader_service_infos.values():
                 # 创建一个集合，包含所有需要排除的 name
                 excluded_names = {name for name, id in all_site_name_id_map.items() if id in limit_sites}
@@ -1354,7 +1354,7 @@ class ZYTLimit(_PluginBase):
                 self.limit_per_downloader(all_site_name_id_map, all_site_names, downloader_service_info,
                                           limit_sites, limit_speed, limit_sites_pause_threshold, is_in_time_range, limit_speed <= 0)
         # 给downloader_site_record中未设置限速的站点,设置不限速
-        logger.info("其余种子不限速")
+        logger.debug("其余种子不限速")
         for downloader, sites in downloader_site_record.items():
             if sites:  # names
                 logger.debug(f"{downloader} {','.join(sites)} 种子不限速")
@@ -1394,7 +1394,7 @@ class ZYTLimit(_PluginBase):
                 current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                 torrent_nolabel = nolabel_set & set(current_torrent_tag_list)
                 if torrent_nolabel:
-                    logger.info(f"{downloader} {torrent.name} 含有不限速标签{torrent_nolabel}，跳过 ...")
+                    logger.debug(f"{downloader} {torrent.name} 含有不限速标签{torrent_nolabel}，跳过 ...")
                     continue
                 # qb 补充站点标签,交集第一个就是站点标签
                 intersection = all_site_names.intersection(current_torrent_tag_list)
@@ -1468,7 +1468,7 @@ class ZYTLimit(_PluginBase):
                 current_torrent_tag_list = [element.strip() for element in torrent.labels]
                 torrent_nolabel = nolabel_set & set(current_torrent_tag_list)
                 if torrent_nolabel:
-                    logger.info(f"{downloader} {torrent.name} 含有不限速标签{torrent_nolabel}，跳过 ...")
+                    logger.debug(f"{downloader} {torrent.name} 含有不限速标签{torrent_nolabel}，跳过 ...")
                     continue
                 # qb 补充站点标签,交集第一个就是站点标签
                 intersection = all_site_names.intersection(current_torrent_tag_list)

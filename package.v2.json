@@ -167,11 +167,12 @@
         "name": "QB&TR上传限速",
         "description": "自定义时间点执行限速逻辑",
         "labels": "限速",
-        "version": "1.1.6",
+        "version": "1.1.7",
         "icon": "upload.png",
         "author": "zyt",
         "level": 2,
         "history": {
+            "v1.1.7": "减少日志打印",
             "v1.1.6": "减内存占用",
             "v1.1.5": "vcard",
             "v1.0.28": "支持不自动限速标签",
