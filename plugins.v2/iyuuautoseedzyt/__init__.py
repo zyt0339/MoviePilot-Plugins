@@ -34,7 +34,7 @@ class IYUUAutoSeedzyt(_PluginBase):
     # 插件图标
     plugin_icon = "IYUU.png"
     # 插件版本
-    plugin_version = "2.15.3"
+    plugin_version = "2.15.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -641,6 +641,9 @@ class IYUUAutoSeedzyt(_PluginBase):
                 if service.type == "qbittorrent":
                     if torrent.availability != -1 and torrent.availability < 1:
                         logger.info(f"{log_torrent_tag} 下载不完整，跳过 ...")
+                        continue
+                    if torrent.total_size != torrent.completed:
+                        logger.info(f"{log_torrent_tag} 下载不完整 2，跳过 ...")
                         continue
 
                 hash_strs.append({
