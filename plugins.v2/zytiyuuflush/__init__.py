@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.15.2"
+    plugin_version = "2.15.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -688,13 +688,13 @@ class ZYTIYUUflush(_PluginBase):
                 for torrent in paused_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                    if torrent.state in ['pausedUP', 'stoppedUP'] and not noautostart_set_and_P100K.intersection(current_torrent_tag_list):
+                    if torrent.state in ['pausedUP', 'stoppedUP'] and torrent.total_size == torrent.completed and not noautostart_set_and_P100K.intersection(current_torrent_tag_list):
                         pausedUP_torrent_hashs.append(torrent.hash)
                         logger.debug(f"{downloader} 自动开始 {torrent.name} {current_torrent_tag_list}")
                 for torrent in paused_torrents:
                     # 当前种子 tags list
                     current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
-                    if torrent.state not in ['pausedUP', 'stoppedUP']:
+                    if torrent.state not in ['pausedUP', 'stoppedUP'] or torrent.total_size != torrent.completed:
                         logger.debug(f"{downloader} 不自动开始 {torrent.name}, state={torrent.state} {current_torrent_tag_list}")
                     else:
                         intersection = noautostart_set_and_P100K.intersection(current_torrent_tag_list)

@@ -24,7 +24,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.7"
+    plugin_version = "1.1.8"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1408,7 +1408,7 @@ class ZYTLimit(_PluginBase):
                     state = torrent.state  # str
                     if cancel_limit:
                         to_cancel_limit_torrent_hashs.append(torrent.hash)
-                        if torrent.state in ['pausedUP', 'stoppedUP'] and ('暂停' not in current_torrent_tag_list):
+                        if torrent.state in ['pausedUP', 'stoppedUP'] and torrent.total_size == torrent.completed and ('暂停' not in current_torrent_tag_list):
                             to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     elif is_in_time_range:
                         to_limit_torrent_hashs.append(torrent.hash)
@@ -1416,13 +1416,13 @@ class ZYTLimit(_PluginBase):
                         if limit_sites_pause_threshold > 0 and limit_speed > 0:
                             if "uploading" == state:
                                 to_pausedUP_hashs_cur.append(torrent.hash)
-                            elif state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                            elif state in ["pausedUP", "stoppedUP"] and torrent.total_size == torrent.completed and ('暂停' not in current_torrent_tag_list):
                                 pausedUPTime = self.to_pausedUP_hashs.get(torrent.hash, 0)
                                 if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     else:  # 非限速区间,解除限速,解除暂停
                         to_cancel_limit_torrent_hashs.append(torrent.hash)
-                        if state in ["pausedUP", "stoppedUP"] and ('暂停' not in current_torrent_tag_list):
+                        if state in ["pausedUP", "stoppedUP"] and torrent.total_size == torrent.completed and ('暂停' not in current_torrent_tag_list):
                             to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                 # else:  # 配置站点外,解除限速,会将前面已经设置的也误解除,如何办? 初始记录{downloader:all_sites,},限速的站点从all_sites中减去,剩余的设置一轮0速度
                 #     cancel_limit_torrent_hashs_other.append(torrent.hash)
