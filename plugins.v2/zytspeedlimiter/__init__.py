@@ -19,7 +19,7 @@ class ZYTSpeedLimiter(_PluginBase):
     # 插件图标
     plugin_icon = "Librespeed_A.png"
     # 插件版本
-    plugin_version = "2.1.4"
+    plugin_version = "2.1.5"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -448,7 +448,7 @@ class ZYTSpeedLimiter(_PluginBase):
         if event:
             event_data: WebhookEventInfo = event.event_data
             # 打印event_info用于调试
-            logger.debug(f"收到Webhook事件: {event_data}")
+            # logger.debug(f"收到Webhook事件: {event_data}")
             if event_data.event not in [
                 "playback.start",
                 "PlaybackStart",
@@ -477,7 +477,7 @@ class ZYTSpeedLimiter(_PluginBase):
                         sessions = res.json()
                         # 使用DeviceId进行去重转码播放的2条session
                         sessions_dict = {}
-                        logger.debug(f"获取Emby session,length={len(sessions)},detail={sessions}")
+                        # logger.debug(f"获取Emby session,length={len(sessions)},detail={sessions}")
                         for session in sessions:
                             if session.get("NowPlayingItem") and not session.get("PlayState", {}).get("IsPaused"):
                                 if not self.__path_execluded(session.get("NowPlayingItem").get("Path")):
@@ -486,7 +486,7 @@ class ZYTSpeedLimiter(_PluginBase):
                                         # 如果新的session包含TranscodingInfo，则优先使用
                                         if session.get("TranscodingInfo") and not sessions_dict[device_id].get("TranscodingInfo"):
                                             sessions_dict[device_id] = session
-                                            logger.debug(f"新的session包含TranscodingInfo，则优先使用新的")
+                                            # logger.debug(f"新的session包含TranscodingInfo，则优先使用新的")
                                     else:
                                         sessions_dict[device_id] = session
                         playing_sessions = list(sessions_dict.values())
@@ -512,7 +512,7 @@ class ZYTSpeedLimiter(_PluginBase):
                     elif not IpUtils.is_private_ip(session.get("RemoteEndPoint")) \
                             and session.get("NowPlayingItem", {}).get("MediaType") == "Video":
                         total_bit_rate += bitrate
-                        logger.debug(f"session Bitrate = {bitrate / 8 / 1024} KB, total_bit_rate = {total_bit_rate/ 8 / 1024} KB")
+                        # logger.debug(f"session Bitrate = {bitrate / 8 / 1024} KB, total_bit_rate = {total_bit_rate/ 8 / 1024} KB")
 
             elif service.type == "jellyfin":
                 req_url = "[HOST]Sessions?api_key=[APIKEY]"
