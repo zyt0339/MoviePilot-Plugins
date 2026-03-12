@@ -19,7 +19,7 @@ class ZYTSpeedLimiter(_PluginBase):
     # 插件图标
     plugin_icon = "Librespeed_A.png"
     # 插件版本
-    plugin_version = "2.1.1"
+    plugin_version = "2.1.2"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -447,6 +447,8 @@ class ZYTSpeedLimiter(_PluginBase):
             return
         if event:
             event_data: WebhookEventInfo = event.event_data
+            # 打印event_info用于调试
+            logger.debug(f"收到Webhook事件: {event_data}")
             if event_data.event not in [
                 "playback.start",
                 "PlaybackStart",
@@ -610,11 +612,11 @@ class ZYTSpeedLimiter(_PluginBase):
                                 upload_limit * int(self._allocation_ratio.split(":")[cnt]) / allocation_count)
                             cnt += 1
                 if upload_limit:
-                    text = f"上传：{upload_limit} KB/s"
+                    text = f"上传：{round(upload_limit / 1024, 1)} MB/s"
                 else:
                     text = f"上传：未限速"
                 if download_limit:
-                    text = f"{text}\n下载：{download_limit} KB/s"
+                    text = f"{text}\n下载：{round(download_limit / 1024, 1)} MB/s"
                 else:
                     text = f"{text}\n下载：未限速"
                 if service.type == 'qbittorrent':
