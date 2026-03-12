@@ -452,8 +452,10 @@ class ZYTSpeedLimiter(_PluginBase):
             if event_data.event not in [
                 "playback.start",
                 "PlaybackStart",
-                "media.play",
-                "media.stop",
+                "media.play", # 播放
+                "media.stop", # 停止
+                "playback.pause", # 暂停
+                "playback.unpause", # 继续
                 "PlaybackStop",
                 "playback.stop"
             ]:
