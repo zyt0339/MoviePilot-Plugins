@@ -19,7 +19,7 @@ class ZYTSpeedLimiter(_PluginBase):
     # 插件图标
     plugin_icon = "Librespeed_A.png"
     # 插件版本
-    plugin_version = "2.1.3"
+    plugin_version = "2.1.4"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -475,27 +475,44 @@ class ZYTSpeedLimiter(_PluginBase):
                     res = service.instance.get_data(req_url)
                     if res and res.status_code == 200:
                         sessions = res.json()
+                        # 使用DeviceId进行去重转码播放的2条session
+                        sessions_dict = {}
+                        logger.debug(f"获取Emby session,length={len(sessions)},detail={sessions}")
                         for session in sessions:
                             if session.get("NowPlayingItem") and not session.get("PlayState", {}).get("IsPaused"):
                                 if not self.__path_execluded(session.get("NowPlayingItem").get("Path")):
-                                    playing_sessions.append(session)
-
+                                    device_id = session.get("DeviceId")
+                                    if device_id in sessions_dict:
+                                        # 如果新的session包含TranscodingInfo，则优先使用
+                                        if session.get("TranscodingInfo") and not sessions_dict[device_id].get("TranscodingInfo"):
+                                            sessions_dict[device_id] = session
+                                            logger.debug(f"新的session包含TranscodingInfo，则优先使用新的")
+                                    else:
+                                        sessions_dict[device_id] = session
+                        playing_sessions = list(sessions_dict.values())
                 except Exception as e:
                     logger.error(f"获取Emby播放会话失败：{str(e)}")
                     continue
                 # 计算有效比特率
                 for session in playing_sessions:
+                    # 获取码率，优先使用TranscodingInfo
+                    bitrate = 0
+                    transcoding_info = session.get("TranscodingInfo")
+                    if transcoding_info and transcoding_info.get("Bitrate"):
+                        bitrate = int(transcoding_info.get("Bitrate"))
+                    else:
+                        bitrate = int(session.get("NowPlayingItem", {}).get("Bitrate") or 0)
+
                     # 设置了不限速范围则判断session ip是否在不限速范围内
                     if self._unlimited_ips["ipv4"] or self._unlimited_ips["ipv6"]:
                         if not self.__allow_access(self._unlimited_ips, session.get("RemoteEndPoint")) \
                                 and session.get("NowPlayingItem", {}).get("MediaType") == "Video":
-                            total_bit_rate += int(session.get("NowPlayingItem", {}).get("Bitrate") or 0)
+                            total_bit_rate += bitrate
                     # 未设置不限速范围，则默认不限速内网ip
                     elif not IpUtils.is_private_ip(session.get("RemoteEndPoint")) \
                             and session.get("NowPlayingItem", {}).get("MediaType") == "Video":
-                        session_Bitrate = int(session.get("NowPlayingItem", {}).get("Bitrate") or 0)
-                        total_bit_rate += session_Bitrate
-                        logger.debug(f"session Bitrate = {session_Bitrate / 8 / 1024} KB, total_bit_rate = {total_bit_rate/ 8 / 1024} KB")
+                        total_bit_rate += bitrate
+                        logger.debug(f"session Bitrate = {bitrate / 8 / 1024} KB, total_bit_rate = {total_bit_rate/ 8 / 1024} KB")
 
             elif service.type == "jellyfin":
                 req_url = "[HOST]Sessions?api_key=[APIKEY]"
