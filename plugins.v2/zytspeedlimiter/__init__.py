@@ -572,11 +572,12 @@ class ZYTSpeedLimiter(_PluginBase):
 
     def __calc_limit(self, total_bit_rate: float) -> float:
         """
-        计算智能上传限速
+        计算智能上传限速,最低限制10kb/s
         """
         if not self._bandwidth:
             return 10
-        return round((self._bandwidth - total_bit_rate) / 8 / 1024, 2)
+        res = round((self._bandwidth - total_bit_rate) / 8 / 1024, 2)
+        return max(res, 10)
 
     def __set_limiter(self, limit_type: str, upload_limit: float, download_limit: float):
         """
@@ -612,11 +613,11 @@ class ZYTSpeedLimiter(_PluginBase):
                                 upload_limit * int(self._allocation_ratio.split(":")[cnt]) / allocation_count)
                             cnt += 1
                 if upload_limit:
-                    text = f"上传：{round(upload_limit / 1024, 1)} MB/s"
+                    text = f"上传：{round(upload_limit / 1024, 2)} MB/s"
                 else:
                     text = f"上传：未限速"
                 if download_limit:
-                    text = f"{text}\n下载：{round(download_limit / 1024, 1)} MB/s"
+                    text = f"{text}\n下载：{round(download_limit / 1024, 2)} MB/s"
                 else:
                     text = f"{text}\n下载：未限速"
                 if service.type == 'qbittorrent':
