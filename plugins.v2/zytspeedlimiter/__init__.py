@@ -19,7 +19,7 @@ class ZYTSpeedLimiter(_PluginBase):
     # 插件图标
     plugin_icon = "Librespeed_A.png"
     # 插件版本
-    plugin_version = "2.1.2"
+    plugin_version = "2.1.3"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -491,7 +491,10 @@ class ZYTSpeedLimiter(_PluginBase):
                     # 未设置不限速范围，则默认不限速内网ip
                     elif not IpUtils.is_private_ip(session.get("RemoteEndPoint")) \
                             and session.get("NowPlayingItem", {}).get("MediaType") == "Video":
-                        total_bit_rate += int(session.get("NowPlayingItem", {}).get("Bitrate") or 0)
+                        session_Bitrate = int(session.get("NowPlayingItem", {}).get("Bitrate") or 0)
+                        total_bit_rate += session_Bitrate
+                        logger.debug(f"session Bitrate = {session_Bitrate / 8 / 1024} KB, total_bit_rate = {total_bit_rate/ 8 / 1024} KB")
+
             elif service.type == "jellyfin":
                 req_url = "[HOST]Sessions?api_key=[APIKEY]"
                 try:
@@ -626,7 +629,7 @@ class ZYTSpeedLimiter(_PluginBase):
                     if self._notify:
                         title = "【播放限速】"
                         if upload_limit or download_limit:
-                            subtitle = f"Qbittorrent 开始{limit_type}限速"
+                            subtitle = f"{service.name} 开始{limit_type}限速"
                             self.post_message(
                                 mtype=NotificationType.MediaServer,
                                 title=title,
