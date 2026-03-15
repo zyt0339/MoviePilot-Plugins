@@ -34,7 +34,7 @@ class ZYTIYUUflush(_PluginBase):
     # 插件图标
     plugin_icon = "Iyuu_A.png"
     # 插件版本
-    plugin_version = "2.15.5"
+    plugin_version = "2.15.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1050,7 +1050,7 @@ class ZYTIYUUflush(_PluginBase):
             else:
                 torrent_url += "?https=1"
         # 下载种子文件
-        _, content, _, _, error_msg = TorrentHelper.download_torrent(
+        _, content, _, _, error_msg = TorrentHelper().download_torrent(
             url=torrent_url,
             cookie=site_info.get("cookie"),
             ua=site_info.get("ua") or settings.USER_AGENT,
