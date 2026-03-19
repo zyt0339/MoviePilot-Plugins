@@ -1,4 +1,5 @@
 import ipaddress
+import threading
 from typing import List, Tuple, Dict, Any, Optional
 
 from app.core.event import eventmanager, Event
@@ -19,7 +20,7 @@ class ZYTSpeedLimiter(_PluginBase):
     # 插件图标
     plugin_icon = "Librespeed_A.png"
     # 插件版本
-    plugin_version = "2.1.6"
+    plugin_version = "2.1.7"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -50,6 +51,9 @@ class ZYTSpeedLimiter(_PluginBase):
     # 当前限速状态
     _current_state = ""
     _exclude_path = ""
+
+    _delay_timer = None
+    _delay_lock = threading.Lock()
 
     def init_plugin(self, config: dict = None):
 
@@ -466,6 +470,22 @@ class ZYTSpeedLimiter(_PluginBase):
                 "playback.stop"
             ]:
                 return
+
+        # ====== 防抖延时逻辑 ======
+        with self._delay_lock:
+            # 如果已有延时任务 → 取消
+            if self._delay_timer:
+                self._delay_timer.cancel()
+            # 创建新延时1s任务
+            self._delay_timer = threading.Timer(1, lambda: self._do_check_playing_sessions())
+            self._delay_timer.start()
+        return
+        # ====== 防抖延时逻辑 ======
+
+    def _do_check_playing_sessions(self):
+        """
+        真正执行播放会话检查逻辑
+        """
         # 当前播放的总比特率
         total_bit_rate = 0
         media_servers = MediaServerHelper().get_services()
