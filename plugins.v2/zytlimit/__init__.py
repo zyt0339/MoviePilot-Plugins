@@ -24,7 +24,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.8"
+    plugin_version = "1.1.9"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1516,6 +1516,8 @@ class ZYTLimit(_PluginBase):
 
             # 限速中仍然有上传就暂停
             if to_pausedUP_hashs_cur:
+                # 先强制重新汇报再暂停
+                downloader_obj.qbc.torrents_reannounce(torrent_hashes=to_pausedUP_hashs_cur)
                 downloader_obj.stop_torrents(to_pausedUP_hashs_cur)
                 # downloader_obj.set_torrents_tag(to_pausedUP_hashs_cur, ["P"])
                 self.logger_info(cancel_limit, f"{downloader} 限速后仍活动,暂停种子个数: {len(to_pausedUP_hashs_cur)}")
