@@ -24,7 +24,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.5"
+    plugin_version = "1.0.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -584,7 +584,7 @@ class QBBanIp(_PluginBase):
             # 自动删除种子内容
             if self._nopaths:
                 # for toHash in self._nopaths.split('\n'):
-                toHashs = [x for x in self._nopaths.splitlines() if x.strip()]
+                toHashs = {x.strip() for x in self._nopaths.splitlines() if x.strip()}
                 if torrent.hash in toHashs:
                     progress = torrent.progress
                     if progress > 0.08:
