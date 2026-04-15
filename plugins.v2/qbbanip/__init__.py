@@ -24,7 +24,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.7"
+    plugin_version = "1.0.8"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -582,15 +582,12 @@ class QBBanIp(_PluginBase):
                 f"---种子'{torrent['name'][:30]}...'共{len(peers)}个peer,待屏蔽{cur_to_block_count}个")
 
             # 自动删除种子内容
-            logger.info(f"self._nopaths={self._nopaths}")
             if self._nopaths:
                 # for toHash in self._nopaths.split('\n'):
                 toHashs = {x.strip() for x in self._nopaths.splitlines() if x.strip()}
-                logger.info(f"toHashs={toHashs}, torrent.hash={torrent.hash}")
                 if torrent.hash in toHashs:
                     progress = torrent.progress
-                    logger.info(f"progress={progress}")
-                    if progress > 0.08:
+                    if progress > 0.8:
                         # 重新汇报
                         qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
                         time.sleep(2)
