@@ -314,7 +314,7 @@ class QBBanIp(_PluginBase):
                                                "props": {
                                                    "model": "tracker_domain",
                                                    "label": "tracker过滤",
-                                                   "placeholder": "只处理tracker域名包含此值的种子"
+                                                   "placeholder": "只处理tracker域名包含此值的种子,为空全部处理"
                                                }
                                            }
                                        ]
@@ -331,7 +331,7 @@ class QBBanIp(_PluginBase):
                                                "props": {
                                                    "model": "nolabels",
                                                    "label": "标签过滤",
-                                                   "placeholder": "只处理标签包含此值的种子"
+                                                   "placeholder": "只处理标签包含此值的种子,为空全部处理"
                                                }
                                            }
                                        ]
@@ -417,8 +417,8 @@ class QBBanIp(_PluginBase):
                    "notify": False,
                    "cron": "*/3 * * * *",
                    "tracker_ports": "63222,63223,63224",
-                   "tracker_domain": "piggo",
-                   "nolabels": "牛马",
+                   "tracker_domain": "dmhy",
+                   "nolabels": "",
                    "no_torrent_size": "10",
                    "downloaders1": []
                }
@@ -526,17 +526,18 @@ class QBBanIp(_PluginBase):
             # logger.info(f'---种子标签 {current_torrent_tag_list}')
 
             # tracker 不匹配猪跳过
-            working_trackers = [tracker for tracker in torrent.trackers if
-                                tracker.status != TrackerStatus.DISABLED]
-            contanin_tracker = False
-            for tracker in working_trackers:
-                domain = urlparse(tracker.url).netloc
-                if TARGET_TRACKER in domain:
-                    contanin_tracker = True
-                    break
-            if not contanin_tracker:
-                logger.info(f"---种子'{torrent['name'][:30]}...'tracker不包含'{TARGET_TRACKER}',跳过")
-                continue
+            if TARGET_TRACKER:
+                working_trackers = [tracker for tracker in torrent.trackers if
+                                    tracker.status != TrackerStatus.DISABLED]
+                contanin_tracker = False
+                for tracker in working_trackers:
+                    domain = urlparse(tracker.url).netloc
+                    if TARGET_TRACKER in domain:
+                        contanin_tracker = True
+                        break
+                if not contanin_tracker:
+                    logger.info(f"---种子'{torrent['name'][:30]}...'tracker不包含'{TARGET_TRACKER}',跳过")
+                    continue
             to_limit_hashs.append(torrent.hash)
 
             # 获取其peer 连接到的IP端口,不在白名单的添加到 ips_to_block
