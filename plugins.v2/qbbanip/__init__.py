@@ -13,6 +13,7 @@ from app.schemas import NotificationType, ServiceInfo
 from app.schemas.types import EventType
 from qbittorrentapi import TorrentState, TrackerStatus
 from urllib.parse import urlparse
+import time
 
 
 class QBBanIp(_PluginBase):
@@ -23,7 +24,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.4"
+    plugin_version = "1.0.5"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -43,6 +44,7 @@ class QBBanIp(_PluginBase):
     _cron = None
 
     _tracker_ports = []  # 端口白名单
+    _nopaths = None  # 自动管理hash
     _tracker_domain = None  # tracker域名过滤
     _nolabels = ""  # 标签过滤
     _no_torrent_size = 0  # 体积过滤
@@ -62,6 +64,7 @@ class QBBanIp(_PluginBase):
             self._cron = config.get("cron")
 
             self._tracker_ports = config.get("tracker_ports") or ""  # 端口白名单
+            self._nopaths = config.get("nopaths")
             self._tracker_domain = config.get("tracker_domain") or ""  # tracker域名过滤
             self._nolabels = config.get("nolabels") or ""  # 标签过滤
             self._no_torrent_size = config.get("no_torrent_size") or ""  # 体积过滤
@@ -369,6 +372,23 @@ class QBBanIp(_PluginBase):
                                                }
                                            }
                                        ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
+                                       },
+                                       "content": [
+                                           {
+                                               'component': 'VTextarea',
+                                               'props': {
+                                                   'model': 'nopaths',
+                                                   'label': '自动管理hash值',
+                                                   'rows': 2,
+                                                   'placeholder': '每一行一个hash'
+                                               }
+                                           }
+                                       ]
                                    }
                                ]
                            },
@@ -417,7 +437,8 @@ class QBBanIp(_PluginBase):
                    "notify": False,
                    "cron": "*/3 * * * *",
                    "tracker_ports": "63222,63223,63224",
-                   "tracker_domain": "dmhy",
+                    "nopaths": "",
+                    "tracker_domain": "dmhy",
                    "nolabels": "",
                    "no_torrent_size": "10",
                    "downloaders1": []
@@ -430,6 +451,7 @@ class QBBanIp(_PluginBase):
             "notify": self._notify,
             "cron": self._cron,
             "tracker_ports": self._tracker_ports,
+            "nopaths": self._nopaths,
             "tracker_domain": self._tracker_domain,
             "nolabels": self._nolabels,
             "no_torrent_size": self._no_torrent_size,
@@ -558,6 +580,32 @@ class QBBanIp(_PluginBase):
                     cur_to_block_count = cur_to_block_count + 1
             logger.info(
                 f"---种子'{torrent['name'][:30]}...'共{len(peers)}个peer,待屏蔽{cur_to_block_count}个")
+
+            # 自动删除种子内容
+            if self._nopaths:
+                # for toHash in self._nopaths.split('\n'):
+                toHashs = [x for x in self._nopaths.splitlines() if x.strip()]
+                if torrent.hash in toHashs:
+                    progress = torrent.progress
+                    if progress > 0.08:
+                        # 重新汇报
+                        qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
+                        time.sleep(2)
+                        # 导出
+                        torrent_file = qbt_client.torrents_export(torrent_hash=torrent.hash)
+                        # 删除
+                        qbt_client.torrents_delete(torrent_hashes=torrent.hash, delete_files=True)
+                        # 重新添加
+                        qbt_client.torrents_add(
+                            torrent_files=torrent_file,
+                            save_path=torrent.save_path,
+                            category=torrent.category,
+                            tags=torrent.tags,
+                        )
+                        logger.info(
+                            f"---种子'{torrent['name'][:30]}...'下载进度{progress * 100:.2f}%,超80%,已清除重来")
+                        time.sleep(2)
+
 
         if to_limit_hashs:
             qbt_client.torrents_set_download_limit(DOWNLOADLIMIT_SPEED, to_limit_hashs)  # 11M
