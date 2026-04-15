@@ -24,7 +24,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.1.9"
+    plugin_version = "1.2.0"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1306,7 +1306,7 @@ class ZYTLimit(_PluginBase):
         else:
             logger.warning("未设置限速站点,取消执行")
             return
-        logger.info(f"----------开始执行限速逻辑----------")
+        logger.debug(f"----------开始执行限速逻辑----------")
         # 站点name:id {}
         all_site_name_id_map = {}
         for site in SiteOper().list_order_by_pri():
@@ -1364,7 +1364,7 @@ class ZYTLimit(_PluginBase):
 
         # 保存缓存
         # self.__update_config()
-        logger.info(f"限速执行完成")
+        logger.debug(f"限速执行完成")
 
 
     def limit_per_downloader(self, all_site_name_id_map, all_site_names, downloader_service_info,
