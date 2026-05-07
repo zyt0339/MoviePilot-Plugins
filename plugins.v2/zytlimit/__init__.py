@@ -24,7 +24,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.2.1"
+    plugin_version = "1.2.2"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1390,6 +1390,10 @@ class ZYTLimit(_PluginBase):
             self.logger_info(cancel_limit, f"{downloader} 开始设置限速")
             all_torrents, _ = downloader_obj.get_torrents()
             for torrent in all_torrents:
+                state = torrent.state  # str
+                if state in ['downloading']:
+                    logger.info(f"{downloader} {torrent.name} 下载中，跳过 ...")
+                    continue
                 # 当前种子 tags list
                 current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]
                 torrent_nolabel = nolabel_set & set(current_torrent_tag_list)
@@ -1405,10 +1409,9 @@ class ZYTLimit(_PluginBase):
                     site_id = -1
                     self.logger_info(cancel_limit, f"{downloader} {torrent.name} 没有添加站点标签{current_torrent_tag_list}")
                 if site_id in limit_site_ids:
-                    state = torrent.state  # str
                     if cancel_limit:
                         to_cancel_limit_torrent_hashs.append(torrent.hash)
-                        if torrent.state in ['pausedUP', 'stoppedUP'] and torrent.total_size == torrent.completed and ('暂停' not in current_torrent_tag_list):
+                        if state in ['pausedUP', 'stoppedUP'] and torrent.total_size == torrent.completed and ('暂停' not in current_torrent_tag_list):
                             to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     elif is_in_time_range:
                         to_limit_torrent_hashs.append(torrent.hash)
