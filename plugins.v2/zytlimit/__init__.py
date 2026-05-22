@@ -24,7 +24,7 @@ class ZYTLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.2.2"
+    plugin_version = "1.2.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -1391,7 +1391,7 @@ class ZYTLimit(_PluginBase):
             all_torrents, _ = downloader_obj.get_torrents()
             for torrent in all_torrents:
                 state = torrent.state  # str
-                if state in ['downloading']:
+                if torrent.state_enum.is_downloading:  # 包含多种下载态
                     logger.info(f"{downloader} {torrent.name} 下载中，跳过 ...")
                     continue
                 # 当前种子 tags list
