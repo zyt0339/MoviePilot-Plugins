@@ -33,7 +33,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.28.0"
+    plugin_version = "1.31.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -475,9 +475,16 @@ class PTDepilerMp(_PluginBase):
         }
 
     @staticmethod
-    def _cell(text: Any, content: Optional[List[dict]] = None) -> Dict[str, Any]:
+    def _cell(
+        text: Any,
+        content: Optional[List[dict]] = None,
+        width: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """构建表格单元格。"""
-        cell = {"component": "td", "props": {"class": "text-sm whitespace-nowrap"}}
+        props: Dict[str, Any] = {"class": "text-sm whitespace-nowrap"}
+        if width:
+            props["style"] = {"width": width}
+        cell = {"component": "td", "props": props}
         if content is not None:
             cell["content"] = content
         else:
@@ -533,13 +540,35 @@ class PTDepilerMp(_PluginBase):
         detail = self._gap_text(proxy)
         return "目标：" + detail
 
+    @staticmethod
+    def _join_at_sort_key(row: Dict[str, Any]) -> Tuple[int, float]:
+        """按入站时间升序排列，缺失或异常时间统一放在最后。"""
+        value = row.get("user", {}).get("join_at")
+        if not value:
+            return 1, 0.0
+        try:
+            joined = (
+                value
+                if isinstance(value, datetime)
+                else datetime.fromisoformat(str(value).strip().replace("Z", "+00:00"))
+            )
+            return 0, joined.timestamp()
+        except (TypeError, ValueError, OverflowError, OSError):
+            return 1, 0.0
+
     def get_page(self) -> List[dict]:
         """返回站点等级详情页。"""
-        rows = self._rows()
+        rows = sorted(self._rows(), key=self._join_at_sort_key)
         summary = self._summary(rows)
-        header_names = [
-            "站点", "状态", "当前等级", "保号等级", "上传/下载", "分享率",
-            "保号上传/下载", "总结", "数据时间",
+        headers = [
+            ("站点", "7%"),
+            ("状态", "7%"),
+            ("当前等级", "8%"),
+            ("保号等级", "12%"),
+            ("上传/下载/分享率", "19%"),
+            ("保号上传/下载/分享率", "22%"),
+            ("总结", "13%"),
+            ("数据时间", "12%"),
         ]
         table_rows = []
         panels = []
@@ -554,18 +583,27 @@ class PTDepilerMp(_PluginBase):
             table_rows.append({
                 "component": "tr",
                 "content": [
-                    self._cell(row["site_name"]),
-                    self._cell("", [self._status_chip(result)]),
-                    self._cell(current_name),
-                    self._cell((retained_level or {}).get("name") or "未配置"),
-                    self._cell(f"{self._size(user.get('upload'))} / {self._size(user.get('download'))}"),
-                    self._cell(self._number(user.get("ratio"))),
+                    self._cell(row["site_name"], width=headers[0][1]),
+                    self._cell("", [self._status_chip(result)], width=headers[1][1]),
+                    self._cell(current_name, width=headers[2][1]),
+                    self._cell((retained_level or {}).get("name") or "未配置", width=headers[3][1]),
+                    self._cell(
+                        f"{self._size(user.get('upload'))} / "
+                        f"{self._size(user.get('download'))} / "
+                        f"{self._number(user.get('ratio'))}",
+                        width=headers[4][1],
+                    ),
                     self._cell(
                         f"{self._requirement_size(retained_level or {}, 'uploaded')} / "
-                        f"{self._requirement_size(retained_level or {}, 'downloaded')}"
+                        f"{self._requirement_size(retained_level or {}, 'downloaded')} / "
+                        f"{self._number(retained_level.get('ratio')) if retained_level and 'ratio' in retained_level else '无要求'}",
+                        width=headers[5][1],
                     ),
-                    self._cell(self._retention_summary(result, retained_level, retained_requirement)),
-                    self._cell(update_text),
+                    self._cell(
+                        self._retention_summary(result, retained_level, retained_requirement),
+                        width=headers[6][1],
+                    ),
+                    self._cell(update_text, width=headers[7][1]),
                 ],
             })
             panels.append(self._level_panel(row))
@@ -580,7 +618,14 @@ class PTDepilerMp(_PluginBase):
                     "content": [
                         {"component": "thead", "content": [{
                             "component": "tr",
-                            "content": [{"component": "th", "text": name} for name in header_names],
+                            "content": [
+                                {
+                                    "component": "th",
+                                    "props": {"style": {"width": width}},
+                                    "text": name,
+                                }
+                                for name, width in headers
+                            ],
                         }]},
                         {"component": "tbody", "content": table_rows},
                     ],
@@ -645,14 +690,11 @@ class PTDepilerMp(_PluginBase):
             }]
         panel_title = {"component": "VExpansionPanelTitle"}
         if result.retained is True:
-            panel_title["content"] = [
-                {"component": "span", "text": row["site_name"]},
-                {
-                    "component": "span",
-                    "props": {"class": "text-success ml-1"},
-                    "text": "（已保号）",
-                },
-            ]
+            panel_title["content"] = [{
+                "component": "span",
+                "props": {"class": "text-success"},
+                "text": row["site_name"],
+            }]
         else:
             panel_title["text"] = row["site_name"]
         return {
