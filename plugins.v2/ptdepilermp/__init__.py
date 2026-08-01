@@ -34,7 +34,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.33.0"
+    plugin_version = "1.34.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -443,8 +443,8 @@ class PTDepilerMp(_PluginBase):
             "alternative": "可选条件", "interval": "注册时长",
         }.get(key, key)
 
-    def _extra_requirement_text(self, level: Dict[str, Any]) -> str:
-        """展示常见的非流量等级门槛。"""
+    def _extra_requirement_parts(self, level: Dict[str, Any]) -> List[str]:
+        """返回可在移动端独立换行的非流量等级门槛。"""
         parts = []
         for key in ("ratio", "bonus", "seedingBonus", "seeding", "seedingSize", "uploads"):
             if key not in level:
@@ -457,7 +457,30 @@ class PTDepilerMp(_PluginBase):
             else:
                 text = self._number(value)
             parts.append(f"{self._field_label(key)} {text}")
-        return "；" + "；".join(parts) if parts else ""
+        return parts
+
+    def _level_requirement_content(self, level: Dict[str, Any]) -> Dict[str, Any]:
+        """按条件块展示等级要求，窄屏时在条件之间自动换行。"""
+        parts = [
+            f"上传 {self._requirement_size(level, 'uploaded')}",
+            f"下载 {self._requirement_size(level, 'downloaded')}",
+            f"注册时长 {self._duration(level.get('interval'))}",
+            *self._extra_requirement_parts(level),
+        ]
+        return {
+            "component": "div",
+            "props": {
+                "class": "d-flex flex-wrap text-body-2 text-medium-emphasis mt-1",
+            },
+            "content": [
+                {
+                    "component": "span",
+                    "props": {"class": "text-no-wrap me-2"},
+                    "text": f"{part}{'；' if index < len(parts) - 1 else ''}",
+                }
+                for index, part in enumerate(parts)
+            ],
+        }
 
     def _gap_text(self, result: SiteLevelResult) -> str:
         """把下一等级三态结果转为简洁文本。"""
@@ -712,16 +735,15 @@ class PTDepilerMp(_PluginBase):
             item_props = {
                 "prepend-icon": icon,
                 "title": level_name,
-                "subtitle": (
-                    f"上传 {self._requirement_size(level, 'uploaded')}；下载 {self._requirement_size(level, 'downloaded')}；"
-                    f"注册时长 {self._duration(level.get('interval'))}{self._extra_requirement_text(level)}"
-                ),
+                # 手机端减少左侧留白；sm 及以上恢复原来的 16px 内边距。
+                "class": "px-0 px-sm-4",
             }
             if color:
                 item_props["base-color"] = color
             level_rows.append({
                 "component": "VListItem",
                 "props": item_props,
+                "content": [self._level_requirement_content(level)],
             })
         if not level_rows:
             level_rows = [{
@@ -744,7 +766,9 @@ class PTDepilerMp(_PluginBase):
                 {"component": "VExpansionPanelText", "content": [
                     {
                         "component": "div",
-                        "props": {"class": "px-4 pt-2 pb-1 text-body-2 font-weight-medium"},
+                        "props": {
+                            "class": "px-0 px-sm-4 pt-2 pb-1 text-body-2 font-weight-medium",
+                        },
                         "content": self._current_level_data_content(user, displayed_retention_level),
                     },
                     {"component": "VList", "content": level_rows},
