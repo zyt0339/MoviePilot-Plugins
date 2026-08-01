@@ -383,9 +383,12 @@ class RuleRepository:
                     rule = json.loads(path.read_text(encoding="utf-8"))
                     if not isinstance(rule, dict) or not isinstance(rule.get("levels"), list):
                         raise ValueError("规则必须是对象且包含 levels 数组")
-                    rule_id = path.stem
-                    if str(rule.get("name") or "").strip() != rule_id:
-                        raise ValueError("规则 name 必须与文件名一致")
+                    file_name = path.stem.strip()
+                    rule_id = str(rule.get("name") or "").strip()
+                    # MoviePilot 安装插件时可能把资源文件名统一转成小写；文件名和规则名仅忽略大小写比较，
+                    # 关联时仍保留 JSON name 的原始写法，与 MoviePilot 站点名称保持一致。
+                    if not rule_id or rule_id.casefold() != file_name.casefold():
+                        raise ValueError("规则 name 必须与文件名一致（忽略大小写）")
                     name_key = rule_id.casefold()
                     if name_key in name_keys:
                         raise ValueError("规则 name 忽略大小写后必须唯一")

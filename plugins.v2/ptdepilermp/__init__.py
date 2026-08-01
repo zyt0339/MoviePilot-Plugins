@@ -33,7 +33,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.14.0"
+    plugin_version = "1.18.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -57,7 +57,7 @@ class PTDepilerMp(_PluginBase):
         config = dict(config or {})
         self._onlyonce = bool(config.get("onlyonce", False))
         self._cron = str(config.get("cron") or "").strip()
-        self._recalculate()
+        self._recalculate("手动刷新" if self._onlyonce else "插件加载")
         if self._onlyonce:
             # 保存配置会重新加载插件，上面的计算已经立即完成；这里只负责复位一次性开关。
             self._onlyonce = False
@@ -86,6 +86,7 @@ class PTDepilerMp(_PluginBase):
                 scheduler.add_job(
                     self._recalculate,
                     CronTrigger.from_crontab(self._cron),
+                    args=["cron"],
                     max_instances=1,
                     coalesce=True,
                     name="PT站点保号数据定时重算",
@@ -204,13 +205,18 @@ class PTDepilerMp(_PluginBase):
             })
         return rows
 
-    def _recalculate(self) -> None:
+    def _recalculate(self, trigger_source: str = "内部调用") -> None:
         """重新计算并缓存保号数据。"""
         with self._calculation_lock:
             rows = self._calculate_rows()
             self._cached_rows = rows
             self._has_calculated = True
             self._write_debug_log(rows)
+            completed_at = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%Y-%m-%d %H:%M:%S")
+            logger.info(
+                f"PT 站点保号状态：保号数据刷新完成，刷新时间={completed_at}，"
+                f"触发源={trigger_source}，站点数={len(rows)}"
+            )
 
     @eventmanager.register(EventType.SiteRefreshed)
     def on_all_sites_refreshed(self, event: Event) -> None:
@@ -219,14 +225,14 @@ class PTDepilerMp(_PluginBase):
             return
         logger.debug("PT站点等级监控：收到全站数据刷新完成事件，开始重新计算保号数据")
         try:
-            self._recalculate()
+            self._recalculate("站点全量刷新通知")
         except Exception as error:
             logger.error(f"PT站点等级监控：全站刷新完成后重新计算失败：{error}")
 
     def _rows(self) -> List[Dict[str, Any]]:
         """返回最近一次计算结果；首次缺失时即时计算。"""
         if not self._has_calculated:
-            self._recalculate()
+            self._recalculate("页面首次计算")
         return self._cached_rows
 
     def _write_debug_log(self, rows: List[Dict[str, Any]]) -> None:
@@ -282,6 +288,32 @@ class PTDepilerMp(_PluginBase):
         if not value:
             return "无"
         return str(value).removeprefix("P").replace("Y", "年").replace("M", "月").replace("W", "周").replace("D", "天")
+
+    @staticmethod
+    def _membership_weeks(value: Any) -> str:
+        """将 MoviePilot 入站时间格式化为已经过的完整周数。"""
+        if not value:
+            return "数据不足"
+        try:
+            joined = value if isinstance(value, datetime) else datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+            timezone = pytz.timezone(settings.TZ)
+            now = datetime.now(tz=timezone)
+            if joined.tzinfo is None:
+                joined = timezone.localize(joined) if hasattr(timezone, "localize") else joined.replace(tzinfo=timezone)
+            else:
+                joined = joined.astimezone(timezone)
+            elapsed_days = (now - joined).days
+            return f"{elapsed_days // 7}周" if elapsed_days >= 0 else "数据不足"
+        except (TypeError, ValueError, OverflowError):
+            return "数据不足"
+
+    def _current_level_data_text(self, user: Dict[str, Any]) -> str:
+        """格式化完整等级规则上方的当前站点数据。"""
+        return (
+            f"当前：上传 {self._size(user.get('upload'))}；下载 {self._size(user.get('download'))}；"
+            f"注册时长 {self._membership_weeks(user.get('join_at'))}；分享率 {self._number(user.get('ratio'))}；"
+            f"魔力 {self._number(user.get('bonus'))}"
+        )
 
     def _requirement_size(self, requirement: Dict[str, Any], key: str) -> str:
         """区分等级没有该门槛与门槛值无效。"""
@@ -340,7 +372,7 @@ class PTDepilerMp(_PluginBase):
         if result.retained is True:
             text, color = "已保号", "success"
         elif result.retained is False:
-            text, color = "未达保号", "warning"
+            text, color = "未保号", "warning"
         else:
             text, color = "无法判断", "grey"
         return {
@@ -473,7 +505,6 @@ class PTDepilerMp(_PluginBase):
         ), None)
         minimum_retention_id = (minimum_retention_level or {}).get("id")
         for level in sorted_levels:
-            evaluation = evaluate_requirement(user, level)
             if result.current_group == "user":
                 reached = (
                     (level.get("groupType") or "user") == "user"
@@ -485,21 +516,16 @@ class PTDepilerMp(_PluginBase):
             if reached:
                 icon = "mdi-check-circle-outline"
                 color = "success" if level.get("id") == minimum_retention_id else "info"
-                detail = "已达到"
-            elif evaluation.status == "unknown":
-                icon, color, detail = "mdi-circle-outline", None, "数据不足"
-            elif evaluation.status == "met":
-                icon, color, detail = "mdi-circle-outline", None, "已满足条件，等级未确认"
             else:
-                icon, color, detail = "mdi-circle-outline", None, "未达到"
+                icon, color = "mdi-circle-outline", None
             level_name = level.get("name") or "未命名等级"
             if minimum_retention_id is not None and level.get("id") == minimum_retention_id:
-                level_name += "（最低保号等级）"
+                level_name += "（保号等级）"
             item_props = {
                 "prepend-icon": icon,
                 "title": level_name,
                 "subtitle": (
-                    f"{detail}；上传 {self._requirement_size(level, 'uploaded')}；下载 {self._requirement_size(level, 'downloaded')}；"
+                    f"上传 {self._requirement_size(level, 'uploaded')}；下载 {self._requirement_size(level, 'downloaded')}；"
                     f"注册时长 {self._duration(level.get('interval'))}{self._extra_requirement_text(level)}"
                 ),
             }
@@ -518,7 +544,14 @@ class PTDepilerMp(_PluginBase):
             "component": "VExpansionPanel",
             "content": [
                 {"component": "VExpansionPanelTitle", "text": row["site_name"]},
-                {"component": "VExpansionPanelText", "content": [{"component": "VList", "content": level_rows}]},
+                {"component": "VExpansionPanelText", "content": [
+                    {
+                        "component": "div",
+                        "props": {"class": "px-4 pt-2 pb-1 text-body-2 font-weight-medium"},
+                        "text": self._current_level_data_text(user),
+                    },
+                    {"component": "VList", "content": level_rows},
+                ]},
             ],
         }
 
