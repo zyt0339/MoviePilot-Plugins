@@ -3,111 +3,111 @@
   "is_dead": false,
   "levels": [
     {
-      "groupType": "user",
       "id": 0,
       "name": "Peasant",
+      "groupType": "user",
       "privilege": "被降级的用户，他们有30天时间来提升分享率，否则他们会被踢。不能发表趣味盒内容；不能申请友情链接；不能上传字幕。"
     },
     {
-      "groupType": "user",
       "id": 1,
       "name": "User",
+      "groupType": "user",
       "privilege": "新用户的默认级别。只能在每周六中午12点至每周日晚上11点59分发布种子。"
     },
     {
-      "downloaded": 214748364800,
-      "groupType": "user",
       "id": 2,
-      "interval": "P5W",
       "name": "Power User",
+      "groupType": "user",
       "privilege": "可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "interval": "P5W",
+      "downloaded": 214748364800,
       "ratio": 2,
       "seedingBonus": 50000
     },
     {
-      "downloaded": 536870912000,
-      "groupType": "user",
       "id": 3,
-      "interval": "P10W",
       "name": "Elite User",
+      "groupType": "user",
       "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "interval": "P10W",
+      "downloaded": 536870912000,
       "ratio": 3,
       "seedingBonus": 100000
     },
     {
-      "downloaded": 858993459200,
-      "groupType": "user",
       "id": 4,
-      "interval": "P15W",
       "name": "Crazy User",
+      "groupType": "user",
       "privilege": "得到1个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "interval": "P15W",
+      "downloaded": 858993459200,
       "ratio": 4,
       "seedingBonus": 200000
     },
     {
-      "downloaded": 1099511627776,
-      "groupType": "user",
       "id": 5,
-      "interval": "P20W",
       "name": "Insane User",
+      "groupType": "user",
       "privilege": "得到1个邀请名额；可以查看普通日志。",
+      "interval": "P20W",
+      "downloaded": 1099511627776,
       "ratio": 5,
       "seedingBonus": 500000
     },
     {
-      "downloaded": 1649267441664,
-      "groupType": "user",
       "id": 6,
-      "interval": "P25W",
-      "isKept": true,
       "name": "Veteran User",
+      "groupType": "user",
+      "isKept": true,
       "privilege": "得到1个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "interval": "P25W",
+      "downloaded": 1649267441664,
       "ratio": 6,
       "seedingBonus": 750000
     },
     {
-      "downloaded": 2199023255552,
-      "groupType": "user",
       "id": 7,
-      "interval": "P30W",
-      "isKept": true,
       "name": "Extreme User",
+      "groupType": "user",
+      "isKept": true,
       "privilege": "得到2个邀请名额；可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "interval": "P30W",
+      "downloaded": 2199023255552,
       "ratio": 7,
       "seedingBonus": 1500000
     },
     {
-      "downloaded": 3298534883328,
-      "groupType": "user",
       "id": 8,
-      "interval": "P40W",
-      "isKept": true,
       "name": "Ultimate User",
+      "groupType": "user",
+      "isKept": true,
       "privilege": "得到3个邀请名额。",
+      "interval": "P40W",
+      "downloaded": 3298534883328,
       "ratio": 8,
       "seedingBonus": 2000000
     },
     {
-      "downloaded": 4398046511104,
-      "groupType": "user",
       "id": 9,
-      "interval": "P60W",
-      "isKept": true,
       "name": "Nexus Master",
+      "groupType": "user",
+      "isKept": true,
       "privilege": "得到4个邀请名额。",
+      "interval": "P60W",
+      "downloaded": 4398046511104,
       "ratio": 10,
       "seedingBonus": 3000000
     },
     {
-      "groupType": "vip",
       "id": 10,
       "name": "贵宾(VIP)",
+      "groupType": "vip",
       "privilege": "和Nexus Master拥有相同权限并被认为是精英成员。免除自动降级。"
     },
     {
-      "groupType": "vip",
       "id": 11,
       "name": "养老族(Retiree)",
+      "groupType": "vip",
       "privilege": "退休后的管理组成员。"
     }
   ]

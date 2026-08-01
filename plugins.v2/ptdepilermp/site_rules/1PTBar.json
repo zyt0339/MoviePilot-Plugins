@@ -8,78 +8,78 @@
       "privilege": "新用户的默认级别；只能在每周六中午12点至每周日晚上11点59分发布种子"
     },
     {
-      "downloaded": "50GB",
       "id": 1,
-      "interval": "P5W",
       "name": "Power User",
       "privilege": "得到一个邀请名额；可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请；可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "interval": "P5W",
+      "downloaded": "50GB",
       "ratio": 1.3,
       "seedingBonus": 40000
     },
     {
-      "downloaded": "120GB",
       "id": 2,
-      "interval": "P8W",
       "name": "Elite User",
       "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "interval": "P8W",
+      "downloaded": "120GB",
       "ratio": 1.9,
       "seedingBonus": 80000
     },
     {
-      "downloaded": "300GB",
       "id": 3,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 2.3,
       "seedingBonus": 150000
     },
     {
-      "downloaded": "500GB",
       "id": 4,
-      "interval": "P30W",
       "name": "Insane User",
       "privilege": "可以查看普通日志。",
+      "interval": "P30W",
+      "downloaded": "500GB",
       "ratio": 2.7,
       "seedingBonus": 250000
     },
     {
-      "downloaded": "1024GB",
       "id": 5,
-      "interval": "P60W",
-      "isKept": true,
       "name": "Veteran User",
+      "isKept": true,
       "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "interval": "P60W",
+      "downloaded": "1024GB",
       "ratio": 3.2,
       "seedingBonus": 400000
     },
     {
-      "downloaded": "2048GB",
       "id": 6,
-      "interval": "P90W",
-      "isKept": true,
       "name": "Extreme User",
+      "isKept": true,
       "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "interval": "P90W",
+      "downloaded": "2048GB",
       "ratio": 3.7,
       "seedingBonus": 600000
     },
     {
-      "downloaded": "4096GB",
       "id": 7,
-      "interval": "P120W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "得到五个邀请名额。",
+      "interval": "P120W",
+      "downloaded": "4096GB",
       "ratio": 4.2,
       "seedingBonus": 800000
     },
     {
-      "downloaded": "10240GB",
       "id": 8,
-      "interval": "P150W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "得到十个邀请名额。",
+      "interval": "P150W",
+      "downloaded": "10240GB",
       "ratio": 5.2,
       "seedingBonus": 1000000
     }

@@ -9,69 +9,69 @@
     {
       "id": 2,
       "name": "Power User",
+      "privilege": "魔力值加成：+1%；可以使用匿名發表候選種子；可以上傳字幕",
       "interval": "P4W",
       "downloaded": "200GB",
-      "ratio": 2,
-      "privilege": "魔力值加成：+1%；可以使用匿名發表候選種子；可以上傳字幕"
+      "ratio": 2
     },
     {
       "id": 3,
       "name": "Elite User",
+      "privilege": "魔力值加成：+2%；可以發送邀請；可以管理自己上傳的字幕；可以檢視別人的下載紀錄（當對方的隱私權設定不為強才會生效）；可以使用個性條",
       "interval": "P8W",
       "downloaded": "400GB",
-      "ratio": 3,
-      "privilege": "魔力值加成：+2%；可以發送邀請；可以管理自己上傳的字幕；可以檢視別人的下載紀錄（當對方的隱私權設定不為強才會生效）；可以使用個性條"
+      "ratio": 3
     },
     {
       "id": 4,
       "name": "Crazy User",
+      "privilege": "魔力值加成：+3%",
       "interval": "P12W",
       "downloaded": "500GB",
-      "ratio": 4,
-      "privilege": "魔力值加成：+3%"
+      "ratio": 4
     },
     {
       "id": 5,
       "name": "Insane User",
+      "privilege": "魔力值加成：+4%；可以檢視排行榜",
       "interval": "P16W",
       "downloaded": "800GB",
-      "ratio": 5,
-      "privilege": "魔力值加成：+4%；可以檢視排行榜"
+      "ratio": 5
     },
     {
       "id": 6,
       "name": "Veteran User",
+      "privilege": "魔力值加成：+5%；封存帳號（在控制面板）後不會被刪除帳號",
       "interval": "P20W",
       "downloaded": "1000GB",
-      "ratio": 6,
-      "privilege": "魔力值加成：+5%；封存帳號（在控制面板）後不會被刪除帳號"
+      "ratio": 6
     },
     {
       "id": 7,
       "name": "Extreme User",
+      "isKept": true,
+      "privilege": "魔力值加成：+6%；永遠保留",
       "interval": "P24W",
       "downloaded": "2000GB",
-      "ratio": 7,
-      "isKept": true,
-      "privilege": "魔力值加成：+6%；永遠保留"
+      "ratio": 7
     },
     {
       "id": 8,
       "name": "Ultimate User",
+      "isKept": true,
+      "privilege": "魔力值加成：+7%",
       "interval": "P28W",
       "downloaded": "2500GB",
-      "ratio": 8,
-      "isKept": true,
-      "privilege": "魔力值加成：+7%"
+      "ratio": 8
     },
     {
       "id": 9,
       "name": "mTorrent Master",
+      "isKept": true,
+      "privilege": "魔力值加成：+8%",
       "interval": "P32W",
       "downloaded": "3000GB",
-      "ratio": 9,
-      "isKept": true,
-      "privilege": "魔力值加成：+8%"
+      "ratio": 9
     },
     {
       "id": 100,

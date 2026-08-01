@@ -8,148 +8,150 @@
       "privilege": "新用户的默认级别。可以同时下载2个种子;可以删除自己上传的字幕."
     },
     {
-      "downloaded": "50GB",
       "id": 2,
-      "interval": "P4W",
       "name": "Power User",
+      "privilege": "可以查看NFO文档; 可以查看用户列表; 可以请求续种; 可以在求种补种区发主题帖;可以查看友站邀请专区;可以查看排行榜; 可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\"); 可以在魔力值系统购买更多邀请名额.可以同时下载5个种子.",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.05
     },
     {
-      "downloaded": "120GB",
       "id": 3,
-      "interval": "P8W",
       "name": "Elite User",
       "privilege": "Elite User及以上用户Park后不会被删除帐号;可以直接上传种子.可以同时下载8个种子.",
+      "interval": "P8W",
+      "downloaded": "120GB",
       "ratio": 1.55
     },
     {
-      "downloaded": "300GB",
       "id": 4,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "得到一个邀请名额; 可以发送邀请; 可以在做种/下载/上传的时候选择匿名模式.可以同时下载10个种子.",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 2.05
     },
     {
-      "downloaded": "500GB",
       "id": 5,
-      "interval": "P25W",
       "name": "Insane User",
       "privilege": "得到一个邀请名额; 可以查看普通日志.同时下载种子线程无限制.",
+      "interval": "P25W",
+      "downloaded": "500GB",
       "ratio": 2.55
     },
     {
-      "downloaded": "750GB",
       "id": 6,
-      "interval": "P40W",
-      "isKept": true,
       "name": "Veteran User",
+      "isKept": true,
       "privilege": "可以查看其它用户的评论、帖子历史;Veteran User及以上用户会永远保留账号.",
+      "interval": "P40W",
+      "downloaded": "750GB",
       "ratio": 3.05
     },
     {
-      "downloaded": "1TB",
       "id": 7,
-      "interval": "P60W",
-      "isKept": true,
       "name": "Extreme User",
+      "isKept": true,
       "privilege": "得到一个邀请名额; 可以更新过期的外部信息.",
+      "interval": "P60W",
+      "downloaded": "1TB",
       "ratio": 3.55
     },
     {
-      "downloaded": "1.5TB",
       "id": 8,
-      "interval": "P80W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "可以查看种子文件结构.",
+      "interval": "P80W",
+      "downloaded": "1.5TB",
       "ratio": 4.05
     },
     {
-      "downloaded": "3TB",
       "id": 9,
-      "interval": "P100W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "得到一个邀请名额.",
+      "interval": "P100W",
+      "downloaded": "3TB",
       "ratio": 4.55
     },
     {
-      "groupType": "vip",
       "id": 100,
       "name": "VIP",
       "nameAka": [
         "贵宾"
       ],
+      "groupType": "vip",
       "privilege": "和Nexus Master拥有相同权限并被认为是精英成员. 免除自动降级."
     },
     {
-      "groupType": "manager",
       "id": 200,
       "name": "Warehouse",
+      "groupType": "manager",
       "privilege": "保种组组员.可以查看保种组页面,可以选择/取消要保种的种子;免除自动降级."
     },
     {
-      "groupType": "manager",
       "id": 201,
       "name": "Uploader",
       "nameAka": [
         "上传者",
         "上传员"
       ],
+      "groupType": "manager",
       "privilege": "专注的上传者."
     },
     {
-      "groupType": "manager",
       "id": 202,
       "name": "Helper",
+      "groupType": "manager",
       "privilege": "保种组各小组小组长,可以挑选/取消需要保种的种子,可以删除保种组页面列表里保种组组员的名单."
     },
     {
-      "groupType": "manager",
       "id": 203,
       "name": "Forummod",
       "nameAka": [
         "论坛版主"
       ],
+      "groupType": "manager",
       "privilege": "论坛版主.可以封禁用户的POST权限,可以警告用户;可以管理对应版面的帖子."
     },
     {
-      "groupType": "manager",
       "id": 204,
       "name": "Coder",
+      "groupType": "manager",
       "privilege": "网站的维护开发组成员."
     },
     {
-      "groupType": "manager",
       "id": 205,
       "name": "Moderator",
       "nameAka": [
         "总版主"
-      ]
+      ],
+      "groupType": "manager",
+      "privilege": "可以查看管理组信箱、举报信箱; 管理趣味盒内容、投票内容; 可以编辑或删除任何上传的种子; 可以管理候选;可以管理论坛帖子、用户评论; 可以查看机密日志; 可以删除任何字幕; 可以管理日志中的代码、史册; 可以查看用户的邀请记录;可以管理用户帐号的一般信息. 不能管理友情链接、最近消息、论坛版块; 不能删除账号."
     },
     {
-      "groupType": "manager",
       "id": 206,
       "name": "Administrator",
       "nameAka": [
         "管理员"
       ],
+      "groupType": "manager",
       "privilege": "除了不能改变站点设定、管理捐赠外, 可以做任何事."
     },
     {
-      "groupType": "manager",
       "id": 207,
       "name": "Sysop",
       "nameAka": [
         "维护开发员"
       ],
+      "groupType": "manager",
       "privilege": "网站开发/维护人员, 可以改变站点设定, 不能管理捐赠."
     },
     {
-      "groupType": "manager",
       "id": 208,
       "name": "Staff Leader",
+      "groupType": "manager",
       "privilege": "网站主管, 可以做任何事."
     }
   ]

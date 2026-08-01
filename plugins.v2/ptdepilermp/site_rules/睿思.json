@@ -8,66 +8,66 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "downloaded": "50GB",
       "id": 1,
       "name": "Power User",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于0.95，你将自动降级。",
+      "downloaded": "50GB",
       "ratio": 1.05,
       "seedingBonus": 10000
     },
     {
-      "downloaded": "120GB",
       "id": 2,
       "name": "Elite User",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于1.45，你将自动降级。",
+      "downloaded": "120GB",
       "ratio": 1.55,
       "seedingBonus": 40000
     },
     {
-      "downloaded": "300GB",
       "id": 3,
       "name": "Crazy User",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于1.95，你将自动降级。",
+      "downloaded": "300GB",
       "ratio": 2.05,
       "seedingBonus": 80000
     },
     {
-      "downloaded": "500GB",
       "id": 4,
       "name": "Insane User",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于2.45，你将自动降级。",
+      "downloaded": "500GB",
       "ratio": 2.55,
       "seedingBonus": 100000
     },
     {
-      "downloaded": "750GB",
       "id": 5,
       "name": "Veteran User",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于2.95，你将自动降级。",
+      "downloaded": "750GB",
       "ratio": 3.05,
       "seedingBonus": 200000
     },
     {
-      "downloaded": "1000GB",
       "id": 6,
       "name": "Extreme User",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于3.45，你将自动降级。",
+      "downloaded": "1000GB",
       "ratio": 3.55,
       "seedingBonus": 400000
     },
     {
-      "downloaded": "1500GB",
       "id": 7,
       "name": "Ultimate User",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于3.95，你将自动降级。",
+      "downloaded": "1500GB",
       "ratio": 4.05,
       "seedingBonus": 800000
     },
     {
-      "downloaded": "3000GB",
       "id": 8,
       "name": "Nexus Master",
       "privilege": "当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于4.45，你将自动降级。",
+      "downloaded": "3000GB",
       "ratio": 4.55,
       "seedingBonus": 1000000
     }

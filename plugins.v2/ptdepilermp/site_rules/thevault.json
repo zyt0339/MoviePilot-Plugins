@@ -9,19 +9,19 @@
     },
     {
       "id": 2,
-      "interval": "P28D",
       "name": "Power User",
       "privilege": "Able to leech 50 torrents at a time. Has full request privileges.",
-      "ratio": 1.05,
-      "uploaded": "25GB"
+      "interval": "P28D",
+      "uploaded": "25GB",
+      "ratio": 1.05
     },
     {
       "id": 3,
-      "interval": "P60D",
       "name": "Extreme User",
       "privilege": "Able to leech 100 torrents at a time.",
-      "ratio": 2.05,
-      "uploaded": "60GB"
+      "interval": "P60D",
+      "uploaded": "60GB",
+      "ratio": 2.05
     }
   ]
 }

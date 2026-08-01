@@ -1,0 +1,28 @@
+{
+  "name": "FSM",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 1,
+      "name": "封禁用户",
+      "privilege": "无法解封，感谢曾经来过"
+    },
+    {
+      "id": 3,
+      "name": "注册成员",
+      "privilege": "投票中拥有1票权"
+    },
+    {
+      "id": 4,
+      "name": "特殊贡献成员",
+      "groupType": "vip",
+      "privilege": "投票中拥有3票权，不计下载量"
+    },
+    {
+      "id": 5,
+      "name": "自制委员会",
+      "groupType": "manager",
+      "privilege": "投票中拥有10票权"
+    }
+  ]
+}

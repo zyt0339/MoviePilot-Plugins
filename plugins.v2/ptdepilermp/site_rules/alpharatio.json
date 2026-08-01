@@ -8,98 +8,98 @@
     },
     {
       "id": 2,
-      "interval": "P4W",
       "name": "Philosopher",
       "privilege": "Mortal privileges plus can invite users, upload torrents, and submit requests.",
-      "seedingBonus": 60000,
-      "uploaded": "80GB"
+      "interval": "P4W",
+      "uploaded": "80GB",
+      "seedingBonus": 60000
     },
     {
       "id": 3,
-      "interval": "P8W",
       "name": "Gladiator",
       "privilege": "Philosopher privileges plus can use bookmarks and view top ten user/torrent stats.",
-      "seedingBonus": 120000,
-      "uploaded": "260GB"
+      "interval": "P8W",
+      "uploaded": "260GB",
+      "seedingBonus": 120000
     },
     {
       "id": 4,
-      "interval": "P12W",
       "name": "Giant",
       "privilege": "Gladiator privileges plus can create polls in the forum.",
-      "seedingBonus": 360000,
-      "uploaded": "600GB"
+      "interval": "P12W",
+      "uploaded": "600GB",
+      "seedingBonus": 360000
     },
     {
       "id": 5,
-      "interval": "P18W",
       "name": "Centaur",
       "privilege": "Giant privileges.",
-      "seedingBonus": 720000,
-      "uploaded": "1.6TB"
+      "interval": "P18W",
+      "uploaded": "1.6TB",
+      "seedingBonus": 720000
     },
     {
       "id": 6,
-      "interval": "P26W",
       "name": "Sphinx",
       "privilege": "Centaur privileges plus access to the Invite Forum.",
-      "seedingBonus": 1440000,
-      "uploaded": "3.2TB"
+      "interval": "P26W",
+      "uploaded": "3.2TB",
+      "seedingBonus": 1440000
     },
     {
       "id": 7,
-      "interval": "P38W",
       "name": "Harpy",
       "privilege": "Sphinx privileges.",
-      "seedingBonus": 1920000,
-      "uploaded": "6TB"
+      "interval": "P38W",
+      "uploaded": "6TB",
+      "seedingBonus": 1920000
     },
     {
       "id": 8,
-      "interval": "P60W",
       "name": "Satyr",
       "privilege": "Harpy privileges plus exemption from hit and runs and can see other users' active torrents.",
-      "seedingBonus": 2400000,
-      "uploaded": "12TB"
+      "interval": "P60W",
+      "uploaded": "12TB",
+      "seedingBonus": 2400000
     },
     {
       "id": 9,
-      "interval": "P60W",
       "name": "Adonis",
       "privilege": "Harpy privileges plus exemption from hit and runs and can see other users' active torrents.",
-      "seedingBonus": 2000000,
-      "uploaded": "12TB"
+      "interval": "P60W",
+      "uploaded": "12TB",
+      "seedingBonus": 2000000
     },
     {
       "id": 10,
-      "interval": "P90W",
       "name": "Cyclops",
       "privilege": "Satyr privileges.",
-      "seedingBonus": 4800000,
-      "uploaded": "18TB"
+      "interval": "P90W",
+      "uploaded": "18TB",
+      "seedingBonus": 4800000
     },
     {
       "id": 11,
-      "interval": "P90W",
       "name": "Chimera",
       "privilege": "Satyr privileges.",
-      "seedingBonus": 4000000,
-      "uploaded": "18TB"
+      "interval": "P90W",
+      "uploaded": "18TB",
+      "seedingBonus": 4000000
     },
     {
-      "groupType": "vip",
       "id": 12,
       "name": "Deity",
+      "groupType": "vip",
       "privilege": "Given by Staff at their discretion. Same as Satyr privileges plus can send invites even when invites are closed."
     },
     {
-      "groupType": "vip",
       "id": 13,
-      "interval": "P120W",
       "name": "Spartan",
+      "groupType": "vip",
       "privilege": "Same as Deity privileges.",
-      "seedingBonus": 6200000,
-      "uploaded": "10TB"
+      "interval": "P120W",
+      "uploaded": "10TB",
+      "seedingBonus": 6200000
     }
   ]
 }

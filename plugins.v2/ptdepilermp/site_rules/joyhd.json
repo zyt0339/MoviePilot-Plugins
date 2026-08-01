@@ -8,70 +8,71 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "downloaded": "50GB",
       "id": 2,
-      "interval": "P4W",
       "name": "正兵/Power User",
+      "privilege": "可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以查看其它用户的种子历史(如果用户隐私等级未设置为“强”)； 可以删除自己上传的字幕。",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.2
     },
     {
-      "downloaded": "100GB",
       "id": 3,
-      "interval": "P8W",
       "name": "军士/Elite User",
       "privilege": "军士及以上用户封存账号后不会被删除; 可以发送邀请；可以请求续种。",
+      "interval": "P8W",
+      "downloaded": "100GB",
       "ratio": 1.5
     },
     {
-      "downloaded": "200GB",
       "id": 4,
-      "interval": "P15W",
       "name": "副军校/Crazy User",
       "privilege": "可以在做种/下载/发布的时候选择匿名模式。",
+      "interval": "P15W",
+      "downloaded": "200GB",
       "ratio": 2.5
     },
     {
-      "downloaded": "400GB",
       "id": 5,
-      "interval": "P25W",
       "name": "正军校/Insane User",
       "privilege": "可以查看普通日志。得到一个邀请名额。",
+      "interval": "P25W",
+      "downloaded": "400GB",
       "ratio": 3.5
     },
     {
-      "downloaded": "600GB",
       "id": 6,
-      "interval": "P25W",
-      "isKept": true,
       "name": "副参领/Veteran User",
+      "isKept": true,
       "privilege": "可以查看其它用户的评论、帖子历史。副参领及以上用户会永远保留账号。得到二个邀请名额。",
+      "interval": "P25W",
+      "downloaded": "600GB",
       "ratio": 4.5
     },
     {
-      "downloaded": "1000GB",
       "id": 7,
-      "interval": "P25W",
-      "isKept": true,
       "name": "正参领/Extreme User",
+      "isKept": true,
       "privilege": "可以更新过期的外部信息；得到二个邀请名额。",
+      "interval": "P25W",
+      "downloaded": "1000GB",
       "ratio": 5.5
     },
     {
-      "downloaded": "2000GB",
       "id": 8,
-      "interval": "P30W",
-      "isKept": true,
       "name": "副都统/Ultimate User",
+      "isKept": true,
       "privilege": "得到三个邀请名额。",
+      "interval": "P30W",
+      "downloaded": "2000GB",
       "ratio": 6
     },
     {
-      "downloaded": "5000GB",
       "id": 9,
-      "interval": "P50W",
-      "isKept": true,
       "name": "大将军/Nexus Master",
+      "isKept": true,
       "privilege": "得到五个邀请名额。",
+      "interval": "P50W",
+      "downloaded": "5000GB",
       "ratio": 6
     }
   ]

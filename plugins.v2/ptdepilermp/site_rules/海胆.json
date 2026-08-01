@@ -8,78 +8,78 @@
       "privilege": "新用户的默认级别，仅能下载免费种子，可以直接发布种子"
     },
     {
-      "downloaded": "50GB",
       "id": 1,
-      "interval": "P2W",
       "name": "Power User",
       "privilege": "允许购买邀请码，可以直接发布种子，可以删除自己上传的字幕。",
+      "interval": "P2W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 100
     },
     {
-      "downloaded": "50GB",
       "id": 2,
-      "interval": "P4W",
       "name": "Elite User",
       "privilege": "Elite User允许发送邀请码，并拥有低于该等级以下权限。",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 200
     },
     {
-      "downloaded": "50GB",
       "id": 3,
-      "interval": "P8W",
       "name": "Crazy User",
       "privilege": "查看种子结构，并拥有低于该等级以下权限。",
+      "interval": "P8W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 500
     },
     {
-      "downloaded": "50GB",
       "id": 4,
-      "interval": "P16W",
       "name": "Insane User",
       "privilege": "发布趣味盒，并拥有低于该等级以下权限。",
+      "interval": "P16W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 1000
     },
     {
-      "downloaded": "50GB",
       "id": 5,
-      "interval": "P28W",
-      "isKept": true,
       "name": "Veteran User",
+      "isKept": true,
       "privilege": "Veteran User永远保留账号，并拥有低于该等级以下权限。",
+      "interval": "P28W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 2000
     },
     {
-      "downloaded": "50GB",
       "id": 6,
-      "interval": "P32W",
-      "isKept": true,
       "name": "Extreme User",
+      "isKept": true,
       "privilege": "查看日志权限，并拥有低于该等级以下权限。",
+      "interval": "P32W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 5000
     },
     {
-      "downloaded": "50GB",
       "id": 7,
-      "interval": "P40W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "查看排行榜，并拥有低于该等级以下权限",
+      "interval": "P40W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 8000
     },
     {
-      "downloaded": "50GB",
       "id": 8,
-      "interval": "P52W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "允许匿名，拥有发布主题推荐权限，并拥有低于该等级以下权限",
+      "interval": "P52W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 10000
     }

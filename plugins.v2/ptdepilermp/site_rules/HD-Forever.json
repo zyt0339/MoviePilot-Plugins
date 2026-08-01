@@ -9,17 +9,17 @@
     },
     {
       "id": 2,
-      "interval": "P1W",
       "name": "Member",
       "privilege": "Can upload, send requests, create bookmarks, edit wiki pages, download multiple torrents at once, and reset own password/authkey.",
+      "interval": "P1W",
       "uploaded": "55GB"
     },
     {
       "id": 3,
       "name": "Elite",
       "privilege": "Can access torrents notification system, create collections and a personal collection, create polls in forums, view snatch torrent lists, add own torrents to recommendations, display tag aliases, change password, and add artists to any group.",
-      "ratio": 1,
-      "uploaded": "1TiB"
+      "uploaded": "1TiB",
+      "ratio": 1
     }
   ]
 }

@@ -11,22 +11,22 @@
       "id": 2,
       "name": "HD Maniac",
       "privilege": "Gain access to \"Top 10\"",
-      "ratio": 1.05,
-      "uploaded": "50GB"
+      "uploaded": "50GB",
+      "ratio": 1.05
     },
     {
       "id": 3,
       "name": "HD Monster",
       "privilege": "Gain access to \"Tracker Info\", \"Invites\" section of the forums",
-      "ratio": 2,
-      "uploaded": "250GB"
+      "uploaded": "250GB",
+      "ratio": 2
     },
     {
       "id": 4,
       "name": "HD Daemon",
       "privilege": "Gain access to \"Users\"",
-      "ratio": 4,
-      "uploaded": "1TB"
+      "uploaded": "1TB",
+      "ratio": 4
     }
   ]
 }

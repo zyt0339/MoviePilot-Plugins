@@ -3,59 +3,59 @@
   "is_dead": false,
   "levels": [
     {
-      "bonus": -999,
       "id": 0,
-      "name": "地狱使者"
+      "name": "地狱使者",
+      "bonus": -999
     },
     {
-      "bonus": -1,
       "id": 1,
-      "name": "武林新丁"
+      "name": "武林新丁",
+      "bonus": -1
     },
     {
-      "bonus": 20,
       "id": 2,
-      "name": "江湖小虾"
+      "name": "江湖小虾",
+      "bonus": 20
     },
     {
-      "bonus": 100,
       "id": 3,
-      "name": "后起之秀"
+      "name": "后起之秀",
+      "bonus": 100
     },
     {
-      "bonus": 200,
       "id": 4,
-      "name": "武林高手"
+      "name": "武林高手",
+      "bonus": 200
     },
     {
-      "bonus": 500,
       "id": 5,
-      "name": "风尘奇侠"
+      "name": "风尘奇侠",
+      "bonus": 500
     },
     {
-      "bonus": 1000,
       "id": 6,
-      "name": "无双隐士"
+      "name": "无双隐士",
+      "bonus": 1000
     },
     {
-      "bonus": 2000,
       "id": 7,
-      "name": "世外高人"
+      "name": "世外高人",
+      "bonus": 2000
     },
     {
-      "bonus": 4000,
       "id": 8,
-      "name": "江湖侠隐"
+      "name": "江湖侠隐",
+      "bonus": 4000
     },
     {
-      "bonus": 7000,
       "id": 9,
-      "name": "无敌圣者"
+      "name": "无敌圣者",
+      "bonus": 7000
     },
     {
-      "bonus": 12000,
       "id": 10,
-      "name": "三界贤君"
+      "name": "三界贤君",
+      "bonus": 12000
     }
   ]
 }

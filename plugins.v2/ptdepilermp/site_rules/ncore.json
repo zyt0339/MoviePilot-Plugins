@@ -8,20 +8,20 @@
     },
     {
       "id": 2,
-      "interval": "P26W",
       "name": "Tag",
+      "interval": "P26W",
       "uploaded": "250GB"
     },
     {
       "id": 3,
-      "interval": "P52W",
       "name": "Elite",
+      "interval": "P52W",
       "uploaded": "1TB"
     },
     {
       "id": 4,
-      "interval": "P52W",
       "name": "Legend",
+      "interval": "P52W",
       "uploaded": "1TB"
     },
     {

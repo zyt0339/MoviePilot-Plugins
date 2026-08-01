@@ -9,51 +9,51 @@
     },
     {
       "id": 2,
-      "interval": "P4W",
       "name": "Retro Rookie",
-      "posts": 1,
       "privilege": "Access to Top10 Stats. Can send CRT Invites. Can create Collages. Torrent download limit set to 12 torrents per hour.",
+      "interval": "P4W",
+      "uploaded": "100GiB",
       "ratio": 1,
-      "uploaded": "100GiB"
+      "posts": 1
     },
     {
       "id": 3,
-      "interval": "P8W",
       "name": "Classics Collector",
-      "posts": 10,
       "privilege": "Access to Tracker Discussion forum. Torrent download limit set to 24 torrents per hour.",
+      "interval": "P8W",
+      "uploaded": "1TiB",
       "ratio": 1.25,
-      "uploaded": "1TiB"
+      "posts": 10
     },
     {
       "id": 4,
-      "interval": "P16W",
       "name": "Analog Ace",
-      "posts": 20,
       "privilege": "Access to Invite forums. Torrent download limit set to 36 torrents per hour.",
-      "ratio": 1.5,
+      "interval": "P16W",
       "uploaded": "5TiB",
-      "uploads": 5
+      "ratio": 1.5,
+      "uploads": 5,
+      "posts": 20
     },
     {
       "id": 5,
-      "interval": "P32W",
       "name": "Monochrome Master",
-      "posts": 30,
       "privilege": "Can post in the \"Looking For...\" Invite forum. Torrent download limit set to 48 torrents per hour.",
-      "ratio": 2,
+      "interval": "P32W",
       "uploaded": "15TiB",
-      "uploads": 15
+      "ratio": 2,
+      "uploads": 15,
+      "posts": 30
     },
     {
       "id": 6,
-      "interval": "P64W",
       "name": "Vintage Virtuoso",
-      "posts": 50,
       "privilege": "Torrent download limit set to 60 torrents per hour.",
-      "ratio": 2.5,
+      "interval": "P64W",
       "uploaded": "25TiB",
-      "uploads": 25
+      "ratio": 2.5,
+      "uploads": 25,
+      "posts": 50
     }
   ]
 }

@@ -13,6 +13,9 @@
       "privilege": "Can download 5 torrents a day. Cannot upload. Cannot use RSS."
     },
     {
+      "id": 3,
+      "name": "Member",
+      "privilege": "Can download 100 torrents a day. Can upload. Can use RSS (must enable it in My Account settings).",
       "alternative": [
         {
           "ratio": 1
@@ -20,43 +23,40 @@
         {
           "interval": "P1W"
         }
-      ],
-      "id": 3,
-      "name": "Member",
-      "privilege": "Can download 100 torrents a day. Can upload. Can use RSS (must enable it in My Account settings)."
+      ]
     },
     {
-      "groupType": "vip",
       "id": 100,
       "name": "V.I.P.",
+      "groupType": "vip",
       "privilege": "Can download 200 torrents a day. Can upload."
     },
     {
-      "groupType": "manager",
       "id": 200,
       "name": "Uploader",
+      "groupType": "manager",
       "privilege": "Can upload."
     },
     {
-      "groupType": "manager",
       "id": 201,
       "name": "Editor",
+      "groupType": "manager",
       "privilege": "Can upload."
     },
     {
-      "groupType": "manager",
       "id": 203,
-      "name": "Moderator"
+      "name": "Moderator",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 204,
-      "name": "Admin"
+      "name": "Admin",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 205,
-      "name": "Super Admin"
+      "name": "Super Admin",
+      "groupType": "manager"
     }
   ]
 }

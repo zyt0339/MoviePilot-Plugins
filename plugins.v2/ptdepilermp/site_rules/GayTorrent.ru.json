@@ -8,10 +8,10 @@
     },
     {
       "id": 2,
-      "interval": "P28D",
       "name": "PowerUser",
-      "ratio": 1.05,
-      "uploaded": "40GB"
+      "interval": "P28D",
+      "uploaded": "40GB",
+      "ratio": 1.05
     }
   ]
 }

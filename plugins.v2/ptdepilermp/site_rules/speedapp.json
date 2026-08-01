@@ -11,77 +11,77 @@
     },
     {
       "id": 2,
-      "interval": "P30D",
       "name": "User",
       "nameAka": [
         "用户"
       ],
       "privilege": "Can invite other people.",
-      "ratio": 1.05,
-      "uploaded": "25GB"
+      "interval": "P30D",
+      "uploaded": "25GB",
+      "ratio": 1.05
     },
     {
       "id": 3,
-      "interval": "P90D",
       "name": "Power User",
       "nameAka": [
         "超级用户"
       ],
       "privilege": "Can make requests.",
-      "ratio": 2,
-      "uploaded": "200GB"
+      "interval": "P90D",
+      "uploaded": "200GB",
+      "ratio": 2
     },
     {
       "id": 4,
-      "interval": "P180D",
       "name": "Elite User",
       "nameAka": [
         "精英用户"
       ],
       "privilege": "Can be chosen as Hyperseeders (immune to HnR).",
-      "ratio": 3,
-      "uploaded": "1TB"
+      "interval": "P180D",
+      "uploaded": "1TB",
+      "ratio": 3
     },
     {
       "id": 5,
-      "interval": "P12M",
       "name": "Xtreme User",
       "nameAka": [
         "极端用户"
       ],
       "privilege": "Same privileges as Elite User.",
-      "ratio": 4,
-      "uploaded": "5TB"
+      "interval": "P12M",
+      "uploaded": "5TB",
+      "ratio": 4
     },
     {
       "id": 6,
-      "interval": "P2Y",
       "name": "Super User",
       "nameAka": [
         "超级用户"
       ],
       "privilege": "Same privileges as Elite User.",
-      "ratio": 5,
-      "uploaded": "20TB"
+      "interval": "P2Y",
+      "uploaded": "20TB",
+      "ratio": 5
     },
     {
       "id": 7,
-      "interval": "P6Y",
       "name": "Legend User",
       "nameAka": [
         "传奇用户"
       ],
       "privilege": "Same privileges as Elite User.",
-      "ratio": 6,
-      "uploaded": "100TB"
+      "interval": "P6Y",
+      "uploaded": "100TB",
+      "ratio": 6
     },
     {
-      "groupType": "vip",
       "id": 8,
       "name": "VIP",
       "nameAka": [
         "贵宾"
       ],
+      "groupType": "vip",
       "privilege": "Same privileges as Elite User, immune to automated HnR warnings."
     }
   ]

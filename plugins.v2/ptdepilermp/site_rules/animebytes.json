@@ -9,50 +9,50 @@
     },
     {
       "id": 1,
-      "interval": "P1W",
       "name": "User",
       "privilege": "发送邀请",
-      "ratio": 0.5,
-      "uploaded": "10.5GB"
+      "interval": "P1W",
+      "uploaded": "10.5GB",
+      "ratio": 0.5
     },
     {
       "id": 2,
-      "interval": "P2W",
-      "isKept": true,
       "name": "Power User",
+      "isKept": true,
       "privilege": "访问邀请区，每月固定邀请名额，免于非活动修剪",
-      "ratio": 0.7,
+      "interval": "P2W",
       "uploaded": "25GB",
+      "ratio": 0.7,
       "uploads": 10
     },
     {
       "id": 3,
-      "interval": "P30D",
-      "isKept": true,
       "name": "Elite",
+      "isKept": true,
       "privilege": "",
-      "ratio": 0.8,
+      "interval": "P30D",
       "uploaded": "100GB",
+      "ratio": 0.8,
       "uploads": 50
     },
     {
       "id": 4,
-      "interval": "P90D",
-      "isKept": true,
       "name": "Torrent Master",
+      "isKept": true,
       "privilege": "超出用户限制也可以发送邀请",
-      "ratio": 0.9,
+      "interval": "P90D",
       "uploaded": "500GB",
+      "ratio": 0.9,
       "uploads": 100
     },
     {
       "id": 5,
-      "interval": "P180D",
-      "isKept": true,
       "name": "Legend",
+      "isKept": true,
       "privilege": "",
-      "ratio": 1,
+      "interval": "P180D",
       "uploaded": "1TB",
+      "ratio": 1,
       "uploads": 500
     }
   ]

@@ -10,50 +10,50 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "ShareUser",
       "privilege": "8下载槽",
+      "interval": "P1M",
       "uploaded": "1TiB"
     },
     {
       "id": 3,
-      "interval": "P2M",
       "name": "SuperUser",
       "privilege": "10下载槽",
+      "interval": "P2M",
       "uploaded": "5TiB"
     },
     {
       "id": 4,
-      "interval": "P3M",
       "name": "ExtremeUser",
       "privilege": "自动通过候选 无限下载槽",
+      "interval": "P3M",
       "uploaded": "20TiB"
     },
     {
       "id": 5,
-      "interval": "P6M",
       "name": "InsaneUser",
+      "interval": "P6M",
       "uploaded": "50TiB"
     },
     {
       "id": 6,
-      "interval": "P12M",
       "name": "Veteran",
+      "interval": "P12M",
       "uploaded": "100TiB"
     },
     {
-      "averageSeedingTime": "P30D",
       "id": 7,
-      "interval": "P1M",
       "name": "ShareArchivist",
-      "seedingSize": "5TiB"
+      "interval": "P1M",
+      "seedingSize": "5TiB",
+      "averageSeedingTime": "P30D"
     },
     {
-      "averageSeedingTime": "P60D",
       "id": 8,
-      "interval": "P3M",
       "name": "Seeder",
-      "seedingSize": "10TiB"
+      "interval": "P3M",
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P60D"
     }
   ]
 }

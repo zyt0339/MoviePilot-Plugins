@@ -9,32 +9,32 @@
     },
     {
       "id": 1,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "It can download DOX files larger than 1MB. This class has the right to apply to uploader status.",
-      "ratio": 1.05,
-      "uploaded": "25GB"
+      "interval": "P4W",
+      "uploaded": "25GB",
+      "ratio": 1.05
     },
     {
       "id": 2,
-      "interval": "P6M",
       "name": "Addict",
       "privilege": "This class has the right to request a Custom Title. This class is entitled to requests.",
-      "ratio": 4,
-      "uploaded": "500GB"
+      "interval": "P6M",
+      "uploaded": "500GB",
+      "ratio": 4
     },
     {
       "id": 3,
-      "interval": "P4Y",
       "name": "Elite",
       "privilege": "This class gives you the right to give reputation to other users.",
-      "ratio": 5,
-      "uploaded": "4TB"
+      "interval": "P4Y",
+      "uploaded": "4TB",
+      "ratio": 5
     },
     {
-      "groupType": "vip",
       "id": 4,
       "name": "VIP",
+      "groupType": "vip",
       "privilege": "This class always has a minimum ratio equal to 2, regardless of the downloads made, and is exempt from hit&run rules. They can set their own Custom Title."
     }
   ]

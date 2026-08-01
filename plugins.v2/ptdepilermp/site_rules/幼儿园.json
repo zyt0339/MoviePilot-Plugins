@@ -13,109 +13,110 @@
       "privilege": "新用户的默认等级; 查看种子结构; 查看其它用户的评论、帖子历史; 查看排行榜; 查看其它用户的历史种子列表; 上传字幕; 删除自己上传的字幕; 提交候选."
     },
     {
-      "downloaded": "50GB",
       "id": 2,
-      "interval": "P4W",
       "name": "御宅族",
       "privilege": "查看会员列表; 请求补种; 查看普通日志; 使用流量信息条",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.05
     },
     {
-      "downloaded": "120GB",
       "id": 3,
-      "interval": "P8W",
       "name": "宅修士",
       "privilege": "无",
+      "interval": "P8W",
+      "downloaded": "120GB",
       "ratio": 1.55
     },
     {
-      "downloaded": "300GB",
       "id": 4,
-      "interval": "P15W",
       "name": "宅教士",
       "privilege": "无",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 2.55
     },
     {
-      "downloaded": "500GB",
       "id": 5,
-      "interval": "P25W",
       "name": "宅传教士",
       "privilege": "无",
+      "interval": "P25W",
+      "downloaded": "500GB",
       "ratio": 2.55
     },
     {
-      "downloaded": "750GB",
       "id": 6,
-      "interval": "P40W",
       "name": "宅护法",
       "privilege": "使用邀请名额; 无可用邀请时，购买邀请",
+      "interval": "P40W",
+      "downloaded": "750GB",
       "ratio": 3.05
     },
     {
-      "downloaded": "1024GB",
       "id": 7,
-      "interval": "P60W",
       "name": "宅贤者",
       "privilege": "无",
+      "interval": "P60W",
+      "downloaded": "1024GB",
       "ratio": 3.55
     },
     {
-      "downloaded": "1536GB",
       "id": 8,
-      "interval": "P80W",
       "name": "宅圣",
       "privilege": "账号封存后永久保留.",
+      "interval": "P80W",
+      "downloaded": "1536GB",
       "ratio": 4.05
     },
     {
-      "downloaded": "3072GB",
       "id": 9,
-      "interval": "P100W",
-      "isKept": true,
       "name": "宅神",
+      "isKept": true,
       "privilege": "账号永久保留",
+      "interval": "P100W",
+      "downloaded": "3072GB",
       "ratio": 4.55
     },
     {
-      "groupType": "manager",
       "id": 200,
       "name": "福音组",
+      "groupType": "manager",
       "privilege": "热心会员自发参与组成。如果他们的种子存在问题，请勇敢指正; 不经候选直接上传种子; 查看已屏蔽的种子."
     },
     {
-      "groupType": "manager",
       "id": 201,
       "name": "现充",
+      "groupType": "manager",
       "privilege": "授予曾经做出贡献的管理成员、发布员、压制组等的荣誉头衔."
     },
     {
-      "groupType": "manager",
       "id": 202,
-      "name": "FFF团"
+      "name": "FFF团",
+      "groupType": "manager",
+      "privilege": "帮助通过和拒绝候选的热心用户。如果他们的操作存在问题，请联系管理组; 属于管理组成员，可查看受理咨询、建议、投诉等; 管理论坛主题和帖子; 屏蔽种子评论; 编辑/屏蔽种子; 设置/清除种子置顶; 设置种子人工优惠; 查看机密日志; 管理字幕区;查看匿名用户身份; 编辑/屏蔽/决定候选; 查看邀请记录."
     },
     {
-      "groupType": "manager",
       "id": 203,
       "name": "执事",
+      "groupType": "manager",
       "privilege": "维护群聊区风纪; 发起站内投票; 对会员进行警告、停用/启用账号; 管理史册."
     },
     {
-      "groupType": "manager",
       "id": 204,
       "name": "司铎",
+      "groupType": "manager",
       "privilege": "统筹执事工作，主导规则制定、管理策划和争议调解; 发布、管理站点公告; 管理论坛版块; 彻底删除种子."
     },
     {
-      "groupType": "manager",
       "id": 205,
       "name": "枢机",
+      "groupType": "manager",
       "privilege": "负责程序开发和服务器维护，管理站点设定; 修改会员资料，变更用户名、邮箱地址、重设密码."
     },
     {
-      "groupType": "manager",
       "id": 206,
       "name": "站宗",
+      "groupType": "manager",
       "privilege": "网站创始人，可以做任何事."
     }
   ]

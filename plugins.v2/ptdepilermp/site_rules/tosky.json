@@ -8,74 +8,74 @@
       "privilege": ""
     },
     {
-      "downloaded": "50GB",
       "id": 1,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "直接发布种子；查看NFO文档；删除自己上传的字幕。",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1,
       "seedingBonus": 40000
     },
     {
-      "downloaded": "150GB",
       "id": 2,
-      "interval": "P8W",
       "name": "Elite User",
       "privilege": "首次升级至此等级的用户将获得1个邀请名额。",
+      "interval": "P8W",
+      "downloaded": "150GB",
       "ratio": 1.5,
       "seedingBonus": 80000
     },
     {
-      "downloaded": "500GB",
       "id": 3,
-      "interval": "P13W",
       "name": "Crazy User",
       "privilege": "",
+      "interval": "P13W",
+      "downloaded": "500GB",
       "ratio": 2,
       "seedingBonus": 150000
     },
     {
-      "downloaded": "800GB",
       "id": 4,
-      "interval": "P23W",
       "name": "Insane User",
       "privilege": "",
+      "interval": "P23W",
+      "downloaded": "800GB",
       "ratio": 2.5,
       "seedingBonus": 250000
     },
     {
-      "downloaded": "1.5TB",
       "id": 5,
-      "interval": "P35W",
       "name": "Veteran User",
       "privilege": "",
+      "interval": "P35W",
+      "downloaded": "1.5TB",
       "ratio": 3,
       "seedingBonus": 400000
     },
     {
-      "downloaded": "2.5TB",
       "id": 6,
-      "interval": "P50W",
       "name": "Extreme User",
       "privilege": "",
+      "interval": "P50W",
+      "downloaded": "2.5TB",
       "ratio": 3.5,
       "seedingBonus": 600000
     },
     {
-      "downloaded": "3.5TB",
       "id": 7,
-      "interval": "P65W",
       "name": "Ultimate User",
       "privilege": "",
+      "interval": "P65W",
+      "downloaded": "3.5TB",
       "ratio": 4,
       "seedingBonus": 800000
     },
     {
-      "downloaded": "4.5TB",
       "id": 8,
-      "interval": "P80W",
       "name": "Nexus Master",
       "privilege": "",
+      "interval": "P80W",
+      "downloaded": "4.5TB",
       "ratio": 5,
       "seedingBonus": 1000000
     }

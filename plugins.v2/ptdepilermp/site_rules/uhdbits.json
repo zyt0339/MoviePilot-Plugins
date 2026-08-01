@@ -8,50 +8,50 @@
     },
     {
       "id": 1,
-      "interval": "P1W",
       "name": "User",
       "privilege": "Access to Top 10; Can create and edit Wiki pages.",
+      "interval": "P1W",
       "ratio": 0.7
     },
     {
-      "downloaded": "100GB",
       "id": 2,
-      "interval": "P4W",
       "name": "Power",
       "privilege": "Ability to make New Requests; Enable Users online and Users on IRC on front page; Access to full Staff page.",
+      "interval": "P4W",
+      "downloaded": "100GB",
       "ratio": 1.5,
       "snatches": 20
     },
     {
-      "downloaded": "300GB",
       "id": 3,
-      "interval": "P8W",
       "name": "Extreme",
       "privilege": "Access to the Invite Forum.",
+      "interval": "P8W",
+      "downloaded": "300GB",
       "ratio": 2,
       "snatches": 60
     },
     {
-      "downloaded": "900GB",
       "id": 4,
-      "interval": "P16W",
       "name": "Elite",
+      "interval": "P16W",
+      "downloaded": "900GB",
       "ratio": 2.5,
       "snatches": 180
     },
     {
-      "downloaded": "2700GB",
       "id": 5,
-      "interval": "P32W",
       "name": "Guru",
+      "interval": "P32W",
+      "downloaded": "2700GB",
       "ratio": 3,
       "snatches": 540
     },
     {
-      "downloaded": "8100GB",
       "id": 6,
-      "interval": "P64W",
       "name": "Master",
+      "interval": "P64W",
+      "downloaded": "8100GB",
       "ratio": 3.5,
       "snatches": 1620
     }

@@ -8,39 +8,39 @@
     },
     {
       "id": 2,
-      "interval": "P1W",
       "name": "Member",
-      "posts": 25,
+      "interval": "P1W",
+      "uploaded": "50GB",
       "ratio": 0.75,
-      "uploaded": "50GB"
+      "posts": 25
     },
     {
       "id": 3,
-      "interval": "P12W",
       "name": "Power User",
-      "posts": 50,
       "privilege": "See the uploader of a torrent.",
-      "ratio": 1.25,
+      "interval": "P12W",
       "uploaded": "150GB",
-      "uploads": 1
+      "ratio": 1.25,
+      "uploads": 1,
+      "posts": 50
     },
     {
       "id": 4,
-      "interval": "P24W",
       "name": "Master",
-      "posts": 75,
-      "ratio": 0.75,
+      "interval": "P24W",
       "uploaded": "500GB",
-      "uploads": 10
+      "ratio": 0.75,
+      "uploads": 10,
+      "posts": 75
     },
     {
       "id": 5,
-      "interval": "P48W",
       "name": "Elite",
-      "posts": 150,
-      "ratio": 0.75,
+      "interval": "P48W",
       "uploaded": "1TB",
-      "uploads": 25
+      "ratio": 0.75,
+      "uploads": 25,
+      "posts": 150
     }
   ]
 }

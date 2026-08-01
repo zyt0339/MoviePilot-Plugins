@@ -1,0 +1,98 @@
+{
+  "name": "YemaPT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "乱民",
+      "privilege": "无",
+      "ratio": 0.3
+    },
+    {
+      "id": 1,
+      "name": "小卒",
+      "privilege": "注册后默认等级，待系统更新后会自动升级到level2",
+      "ratio": 0.5
+    },
+    {
+      "id": 2,
+      "name": "教谕",
+      "privilege": "可查看站点统计",
+      "ratio": 0.6
+    },
+    {
+      "id": 3,
+      "name": "登仕郎",
+      "privilege": "新注册用户系统定时更新后的默认等级；可查看种子TOP10排行",
+      "downloaded": "100GB",
+      "ratio": 1
+    },
+    {
+      "id": 4,
+      "name": "修职郎",
+      "privilege": "可查看种子TOP250信息；可查看用户TOP10信息",
+      "interval": "P4W",
+      "downloaded": "200GB",
+      "ratio": 2
+    },
+    {
+      "id": 5,
+      "name": "文林郎",
+      "privilege": "可查看用户TOP250信息，可匿名发帖",
+      "interval": "P8W",
+      "downloaded": "400GB",
+      "ratio": 3
+    },
+    {
+      "id": 6,
+      "name": "忠武校尉",
+      "privilege": "可设定免候选发布种子",
+      "interval": "P12W",
+      "downloaded": "500GB",
+      "ratio": 4
+    },
+    {
+      "id": 7,
+      "name": "承信将军",
+      "privilege": "发帖可禁止评论",
+      "interval": "P16W",
+      "downloaded": "800GB",
+      "ratio": 5
+    },
+    {
+      "id": 8,
+      "name": "武毅将军",
+      "privilege": "无",
+      "interval": "P20W",
+      "downloaded": "1TB",
+      "ratio": 6
+    },
+    {
+      "id": 9,
+      "name": "武节将军",
+      "isKept": true,
+      "privilege": "此等级及以上用户，账号将永久保留",
+      "interval": "P24W",
+      "downloaded": "2TB",
+      "ratio": 7
+    },
+    {
+      "id": 10,
+      "name": "显威将军",
+      "isKept": true,
+      "privilege": "无",
+      "interval": "P28W",
+      "downloaded": "2.5TB",
+      "ratio": 8
+    },
+    {
+      "id": 11,
+      "name": "宣武将军",
+      "isKept": true,
+      "privilege": "无",
+      "interval": "P32W",
+      "downloaded": "3TB",
+      "ratio": 9
+    }
+  ]
+}

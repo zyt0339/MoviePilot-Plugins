@@ -9,63 +9,63 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "BluUser",
       "privilege": "5下载槽",
+      "interval": "P1M",
       "uploaded": "1TiB"
     },
     {
       "id": 3,
-      "interval": "P2M",
       "name": "BluMaster",
       "privilege": "10下载槽 发送邀请",
+      "interval": "P2M",
       "uploaded": "5TiB"
     },
     {
       "id": 4,
-      "interval": "P3M",
       "name": "BluExtremist",
       "privilege": "自动通过候选 访问邀请区 15下载槽 发送邀请",
+      "interval": "P3M",
       "uploaded": "20TiB"
     },
     {
       "id": 5,
-      "interval": "P6M",
       "name": "BluLegend",
       "privilege": "自动通过候选 访问邀请区 20下载槽 发送邀请",
+      "interval": "P6M",
       "uploaded": "50TiB"
     },
     {
       "id": 6,
-      "interval": "P12M",
       "name": "Blutopian",
       "privilege": "自动通过候选 访问邀请区 免疫HR 不计算下载量 25下载槽 发送邀请",
+      "interval": "P12M",
       "uploaded": "100TiB"
     },
     {
-      "averageSeedingTime": "P30D",
-      "groupType": "user",
       "id": 7,
-      "interval": "P1M",
       "name": "BluSeeder",
+      "groupType": "user",
       "privilege": "自动通过候选 访问邀请区 免疫HR 15下载槽 发送邀请",
-      "seedingSize": "5TiB"
+      "interval": "P1M",
+      "seedingSize": "5TiB",
+      "averageSeedingTime": "P30D"
     },
     {
-      "averageSeedingTime": "P60D",
       "id": 8,
-      "interval": "P3M",
       "name": "BluCollector",
       "privilege": "自动通过候选 访问邀请区 免疫HR 不计算下载量 20下载槽 发送邀请",
-      "seedingSize": "10TiB"
+      "interval": "P3M",
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P60D"
     },
     {
-      "averageSeedingTime": "P90D",
       "id": 9,
-      "interval": "P3M",
       "name": "BluArchivist",
       "privilege": "自动通过候选 访问邀请区 免疫HR 不计算下载量 双倍计算上传量 25下载槽 发送邀请",
-      "seedingSize": "20TiB"
+      "interval": "P3M",
+      "seedingSize": "20TiB",
+      "averageSeedingTime": "P90D"
     }
   ]
 }

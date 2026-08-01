@@ -16,78 +16,78 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "bonus": 600000,
-      "downloaded": "200GB",
       "id": 2,
-      "interval": "P5W",
       "name": "Power User",
       "privilege": "NFO文档；请求续种；查看其它用户的种子历史；删除自己上传的字幕",
-      "ratio": 2
+      "interval": "P5W",
+      "downloaded": "200GB",
+      "ratio": 2,
+      "bonus": 600000
     },
     {
-      "bonus": 800000,
-      "downloaded": "500GB",
       "id": 3,
-      "interval": "P10W",
       "name": "Elite User",
       "privilege": "查看邀请区",
-      "ratio": 2.5
+      "interval": "P10W",
+      "downloaded": "500GB",
+      "ratio": 2.5,
+      "bonus": 800000
     },
     {
-      "bonus": 1000000,
-      "downloaded": "1TB",
       "id": 4,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "在做种/下载/发布的时候选择匿名模式",
-      "ratio": 3
+      "interval": "P15W",
+      "downloaded": "1TB",
+      "ratio": 3,
+      "bonus": 1000000
     },
     {
-      "bonus": 1500000,
-      "downloaded": "2TB",
       "id": 5,
-      "interval": "P20W",
       "name": "Insane User",
       "privilege": "查看普通日志",
-      "ratio": 3.5
+      "interval": "P20W",
+      "downloaded": "2TB",
+      "ratio": 3.5,
+      "bonus": 1500000
     },
     {
-      "bonus": 2000000,
-      "downloaded": "4TB",
       "id": 6,
-      "interval": "P25W",
       "name": "Veteran User",
       "privilege": "封存账号后不会被删除；查看其它用户的评论、帖子历史",
-      "ratio": 4
+      "interval": "P25W",
+      "downloaded": "4TB",
+      "ratio": 4,
+      "bonus": 2000000
     },
     {
-      "bonus": 2500000,
-      "downloaded": "6TB",
       "id": 7,
-      "interval": "P30W",
       "name": "Extreme User",
       "privilege": "更新过期的外部信息；查看Extreme User论坛",
-      "ratio": 4.5
+      "interval": "P30W",
+      "downloaded": "6TB",
+      "ratio": 4.5,
+      "bonus": 2500000
     },
     {
-      "bonus": 3500000,
-      "downloaded": "8TB",
       "id": 8,
-      "interval": "P45W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "永远保留账号",
-      "ratio": 5
+      "interval": "P45W",
+      "downloaded": "8TB",
+      "ratio": 5,
+      "bonus": 3500000
     },
     {
-      "bonus": 5000000,
-      "downloaded": "10TB",
       "id": 9,
-      "interval": "P65W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "直接发布种子；可以查看排行榜；在网站开放邀请期间发送邀请",
-      "ratio": 5.5
+      "interval": "P65W",
+      "downloaded": "10TB",
+      "ratio": 5.5,
+      "bonus": 5000000
     }
   ]
 }

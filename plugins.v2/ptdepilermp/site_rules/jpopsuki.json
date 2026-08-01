@@ -4,28 +4,29 @@
   "levels": [
     {
       "id": 1,
-      "isKept": true,
       "name": "User",
+      "isKept": true,
       "privilege": "Can download/upload."
     },
     {
-      "downloaded": "1KB",
       "id": 2,
-      "interval": "P1W",
-      "isKept": true,
       "name": "Member",
+      "isKept": true,
       "privilege": "Can use invites, notifications, set a forum signature, access the Top 10 and edit the Knowledge base.",
-      "ratio": 0.7,
-      "uploaded": "10GB"
+      "interval": "P1W",
+      "downloaded": "1KB",
+      "uploaded": "10GB",
+      "ratio": 0.7
     },
     {
-      "downloaded": "1KB",
       "id": 3,
-      "interval": "P2W",
-      "isKept": true,
       "name": "Power User",
-      "ratio": 1.05,
+      "isKept": true,
+      "privilege": "advanced Top 10, can view torrent snatched list, edit torrent's description, original title and release date and access the advanced user search. Receives a new invite once per month (up to a maximum of 10 available invites).",
+      "interval": "P2W",
+      "downloaded": "1KB",
       "uploaded": "25GB",
+      "ratio": 1.05,
       "uploads": 5
     }
   ]

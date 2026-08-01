@@ -9,55 +9,55 @@
     },
     {
       "id": 2,
-      "interval": "P1W",
       "name": "Member",
       "privilege": "Invites",
-      "ratio": 0.6,
-      "uploaded": "10B"
+      "interval": "P1W",
+      "uploaded": "10B",
+      "ratio": 0.6
     },
     {
       "id": 3,
-      "interval": "P2W",
       "name": "Power User",
       "privilege": "",
-      "ratio": 0.65,
+      "interval": "P2W",
       "uploaded": "25GB",
+      "ratio": 0.65,
       "uploads": 5
     },
     {
       "id": 4,
-      "interval": "P4W",
       "name": "Elite",
       "privilege": "",
-      "ratio": 0.65,
+      "interval": "P4W",
       "uploaded": "100GB",
+      "ratio": 0.65,
       "uploads": 50
     },
     {
       "id": 5,
-      "interval": "P8W",
       "name": "Torrent Master",
       "privilege": "",
-      "ratio": 0.65,
+      "interval": "P8W",
       "uploaded": "500GB",
+      "ratio": 0.65,
       "uploads": 500
     },
     {
       "id": 6,
-      "interval": "P8W",
       "name": "Power TM",
       "privilege": "",
-      "ratio": 0.65,
+      "interval": "P8W",
       "uploaded": "500GB",
+      "ratio": 0.65,
       "uploads": 500
     },
     {
       "id": 7,
-      "interval": "P8W",
       "name": "Elite TM",
       "privilege": "",
-      "ratio": 0.65,
+      "interval": "P8W",
       "uploaded": "500GB",
+      "ratio": 0.65,
       "uploads": 500
     }
   ]

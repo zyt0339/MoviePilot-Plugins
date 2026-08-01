@@ -1,0 +1,55 @@
+{
+  "name": "DigitalCore",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Rogue"
+    },
+    {
+      "id": 10,
+      "name": "Sentinel",
+      "privilege": "Get access to the request system and the bonus system. Can upload (moderated) torrents",
+      "interval": "P14D",
+      "uploaded": "50GB",
+      "ratio": 1.05
+    },
+    {
+      "id": 20,
+      "name": "Viceroy",
+      "privilege": "See all 'top' lists. See extended statistics. IP logging disabled. All IP logs are now cleared",
+      "interval": "P105D",
+      "uploaded": "300GB",
+      "ratio": 1.1
+    },
+    {
+      "id": 30,
+      "name": "Sentry",
+      "privilege": "Get 3 request slots, 2 invites and above perks",
+      "interval": "P210D",
+      "uploaded": "1200GB",
+      "ratio": 1.1
+    },
+    {
+      "id": 31,
+      "name": "Guardian",
+      "privilege": "Get 5 extra invites and 6 additional request slots. Can upload unmoderated torrents.",
+      "interval": "P500D",
+      "uploaded": "5TB",
+      "ratio": 20
+    },
+    {
+      "id": 32,
+      "name": "Vanguard",
+      "privilege": "Get 10 more extra invites and 10 additional request slots. Can upload unmoderated torrents.",
+      "interval": "P730D",
+      "uploaded": "20TB",
+      "ratio": 20
+    },
+    {
+      "id": 70,
+      "name": "VIP",
+      "groupType": "vip"
+    }
+  ]
+}

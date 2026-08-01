@@ -11,15 +11,15 @@
       "id": 2,
       "name": "Poweruser",
       "privilege": "Access to: Online Users, Tracker info",
-      "ratio": 1.05,
-      "uploaded": "50GB"
+      "uploaded": "50GB",
+      "ratio": 1.05
     },
     {
       "id": 3,
       "name": "Extrauser",
       "privilege": "Access to: Online Users, Tracker info, Requests, Top 10 and Users",
-      "ratio": 2,
-      "uploaded": "250GB"
+      "uploaded": "250GB",
+      "ratio": 2
     }
   ]
 }

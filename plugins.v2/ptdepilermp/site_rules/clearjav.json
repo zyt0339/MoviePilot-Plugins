@@ -9,39 +9,39 @@
     },
     {
       "id": 11,
-      "interval": "P30D",
       "name": "PowerUser",
-      "ratio": 0.4,
-      "uploaded": "1TB"
+      "interval": "P30D",
+      "uploaded": "1TB",
+      "ratio": 0.4
     },
     {
       "id": 12,
-      "interval": "P60D",
       "name": "SuperUser",
-      "ratio": 0.4,
-      "uploaded": "5TB"
+      "interval": "P60D",
+      "uploaded": "5TB",
+      "ratio": 0.4
     },
     {
       "id": 13,
-      "interval": "P90D",
       "name": "ExtremeUser",
-      "ratio": 0.4,
-      "uploaded": "20TB"
+      "interval": "P90D",
+      "uploaded": "20TB",
+      "ratio": 0.4
     },
     {
       "id": 14,
-      "interval": "P180D",
       "name": "InsaneUser",
-      "ratio": 0.4,
-      "uploaded": "50TB"
+      "interval": "P180D",
+      "uploaded": "50TB",
+      "ratio": 0.4
     },
     {
-      "averageSeedingTime": "P30D",
       "id": 17,
-      "interval": "P30D",
       "name": "Seeder",
+      "interval": "P30D",
       "ratio": 0.4,
-      "seedingSize": "5TB"
+      "seedingSize": "5TB",
+      "averageSeedingTime": "P30D"
     }
   ]
 }

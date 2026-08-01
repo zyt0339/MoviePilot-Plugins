@@ -9,53 +9,53 @@
     },
     {
       "id": 2,
-      "interval": "P1W",
       "name": "Perv",
       "privilege": "can access top10 lists;  can add and vote on tags;  can use upload templates;  can set forum signature (up to 128 characters)",
-      "ratio": 0.6,
-      "uploaded": "10GB"
+      "interval": "P1W",
+      "uploaded": "10GB",
+      "ratio": 0.6
     },
     {
       "id": 3,
-      "interval": "P4W",
       "name": "Good Perv",
       "privilege": "can access site statistics;  can create public upload templates;  can create and vote in requests;  can use the notifications system;  can create collages;  can create up to 2 personal collages;  can add multiple tags at once;  can see uploaders name in upload (unless forced hidden);  can download zips of torrent files (from collages, and user pages);  can play Slot Machine;  can create polls in the forums;  can bump threads in the forums;  can set forum signature (up to 256 characters)",
-      "ratio": 1.05,
-      "uploaded": "25GB"
+      "interval": "P4W",
+      "uploaded": "25GB",
+      "ratio": 1.05
     },
     {
       "id": 4,
-      "interval": "P5Y",
       "name": "Better Perv",
       "privilege": "can see staff list on Staff page; can send invites (if you have any); can create an additional personal collage (3 total); can set forum signature (up to 512 characters)",
-      "ratio": 1.05,
-      "uploaded": "25TB"
+      "interval": "P5Y",
+      "uploaded": "25TB",
+      "ratio": 1.05
     },
     {
       "id": 5,
-      "interval": "P8W",
       "name": "Great Perv",
       "privilege": "can see staff list on Staff page;  can access the Invite forum;  can send invites (if you have any);  can create an additional personal collage (3 total);  can set forum signature (up to 512 characters)",
-      "ratio": 1.05,
+      "interval": "P8W",
       "uploaded": "100GB",
+      "ratio": 1.05,
       "uploads": 5
     },
     {
       "id": 6,
-      "interval": "P13W",
       "name": "Sextreme Perv",
       "privilege": "can see staff list on Staff page; can create 2 additional personal collages (5 total); can set forum signature (up to 1024 characters)",
-      "ratio": 1.05,
+      "interval": "P13W",
       "uploaded": "1TB",
+      "ratio": 1.05,
       "uploads": 50
     },
     {
       "id": 7,
-      "interval": "P26W",
       "name": "Smut Peddler",
       "privilege": "can create 5 additional personal collages (10 total); can set forum signature (up to 2048 characters)",
-      "ratio": 1.05,
+      "interval": "P26W",
       "uploaded": "10TB",
+      "ratio": 1.05,
       "uploads": 250
     }
   ]

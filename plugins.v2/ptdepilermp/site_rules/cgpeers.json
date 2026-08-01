@@ -8,37 +8,37 @@
     },
     {
       "id": 2,
-      "interval": "P4W",
       "name": "Member",
       "privilege": "Access Top 10; Can (anonymously) upload torrents; Can make requests",
-      "ratio": 1,
-      "uploaded": "100GiB"
+      "interval": "P4W",
+      "uploaded": "100GiB",
+      "ratio": 1
     },
     {
       "id": 3,
-      "interval": "P20W",
       "name": "Power User",
       "privilege": "Can view advanced site stats.",
-      "ratio": 2,
+      "interval": "P20W",
       "uploaded": "500GiB",
+      "ratio": 2,
       "uploads": 5
     },
     {
       "id": 4,
-      "interval": "P52W",
       "name": "Elite",
       "privilege": "Can download multiple torrents at once. Can delete tags. Can view torrent peerlists.",
-      "ratio": 4,
+      "interval": "P52W",
       "uploaded": "2TiB",
+      "ratio": 4,
       "uploads": 50
     },
     {
       "id": 5,
-      "interval": "P260W",
       "name": "Legend",
       "privilege": "Can have a personal collage. Can create collages.",
-      "ratio": 4,
+      "interval": "P260W",
       "uploaded": "100TiB",
+      "ratio": 4,
       "uploads": 100
     }
   ]

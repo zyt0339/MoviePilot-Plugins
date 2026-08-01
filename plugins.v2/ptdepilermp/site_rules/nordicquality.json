@@ -10,53 +10,53 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "Power User",
       "privilege": "10下载槽 上传种子 发送邀请",
-      "ratio": 1,
-      "uploaded": "250GiB"
+      "interval": "P1M",
+      "uploaded": "250GiB",
+      "ratio": 1
     },
     {
       "id": 3,
-      "interval": "P2M",
       "name": "Super User",
       "privilege": "25下载槽 上传种子 发送邀请",
-      "ratio": 1.2,
-      "uploaded": "750GiB"
+      "interval": "P2M",
+      "uploaded": "750GiB",
+      "ratio": 1.2
     },
     {
       "id": 4,
-      "interval": "P3M",
       "name": "Extreme User",
       "privilege": "35下载槽 上传种子 发送邀请",
-      "ratio": 1.4,
-      "uploaded": "4TiB"
+      "interval": "P3M",
+      "uploaded": "4TiB",
+      "ratio": 1.4
     },
     {
       "id": 5,
-      "interval": "P6M",
       "name": "Insane User",
       "privilege": "50下载槽 上传种子 发送邀请",
-      "ratio": 1.5,
-      "uploaded": "15TiB"
+      "interval": "P6M",
+      "uploaded": "15TiB",
+      "ratio": 1.5
     },
     {
-      "averageSeedingTime": "P1W",
-      "groupType": "user",
       "id": 6,
       "name": "Super Seeder",
+      "groupType": "user",
       "privilege": "50下载槽 上传种子 发送邀请 免疫HR",
       "ratio": 1,
-      "seedingSize": "5TiB"
+      "seedingSize": "5TiB",
+      "averageSeedingTime": "P1W"
     },
     {
-      "averageSeedingTime": "P4W",
-      "groupType": "user",
       "id": 7,
       "name": "Torrent King",
+      "groupType": "user",
       "privilege": "50下载槽 上传种子 发送邀请 不计算下载量 免疫HR",
       "ratio": 1,
-      "seedingSize": "10TiB"
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P4W"
     }
   ]
 }

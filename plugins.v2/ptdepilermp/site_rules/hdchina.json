@@ -8,67 +8,67 @@
       "privilege": ""
     },
     {
-      "downloaded": "200GB",
       "id": 1,
-      "interval": "P5W",
       "name": "Power User",
       "privilege": "可以使用道具，可以打开签名和个性化称号",
+      "interval": "P5W",
+      "downloaded": "200GB",
       "ratio": 1.5
     },
     {
-      "downloaded": "500GB",
       "id": 2,
-      "interval": "P10W",
       "name": "Elite User",
       "privilege": "可以在候选区投票，可以在论坛建议区发帖，可以上传字幕，可以删除自己上传的字幕。",
+      "interval": "P10W",
+      "downloaded": "500GB",
       "ratio": 2
     },
     {
-      "downloaded": "1TB",
       "id": 3,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "可以进入邀请区。",
+      "interval": "P15W",
+      "downloaded": "1TB",
       "ratio": 2.5
     },
     {
-      "downloaded": "1.5TB",
       "id": 4,
-      "interval": "P20W",
       "name": "Insane User",
       "privilege": "并可以直接发布种子，无需候选。",
+      "interval": "P20W",
+      "downloaded": "1.5TB",
       "ratio": 3
     },
     {
-      "downloaded": "2TB",
       "id": 5,
-      "interval": "P25W",
       "name": "Veteran User",
       "privilege": "可以在个人资料内隐藏个人信息，可以匿名做种。",
+      "interval": "P25W",
+      "downloaded": "2TB",
       "ratio": 4
     },
     {
-      "downloaded": "3TB",
       "id": 6,
-      "interval": "P30W",
       "name": "Extreme User",
       "privilege": "发送邀请，可以查看其它会员种子历史，可以更新IMDb信息。",
+      "interval": "P30W",
+      "downloaded": "3TB",
       "ratio": 5
     },
     {
-      "downloaded": "4TB",
       "id": 7,
-      "interval": "P40W",
       "name": "Ultimate User",
       "privilege": "账号挂起永久保留。取消一个月只能发送一个邀请的限制。",
+      "interval": "P40W",
+      "downloaded": "4TB",
       "ratio": 6
     },
     {
-      "downloaded": "5TB",
       "id": 8,
-      "interval": "P50W",
       "name": "Nexus Master",
       "privilege": "账号永久保存(无需挂起)",
+      "interval": "P50W",
+      "downloaded": "5TB",
       "ratio": 8
     }
   ]

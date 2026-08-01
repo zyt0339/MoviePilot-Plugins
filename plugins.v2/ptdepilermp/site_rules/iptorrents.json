@@ -11,18 +11,18 @@
       "name": "User"
     },
     {
-      "downloaded": "5GB",
       "id": 2,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "Are able to make requests for torrents, view the Top 10, and apply for Uploader status.",
-      "ratio": 1.05,
-      "uploaded": "50GB"
+      "interval": "P4W",
+      "downloaded": "5GB",
+      "uploaded": "50GB",
+      "ratio": 1.05
     },
     {
-      "groupType": "vip",
       "id": 3,
       "name": "VIP",
+      "groupType": "vip",
       "privilege": "Immune from H&R."
     }
   ]

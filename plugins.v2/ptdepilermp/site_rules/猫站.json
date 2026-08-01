@@ -8,46 +8,52 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "downloaded": "50GB",
       "id": 2,
-      "interval": "P5W",
       "name": "加菲猫 POWER USER",
       "privilege": "可以直接发布种子；可以查看邀请区；可以上传字幕和删除自己上传的字幕",
+      "interval": "P5W",
+      "downloaded": "50GB",
       "ratio": 1.05,
       "seedingBonus": 10000,
       "uploads": 10
     },
     {
-      "downloaded": "120GB",
       "id": 3,
-      "interval": "P10W",
       "name": "布偶猫 ELITE USER",
       "privilege": "可以请求续种",
+      "interval": "P10W",
+      "downloaded": "120GB",
       "ratio": 1.55,
       "seedingBonus": 30000,
       "uploads": 20
     },
     {
-      "downloaded": "300GB",
       "id": 4,
-      "interval": "P24W",
       "name": "雪鞋猫 CRAZY USER",
       "privilege": "可以查看排行榜",
+      "interval": "P24W",
+      "downloaded": "300GB",
       "ratio": 2.05,
       "seedingBonus": 80000,
       "uploads": 30
     },
     {
-      "downloaded": "500GB",
       "id": 5,
-      "interval": "P32W",
       "name": "暹罗猫 INSANE USER",
       "privilege": "可以查看普通日志",
+      "interval": "P32W",
+      "downloaded": "500GB",
       "ratio": 2.55,
       "seedingBonus": 150000,
       "uploads": 40
     },
     {
+      "id": 6,
+      "name": "安哥拉猫 VETERAN USER",
+      "privilege": "可以查看其它用户的评论、帖子历史；封存账号后，不会因不活跃原因被临时封禁",
+      "interval": "P40W",
+      "downloaded": "750GB",
+      "ratio": 3.05,
       "alternative": [
         {
           "seedingBonus": 300000,
@@ -57,15 +63,15 @@
           "seedingBonus": 900000,
           "uploads": 10
         }
-      ],
-      "downloaded": "750GB",
-      "id": 6,
-      "interval": "P40W",
-      "name": "安哥拉猫 VETERAN USER",
-      "privilege": "可以查看其它用户的评论、帖子历史；封存账号后，不会因不活跃原因被临时封禁",
-      "ratio": 3.05
+      ]
     },
     {
+      "id": 7,
+      "name": "孟加拉猫 EXTREME USER",
+      "privilege": "可2次无条件不活跃解封，可以查看邀请树统计，初次升级赠送1枚永久邀请码",
+      "interval": "P48W",
+      "downloaded": "1024GB",
+      "ratio": 3.55,
       "alternative": [
         {
           "seedingBonus": 600000,
@@ -75,15 +81,15 @@
           "seedingBonus": 1800000,
           "uploads": 10
         }
-      ],
-      "downloaded": "1024GB",
-      "id": 7,
-      "interval": "P48W",
-      "name": "孟加拉猫 EXTREME USER",
-      "privilege": "可2次无条件不活跃解封，可以查看邀请树统计，初次升级赠送1枚永久邀请码",
-      "ratio": 3.55
+      ]
     },
     {
+      "id": 8,
+      "name": "山东狮子猫 ULTIMATE USER",
+      "privilege": "追加1次无条件不活跃解封，可以查看邀请树图，初次升级赠送2枚永久邀请码",
+      "interval": "P56W",
+      "downloaded": "1536GB",
+      "ratio": 4.05,
       "alternative": [
         {
           "seedingBonus": 1200000,
@@ -93,15 +99,16 @@
           "seedingBonus": 3600000,
           "uploads": 10
         }
-      ],
-      "downloaded": "1536GB",
-      "id": 8,
-      "interval": "P56W",
-      "name": "山东狮子猫 ULTIMATE USER",
-      "privilege": "追加1次无条件不活跃解封，可以查看邀请树图，初次升级赠送2枚永久邀请码",
-      "ratio": 4.05
+      ]
     },
     {
+      "id": 9,
+      "name": "四川简州猫 NEXUS MASTER",
+      "isKept": true,
+      "privilege": "用户不会因不活跃原因被临时封禁，初次升级赠送3枚永久邀请码",
+      "interval": "P112W",
+      "downloaded": "3072GB",
+      "ratio": 4.55,
       "alternative": [
         {
           "seedingBonus": 2400000,
@@ -111,14 +118,7 @@
           "seedingBonus": 9600000,
           "uploads": 10
         }
-      ],
-      "downloaded": "3072GB",
-      "id": 9,
-      "interval": "P112W",
-      "isKept": true,
-      "name": "四川简州猫 NEXUS MASTER",
-      "privilege": "用户不会因不活跃原因被临时封禁，初次升级赠送3枚永久邀请码",
-      "ratio": 4.55
+      ]
     }
   ]
 }

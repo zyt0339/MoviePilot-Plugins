@@ -10,20 +10,20 @@
       "id": 2,
       "name": "Athlete",
       "privilege": "Access to: Online Users, Tracker info, Live TV",
-      "ratio": 0.9,
-      "uploaded": "50GB"
+      "uploaded": "50GB",
+      "ratio": 0.9
     },
     {
       "id": 3,
       "name": "ProAthlete",
       "privilege": "Access to: Online Users, Tracker info, Live TV, Requests, Top 10, and Users",
-      "ratio": 1.8,
-      "uploaded": "250GB"
+      "uploaded": "250GB",
+      "ratio": 1.8
     },
     {
-      "groupType": "vip",
       "id": 4,
       "name": "VIP",
+      "groupType": "vip",
       "privilege": "Fancy star, No ratio requirements (as long as you are vip) + Access to: Online Users, Tracker info, Live TV, Requests, Top 10, and Users"
     }
   ]

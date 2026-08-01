@@ -4,31 +4,31 @@
   "levels": [
     {
       "id": 0,
-      "groupType": "user",
       "name": "Peasant",
       "nameAka": [
         "青蛙卵"
       ],
+      "groupType": "user",
       "privilege": "因为分享率过低而被降级的用户。如果不在一定时间内提升分享率，账号会被禁用。"
     },
     {
       "id": 1,
-      "groupType": "user",
       "name": "User",
       "nameAka": [
         "蝌蚪"
       ],
+      "groupType": "user",
       "privilege": "新用户的默认级别。"
     },
     {
       "id": 2,
-      "groupType": "user",
       "name": "Power User",
       "nameAka": [
         "幼蛙"
       ],
-      "interval": "P5W",
+      "groupType": "user",
       "privilege": "得到1个邀请名额；拥有网站基本权限，请自行探索。",
+      "interval": "P5W",
       "alternative": [
         {
           "seedingBonus": 40000,
@@ -47,13 +47,13 @@
     },
     {
       "id": 3,
-      "groupType": "user",
       "name": "Elite User",
       "nameAka": [
         "成蛙"
       ],
-      "interval": "P16W",
+      "groupType": "user",
       "privilege": "得到2个邀请名额；封存账号后不会被删除。",
+      "interval": "P16W",
       "alternative": [
         {
           "seedingBonus": 70000,
@@ -72,13 +72,13 @@
     },
     {
       "id": 4,
-      "groupType": "user",
       "name": "Crazy User",
       "nameAka": [
         "妙蛙种子"
       ],
-      "interval": "P25W",
+      "groupType": "user",
       "privilege": "得到3个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "interval": "P25W",
       "alternative": [
         {
           "seedingBonus": 90000,
@@ -97,13 +97,13 @@
     },
     {
       "id": 5,
-      "groupType": "user",
       "name": "Insane User",
       "nameAka": [
         "妙蛙草"
       ],
-      "interval": "P36W",
+      "groupType": "user",
       "privilege": "得到3个邀请名额；可以查看普通日志。",
+      "interval": "P36W",
       "alternative": [
         {
           "seedingBonus": 150000,
@@ -122,14 +122,14 @@
     },
     {
       "id": 6,
-      "groupType": "user",
       "name": "Veteran User",
       "nameAka": [
         "妙蛙花"
       ],
-      "interval": "P52W",
+      "groupType": "user",
       "isKept": true,
       "privilege": "得到4个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "interval": "P52W",
       "alternative": [
         {
           "seedingBonus": 200000,
@@ -148,14 +148,14 @@
     },
     {
       "id": 7,
-      "groupType": "user",
       "name": "Extreme User",
       "nameAka": [
         "mega妙蛙花"
       ],
-      "interval": "P60W",
+      "groupType": "user",
       "isKept": true,
       "privilege": "得到4个邀请名额；可以更新过期的外部信息。",
+      "interval": "P60W",
       "alternative": [
         {
           "seedingBonus": 280000,
@@ -174,14 +174,14 @@
     },
     {
       "id": 8,
-      "groupType": "user",
       "name": "Ultimate User",
       "nameAka": [
         "极巨化妙蛙花"
       ],
-      "interval": "P100W",
+      "groupType": "user",
       "isKept": true,
       "privilege": "得到5个邀请名额。",
+      "interval": "P100W",
       "alternative": [
         {
           "seedingBonus": 400000,
@@ -200,21 +200,21 @@
     },
     {
       "id": 99,
-      "groupType": "user",
       "name": "SVIP",
       "nameAka": [
         "闪光妙蛙花"
       ],
+      "groupType": "user",
       "isKept": true,
       "privilege": "网站元老用户，和VIP权限完全相同，免除自动降级，但计算下载量。"
     },
     {
       "id": 100,
-      "groupType": "vip",
       "name": "VIP",
       "nameAka": [
         "贵宾"
       ],
+      "groupType": "vip",
       "privilege": "和SVIP权限完全相同，免除自动降级，且不计算下载量。"
     }
   ]

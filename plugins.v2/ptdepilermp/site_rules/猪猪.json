@@ -13,75 +13,75 @@
       "privilege": "限制功能，如发表、申请链接、上传字幕等。"
     },
     {
-      "downloaded": "100GB",
       "id": 3,
-      "interval": "P4W",
       "name": "猪仔",
       "privilege": "可直接发布种子，可查看NFO文档、用户列表，请求续种，查看排行榜，查看他人种子历史（未设强隐私时），可删除自己上传的字幕。",
+      "interval": "P4W",
+      "downloaded": "100GB",
       "ratio": 2,
       "seedingBonus": 40000
     },
     {
-      "downloaded": "300GB",
       "id": 4,
-      "interval": "P8W",
       "name": "香猪",
       "privilege": "香猪及以上封存账号后不会被删除。",
+      "interval": "P8W",
+      "downloaded": "300GB",
       "ratio": 2.5,
       "seedingBonus": 80000
     },
     {
-      "downloaded": "500GB",
       "id": 5,
-      "interval": "P15W",
       "name": "野猪",
       "privilege": "得到一个永久邀请名额；可做种/下载/发布时选择匿名模式。",
+      "interval": "P15W",
+      "downloaded": "500GB",
       "ratio": 3,
       "seedingBonus": 150000
     },
     {
-      "downloaded": "1TB",
       "id": 6,
-      "interval": "P25W",
       "name": "猪王",
       "privilege": "可以查看普通日志。",
+      "interval": "P25W",
+      "downloaded": "1TB",
       "ratio": 3.5,
       "seedingBonus": 250000
     },
     {
-      "downloaded": "2TB",
       "id": 7,
-      "interval": "P40W",
       "name": "猪妖",
       "privilege": "得到两个永久邀请名额；可以查看其他用户评论、帖子历史。",
+      "interval": "P40W",
+      "downloaded": "2TB",
       "ratio": 4,
       "seedingBonus": 400000
     },
     {
-      "downloaded": "3TB",
       "id": 8,
-      "interval": "P60W",
       "name": "二师兄",
       "privilege": "可以更新过期的外部信息，可以查看二师兄论坛。",
+      "interval": "P60W",
+      "downloaded": "3TB",
       "ratio": 4.5,
       "seedingBonus": 600000
     },
     {
-      "downloaded": "4TB",
       "id": 9,
-      "interval": "P80W",
       "name": "净坛使者",
       "privilege": "得到三个邀请名额。",
+      "interval": "P80W",
+      "downloaded": "4TB",
       "ratio": 5,
       "seedingBonus": 800000
     },
     {
-      "downloaded": "6TB",
       "id": 10,
-      "interval": "P100W",
-      "isKept": true,
       "name": "天蓬元帅",
+      "isKept": true,
       "privilege": "得到五个邀请名额，天蓬元帅及以上账号永久保留。",
+      "interval": "P100W",
+      "downloaded": "6TB",
       "ratio": 6,
       "seedingBonus": 1000000
     }

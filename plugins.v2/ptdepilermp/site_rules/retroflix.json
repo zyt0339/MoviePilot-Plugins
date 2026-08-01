@@ -11,38 +11,38 @@
       "name": "Film Stunt"
     },
     {
-      "downloaded": "50GB",
       "id": 3,
-      "interval": "P4W",
       "name": "Movie Lover",
       "privilege": "Can view Topten, ask for reseed, section.",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.05
     },
     {
-      "downloaded": "120GB",
       "id": 4,
-      "interval": "P8W",
       "name": "Cinema Addicted",
       "privilege": "Cinema Addicted or above would never be deleted if parked.",
+      "interval": "P8W",
+      "downloaded": "120GB",
       "ratio": 1.55
     },
     {
-      "downloaded": "300GB",
       "id": 5,
-      "interval": "P15W",
       "name": "Film Critic",
       "privilege": "Can view torrent structure and can set an userbar. Film Critic or above would never be deleted when parked.",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 2.05
     },
     {
-      "groupType": "vip",
       "id": 6,
-      "name": "VIP"
+      "name": "VIP",
+      "groupType": "vip"
     },
     {
-      "groupType": "manager",
       "id": 7,
       "name": "Uploader",
+      "groupType": "manager",
       "privilege": "Can upload torrents, view anonymous uploaders and view banned torrents."
     }
   ]

@@ -8,93 +8,95 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "downloaded": "50GB",
       "id": 2,
-      "interval": "P4W",
       "name": "Power User",
       "nameAka": [
         "易形"
       ],
+      "privilege": "得到一个邀请名额；可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.05
     },
     {
-      "downloaded": "120GB",
       "id": 3,
-      "interval": "P9W",
       "name": "Elite User",
       "nameAka": [
         "化蛹"
       ],
       "privilege": "化蛹(Elite User)及以上用户封存账号后不会被删除。",
+      "interval": "P9W",
+      "downloaded": "120GB",
       "ratio": 1.55
     },
     {
-      "downloaded": "300GB",
       "id": 4,
-      "interval": "P16W",
       "name": "Crazy User",
       "nameAka": [
         "破茧"
       ],
+      "privilege": "得到一个邀请名额； 可以发送邀请（注意：网站会视情况提高或者降低允许发送邀请的最低等级，此处不一定会及时修改）；可以在做种/下载/发布的时候选择匿名模式。",
+      "interval": "P16W",
+      "downloaded": "300GB",
       "ratio": 2.05
     },
     {
-      "downloaded": "500GB",
       "id": 5,
-      "interval": "P25W",
       "name": "Insane User",
       "nameAka": [
         "恋风"
       ],
       "privilege": "可以查看普通日志。",
+      "interval": "P25W",
+      "downloaded": "500GB",
       "ratio": 2.55
     },
     {
-      "downloaded": "750GB",
       "id": 6,
-      "interval": "P36W",
-      "isKept": true,
       "name": "Veteran User",
       "nameAka": [
         "翩跹"
       ],
+      "isKept": true,
       "privilege": "得到一个邀请名额；可以查看其它用户的评论、帖子历史。翩跹(Veteran User)及以上用户会永远保留账号。",
+      "interval": "P36W",
+      "downloaded": "750GB",
       "ratio": 3.05
     },
     {
-      "downloaded": "1TB",
       "id": 7,
-      "interval": "P49W",
-      "isKept": true,
       "name": "Extreme User",
       "nameAka": [
         "归尘"
       ],
+      "isKept": true,
       "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。（未启用）",
+      "interval": "P49W",
+      "downloaded": "1TB",
       "ratio": 3.55
     },
     {
-      "downloaded": "1.5TB",
       "id": 8,
-      "interval": "P64W",
-      "isKept": true,
       "name": "Ultimate User",
       "nameAka": [
         "幻梦"
       ],
+      "isKept": true,
       "privilege": "",
+      "interval": "P64W",
+      "downloaded": "1.5TB",
       "ratio": 4.05
     },
     {
-      "downloaded": "3TB",
       "id": 9,
-      "interval": "P81W",
-      "isKept": true,
       "name": "Nexus Master",
       "nameAka": [
         "逍遥"
       ],
+      "isKept": true,
       "privilege": "",
+      "interval": "P81W",
+      "downloaded": "3TB",
       "ratio": 4.55
     }
   ]

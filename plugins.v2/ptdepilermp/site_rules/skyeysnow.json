@@ -3,52 +3,52 @@
   "is_dead": false,
   "levels": [
     {
-      "bonus": 1000,
       "id": 1,
       "name": "Lv.1 白露",
-      "privilege": "自定义头衔；允许发短消息；允许加好友；允许设置回帖奖励；允许参与点评；"
+      "privilege": "自定义头衔；允许发短消息；允许加好友；允许设置回帖奖励；允许参与点评；",
+      "bonus": 1000
     },
     {
-      "bonus": 3000,
       "id": 2,
       "name": "Lv.2 秋分",
-      "privilege": ""
+      "privilege": "",
+      "bonus": 3000
     },
     {
-      "bonus": 5000,
       "id": 3,
       "name": "Lv.3 霜降",
-      "privilege": ""
+      "privilege": "",
+      "bonus": 5000
     },
     {
-      "bonus": 10000,
       "id": 4,
       "name": "Lv.4 小雪",
-      "privilege": ""
+      "privilege": "",
+      "bonus": 10000
     },
     {
-      "bonus": 30000,
       "id": 5,
       "name": "Lv.5 大雪",
-      "privilege": ""
+      "privilege": "",
+      "bonus": 30000
     },
     {
-      "bonus": 100000,
       "id": 6,
       "name": "Lv.6 小寒",
-      "privilege": ""
+      "privilege": "",
+      "bonus": 100000
     },
     {
-      "bonus": 300000,
       "id": 7,
       "name": "Lv.7 大寒",
-      "privilege": ""
+      "privilege": "",
+      "bonus": 300000
     },
     {
-      "bonus": 1000000,
       "id": 8,
       "name": "Lv.8 立春",
-      "privilege": ""
+      "privilege": "",
+      "bonus": 1000000
     }
   ]
 }

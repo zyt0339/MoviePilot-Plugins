@@ -8,108 +8,108 @@
       "privilege": "入站最初始等级，接受新人考核制。"
     },
     {
-      "downloaded": "60GB",
       "id": 2,
-      "interval": "P5W",
       "name": "KiloByte",
       "privilege": "可申请种子候选",
+      "interval": "P5W",
+      "downloaded": "60GB",
       "ratio": 1.1
     },
     {
-      "downloaded": "150GB",
       "id": 3,
-      "interval": "P8W",
       "name": "MegaByte",
       "privilege": "无",
+      "interval": "P8W",
+      "downloaded": "150GB",
       "ratio": 2
     },
     {
-      "downloaded": "250GB",
       "id": 4,
-      "interval": "P8W",
       "name": "GigaByte",
       "privilege": "可挂起，可进入积分商城",
+      "interval": "P8W",
+      "downloaded": "250GB",
       "ratio": 2
     },
     {
-      "downloaded": "500GB",
       "id": 5,
-      "interval": "P8W",
       "name": "TeraByte",
       "privilege": "可用积分购买邀请，并可浏览全站（新加游戏分类页），可以访问邀请区",
+      "interval": "P8W",
+      "downloaded": "500GB",
       "ratio": 2.5
     },
     {
-      "downloaded": "750GB",
       "id": 6,
-      "interval": "P16W",
       "name": "PetaByte",
       "privilege": "可直接发布种子",
+      "interval": "P16W",
+      "downloaded": "750GB",
       "ratio": 2.5
     },
     {
-      "downloaded": "1TB",
       "id": 7,
-      "interval": "P24W",
       "name": "ExaByte",
       "privilege": "自行挂起账号后不会被清除",
+      "interval": "P24W",
+      "downloaded": "1TB",
       "ratio": 3
     },
     {
-      "downloaded": "1.5TB",
       "id": 8,
-      "interval": "P24W",
       "name": "ZettaByte",
       "privilege": "无",
+      "interval": "P24W",
+      "downloaded": "1.5TB",
       "ratio": 3.5
     },
     {
-      "downloaded": "2.5TB",
       "id": 9,
-      "interval": "P24W",
       "name": "YottaByte",
       "privilege": "可查看排行榜",
+      "interval": "P24W",
+      "downloaded": "2.5TB",
       "ratio": 4
     },
     {
-      "downloaded": "3.5TB",
       "id": 10,
-      "interval": "P32W",
-      "isKept": true,
       "name": "BrontoByte",
+      "isKept": true,
       "privilege": "永远保留账号",
+      "interval": "P32W",
+      "downloaded": "3.5TB",
       "ratio": 5
     },
     {
-      "downloaded": "5TB",
       "id": 11,
-      "interval": "P48W",
-      "isKept": true,
       "name": "NonaByte",
-      "privilege": "无",
-      "ratio": 6,
-      "uploaded": "50TB"
-    },
-    {
-      "downloaded": "10TB",
-      "id": 12,
-      "interval": "P48W",
       "isKept": true,
-      "name": "DoggaByte",
       "privilege": "无",
-      "ratio": 6,
-      "uploaded": "100TB"
+      "interval": "P48W",
+      "downloaded": "5TB",
+      "uploaded": "50TB",
+      "ratio": 6
     },
     {
-      "groupType": "vip",
+      "id": 12,
+      "name": "DoggaByte",
+      "isKept": true,
+      "privilege": "无",
+      "interval": "P48W",
+      "downloaded": "10TB",
+      "uploaded": "100TB",
+      "ratio": 6
+    },
+    {
       "id": 100,
       "name": "资深组",
+      "groupType": "vip",
       "privilege": "元老组，免考核且长期不活动不访问也将保留账号。"
     },
     {
-      "groupType": "vip",
       "id": 101,
       "name": "VIP",
+      "groupType": "vip",
       "privilege": "为TTG做出特殊重大贡献的用户或合作者等。只计算上传量，不计算下载量。"
     }
   ]

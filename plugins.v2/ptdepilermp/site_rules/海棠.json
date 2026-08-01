@@ -8,71 +8,71 @@
       "privilege": "新用户的默认级别"
     },
     {
-      "downloaded": "50GB",
       "id": 1,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "得到一个邀请名额。",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.05
     },
     {
-      "downloaded": "120GB",
       "id": 2,
-      "interval": "P8W",
       "name": "Elite User",
       "privilege": "得到一个邀请名额，且Elite User及以上用户封存账号后不会被删除。",
+      "interval": "P8W",
+      "downloaded": "120GB",
       "ratio": 1.55
     },
     {
-      "downloaded": "300GB",
       "id": 3,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "得到一个邀请名额。",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 2.05
     },
     {
-      "downloaded": "500GB",
       "id": 4,
-      "interval": "P25W",
       "name": "Insane User",
       "privilege": "得到一个邀请名额。",
+      "interval": "P25W",
+      "downloaded": "500GB",
       "ratio": 2.55
     },
     {
-      "downloaded": "750GB",
       "id": 5,
-      "interval": "P40W",
-      "isKept": true,
       "name": "Veteran User",
+      "isKept": true,
       "privilege": "得到一个邀请名额，且Veteran User及以上用户会永远保留账号。",
+      "interval": "P40W",
+      "downloaded": "750GB",
       "ratio": 3.05
     },
     {
-      "downloaded": "1TB",
       "id": 6,
-      "interval": "P60W",
-      "isKept": true,
       "name": "Extreme User",
+      "isKept": true,
       "privilege": "得到一个邀请名额，可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "interval": "P60W",
+      "downloaded": "1TB",
       "ratio": 3.55
     },
     {
-      "downloaded": "1.5TB",
       "id": 7,
-      "interval": "P80W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "得到一个邀请名额。",
+      "interval": "P80W",
+      "downloaded": "1.5TB",
       "ratio": 4.05
     },
     {
-      "downloaded": "3TB",
       "id": 8,
-      "interval": "P100W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "得到一个邀请名额。",
+      "interval": "P100W",
+      "downloaded": "3TB",
       "ratio": 4.55
     }
   ]

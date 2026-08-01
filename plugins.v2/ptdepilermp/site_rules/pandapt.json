@@ -8,75 +8,75 @@
       "privilege": "新用户的默认级别。只能在每周六中午12点至每周日晚上11点59分发布种子。"
     },
     {
-      "downloaded": "250GB",
       "id": 1,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "得到一个邀请名额；可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "interval": "P4W",
+      "downloaded": "250GB",
       "ratio": 2,
       "seedingBonus": 33600
     },
     {
-      "downloaded": "500GB",
       "id": 2,
-      "interval": "P8W",
       "name": "Elite User",
       "privilege": "权限同Power User",
+      "interval": "P8W",
+      "downloaded": "500GB",
       "ratio": 2.5,
       "seedingBonus": 67200
     },
     {
-      "downloaded": "1024GB",
       "id": 3,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "得到一个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "interval": "P15W",
+      "downloaded": "1024GB",
       "ratio": 3,
       "seedingBonus": 126000
     },
     {
-      "downloaded": "1536GB",
       "id": 4,
-      "interval": "P40W",
       "name": "Insane User",
       "privilege": "可以查看普通日志，Insane User及以上用户封存账号后不会被删除。",
+      "interval": "P40W",
+      "downloaded": "1536GB",
       "ratio": 3.5,
       "seedingBonus": 336000
     },
     {
-      "downloaded": "2048GB",
       "id": 5,
-      "interval": "P60W",
       "name": "Veteran User",
       "privilege": "得到两个邀请名额；可以查看其它用户的评论、帖子历史。",
+      "interval": "P60W",
+      "downloaded": "2048GB",
       "ratio": 4,
       "seedingBonus": 504000
     },
     {
-      "downloaded": "3072GB",
       "id": 6,
-      "interval": "P80W",
       "name": "Extreme User",
       "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "interval": "P80W",
+      "downloaded": "3072GB",
       "ratio": 4.5,
       "seedingBonus": 672000
     },
     {
-      "downloaded": "4096GB",
       "id": 7,
-      "interval": "P100W",
       "name": "Ultimate User",
       "privilege": "得到三个邀请名额。",
+      "interval": "P100W",
+      "downloaded": "4096GB",
       "ratio": 5,
       "seedingBonus": 840000
     },
     {
-      "downloaded": "8192GB",
       "id": 8,
-      "interval": "P120W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "得到五个邀请名额。Nexus Master及以上用户会永远保留账号。",
+      "interval": "P120W",
+      "downloaded": "8192GB",
       "ratio": 6,
       "seedingBonus": 1008000
     }

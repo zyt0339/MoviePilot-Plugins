@@ -8,46 +8,46 @@
     },
     {
       "id": 2,
-      "interval": "P1W",
       "name": "Member",
       "privilege": "Live searching/suggestions, Can edit collages, make requests",
-      "ratio": 0.7,
-      "uploaded": "10GB"
+      "interval": "P1W",
+      "uploaded": "10GB",
+      "ratio": 0.7
     },
     {
       "id": 3,
-      "interval": "P4W",
-      "isKept": true,
       "name": "Power User",
+      "isKept": true,
       "privilege": "Receives invites, create new collages, immune from inactivity disabling",
-      "ratio": 1.05,
+      "interval": "P4W",
       "uploaded": "50GB",
+      "ratio": 1.05,
       "uploads": 1
     },
     {
       "id": 4,
-      "interval": "P4W",
-      "isKept": true,
       "name": "Extreme User",
+      "isKept": true,
       "privilege": "Can upload freeware (set to Neutral Leech)",
-      "ratio": 1.05,
+      "interval": "P4W",
       "uploaded": "75GB",
+      "ratio": 1.05,
       "uploads": 10
     },
     {
       "id": 5,
-      "interval": "P4W",
-      "isKept": true,
       "name": "Elite",
+      "isKept": true,
       "privilege": "Top 10 filters & Can edit any torrent and any torrent group.",
-      "ratio": 1.05,
+      "interval": "P4W",
       "uploaded": "100GB",
+      "ratio": 1.05,
       "uploads": 50
     },
     {
-      "groupType": "vip",
       "id": 6,
       "name": "VIP",
+      "groupType": "vip",
       "privilege": "Custom title & Unlimited Invites"
     }
   ]

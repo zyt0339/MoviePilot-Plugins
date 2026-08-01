@@ -8,74 +8,74 @@
       "privilege": ""
     },
     {
-      "downloaded": "30GB",
       "id": 1,
-      "interval": "P5W",
       "name": "Power User",
       "privilege": "请求续种；查看NFO文档；发送邀请；查看排行榜；删除自己的字幕；发布种子；购买邀请；允许个性条。",
+      "interval": "P5W",
+      "downloaded": "30GB",
       "ratio": 1,
       "seedingBonus": 100000
     },
     {
-      "downloaded": "60GB",
       "id": 2,
-      "interval": "P13W",
       "name": "Elite User",
       "privilege": "",
+      "interval": "P13W",
+      "downloaded": "60GB",
       "ratio": 1,
       "seedingBonus": 300000
     },
     {
-      "downloaded": "90GB",
       "id": 3,
-      "interval": "P18W",
       "name": "Crazy User",
       "privilege": "查看特别区种子。",
+      "interval": "P18W",
+      "downloaded": "90GB",
       "ratio": 1,
       "seedingBonus": 600000
     },
     {
-      "downloaded": "120GB",
       "id": 4,
-      "interval": "P43W",
       "name": "Insane User",
       "privilege": "",
+      "interval": "P43W",
+      "downloaded": "120GB",
       "ratio": 1,
       "seedingBonus": 1000000
     },
     {
-      "downloaded": "150GB",
       "id": 5,
-      "interval": "P65W",
       "name": "Veteran User",
       "privilege": "查看历史记录。",
+      "interval": "P65W",
+      "downloaded": "150GB",
       "ratio": 1,
       "seedingBonus": 1500000
     },
     {
-      "downloaded": "180GB",
       "id": 6,
-      "interval": "P90W",
       "name": "Extreme User",
       "privilege": "更新外部信息。",
+      "interval": "P90W",
+      "downloaded": "180GB",
       "ratio": 1,
       "seedingBonus": 2100000
     },
     {
-      "downloaded": "210GB",
       "id": 7,
-      "interval": "P120W",
       "name": "Ultimate User",
       "privilege": "查看种子结构。",
+      "interval": "P120W",
+      "downloaded": "210GB",
       "ratio": 1,
       "seedingBonus": 2800000
     },
     {
-      "downloaded": "240GB",
       "id": 8,
-      "interval": "P155W",
       "name": "Nexus Master",
       "privilege": "",
+      "interval": "P155W",
+      "downloaded": "240GB",
       "ratio": 1,
       "seedingBonus": 3600000
     }

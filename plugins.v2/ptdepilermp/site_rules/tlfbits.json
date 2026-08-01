@@ -13,71 +13,71 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "downloaded": "50GB",
       "id": 2,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "可以查看NFO文档；可以请求续种； 查看种子结构; 可以删除自己上传的字幕。",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.5
     },
     {
-      "downloaded": "120GB",
       "id": 3,
-      "interval": "P8W",
       "name": "Elite User",
       "privilege": "可以查看用户的种子历史记录，如下载种子的历史记录（只有用户的隐私等级没有设为’强‘时才生效）; 可以查看高级会员区 . Elite User +论坛。",
+      "interval": "P8W",
+      "downloaded": "120GB",
       "ratio": 2.55
     },
     {
-      "downloaded": "300GB",
       "id": 4,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "可以查看排行榜；可以在做种/下载/发布的时候选择匿名模式。",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 3.05
     },
     {
-      "downloaded": "500GB",
       "id": 5,
-      "interval": "P25W",
       "name": "Insane User",
       "privilege": "可以发送邀请；查看一般日志，不能查看机密日志; Insane User及以上等级的账号如果在封存后将永远保留。",
+      "interval": "P25W",
+      "downloaded": "500GB",
       "ratio": 4.55
     },
     {
-      "downloaded": "750GB",
       "id": 6,
-      "interval": "P40W",
-      "isKept": true,
       "name": "Veteran User",
+      "isKept": true,
       "privilege": "得到一个邀请名额；可以查看其它用户的评论、帖子历史(如果用户隐私等级未设置为\"强\"); Veteran User及以上等级的账号将永远保留。",
+      "interval": "P40W",
+      "downloaded": "750GB",
       "ratio": 5.05
     },
     {
-      "downloaded": "1TB",
       "id": 7,
-      "interval": "P45W",
-      "isKept": true,
       "name": "Extreme User",
+      "isKept": true,
       "privilege": "得到三个邀请名额；可以更新过期的外部信息。",
+      "interval": "P45W",
+      "downloaded": "1TB",
       "ratio": 6.55
     },
     {
-      "downloaded": "1.5TB",
       "id": 8,
-      "interval": "P50W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "得到五个邀请名额。",
+      "interval": "P50W",
+      "downloaded": "1.5TB",
       "ratio": 7.05
     },
     {
-      "downloaded": "3TB",
       "id": 9,
-      "interval": "P55W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "得到十个邀请名额。",
+      "interval": "P55W",
+      "downloaded": "3TB",
       "ratio": 8.55
     }
   ]

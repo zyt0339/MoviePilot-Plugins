@@ -9,122 +9,122 @@
     },
     {
       "id": 2,
-      "interval": "P2W",
       "name": "Grip",
       "privilege": "Request Creation; Bookmarks; Poll Making; Notifications Access; Can play the slots",
+      "interval": "P2W",
       "uploaded": "10GB"
     },
     {
       "id": 3,
-      "interval": "P4W",
       "name": "Key Grip",
       "privilege": "Upload privileges; Subscription, Creation & Personal Collage Access; Top 10 Access; Advanced Search Access; Inactivity disabled after a few months",
+      "interval": "P4W",
       "uploaded": "200GB"
     },
     {
       "id": 4,
-      "interval": "P8W",
       "name": "Camera Operator",
       "privilege": "Advanced top 10 Access; Invite Forum Access; View Site Stats; Can Add Tags; Can Vote on Tags; Can set a torrent signature",
+      "interval": "P8W",
       "uploaded": "500GB"
     },
     {
       "id": 5,
-      "interval": "P12W",
       "name": "Boom Operator",
-      "posts": 5,
       "privilege": "Advanced Site Stats; Boom Operator Restricted forum; Can make/delete private upload templates; Can purchase invites from bonus shop",
+      "interval": "P12W",
       "uploaded": "1000GB",
-      "uploads": 10
+      "uploads": 10,
+      "posts": 5
     },
     {
       "id": 6,
-      "interval": "P24W",
       "name": "Gaffer",
-      "posts": 10,
       "privilege": "Gaffer Restricted forum; Can send invites while site is past user limit",
+      "interval": "P24W",
       "uploaded": "2000GB",
-      "uploads": 100
+      "uploads": 100,
+      "posts": 10
     },
     {
       "id": 7,
-      "interval": "P48W",
-      "isKept": true,
       "name": "Engineer",
-      "posts": 25,
+      "isKept": true,
       "privilege": "Engineer Restricted forum; FREE Invites (Send a staff PM for us to credit your account); Immune from inactivity disablement",
+      "interval": "P48W",
       "uploaded": "3000GB",
-      "uploads": 500
+      "uploads": 500,
+      "posts": 25
     },
     {
-      "groupType": "vip",
       "id": 100,
-      "name": "Assistant Producer"
+      "name": "Assistant Producer",
+      "groupType": "vip"
     },
     {
-      "groupType": "vip",
       "id": 101,
-      "name": "Donor"
+      "name": "Donor",
+      "groupType": "vip"
     },
     {
-      "groupType": "vip",
       "id": 102,
-      "name": "Network Affiliate"
+      "name": "Network Affiliate",
+      "groupType": "vip"
     },
     {
-      "groupType": "vip",
       "id": 103,
-      "name": "Former Staff"
+      "name": "Former Staff",
+      "groupType": "vip"
     },
     {
-      "groupType": "vip",
       "id": 104,
-      "name": "Internal"
+      "name": "Internal",
+      "groupType": "vip"
     },
     {
-      "groupType": "manager",
       "id": 200,
-      "name": "Production Supervisor"
+      "name": "Production Supervisor",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 201,
-      "name": "Junior Developer"
+      "name": "Junior Developer",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 202,
-      "name": "Manager"
+      "name": "Manager",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 203,
-      "name": "Executive Producer"
+      "name": "Executive Producer",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 204,
-      "name": "Senior Developer"
+      "name": "Senior Developer",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 205,
-      "name": "Director"
+      "name": "Director",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 206,
-      "name": "Showrunner"
+      "name": "Showrunner",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 210,
-      "name": "First Line Support"
+      "name": "First Line Support",
+      "groupType": "manager"
     },
     {
-      "groupType": "manager",
       "id": 211,
-      "name": "Tagger"
+      "name": "Tagger",
+      "groupType": "manager"
     }
   ]
 }

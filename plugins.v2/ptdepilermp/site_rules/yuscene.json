@@ -15,78 +15,78 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "PowerUser",
       "privilege": "无限下载槽 上传种子 发送邀请",
-      "ratio": 0.4,
-      "uploaded": "1TiB"
+      "interval": "P1M",
+      "uploaded": "1TiB",
+      "ratio": 0.4
     },
     {
       "id": 3,
-      "interval": "P2M",
       "name": "SuperUser",
       "privilege": "无限下载槽 上传种子 发送邀请",
-      "ratio": 0.4,
-      "uploaded": "5TiB"
+      "interval": "P2M",
+      "uploaded": "5TiB",
+      "ratio": 0.4
     },
     {
       "id": 4,
-      "interval": "P3M",
       "name": "ExtremeUser",
       "privilege": "无限下载槽 上传种子 发送邀请",
-      "ratio": 0.4,
-      "uploaded": "20TiB"
+      "interval": "P3M",
+      "uploaded": "20TiB",
+      "ratio": 0.4
     },
     {
       "id": 5,
-      "interval": "P6M",
       "name": "InsaneUser",
       "privilege": "无限下载槽 上传种子 发送邀请",
-      "ratio": 0.4,
-      "uploaded": "50TiB"
+      "interval": "P6M",
+      "uploaded": "50TiB",
+      "ratio": 0.4
     },
     {
       "id": 6,
-      "interval": "P1Y",
       "name": "Veteran",
       "privilege": "无限下载槽 上传种子 发送邀请 全站免费 免疫自动 HnR 警告 免审核发布",
-      "ratio": 0.4,
-      "uploaded": "100TiB"
+      "interval": "P1Y",
+      "uploaded": "100TiB",
+      "ratio": 0.4
     },
     {
       "id": 7,
-      "interval": "P1M",
       "name": "Seeder",
       "privilege": "无限下载槽 上传种子 发送邀请 全站免费 免审核发布",
+      "interval": "P1M",
       "ratio": 0.4,
       "seedingSize": "4TiB"
     },
     {
-      "averageSeedingTime": "P1M",
       "id": 8,
-      "interval": "P2M",
       "name": "Curator",
       "privilege": "无限下载槽 上传种子 发送邀请 全站免费 免疫自动 HnR 警告 免审核发布",
+      "interval": "P2M",
       "ratio": 0.4,
-      "seedingSize": "10TiB"
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P1M"
     },
     {
-      "averageSeedingTime": "P2M",
       "id": 9,
-      "interval": "P3M",
       "name": "Archivist",
       "privilege": "无限下载槽 上传种子 发送邀请 全站免费 2x上传 免疫自动 HnR 警告 免审核发布",
+      "interval": "P3M",
       "ratio": 0.4,
-      "seedingSize": "20TiB"
+      "seedingSize": "20TiB",
+      "averageSeedingTime": "P2M"
     },
     {
-      "averageSeedingTime": "P3M",
       "id": 10,
-      "interval": "P3M",
       "name": "Titan",
       "privilege": "无限下载槽 上传种子 发送邀请 全站免费 2x上传 免疫自动 HnR 警告 免审核发布",
+      "interval": "P3M",
       "ratio": 0.4,
-      "seedingSize": "40TiB"
+      "seedingSize": "40TiB",
+      "averageSeedingTime": "P3M"
     }
   ]
 }

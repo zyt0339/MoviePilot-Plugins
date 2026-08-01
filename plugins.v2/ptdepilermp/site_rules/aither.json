@@ -8,6 +8,11 @@
       "privilege": "4下载槽"
     },
     {
+      "id": 2,
+      "name": "Harmonia",
+      "privilege": "10下载槽",
+      "interval": "P1M",
+      "ratio": 0.6,
       "alternative": [
         {
           "uploaded": "500GiB"
@@ -15,14 +20,15 @@
         {
           "seedingSize": "1TiB"
         }
-      ],
-      "id": 2,
-      "interval": "P1M",
-      "name": "Harmonia",
-      "privilege": "10下载槽",
-      "ratio": 0.6
+      ]
     },
     {
+      "id": 3,
+      "name": "Zeus",
+      "privilege": "25下载槽",
+      "interval": "P3M",
+      "ratio": 0.6,
+      "averageSeedingTime": "P10D",
       "alternative": [
         {
           "uploaded": "2TiB"
@@ -30,15 +36,16 @@
         {
           "seedingSize": "2TiB"
         }
-      ],
-      "averageSeedingTime": "P10D",
-      "id": 3,
-      "interval": "P3M",
-      "name": "Zeus",
-      "privilege": "25下载槽",
-      "ratio": 0.6
+      ]
     },
     {
+      "id": 4,
+      "name": "Helios",
+      "privilege": "50下载槽 发送邀请",
+      "interval": "P6M",
+      "ratio": 0.8,
+      "averageSeedingTime": "P20D",
+      "uploads": 1,
       "alternative": [
         {
           "uploaded": "5TiB"
@@ -46,16 +53,16 @@
         {
           "seedingSize": "5TiB"
         }
-      ],
-      "averageSeedingTime": "P20D",
-      "id": 4,
-      "interval": "P6M",
-      "name": "Helios",
-      "privilege": "50下载槽 发送邀请",
-      "ratio": 0.8,
-      "uploads": 1
+      ]
     },
     {
+      "id": 5,
+      "name": "Prometheus",
+      "privilege": "访问邀请区 50下载槽 发送邀请",
+      "interval": "P8M",
+      "ratio": 1,
+      "averageSeedingTime": "P45D",
+      "uploads": 5,
       "alternative": [
         {
           "uploaded": "10TiB"
@@ -63,16 +70,16 @@
         {
           "seedingSize": "10TiB"
         }
-      ],
-      "averageSeedingTime": "P45D",
-      "id": 5,
-      "interval": "P8M",
-      "name": "Prometheus",
-      "privilege": "访问邀请区 50下载槽 发送邀请",
-      "ratio": 1,
-      "uploads": 5
+      ]
     },
     {
+      "id": 6,
+      "name": "Oceanus",
+      "privilege": "自动通过候选 访问邀请区  50下载槽 发送邀请",
+      "interval": "P12M",
+      "ratio": 1.5,
+      "averageSeedingTime": "P2M",
+      "uploads": 10,
       "alternative": [
         {
           "uploaded": "20TiB"
@@ -80,16 +87,16 @@
         {
           "seedingSize": "20TiB"
         }
-      ],
-      "averageSeedingTime": "P2M",
-      "id": 6,
-      "interval": "P12M",
-      "name": "Oceanus",
-      "privilege": "自动通过候选 访问邀请区  50下载槽 发送邀请",
-      "ratio": 1.5,
-      "uploads": 10
+      ]
     },
     {
+      "id": 7,
+      "name": "Gigantes",
+      "privilege": "自动通过候选 访问邀请区 不计算下载量 50下载槽 发送邀请",
+      "interval": "P15M",
+      "ratio": 1.5,
+      "averageSeedingTime": "P3M",
+      "uploads": 15,
       "alternative": [
         {
           "uploaded": "40TiB"
@@ -97,16 +104,16 @@
         {
           "seedingSize": "40TiB"
         }
-      ],
-      "averageSeedingTime": "P3M",
-      "id": 7,
-      "interval": "P15M",
-      "name": "Gigantes",
-      "privilege": "自动通过候选 访问邀请区 不计算下载量 50下载槽 发送邀请",
-      "ratio": 1.5,
-      "uploads": 15
+      ]
     },
     {
+      "id": 8,
+      "name": "Titan",
+      "privilege": "自动通过候选 访问邀请区 免疫HR 不计算下载量 50下载槽 发送邀请",
+      "interval": "P24M",
+      "ratio": 2,
+      "averageSeedingTime": "P6M",
+      "uploads": 20,
       "alternative": [
         {
           "uploaded": "100TiB"
@@ -114,14 +121,7 @@
         {
           "seedingSize": "65TiB"
         }
-      ],
-      "averageSeedingTime": "P6M",
-      "id": 8,
-      "interval": "P24M",
-      "name": "Titan",
-      "privilege": "自动通过候选 访问邀请区 免疫HR 不计算下载量 50下载槽 发送邀请",
-      "ratio": 2,
-      "uploads": 20
+      ]
     }
   ]
 }

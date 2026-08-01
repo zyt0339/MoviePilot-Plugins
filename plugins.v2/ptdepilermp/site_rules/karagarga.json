@@ -4,10 +4,10 @@
   "levels": [
     {
       "id": 1,
-      "interval": "P13W",
       "name": "Power User",
-      "ratio": 1.05,
-      "uploaded": "50GB"
+      "interval": "P13W",
+      "uploaded": "50GB",
+      "ratio": 1.05
     }
   ]
 }

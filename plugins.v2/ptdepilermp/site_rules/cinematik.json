@@ -9,61 +9,61 @@
     },
     {
       "id": 2,
-      "interval": "P30D",
       "name": "CineNovice",
       "privilege": "10下载槽",
-      "ratio": 0.95,
-      "uploaded": "1TiB"
+      "interval": "P30D",
+      "uploaded": "1TiB",
+      "ratio": 0.95
     },
     {
       "id": 3,
-      "interval": "P60D",
       "name": "FilmEnthusiast",
       "privilege": "15下载槽 访问邀请区",
-      "ratio": 1.05,
-      "uploaded": "5TiB"
+      "interval": "P60D",
+      "uploaded": "5TiB",
+      "ratio": 1.05
     },
     {
       "id": 4,
-      "interval": "P90D",
       "name": "FilmScholar",
       "privilege": "20下载槽 访问邀请区",
-      "ratio": 1.2,
-      "uploaded": "10TiB"
+      "interval": "P90D",
+      "uploaded": "10TiB",
+      "ratio": 1.2
     },
     {
       "id": 5,
-      "interval": "P180D",
       "name": "CineExpert",
       "privilege": "25下载槽 访问邀请区 发送邀请",
-      "ratio": 1.5,
-      "uploaded": "50TiB"
+      "interval": "P180D",
+      "uploaded": "50TiB",
+      "ratio": 1.5
     },
     {
       "id": 6,
-      "interval": "P365D",
       "name": "CinemaSage",
       "privilege": "30下载槽 访问邀请区 发送邀请",
-      "ratio": 2,
-      "uploaded": "100TiB"
+      "interval": "P365D",
+      "uploaded": "100TiB",
+      "ratio": 2
     },
     {
-      "averageSeedingTime": "P60D",
       "id": 7,
-      "interval": "P60D",
       "name": "CineSeeder",
       "privilege": "50下载槽 访问邀请区 发送邀请 Personalised HnR management by staff",
+      "interval": "P60D",
       "ratio": 1,
-      "seedingSize": "10TiB"
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P60D"
     },
     {
-      "averageSeedingTime": "P90D",
       "id": 8,
-      "interval": "P90D",
       "name": "FilmArchivist",
       "privilege": "1000下载槽 访问邀请区 发送邀请 免疫HR 双倍上传 可以访问FilmArchivist论坛",
+      "interval": "P90D",
       "ratio": 1,
-      "seedingSize": "20TiB"
+      "seedingSize": "20TiB",
+      "averageSeedingTime": "P90D"
     }
   ]
 }

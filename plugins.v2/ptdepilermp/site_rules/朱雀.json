@@ -8,59 +8,59 @@
       "privilege": "入站初始等级"
     },
     {
-      "downloaded": "10GB",
       "id": 2,
-      "interval": "P5W",
       "name": "结丹",
       "privilege": "无",
+      "interval": "P5W",
+      "downloaded": "10GB",
       "ratio": 2
     },
     {
-      "downloaded": "25GB",
       "id": 3,
-      "interval": "P10W",
       "name": "元婴",
       "privilege": "无",
+      "interval": "P10W",
+      "downloaded": "25GB",
       "ratio": 2
     },
     {
-      "downloaded": "50GB",
       "id": 4,
-      "interval": "P15W",
       "name": "出窍",
       "privilege": "无",
+      "interval": "P15W",
+      "downloaded": "50GB",
       "ratio": 2
     },
     {
-      "downloaded": "100GB",
       "id": 5,
-      "interval": "P20W",
       "name": "炼虚",
       "privilege": "无",
+      "interval": "P20W",
+      "downloaded": "100GB",
       "ratio": 2
     },
     {
-      "downloaded": "200GB",
       "id": 6,
-      "interval": "P25W",
       "name": "合体",
       "privilege": "无",
+      "interval": "P25W",
+      "downloaded": "200GB",
       "ratio": 4
     },
     {
-      "downloaded": "300GB",
       "id": 7,
-      "interval": "P30W",
       "name": "大乘",
       "privilege": "无",
+      "interval": "P30W",
+      "downloaded": "300GB",
       "ratio": 6
     },
     {
-      "downloaded": "400GB",
       "id": 8,
-      "interval": "P35W",
       "name": "真仙",
       "privilege": "无",
+      "interval": "P35W",
+      "downloaded": "400GB",
       "ratio": 8
     }
   ]

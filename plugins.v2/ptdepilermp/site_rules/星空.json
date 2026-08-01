@@ -28,74 +28,74 @@
     },
     {
       "id": 4,
-      "isKept": true,
       "name": "Crazy User",
       "nameAka": [
         "着迷"
       ],
+      "isKept": true,
       "privilege": "此等级及以上用户不会因为长期不登录被禁用"
     },
     {
       "id": 5,
-      "isKept": true,
       "name": "Insane User",
       "nameAka": [
         "狂热"
       ],
+      "isKept": true,
       "privilege": "无"
     },
     {
       "id": 6,
-      "isKept": true,
       "name": "Veteran User",
       "nameAka": [
         "资深"
       ],
+      "isKept": true,
       "privilege": "无"
     },
     {
       "id": 7,
-      "isKept": true,
       "name": "Extreme User",
       "nameAka": [
         "大师"
       ],
+      "isKept": true,
       "privilege": "无"
     },
     {
       "id": 8,
-      "isKept": true,
       "name": "Ultimate User",
       "nameAka": [
         "宗师"
       ],
+      "isKept": true,
       "privilege": "无"
     },
     {
       "id": 9,
-      "isKept": true,
       "name": "Master User",
       "nameAka": [
         "满级"
       ],
+      "isKept": true,
       "privilege": "无"
     },
     {
       "id": 10,
-      "isKept": true,
       "name": "Star User",
       "nameAka": [
         "星级"
       ],
+      "isKept": true,
       "privilege": "无"
     },
     {
       "id": 11,
-      "isKept": true,
       "name": "God User",
       "nameAka": [
         "神级"
       ],
+      "isKept": true,
       "privilege": "无"
     }
   ]

@@ -3,54 +3,54 @@
   "is_dead": false,
   "levels": [
     {
-      "downloaded": "50GB",
       "id": 1,
-      "interval": "P4W",
       "name": "魔法助手",
       "privilege": "首次升级至此等级的用户将获得1个邀请名额",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 1.05,
       "seedingBonus": 10000
     },
     {
-      "downloaded": "120GB",
       "id": 2,
-      "interval": "P8W",
       "name": "准魔法师",
+      "interval": "P8W",
+      "downloaded": "120GB",
       "ratio": 1.55,
       "seedingBonus": 80000
     },
     {
-      "downloaded": "300GB",
       "id": 3,
-      "interval": "P15W",
       "name": "魔法师",
       "privilege": "首次升级至此等级的用户将获得2个邀请名额",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 1.95,
       "seedingBonus": 150000
     },
     {
-      "downloaded": "500GB",
       "id": 4,
-      "interval": "P25W",
       "name": "大魔法师",
+      "interval": "P25W",
+      "downloaded": "500GB",
       "ratio": 2.55,
       "seedingBonus": 250000
     },
     {
-      "downloaded": "1.5TB",
       "id": 5,
-      "interval": "P80W",
       "name": "圣域魔导师",
       "privilege": "首次升级至此等级的用户将获得5个邀请名额",
+      "interval": "P80W",
+      "downloaded": "1.5TB",
       "ratio": 4.05,
       "seedingBonus": 800000
     },
     {
-      "downloaded": "3TB",
       "id": 6,
-      "interval": "P100W",
       "name": "神域魔导师",
       "privilege": "首次升级至此等级的用户将获得10个邀请名额",
+      "interval": "P100W",
+      "downloaded": "3TB",
       "ratio": 4.55,
       "seedingBonus": 1000000
     }

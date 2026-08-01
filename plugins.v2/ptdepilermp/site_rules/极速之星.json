@@ -3,91 +3,91 @@
   "is_dead": false,
   "levels": [
     {
-      "groupType": "user",
       "id": 0,
       "name": "Lv0. 村里没网",
+      "groupType": "user",
       "privilege": "被封禁用户，该等级只能下载免费种子，不能下载普通种子"
     },
     {
-      "groupType": "user",
       "id": 1,
       "name": "Lv1. 拨号上网",
+      "groupType": "user",
       "privilege": "新注册用户的默认等级"
     },
     {
-      "downloaded": 10737418240,
-      "groupType": "user",
       "id": 2,
       "name": "Lv2. 十兆宽带",
-      "ratio": 1.3,
-      "uploaded": 24696061952
+      "groupType": "user",
+      "downloaded": 10737418240,
+      "uploaded": 24696061952,
+      "ratio": 1.3
     },
     {
-      "downloaded": 10737418240,
-      "groupType": "user",
       "id": 3,
       "name": "Lv3. 百兆宽带",
-      "ratio": 1.55,
-      "uploaded": 119185342464
+      "groupType": "user",
+      "downloaded": 10737418240,
+      "uploaded": 119185342464,
+      "ratio": 1.55
     },
     {
-      "downloaded": 16106127360,
-      "groupType": "user",
       "id": 4,
       "name": "Lv4. 千兆宽带",
-      "ratio": 2.05,
-      "uploaded": 558345748480
+      "groupType": "user",
+      "downloaded": 16106127360,
+      "uploaded": 558345748480,
+      "ratio": 2.05
     },
     {
-      "downloaded": 16106127360,
-      "groupType": "user",
       "id": 5,
       "name": "Lv5. 校园核心网",
-      "ratio": 2.3,
-      "uploaded": 1410896756736
+      "groupType": "user",
+      "downloaded": 16106127360,
+      "uploaded": 1410896756736,
+      "ratio": 2.3
     },
     {
-      "downloaded": 21474836480,
-      "groupType": "user",
       "id": 6,
       "name": "Lv6. 城域骨干网",
-      "ratio": 2.55,
-      "uploaded": 2505039675392
+      "groupType": "user",
+      "downloaded": 21474836480,
+      "uploaded": 2505039675392,
+      "ratio": 2.55
     },
     {
-      "downloaded": 21474836480,
-      "groupType": "user",
       "id": 7,
       "name": "Lv7. 国际互联网",
-      "ratio": 3.05,
-      "uploaded": 7157562998784
+      "groupType": "user",
+      "downloaded": 21474836480,
+      "uploaded": 7157562998784,
+      "ratio": 3.05
     },
     {
-      "downloaded": 32212254720,
-      "groupType": "user",
       "id": 8,
       "name": "Lv8. 万物互通网",
+      "groupType": "user",
       "privilege": "本级最大容纳150人，日均上传排名全站TOP250；附加条件：日均上传流量>=10GB且一年内有登录",
-      "ratio": 3.55,
-      "uploaded": 10995116277760
+      "downloaded": 32212254720,
+      "uploaded": 10995116277760,
+      "ratio": 3.55
     },
     {
-      "downloaded": 42949672960,
-      "groupType": "user",
       "id": 9,
       "name": "Lv9. 星际量子网",
+      "groupType": "user",
       "privilege": "本级最大容纳70人，日均上传排名全站TOP100；附加条件：日均上传流量>=15GB且一年内有登录",
-      "ratio": 4.05,
-      "uploaded": 21990232555520
+      "downloaded": 42949672960,
+      "uploaded": 21990232555520,
+      "ratio": 4.05
     },
     {
-      "downloaded": 53687091200,
-      "groupType": "user",
       "id": 10,
       "name": "Lv10. 极速之网",
+      "groupType": "user",
       "privilege": "本级最大容纳30人，日均上传排名全站TOP30；附加条件：日均上传流量>=20GB且一年内有登录",
-      "ratio": 4.55,
-      "uploaded": 32985348833280
+      "downloaded": 53687091200,
+      "uploaded": 32985348833280,
+      "ratio": 4.55
     }
   ]
 }

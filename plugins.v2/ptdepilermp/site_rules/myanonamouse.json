@@ -14,16 +14,16 @@
     },
     {
       "id": 3,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "Receive 2 requests per month; Can have 100 unsatisfied torrents at maximum",
-      "ratio": 2,
-      "uploaded": "25GB"
+      "interval": "P4W",
+      "uploaded": "25GB",
+      "ratio": 2
     },
     {
-      "groupType": "vip",
       "id": 4,
       "name": "VIP",
+      "groupType": "vip",
       "privilege": "Receive 4 requests per month; Can have 150 unsatisfied torrents at maximum"
     }
   ]

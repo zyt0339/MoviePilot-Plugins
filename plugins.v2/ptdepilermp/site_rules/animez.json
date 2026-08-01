@@ -13,16 +13,16 @@
       "privilege": "Newly registered users. Can only download torrents older than 7 days. Cannot use RSS or upload torrents."
     },
     {
+      "id": 3,
+      "name": "Member",
+      "privilege": "Registered users in good standing with 5 GB+ upload and a ratio of 1.0 or above.",
+      "uploaded": "5GB",
+      "ratio": 1,
       "alternative": [
         {
           "interval": "P1W"
         }
-      ],
-      "id": 3,
-      "name": "Member",
-      "privilege": "Registered users in good standing with 5 GB+ upload and a ratio of 1.0 or above.",
-      "ratio": 1,
-      "uploaded": "5GB"
+      ]
     },
     {
       "id": 4,
@@ -30,45 +30,45 @@
       "privilege": "Experienced members with strong upload history and consistently good ratio."
     },
     {
-      "groupType": "vip",
       "id": 100,
       "name": "VIP",
+      "groupType": "vip",
       "privilege": "Distinguished member, donator, or retired staff."
     },
     {
-      "groupType": "manager",
       "id": 200,
       "name": "Uploader",
+      "groupType": "manager",
       "privilege": "Promoted by staff for quality and quantity of uploads. Access to the upload API and tag creation."
     },
     {
-      "groupType": "manager",
       "id": 201,
       "name": "Editor",
+      "groupType": "manager",
       "privilege": "Promoted by staff. Can create and edit anime database entries."
     },
     {
-      "groupType": "manager",
       "id": 202,
       "name": "Staff",
+      "groupType": "manager",
       "privilege": "Site assistant with access to the admin panel and moderation tools."
     },
     {
-      "groupType": "manager",
       "id": 203,
       "name": "Moderator",
+      "groupType": "manager",
       "privilege": "Moderates the site and its users."
     },
     {
-      "groupType": "manager",
       "id": 204,
       "name": "Administrator",
+      "groupType": "manager",
       "privilege": "Administers and moderates the site."
     },
     {
-      "groupType": "manager",
       "id": 205,
       "name": "Super Admin",
+      "groupType": "manager",
       "privilege": "Site owner."
     }
   ]

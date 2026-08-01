@@ -11,101 +11,101 @@
       "privilege": "新用户的默认级别。可以购买邀请；可以发送邀请；可以上传字幕；可以发布种子至候选区。"
     },
     {
-      "downloaded": "50GB",
       "id": 1,
-      "interval": "P4W",
       "name": "Power User",
       "nameAka": [
         "一级烧伤"
       ],
       "privilege": "可以直接发布种子；可以查看NFO文档；可以请求续种；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。拥有与user一样的权限。",
+      "interval": "P4W",
+      "downloaded": "50GB",
       "ratio": 2,
       "seedingBonus": 40000
     },
     {
-      "downloaded": "100GB",
       "id": 2,
-      "interval": "P8W",
       "name": "Elite User",
       "nameAka": [
         "二级烧伤"
       ],
       "privilege": "拥有与PowerUseruser一样的权限。",
+      "interval": "P8W",
+      "downloaded": "100GB",
       "ratio": 2.5,
       "seedingBonus": 80000
     },
     {
-      "downloaded": "300GB",
       "id": 3,
-      "interval": "P15W",
       "name": "Crazy User",
       "nameAka": [
         "三级烧伤"
       ],
       "privilege": "可以在做种/下载/发布的时候选择匿名模式。拥有与EliteUser一样的权限",
+      "interval": "P15W",
+      "downloaded": "300GB",
       "ratio": 3,
       "seedingBonus": 150000
     },
     {
-      "downloaded": "500GB",
       "id": 4,
-      "interval": "P25W",
       "name": "Insane User",
       "nameAka": [
         "四级烧伤"
       ],
       "privilege": "可以查看普通日志。拥有与CrazyUser一样的权限",
+      "interval": "P25W",
+      "downloaded": "500GB",
       "ratio": 3.5,
       "seedingBonus": 250000
     },
     {
-      "downloaded": "1TB",
       "id": 5,
-      "interval": "P40W",
       "name": "Veteran User",
       "nameAka": [
         "五级烧伤"
       ],
       "privilege": "可以查看其它用户的评论、帖子历史。拥有与InsaneUser一样的权限",
+      "interval": "P40W",
+      "downloaded": "1TB",
       "ratio": 4,
       "seedingBonus": 400000
     },
     {
-      "downloaded": "2TB",
       "id": 6,
-      "interval": "P60W",
-      "isKept": true,
       "name": "Extreme User",
       "nameAka": [
         "六级烧伤"
       ],
+      "isKept": true,
       "privilege": "可以更新过期的外部信息。拥有与VeteranUser一样的权限六级烧伤(Extreme User)及以上用户会永远保留账号。",
+      "interval": "P60W",
+      "downloaded": "2TB",
       "ratio": 4.5,
       "seedingBonus": 600000
     },
     {
-      "downloaded": "5TB",
       "id": 7,
-      "interval": "P80W",
-      "isKept": true,
       "name": "Ultimate User",
       "nameAka": [
         "七级烧伤"
       ],
+      "isKept": true,
       "privilege": "这个等级会永远保留账号。拥有与ExtremeUser一样的权限",
+      "interval": "P80W",
+      "downloaded": "5TB",
       "ratio": 5,
       "seedingBonus": 800000
     },
     {
-      "downloaded": "10TB",
       "id": 8,
-      "interval": "P100W",
-      "isKept": true,
       "name": "Nexus Master",
       "nameAka": [
         "终极烧伤"
       ],
+      "isKept": true,
       "privilege": "这个等级会永远保留账号。拥有与UltimateUser一样的权限",
+      "interval": "P100W",
+      "downloaded": "10TB",
       "ratio": 5.5,
       "seedingBonus": 1000000
     }

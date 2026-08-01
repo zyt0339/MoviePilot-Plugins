@@ -11,165 +11,167 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "bonus": 10000,
-      "hnrUnsatisfied": 0,
       "id": 2,
-      "interval": "P4W",
       "name": "拜师学艺",
       "nameAka": [
         "Power User"
       ],
       "privilege": "查看用户列表；请求续种；查看其他用户种子历史（隐私等级不为高时）；删除自己上传的字幕。",
+      "interval": "P4W",
+      "uploaded": "50GB",
+      "bonus": 10000,
       "seedingTime": "P30D",
       "snatches": 20,
-      "uploaded": "50GB"
+      "hnrUnsatisfied": 0
     },
     {
-      "bonus": 30000,
-      "hnrUnsatisfied": 0,
       "id": 3,
-      "interval": "P8W",
       "name": "持剑下山",
       "nameAka": [
         "Elite User"
       ],
       "privilege": "封存账号后不会被删除。",
+      "interval": "P8W",
+      "uploaded": "200GB",
+      "bonus": 30000,
       "seedingTime": "P120D",
       "snatches": 60,
-      "uploaded": "200GB"
+      "hnrUnsatisfied": 0
     },
     {
-      "bonus": 80000,
-      "hnrUnsatisfied": 0,
       "id": 4,
-      "interval": "P16W",
       "name": "初入江湖",
       "nameAka": [
         "Crazy User"
       ],
       "privilege": "首次升级至此等级时将获得1个永久邀请；发送邀请；做种/下载/发布时可以选择匿名。",
-      "seedingTime": "P450D",
-      "snatches": 150,
+      "interval": "P16W",
       "uploaded": "800GB",
-      "uploads": 1
+      "bonus": 80000,
+      "seedingTime": "P450D",
+      "uploads": 1,
+      "snatches": 150,
+      "hnrUnsatisfied": 0
     },
     {
-      "bonus": 150000,
-      "hnrUnsatisfied": 0,
       "id": 5,
-      "interval": "P28W",
       "name": "小有名气",
       "nameAka": [
         "Insane User"
       ],
       "privilege": "首次升级至此等级时将获得1个永久邀请；查看普通日志。",
-      "seedingTime": "P1500D",
-      "snatches": 300,
+      "interval": "P28W",
       "uploaded": "2000GB",
-      "uploads": 5
+      "bonus": 150000,
+      "seedingTime": "P1500D",
+      "uploads": 5,
+      "snatches": 300,
+      "hnrUnsatisfied": 0
     },
     {
-      "bonus": 300000,
-      "hnrUnsatisfied": 0,
       "id": 6,
-      "interval": "P48W",
-      "isKept": true,
       "name": "威震一方",
       "nameAka": [
         "Veteran User"
       ],
+      "isKept": true,
       "privilege": "首次升级至此等级时将获得1个永久邀请；查看其它用户的评论、帖子历史；永久保留账号。",
-      "seedingTime": "P4200D",
-      "snatches": 600,
+      "interval": "P48W",
       "uploaded": "5000GB",
-      "uploads": 10
+      "bonus": 300000,
+      "seedingTime": "P4200D",
+      "uploads": 10,
+      "snatches": 600,
+      "hnrUnsatisfied": 0
     },
     {
-      "bonus": 400000,
-      "hnrUnsatisfied": 0,
       "id": 7,
-      "interval": "P72W",
-      "isKept": true,
       "name": "横扫群雄",
       "nameAka": [
         "Extreme User"
       ],
+      "isKept": true,
       "privilege": "首次升级至此等级时将获得1个永久邀请。",
-      "seedingTime": "P28000D",
-      "snatches": 1000,
+      "interval": "P72W",
       "uploaded": "10000GB",
-      "uploads": 15
+      "bonus": 400000,
+      "seedingTime": "P28000D",
+      "uploads": 15,
+      "snatches": 1000,
+      "hnrUnsatisfied": 0
     },
     {
-      "bonus": 600000,
-      "hnrUnsatisfied": 0,
       "id": 8,
-      "interval": "P100W",
-      "isKept": true,
       "name": "开宗立派",
       "nameAka": [
         "Ultimate User"
       ],
+      "isKept": true,
       "privilege": "首次升级至此等级时将获得2个永久邀请。",
-      "seedingTime": "P90000D",
-      "snatches": 1800,
+      "interval": "P100W",
       "uploaded": "20000GB",
-      "uploads": 30
+      "bonus": 600000,
+      "seedingTime": "P90000D",
+      "uploads": 30,
+      "snatches": 1800,
+      "hnrUnsatisfied": 0
     },
     {
-      "bonus": 1000000,
-      "hnrUnsatisfied": 0,
       "id": 9,
-      "interval": "P132W",
-      "isKept": true,
       "name": "天下无敌",
       "nameAka": [
         "Nexus Master"
       ],
+      "isKept": true,
       "privilege": "首次升级至此等级时将获得3个永久邀请。",
-      "seedingTime": "P300000D",
-      "snatches": 3000,
+      "interval": "P132W",
       "uploaded": "50000GB",
-      "uploads": 50
+      "bonus": 1000000,
+      "seedingTime": "P300000D",
+      "uploads": 50,
+      "snatches": 3000,
+      "hnrUnsatisfied": 0
     },
     {
-      "groupType": "vip",
       "id": 100,
       "name": "西域来客",
+      "groupType": "vip",
       "privilege": "免除自动降级，不记录下载量，免除HnR考核。"
     },
     {
-      "groupType": "manager",
       "id": 200,
       "name": "扫地僧",
+      "groupType": "manager",
       "privilege": "退休的管理组成员。"
     },
     {
-      "groupType": "manager",
       "id": 201,
       "name": "龙门镖局",
+      "groupType": "manager",
       "privilege": "查看匿名用户的真实身份；每月魔力值奖励和邀请码奖励（根据发种情况浮动）"
     },
     {
-      "groupType": "manager",
       "id": 202,
-      "name": "六扇门"
+      "name": "六扇门",
+      "groupType": "manager",
+      "privilege": "查看管理组信箱、举报信箱；编辑种子信息，删除种子，设置置顶和种子优惠，管理候选和字幕区；编辑、删除论坛帖子/种子评论；查看用户基础信息；拥有无限量邀请权限；每周魔力值奖励"
     },
     {
-      "groupType": "manager",
       "id": 203,
-      "name": "中枢六部"
+      "name": "中枢六部",
+      "groupType": "manager",
+      "privilege": "管理用户账号信息；发送全员消息、设置全局优惠、设置IP地址封禁及其它敏感操作；修改站点友链、论坛板块、种子板块、规则、常见问题、公告等站点信息；发放魔力值、批量邀请用户"
     },
     {
-      "groupType": "manager",
       "id": 204,
       "name": "锦衣卫",
+      "groupType": "manager",
       "privilege": "修改站点设定；管理站点代码、服务器等"
     },
     {
-      "groupType": "manager",
       "id": 205,
       "name": "九五之尊",
+      "groupType": "manager",
       "privilege": "管理捐赠；管理管理组任命；其他未被提及的权限..."
     }
   ]

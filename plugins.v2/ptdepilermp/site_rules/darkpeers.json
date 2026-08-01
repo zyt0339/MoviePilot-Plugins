@@ -16,92 +16,92 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "PowerUser",
       "privilege": "15下载槽 上传种子 发送邀请",
+      "interval": "P1M",
+      "uploaded": "1TiB",
       "ratio": 0.8,
-      "seedingSize": "100GiB",
-      "uploaded": "1TiB"
+      "seedingSize": "100GiB"
     },
     {
-      "averageSeedingTime": "P1M",
       "id": 3,
-      "interval": "P1M",
       "name": "Seeder",
       "privilege": "15下载槽 上传种子 发送邀请",
+      "interval": "P1M",
       "ratio": 0.8,
-      "seedingSize": "3TiB"
+      "seedingSize": "3TiB",
+      "averageSeedingTime": "P1M"
     },
     {
       "id": 4,
-      "interval": "P2M",
       "name": "SuperUser",
       "privilege": "20下载槽 上传种子 发送邀请",
+      "interval": "P2M",
+      "uploaded": "5TiB",
       "ratio": 0.8,
       "seedingSize": "500GiB",
-      "uploaded": "5TiB",
       "uploads": 5
     },
     {
-      "averageSeedingTime": "P2M",
       "id": 5,
-      "interval": "P2M",
       "name": "Collector",
       "privilege": "20下载槽 上传种子 发送邀请",
+      "interval": "P2M",
       "ratio": 0.8,
-      "seedingSize": "8TiB"
+      "seedingSize": "8TiB",
+      "averageSeedingTime": "P2M"
     },
     {
-      "averageSeedingTime": "P2M",
       "id": 6,
-      "interval": "P4M",
       "name": "ExtremeUser",
       "privilege": "40下载槽 上传种子 发送邀请 免审核发布 访问邀请区",
+      "interval": "P4M",
+      "uploaded": "20TiB",
       "ratio": 0.8,
       "seedingSize": "1TiB",
-      "uploaded": "20TiB",
+      "averageSeedingTime": "P2M",
       "uploads": 15
     },
     {
-      "averageSeedingTime": "P3M",
       "id": 7,
-      "interval": "P4M",
       "name": "Hoarder",
       "privilege": "40下载槽 上传种子 发送邀请 免审核发布 访问邀请区",
+      "interval": "P4M",
       "ratio": 0.8,
-      "seedingSize": "16TiB"
+      "seedingSize": "16TiB",
+      "averageSeedingTime": "P3M"
     },
     {
-      "averageSeedingTime": "P3M",
       "id": 8,
-      "interval": "P8M",
       "name": "InsaneUser",
       "privilege": "50下载槽 上传种子 发送邀请 免疫自动 HnR 警告 免审核发布 访问邀请区",
+      "interval": "P8M",
+      "uploaded": "60TiB",
       "ratio": 0.8,
       "seedingSize": "25TiB",
-      "uploaded": "60TiB",
+      "averageSeedingTime": "P3M",
       "uploads": 50
     },
     {
-      "averageSeedingTime": "P4M",
       "id": 9,
-      "interval": "P1Y",
       "name": "Veteran",
       "privilege": "无限下载槽 上传种子 发送邀请 全站免费 免疫自动 HnR 警告 免审核发布 访问邀请区",
+      "interval": "P1Y",
+      "uploaded": "120TiB",
       "ratio": 1,
       "seedingSize": "40TiB",
-      "uploaded": "120TiB",
+      "averageSeedingTime": "P4M",
       "uploads": 100
     },
     {
-      "averageSeedingTime": "P5M",
       "id": 10,
-      "interval": "P2Y",
       "name": "Legend",
       "privilege": "无限下载槽 上传种子 发送邀请 全站免费 2x上传 免疫自动 HnR 警告 免审核发布 访问邀请区",
+      "interval": "P2Y",
+      "uploaded": "200TiB",
       "ratio": 1.2,
       "seedingSize": "50TiB",
-      "uploaded": "200TiB",
+      "averageSeedingTime": "P5M",
       "uploads": 300
     }
   ]

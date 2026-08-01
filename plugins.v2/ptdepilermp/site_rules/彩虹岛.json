@@ -8,78 +8,78 @@
       "privilege": "新用户的默认级别。"
     },
     {
-      "bonus": 80000,
-      "downloaded": "200GB",
       "id": 2,
-      "interval": "P5W",
       "name": "Power User",
       "privilege": "可以查看NFO文档；可以请求续种； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
-      "ratio": 2
+      "interval": "P5W",
+      "downloaded": "200GB",
+      "ratio": 2,
+      "bonus": 80000
     },
     {
-      "bonus": 150000,
-      "downloaded": "500GB",
       "id": 3,
-      "interval": "P10W",
       "name": "Elite User",
       "privilege": "",
-      "ratio": 3
+      "interval": "P10W",
+      "downloaded": "500GB",
+      "ratio": 3,
+      "bonus": 150000
     },
     {
-      "bonus": 300000,
-      "downloaded": "800GB",
       "id": 4,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "可以查看NFO文档；可以查看用户列表；可以请求续种；可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。可以在做种/下载/发布的时候选择匿名模式。",
-      "ratio": 4
+      "interval": "P15W",
+      "downloaded": "800GB",
+      "ratio": 4,
+      "bonus": 300000
     },
     {
-      "bonus": 650000,
-      "downloaded": "999GB",
       "id": 5,
-      "interval": "P20W",
       "name": "Insane User",
       "privilege": "可以查看普通日志。",
-      "ratio": 5
+      "interval": "P20W",
+      "downloaded": "999GB",
+      "ratio": 5,
+      "bonus": 650000
     },
     {
-      "bonus": 1000000,
-      "downloaded": "1500GB",
       "id": 6,
-      "interval": "P25W",
       "name": "Veteran User",
       "privilege": "可以查看其它用户的评论、帖子历史。",
-      "ratio": 6
+      "interval": "P25W",
+      "downloaded": "1500GB",
+      "ratio": 6,
+      "bonus": 1000000
     },
     {
-      "bonus": 2200000,
-      "downloaded": "2TB",
       "id": 7,
-      "interval": "P30W",
       "name": "Extreme User",
       "privilege": "首次升级赠送邀请1枚，可以更新过期的外部信息；可以查看Extreme User论坛。Extreme User及以上等级用户封存账号（在控制面板）后不会被删除账号。",
-      "ratio": 7
+      "interval": "P30W",
+      "downloaded": "2TB",
+      "ratio": 7,
+      "bonus": 2200000
     },
     {
-      "bonus": 3500000,
-      "downloaded": "3TB",
       "id": 8,
-      "interval": "P40W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "首次升级赠送邀请2枚，保留帐号，在官方活动期间可发放邀请；Ultimate User及以上等级用户会永远保留；",
-      "ratio": 8
+      "interval": "P40W",
+      "downloaded": "3TB",
+      "ratio": 8,
+      "bonus": 3500000
     },
     {
-      "bonus": 5000000,
-      "downloaded": "4TB",
       "id": 9,
-      "interval": "P52W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "首次升级赠送邀请3枚，保留帐号，在官方活动期间可发放邀请；",
-      "ratio": 10
+      "interval": "P52W",
+      "downloaded": "4TB",
+      "ratio": 10,
+      "bonus": 5000000
     }
   ]
 }

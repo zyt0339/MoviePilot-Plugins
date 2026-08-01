@@ -9,45 +9,45 @@
     },
     {
       "id": 2,
-      "interval": "P1W",
       "name": "User",
       "privilege": "can use upload templates;  can add and vote on tags;  can add multiple tags at once",
-      "ratio": 0.7,
-      "uploaded": "10GB"
+      "interval": "P1W",
+      "uploaded": "10GB",
+      "ratio": 0.7
     },
     {
       "id": 3,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "can access top 10 lists;  can create and vote in Requests;  can set torrent footer (800 px);  can set forum signature (up to 256 characters)",
-      "ratio": 1.05,
-      "uploaded": "25GB"
+      "interval": "P4W",
+      "uploaded": "25GB",
+      "ratio": 1.05
     },
     {
       "id": 4,
-      "interval": "P8W",
       "name": "Expert User",
       "privilege": "can access the Invites Forum",
-      "ratio": 1.05,
+      "interval": "P8W",
       "uploaded": "100GB",
+      "ratio": 1.05,
       "uploads": 25
     },
     {
       "id": 5,
-      "interval": "P13W",
       "name": "Super User",
       "privilege": "can download zips of torrent files (from collages, and user pages);  can create public upload templates;  can set forum signature (up to 512 characters)",
-      "ratio": 1.05,
+      "interval": "P13W",
       "uploaded": "1TB",
+      "ratio": 1.05,
       "uploads": 50
     },
     {
       "id": 6,
-      "interval": "P26W",
       "name": "Fapinator",
       "privilege": "can set forum signature (up to 1024 characters)",
-      "ratio": 1.05,
+      "interval": "P26W",
       "uploaded": "10TB",
+      "ratio": 1.05,
       "uploads": 250
     }
   ]

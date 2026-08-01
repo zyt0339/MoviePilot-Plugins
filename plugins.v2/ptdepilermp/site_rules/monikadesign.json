@@ -9,55 +9,55 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "PowerUser",
       "privilege": "访问邀请区",
+      "interval": "P1M",
       "uploaded": "1TiB"
     },
     {
       "id": 3,
-      "interval": "P2M",
       "name": "SuperUser",
       "privilege": "访问邀请区",
+      "interval": "P2M",
       "uploaded": "2TiB"
     },
     {
       "id": 4,
-      "interval": "P3M",
       "name": "ExtremeUser",
       "privilege": "自动通过候选 调整隐私设置 访问邀请区",
+      "interval": "P3M",
       "uploaded": "5TiB"
     },
     {
       "id": 5,
-      "interval": "P6M",
       "name": "InsaneUser",
       "privilege": "自动通过候选 调整隐私设置 访问邀请区",
+      "interval": "P6M",
       "uploaded": "10TiB"
     },
     {
       "id": 6,
-      "interval": "P12M",
       "name": "Veteran",
       "privilege": "个人全局双倍上传 自动通过候选 调整隐私设置 访问邀请区",
+      "interval": "P12M",
       "uploaded": "15TiB"
     },
     {
-      "averageSeedingTime": "P30D",
-      "groupType": "user",
       "id": 7,
-      "interval": "P1M",
       "name": "Seeder",
+      "groupType": "user",
       "privilege": "自动通过候选 调整隐私设置 访问邀请区",
-      "seedingSize": "3TiB"
+      "interval": "P1M",
+      "seedingSize": "3TiB",
+      "averageSeedingTime": "P30D"
     },
     {
-      "averageSeedingTime": "P60D",
       "id": 8,
-      "interval": "P3M",
       "name": "Archivist",
       "privilege": "个人全局双倍上传 自动通过候选 调整隐私设置 访问邀请区",
-      "seedingSize": "10TiB"
+      "interval": "P3M",
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P60D"
     }
   ]
 }

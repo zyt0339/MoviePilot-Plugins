@@ -10,56 +10,56 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "Pool",
       "privilege": "无限下载槽 发起求种 免疫HR 发送邀请",
+      "interval": "P1M",
       "ratio": 1,
       "seedingSize": "256GiB"
     },
     {
       "id": 3,
-      "interval": "P3M",
       "name": "PowerPool",
       "privilege": "无限下载槽 发起求种 应求求种 免疫HR 发送邀请",
+      "interval": "P3M",
       "ratio": 1.25,
       "seedingSize": "512GiB"
     },
     {
       "id": 4,
-      "interval": "P6M",
       "name": "SuperPool",
       "privilege": "访问邀请区 无限下载槽 发起求种 应求求种 免疫HR 站免 发送邀请",
+      "interval": "P6M",
       "ratio": 1.5,
       "seedingSize": "1TiB"
     },
     {
       "id": 5,
-      "interval": "P9M",
       "name": "UberPool",
       "privilege": "访问邀请区 无限下载槽 发起求种 应求求种 免疫HR 站免 发送邀请",
+      "interval": "P9M",
       "ratio": 3,
       "seedingSize": "5TiB"
     },
     {
       "id": 6,
-      "interval": "P12M",
       "name": "MegaPool",
       "privilege": "上传种子 访问邀请区 双倍计算上传量 无限下载槽 发起求种 应求求种 免疫HR 站免 发送邀请",
+      "interval": "P12M",
       "ratio": 3,
       "seedingSize": "25TiB"
     },
     {
       "id": 7,
-      "interval": "P12M",
       "name": "GodPool",
       "privilege": "上传种子 访问邀请区 双倍计算上传量 无限下载槽 发起求种 应求求种 免疫HR 站免 发送邀请",
+      "interval": "P12M",
       "ratio": 5,
       "seedingSize": "100TiB"
     },
     {
-      "groupType": "vip",
       "id": 8,
       "name": "ProPool",
+      "groupType": "vip",
       "privilege": "双倍计算上传量 无限下载槽 发起求种 应求求种 免疫HR 站免 发送邀请"
     }
   ]

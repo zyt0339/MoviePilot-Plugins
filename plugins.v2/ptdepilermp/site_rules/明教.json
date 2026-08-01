@@ -8,77 +8,77 @@
       "privilege": ""
     },
     {
-      "downloaded": "200GB",
       "id": 1,
-      "interval": "P4W",
       "name": "Power User",
       "privilege": "得到一个邀请名额；可以直接发布种子；可以请求续种； 可以发送邀请。",
+      "interval": "P4W",
+      "downloaded": "200GB",
       "ratio": 2,
       "seedingBonus": 50000
     },
     {
-      "downloaded": "400GB",
       "id": 2,
-      "interval": "P8W",
       "name": "Elite User",
       "privilege": "得到一个邀请名额。",
+      "interval": "P8W",
+      "downloaded": "400GB",
       "ratio": 3,
       "seedingBonus": 110000
     },
     {
-      "downloaded": "700GB",
       "id": 3,
-      "interval": "P15W",
       "name": "Crazy User",
       "privilege": "得到二个邀请名额。",
+      "interval": "P15W",
+      "downloaded": "700GB",
       "ratio": 4,
       "seedingBonus": 200000
     },
     {
-      "downloaded": "1TB",
       "id": 4,
-      "interval": "P25W",
       "name": "Insane User",
       "privilege": "得到二个邀请名额；",
+      "interval": "P25W",
+      "downloaded": "1TB",
       "ratio": 5,
       "seedingBonus": 300000
     },
     {
-      "downloaded": "2TB",
       "id": 5,
-      "interval": "P40W",
       "name": "Veteran User",
       "privilege": "得到二个邀请名额。神蛇 (Veteran User)及以上等级的账号如果在封存后将保留，封存的账号如果连续400天不登录，将被封禁；未封存的账号如果连续90天不登录，将被封禁；没有流量的用户（即上传/下载数据都为0）如果连续90天不登录，将被封禁账号。",
+      "interval": "P40W",
+      "downloaded": "2TB",
       "ratio": 6,
       "seedingBonus": 500000
     },
     {
-      "downloaded": "3TB",
       "id": 6,
-      "interval": "P60W",
-      "isKept": true,
       "name": "Extreme User",
+      "isKept": true,
       "privilege": "得到二个邀请名额；可以更新过期的外部信息；可以查看Extreme User论坛。紫微 (Extreme User)及以上用户会永远保留账号。",
+      "interval": "P60W",
+      "downloaded": "3TB",
       "ratio": 7,
       "seedingBonus": 700000
     },
     {
-      "downloaded": "4TB",
       "id": 7,
-      "interval": "P80W",
-      "isKept": true,
       "name": "Ultimate User",
+      "isKept": true,
       "privilege": "得到五个邀请名额。",
+      "interval": "P80W",
+      "downloaded": "4TB",
       "ratio": 8,
       "seedingBonus": 1000000
     },
     {
-      "downloaded": "8TB",
       "id": 8,
-      "interval": "P100W",
-      "isKept": true,
       "name": "Nexus Master",
+      "isKept": true,
       "privilege": "得到七个邀请名额。",
+      "interval": "P100W",
+      "downloaded": "8TB",
       "ratio": 9,
       "seedingBonus": 1500000
     }

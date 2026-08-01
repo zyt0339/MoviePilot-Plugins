@@ -9,76 +9,76 @@
     },
     {
       "id": 1,
-      "interval": "P1W",
       "name": "Member",
       "privilege": "发起求种；查看部分排行榜；完全访问「茶话会」版块",
-      "ratio": 0.8,
-      "trueDownloaded": "80GB"
+      "interval": "P1W",
+      "trueDownloaded": "80GB",
+      "ratio": 0.8
     },
     {
       "id": 2,
-      "interval": "P2W",
-      "isKept": true,
       "name": "Power User",
+      "isKept": true,
       "privilege": "免疫账号不活跃；发送邀请；赠送1枚邀请；访问论坛的「求邀区」「发邀区」「Power User」",
-      "ratio": 1.2,
+      "interval": "P2W",
       "trueDownloaded": "200GB",
+      "ratio": 1.2,
       "uploads": 1
     },
     {
       "id": 3,
-      "interval": "P4W",
-      "isKept": true,
       "name": "Elite",
+      "isKept": true,
       "privilege": "赠送1枚邀请；访问论坛的「Elite」；检查自己发布的种子；编辑所有种子",
-      "ratio": 1.2,
+      "interval": "P4W",
       "trueDownloaded": "500GB",
+      "ratio": 1.2,
       "uploads": 25
     },
     {
       "id": 4,
-      "interval": "P8W",
-      "isKept": true,
       "name": "Torrent Master",
+      "isKept": true,
       "privilege": "赠送2枚邀请；每月获赠1枚临时邀请；访问论坛的「Torrent Master」",
-      "ratio": 1.2,
+      "interval": "P8W",
       "trueDownloaded": "1TB",
+      "ratio": 1.2,
       "uploads": 100
     },
     {
       "id": 5,
-      "interval": "P12W",
-      "isKept": true,
       "name": "Power Torrent Master",
       "nameAka": [
         "Power TM"
       ],
+      "isKept": true,
       "privilege": "赠送2枚邀请；每月获赠2枚临时邀请；检查所有种子",
-      "ratio": 1.2,
+      "interval": "P12W",
       "trueDownloaded": "2TB",
+      "ratio": 1.2,
       "uploads": 250
     },
     {
       "id": 6,
-      "interval": "P16W",
-      "isKept": true,
       "name": "Elite Torrent Master",
       "nameAka": [
         "Elite TM"
       ],
+      "isKept": true,
       "privilege": "赠送3枚邀请；每月获赠3枚临时邀请；访问论坛的「Elite Torrent Master」",
-      "ratio": 1.2,
+      "interval": "P16W",
       "trueDownloaded": "5TB",
+      "ratio": 1.2,
       "uploads": 500
     },
     {
       "id": 7,
-      "interval": "P20W",
-      "isKept": true,
       "name": "Guru",
+      "isKept": true,
       "privilege": "无限邀请；访问论坛的「Guru」；查看种子检查日志",
-      "ratio": 1.2,
+      "interval": "P20W",
       "trueDownloaded": "10TB",
+      "ratio": 1.2,
       "uploads": 1000
     }
   ]

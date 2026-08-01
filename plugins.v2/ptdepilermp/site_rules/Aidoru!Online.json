@@ -8,19 +8,19 @@
       "privilege": "Can download, upload torrents；Ratio effects availability of new torrents"
     },
     {
-      "averageSeedingTime": "P20H",
       "id": 2,
-      "interval": "P6M",
       "name": "Sharer ",
       "privilege": "Can download, upload torrents；Ratio has no effect on availability of new torrents；Notification and highlighting of new comments",
+      "interval": "P6M",
+      "averageSeedingTime": "P20H",
       "uploads": 50
     },
     {
-      "averageSeedingTime": "P5D",
       "id": 3,
       "name": "Distributor",
       "privilege": "Can download, upload torrents；Ratio has no effect on availability of new torrents；Notification and highlighting of new comments；Can view peers on torrents；Can view user list of who completed downloading a torrent",
       "ratio": 1,
+      "averageSeedingTime": "P5D",
       "uploads": 500
     },
     {

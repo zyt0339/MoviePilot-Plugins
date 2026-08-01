@@ -9,61 +9,61 @@
     },
     {
       "id": 2,
-      "interval": "P1M",
       "name": "PowerUser",
       "privilege": "直接发布种子，可以寄出邀请",
-      "ratio": 1.55,
-      "uploaded": "1TiB"
+      "interval": "P1M",
+      "uploaded": "1TiB",
+      "ratio": 1.55
     },
     {
       "id": 3,
-      "interval": "P2M",
       "name": "SuperUser",
       "privilege": "直接发布种子，可以寄出邀请",
-      "ratio": 2.5,
-      "uploaded": "5TiB"
+      "interval": "P2M",
+      "uploaded": "5TiB",
+      "ratio": 2.5
     },
     {
       "id": 4,
-      "interval": "P3M",
       "name": "ExtremeUser",
       "privilege": "直接发布种子，可以寄出邀请",
-      "ratio": 3,
-      "uploaded": "20TiB"
+      "interval": "P3M",
+      "uploaded": "20TiB",
+      "ratio": 3
     },
     {
       "id": 5,
-      "interval": "P6M",
       "name": "InsaneUser",
       "privilege": "直接发布种子，可以寄出邀请",
-      "ratio": 4.15,
-      "uploaded": "50TiB"
+      "interval": "P6M",
+      "uploaded": "50TiB",
+      "ratio": 4.15
     },
     {
       "id": 6,
-      "interval": "P12M",
       "name": "Veteran",
       "privilege": "直接发布种子，可以寄出邀请，全局免费",
-      "ratio": 5.2,
-      "uploaded": "100TiB"
+      "interval": "P12M",
+      "uploaded": "100TiB",
+      "ratio": 5.2
     },
     {
-      "averageSeedingTime": "P1M",
       "id": 7,
-      "interval": "P1M",
       "name": "Seeder",
       "privilege": "直接发布种子，可以寄出邀请，可以无视H&R",
+      "interval": "P1M",
       "ratio": 0.4,
-      "seedingSize": "5TiB"
+      "seedingSize": "5TiB",
+      "averageSeedingTime": "P1M"
     },
     {
-      "averageSeedingTime": "P2M",
       "id": 8,
-      "interval": "P3M",
       "name": "Archivist",
       "privilege": "直接发布种子，可以寄出邀请，可以无视H&R，全局免费，双倍上传",
+      "interval": "P3M",
       "ratio": 0.4,
-      "seedingSize": "10TiB"
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P2M"
     }
   ]
 }
