@@ -98,6 +98,7 @@
       "downloaded": "10TB",
       "id": 9,
       "interval": "P36W",
+      "isKept": true,
       "name": "Nexus Master",
       "nameAka": [
         "终身影帝"

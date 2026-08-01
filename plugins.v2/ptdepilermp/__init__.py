@@ -33,7 +33,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.22.0"
+    plugin_version = "1.27.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -325,11 +325,13 @@ class PTDepilerMp(_PluginBase):
         requirement: Optional[RequirementResult],
         keys: Tuple[str, ...],
     ) -> bool:
-        """判断摘要字段是否配置了保号门槛且当前值已满足。"""
+        """判断摘要字段是否不阻碍保号：无要求或已满足均返回 True。"""
         if not retained_level or not requirement:
             return False
         configured_keys = [key for key in keys if key in retained_level]
-        return bool(configured_keys) and all(
+        if not configured_keys:
+            return True
+        return all(
             key not in requirement.gaps and key not in requirement.unknown
             for key in configured_keys
         )
@@ -339,7 +341,7 @@ class PTDepilerMp(_PluginBase):
         user: Dict[str, Any],
         retained_level: Optional[Dict[str, Any]],
     ) -> List[Dict[str, Any]]:
-        """构建当前数据摘要，已满足的保号条件使用绿色文字。"""
+        """构建当前数据摘要：无要求/已满足为绿色，明确未满足为黄色。"""
         requirement = evaluate_requirement(user, retained_level) if retained_level else None
         fields = [
             ("上传", self._size(user.get("upload")), ("uploaded", "trueUploaded")),
@@ -351,8 +353,12 @@ class PTDepilerMp(_PluginBase):
         content: List[Dict[str, Any]] = [{"component": "span", "text": "当前："}]
         for index, (label, value, keys) in enumerate(fields):
             props = {}
-            if self._retention_field_met(retained_level, requirement, keys):
-                props["class"] = "text-success"
+            if retained_level and requirement:
+                props["class"] = (
+                    "text-success"
+                    if self._retention_field_met(retained_level, requirement, keys)
+                    else "text-warning"
+                )
             item = {"component": "span", "text": f"{label} {value}"}
             if props:
                 item["props"] = props
@@ -488,7 +494,7 @@ class PTDepilerMp(_PluginBase):
         summary = self._summary(rows)
         header_names = [
             "站点", "状态", "当前等级", "保号等级", "上传/下载", "分享率",
-            "保号上传/下载", "保号总结", "数据时间",
+            "保号上传/下载", "总结", "数据时间",
         ]
         table_rows = []
         panels = []
@@ -587,10 +593,22 @@ class PTDepilerMp(_PluginBase):
                 "component": "VListItem",
                 "props": {"title": result.reason or "无可用规则"},
             }]
+        panel_title = {"component": "VExpansionPanelTitle"}
+        if result.retained is True:
+            panel_title["content"] = [
+                {"component": "span", "text": row["site_name"]},
+                {
+                    "component": "span",
+                    "props": {"class": "text-success ml-1"},
+                    "text": "（已保号）",
+                },
+            ]
+        else:
+            panel_title["text"] = row["site_name"]
         return {
             "component": "VExpansionPanel",
             "content": [
-                {"component": "VExpansionPanelTitle", "text": row["site_name"]},
+                panel_title,
                 {"component": "VExpansionPanelText", "content": [
                     {
                         "component": "div",
