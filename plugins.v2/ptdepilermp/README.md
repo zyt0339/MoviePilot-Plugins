@@ -22,3 +22,9 @@
 完整等级规则会先展示站点当前上传、下载、注册周数、分享率和魔力。蓝色对钩表示已达到；标记为“保号等级”的等级达到后使用绿色对钩；普通圆圈表示尚未确认达到。各等级行只展示等级条件，不再重复输出达到状态文字。
 
 缺失的 MoviePilot 数据显示“数据不足”，未设置的规则条件显示“无要求”。MoviePilot 当前没有独立的 `seedingBonus`（做种积分）字段，该条件暂按已满足处理。
+
+## 发布
+
+插件在 `package.v2.json` 中声明 `release: true`，由 `.github/workflows/release.yml` 自动打包为 GitHub Release ZIP。MoviePilot 会优先一次下载并整体解压该 ZIP，避免逐个请求 `site_rules/` 下的规则文件。
+
+每次发布必须同步修改插件代码中的 `plugin_version`、`package.v2.json` 的 `version` 和对应版本历史，并将改动推送到 `main`。工作流会创建 Tag `PTDepilerMp_v<版本号>` 和资产 `ptdepilermp_v<版本号>.zip`。请确认 Release 资产已生成后再在 MoviePilot 中更新；Release 缺失时宿主会回退到逐文件安装。
