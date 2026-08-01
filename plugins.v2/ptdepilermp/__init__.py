@@ -33,7 +33,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.27.0"
+    plugin_version = "1.28.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -42,6 +42,7 @@ class PTDepilerMp(_PluginBase):
 
     _onlyonce = False
     _cron = ""
+    _donor_sites: List[str] = []
     _scheduler: Optional[BackgroundScheduler] = None
 
     def __init__(self):
@@ -57,6 +58,17 @@ class PTDepilerMp(_PluginBase):
         config = dict(config or {})
         self._onlyonce = bool(config.get("onlyonce", False))
         self._cron = str(config.get("cron") or "").strip()
+        donor_sites = config.get("donor_sites") or []
+        if not isinstance(donor_sites, list):
+            donor_sites = []
+        self._donor_sites = []
+        seen_donor_sites = set()
+        for site_name in donor_sites:
+            normalized = str(site_name or "").strip()
+            name_key = normalized.casefold()
+            if normalized and name_key not in seen_donor_sites:
+                self._donor_sites.append(normalized)
+                seen_donor_sites.add(name_key)
         self._recalculate("手动刷新" if self._onlyonce else "插件加载")
         if self._onlyonce:
             # 保存配置会重新加载插件，上面的计算已经立即完成；这里只负责复位一次性开关。
@@ -73,6 +85,7 @@ class PTDepilerMp(_PluginBase):
         self.update_config({
             "onlyonce": self._onlyonce,
             "cron": self._cron,
+            "donor_sites": self._donor_sites,
         })
 
     def _configure_calculation_jobs(self) -> None:
@@ -114,6 +127,12 @@ class PTDepilerMp(_PluginBase):
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """返回插件配置表单和默认值。"""
+        donor_site_options = []
+        for site in SiteOper().list_active() or []:
+            site_name = str(getattr(site, "name", None) or "").strip()
+            _, rule = self._repository.match(site_name)
+            if site_name and rule and rule.get("donorAccountKept") is True:
+                donor_site_options.append({"title": site_name, "value": site_name})
         return [
             {
                 "component": "VForm",
@@ -150,6 +169,24 @@ class PTDepilerMp(_PluginBase):
                         }],
                     },
                     {
+                        "component": "VRow",
+                        "content": [{
+                            "component": "VCol",
+                            "props": {"cols": 12},
+                            "content": [{
+                                "component": "VSelect",
+                                "props": {
+                                    "model": "donor_sites",
+                                    "label": "黄星/捐赠者特殊保号站点",
+                                    "items": donor_site_options,
+                                    "multiple": True,
+                                    "chips": True,
+                                    "clearable": True,
+                                },
+                            }],
+                        }],
+                    },
+                    {
                         "component": "VAlert",
                         "props": {"type": "info", "variant": "tonal", "class": "mb-4"},
                         "text": "立即重算和 cron 只读取 MoviePilot 已保存的站点快照并重新计算保号结果，不会连接 PT 站点；cron 留空时不创建定时任务。",
@@ -157,13 +194,14 @@ class PTDepilerMp(_PluginBase):
                     {
                         "component": "VAlert",
                         "props": {"type": "info", "variant": "tonal", "class": "mt-4"},
-                        "text": "等级配置来自插件 site_rules 目录。修改或新增单站 JSON 后，请执行一次立即重算或重新加载插件。",
+                        "text": "等级配置来自插件 site_rules 目录。黄星特殊保号仅在规则允许且上方选中当前账号所在站点时生效；黄星失效后请及时取消。修改规则后请执行一次立即重算或重新加载插件。",
                     },
                 ],
             }
         ], {
             "onlyonce": False,
             "cron": "",
+            "donor_sites": [],
         }
 
     @staticmethod
@@ -200,11 +238,14 @@ class PTDepilerMp(_PluginBase):
             if current is None or item_updated_at > current_updated_at:
                 latest_by_name[name_key] = item
         today = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%Y-%m-%d")
+        donor_site_keys = {site_name.casefold() for site_name in self._donor_sites}
         rows = []
         for site in sites:
             site_name_key = str(site.name or "").strip().casefold()
             data = latest_by_name.get(site_name_key)
             user = self._object_dict(data) if data else {}
+            # MoviePilot 暂不保存黄星状态；该瞬时字段只来自用户配置，不访问站点也不持久化。
+            user["is_donor"] = site_name_key in donor_site_keys
             rule_id, rule = self._repository.match(site.name)
             rule = self._repository.resolve_rule(user, rule)
             result = self._repository.evaluate_site(user, rule_id, rule)
@@ -456,6 +497,8 @@ class PTDepilerMp(_PluginBase):
     def _retention_level(row: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """返回首个普通保号等级；VIP/管理等级直接返回当前特殊等级。"""
         result = row["result"]
+        if result.retention_type == "donor":
+            return {"name": "黄星（特殊保号）"}
         if result.current_group in {"vip", "manager"}:
             return result.current_level or {"name": row["user"].get("user_level") or "VIP/管理等级"}
         levels = sorted((row["rule"] or {}).get("levels") or [], key=lambda item: item.get("id", -1))
@@ -471,6 +514,8 @@ class PTDepilerMp(_PluginBase):
         requirement: Optional[RequirementResult],
     ) -> str:
         """生成围绕保号等级的结论，而不是下一等级结论。"""
+        if result.retention_type == "donor":
+            return "黄星保号，已保号"
         if result.reason:
             return result.reason
         if result.current_group in {"vip", "manager"}:
@@ -556,6 +601,11 @@ class PTDepilerMp(_PluginBase):
             if (level.get("groupType") or "user") == "user" and level.get("isKept")
         ), None)
         minimum_retention_id = (minimum_retention_level or {}).get("id")
+        displayed_retention_level = (
+            self._retention_level(row)
+            if result.retention_type == "donor"
+            else minimum_retention_level
+        )
         for level in sorted_levels:
             if result.current_group == "user":
                 reached = (
@@ -613,7 +663,7 @@ class PTDepilerMp(_PluginBase):
                     {
                         "component": "div",
                         "props": {"class": "px-4 pt-2 pb-1 text-body-2 font-weight-medium"},
-                        "content": self._current_level_data_content(user, minimum_retention_level),
+                        "content": self._current_level_data_content(user, displayed_retention_level),
                     },
                     {"component": "VList", "content": level_rows},
                 ]},

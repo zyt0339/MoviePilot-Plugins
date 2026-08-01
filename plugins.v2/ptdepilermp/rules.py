@@ -91,6 +91,7 @@ class SiteLevelResult:
     next_requirement: Optional[RequirementResult]
     retained: Optional[bool]
     reason: Optional[str] = None
+    retention_type: Optional[str] = None
 
 
 def clean_level_name(value: Any) -> str:
@@ -465,6 +466,7 @@ class RuleRepository:
             return SiteLevelResult(rule_id, None, None, None, None, None, "未匹配等级规则")
         if rule.get("is_dead"):
             return SiteLevelResult(rule_id, None, None, None, None, None, "上游规则已标记站点失效")
+        donor_retained = bool(user.get("is_donor") is True and rule.get("donorAccountKept") is True)
         levels = sorted(rule.get("levels") or [], key=lambda item: item.get("id", -1))
         ordinary_levels = [item for item in levels if (item.get("groupType") or "user") == "user"]
         raw_level_name = str(user.get("user_level") or "")
@@ -490,6 +492,11 @@ class RuleRepository:
             # 站点返回自定义头衔或未返回标准等级名时，按适用规则推断最高明确满足等级。
             current = inferred[-1]
         if current is None and group == "user":
+            if donor_retained:
+                return SiteLevelResult(
+                    rule_id, None, group, None, None, True,
+                    retention_type="donor",
+                )
             return SiteLevelResult(rule_id, None, group, None, None, None, "无法识别当前等级")
         retained_level = next((item for item in ordinary_levels if item.get("isKept")), None)
         retained = group in {"vip", "manager"}
@@ -498,6 +505,8 @@ class RuleRepository:
                 retained_level
                 and current.get("id", -1) >= retained_level.get("id", -1)
             )
+        if donor_retained:
+            retained = True
         next_level = None
         next_requirement = None
         if current is not None:
@@ -508,4 +517,7 @@ class RuleRepository:
             )
             if next_level:
                 next_requirement = evaluate_requirement(user, next_level, now=now)
-        return SiteLevelResult(rule_id, current, group, next_level, next_requirement, retained)
+        return SiteLevelResult(
+            rule_id, current, group, next_level, next_requirement, retained,
+            retention_type="donor" if donor_retained else None,
+        )
