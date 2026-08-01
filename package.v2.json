@@ -1,4 +1,17 @@
 {
+  "PTDepilerMp": {
+    "name": "PT站点等级监控",
+    "description": "展示PT站点当前等级、保号状态和下一等级缺口。",
+    "labels": "站点,等级,仪表板",
+    "version": "1.0.0",
+    "icon": "database.png",
+    "author": "zyt0339",
+    "level": 2,
+    "v2": true,
+    "history": {
+      "v1.0.0": "首版：等级规则、保号判断、缺口计算、详情页、仪表板及手动刷新"
+    }
+  },
   "IYUUAutoSeedzyt": {
     "name": "IYUU自动辅种(zyt)",
     "description": "基于IYUU官方Api实现自动辅种。",
