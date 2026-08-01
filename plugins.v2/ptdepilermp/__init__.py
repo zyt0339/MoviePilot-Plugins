@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from threading import Lock
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlparse
@@ -34,7 +34,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.34.0"
+    plugin_version = "1.35.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -235,6 +235,20 @@ class PTDepilerMp(_PluginBase):
             return None
         return site_url
 
+    @staticmethod
+    def _snapshot_is_stale(user: Dict[str, Any]) -> bool:
+        """快照日期超过 7 个自然日或刷新失败时标记陈旧。"""
+        if not user or user.get("err_msg"):
+            return True
+        try:
+            snapshot_day = datetime.strptime(
+                str(user.get("updated_day") or ""), "%Y-%m-%d"
+            ).date()
+        except (TypeError, ValueError):
+            return True
+        today = datetime.now(tz=pytz.timezone(settings.TZ)).date()
+        return today - snapshot_day > timedelta(days=7)
+
     def _calculate_rows(self) -> List[Dict[str, Any]]:
         """读取 MoviePilot 已有快照并计算保号结果，不访问 PT 站点。"""
         self._repository.reload()
@@ -259,7 +273,6 @@ class PTDepilerMp(_PluginBase):
             ) if current else ("", "")
             if current is None or item_updated_at > current_updated_at:
                 latest_by_name[name_key] = item
-        today = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%Y-%m-%d")
         donor_site_keys = {site_name.casefold() for site_name in self._donor_sites}
         rows = []
         for site in sites:
@@ -277,7 +290,7 @@ class PTDepilerMp(_PluginBase):
                 "user": user,
                 "rule": rule,
                 "result": result,
-                "stale": not data or user.get("updated_day") != today or bool(user.get("err_msg")),
+                "stale": self._snapshot_is_stale(user),
             })
         return rows
 
