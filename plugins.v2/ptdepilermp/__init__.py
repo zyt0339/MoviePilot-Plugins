@@ -33,7 +33,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.19.0"
+    plugin_version = "1.22.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -181,12 +181,24 @@ class PTDepilerMp(_PluginBase):
         sites = SiteOper().list_active() or []
         latest = SiteOper().get_userdata_latest() or []
         # 规则与用户快照统一只按 MoviePilot 站点名称关联，不依赖可能变化的站点域名。
-        # get_userdata_latest 可能返回同一天的多条记录，查询结果按时间倒序；只保留第一条。
+        # 同名站点可能残留多个历史域名，必须在名称分组内按完整日期时间选择最新记录，
+        # 不能依赖 get_userdata_latest() 跨域名时仅按 updated_time 排列的返回顺序。
         latest_by_name = {}
         for item in latest:
             name_key = str(getattr(item, "name", None) or "").strip().casefold()
-            if name_key:
-                latest_by_name.setdefault(name_key, item)
+            if not name_key:
+                continue
+            current = latest_by_name.get(name_key)
+            item_updated_at = (
+                str(getattr(item, "updated_day", None) or ""),
+                str(getattr(item, "updated_time", None) or ""),
+            )
+            current_updated_at = (
+                str(getattr(current, "updated_day", None) or ""),
+                str(getattr(current, "updated_time", None) or ""),
+            ) if current else ("", "")
+            if current is None or item_updated_at > current_updated_at:
+                latest_by_name[name_key] = item
         today = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%Y-%m-%d")
         rows = []
         for site in sites:
@@ -307,13 +319,47 @@ class PTDepilerMp(_PluginBase):
         except (TypeError, ValueError, OverflowError):
             return "数据不足"
 
-    def _current_level_data_text(self, user: Dict[str, Any]) -> str:
-        """格式化完整等级规则上方的当前站点数据。"""
-        return (
-            f"当前：上传 {self._size(user.get('upload'))}；下载 {self._size(user.get('download'))}；"
-            f"注册时长 {self._membership_weeks(user.get('join_at'))}；分享率 {self._number(user.get('ratio'))}；"
-            f"魔力 {self._number(user.get('bonus'))}"
+    @staticmethod
+    def _retention_field_met(
+        retained_level: Optional[Dict[str, Any]],
+        requirement: Optional[RequirementResult],
+        keys: Tuple[str, ...],
+    ) -> bool:
+        """判断摘要字段是否配置了保号门槛且当前值已满足。"""
+        if not retained_level or not requirement:
+            return False
+        configured_keys = [key for key in keys if key in retained_level]
+        return bool(configured_keys) and all(
+            key not in requirement.gaps and key not in requirement.unknown
+            for key in configured_keys
         )
+
+    def _current_level_data_content(
+        self,
+        user: Dict[str, Any],
+        retained_level: Optional[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        """构建当前数据摘要，已满足的保号条件使用绿色文字。"""
+        requirement = evaluate_requirement(user, retained_level) if retained_level else None
+        fields = [
+            ("上传", self._size(user.get("upload")), ("uploaded", "trueUploaded")),
+            ("下载", self._size(user.get("download")), ("downloaded", "trueDownloaded")),
+            ("注册时长", self._membership_weeks(user.get("join_at")), ("interval",)),
+            ("分享率", self._number(user.get("ratio")), ("ratio", "trueRatio")),
+            ("魔力", self._number(user.get("bonus")), ("bonus",)),
+        ]
+        content: List[Dict[str, Any]] = [{"component": "span", "text": "当前："}]
+        for index, (label, value, keys) in enumerate(fields):
+            props = {}
+            if self._retention_field_met(retained_level, requirement, keys):
+                props["class"] = "text-success"
+            item = {"component": "span", "text": f"{label} {value}"}
+            if props:
+                item["props"] = props
+            content.append(item)
+            if index < len(fields) - 1:
+                content.append({"component": "span", "text": "；"})
+        return content
 
     def _requirement_size(self, requirement: Dict[str, Any], key: str) -> str:
         """区分等级没有该门槛与门槛值无效。"""
@@ -513,11 +559,12 @@ class PTDepilerMp(_PluginBase):
                 )
             else:
                 reached = current_id is not None and level.get("id") == current_id
-            if reached:
-                icon = "mdi-check-circle-outline"
-                color = "success" if level.get("id") == minimum_retention_id else "info"
+            icon = "mdi-check-circle-outline" if reached else "mdi-circle-outline"
+            # 首个保号等级始终使用绿色，作为规则标识；是否达到只由图标形态表达。
+            if level.get("id") == minimum_retention_id:
+                color = "success"
             else:
-                icon, color = "mdi-circle-outline", None
+                color = "info" if reached else None
             level_name = level.get("name") or "未命名等级"
             if minimum_retention_id is not None and level.get("id") == minimum_retention_id:
                 level_name += "（保号等级）"
@@ -548,7 +595,7 @@ class PTDepilerMp(_PluginBase):
                     {
                         "component": "div",
                         "props": {"class": "px-4 pt-2 pb-1 text-body-2 font-weight-medium"},
-                        "text": self._current_level_data_text(user),
+                        "content": self._current_level_data_content(user, minimum_retention_level),
                     },
                     {"component": "VList", "content": level_rows},
                 ]},
