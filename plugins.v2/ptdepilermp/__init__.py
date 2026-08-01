@@ -1,4 +1,4 @@
-"""PT 站点等级监控插件。"""
+"""PT 站点保号状态插件。"""
 
 from __future__ import annotations
 
@@ -11,9 +11,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from app.core.config import settings
+from app.core.event import Event, eventmanager
 from app.db.site_oper import SiteOper
 from app.log import logger
 from app.plugins import _PluginBase
+from app.schemas.types import EventType
 from app.utils.string import StringUtils
 
 from app.plugins.ptdepilermp.rules import (
@@ -28,10 +30,10 @@ from app.plugins.ptdepilermp.rules import (
 class PTDepilerMp(_PluginBase):
     """使用 MoviePilot 站点快照计算 PT 等级与保号状态。"""
 
-    plugin_name = "PT站点等级监控"
+    plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.7.0"
+    plugin_version = "1.14.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -138,13 +140,10 @@ class PTDepilerMp(_PluginBase):
                             "component": "VCol",
                             "props": {"cols": 12},
                             "content": [{
-                                "component": "VTextField",
+                                "component": "VCronField",
                                 "props": {
                                     "model": "cron",
                                     "label": "保号数据重算周期",
-                                    "placeholder": "5 位 cron 表达式，留空不定时重算",
-                                    "hint": "例如：0 8 * * * 表示每天 08:00",
-                                    "persistent-hint": True,
                                 },
                             }],
                         }],
@@ -152,7 +151,7 @@ class PTDepilerMp(_PluginBase):
                     {
                         "component": "VAlert",
                         "props": {"type": "info", "variant": "tonal", "class": "mb-4"},
-                        "text": "立即重算和 cron 只读取 MoviePilot 已保存的站点快照并重新计算保号结果，不会连接 PT 站点。",
+                        "text": "立即重算和 cron 只读取 MoviePilot 已保存的站点快照并重新计算保号结果，不会连接 PT 站点；cron 留空时不创建定时任务。",
                     },
                     {
                         "component": "VAlert",
@@ -180,16 +179,21 @@ class PTDepilerMp(_PluginBase):
         self._repository.reload()
         sites = SiteOper().list_active() or []
         latest = SiteOper().get_userdata_latest() or []
+        # 规则与用户快照统一只按 MoviePilot 站点名称关联，不依赖可能变化的站点域名。
         # get_userdata_latest 可能返回同一天的多条记录，查询结果按时间倒序；只保留第一条。
-        latest_by_domain = {}
+        latest_by_name = {}
         for item in latest:
-            latest_by_domain.setdefault(getattr(item, "domain", None), item)
+            name_key = str(getattr(item, "name", None) or "").strip().casefold()
+            if name_key:
+                latest_by_name.setdefault(name_key, item)
         today = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%Y-%m-%d")
         rows = []
         for site in sites:
-            data = latest_by_domain.get(getattr(site, "domain", None))
+            site_name_key = str(site.name or "").strip().casefold()
+            data = latest_by_name.get(site_name_key)
             user = self._object_dict(data) if data else {}
             rule_id, rule = self._repository.match(site.name)
+            rule = self._repository.resolve_rule(user, rule)
             result = self._repository.evaluate_site(user, rule_id, rule)
             rows.append({
                 "site_name": site.name,
@@ -207,6 +211,17 @@ class PTDepilerMp(_PluginBase):
             self._cached_rows = rows
             self._has_calculated = True
             self._write_debug_log(rows)
+
+    @eventmanager.register(EventType.SiteRefreshed)
+    def on_all_sites_refreshed(self, event: Event) -> None:
+        """MoviePilot 全站刷新完成后，使用最新快照重算保号数据。"""
+        if (event.event_data or {}).get("site_id") != "*":
+            return
+        logger.debug("PT站点等级监控：收到全站数据刷新完成事件，开始重新计算保号数据")
+        try:
+            self._recalculate()
+        except Exception as error:
+            logger.error(f"PT站点等级监控：全站刷新完成后重新计算失败：{error}")
 
     def _rows(self) -> List[Dict[str, Any]]:
         """返回最近一次计算结果；首次缺失时即时计算。"""
@@ -345,10 +360,8 @@ class PTDepilerMp(_PluginBase):
         return cell
 
     def _summary(self, rows: List[Dict[str, Any]]) -> Dict[str, int]:
-        """汇总站点匹配、保号和陈旧数据数量。"""
+        """汇总站点保号和陈旧数据数量。"""
         return {
-            "configured": len(rows),
-            "matched": sum(1 for row in rows if row["result"].rule_id),
             "retained": sum(1 for row in rows if row["result"].retained is True),
             "unretained": sum(1 for row in rows if row["result"].retained is False),
             "unknown": sum(1 for row in rows if row["result"].retained is None),
@@ -433,16 +446,8 @@ class PTDepilerMp(_PluginBase):
             "content": [
                 self._summary_cards(summary),
                 {
-                    "component": "VAlert",
-                    "props": {"type": "info", "variant": "tonal", "class": "my-4"},
-                    "text": (
-                        "插件只读取 MoviePilot 已保存的站点快照；非当天快照统一标记为陈旧。"
-                        + (f" 当前有 {self._repository.load_errors} 个规则文件无效并已跳过。" if self._repository.load_errors else "")
-                    ),
-                },
-                {
                     "component": "VTable",
-                    "props": {"hover": True, "fixed-header": True, "density": "compact"},
+                    "props": {"hover": True, "fixed-header": True, "density": "compact", "class": "mt-4"},
                     "content": [
                         {"component": "thead", "content": [{
                             "component": "tr",
@@ -461,30 +466,48 @@ class PTDepilerMp(_PluginBase):
         result, rule, user = row["result"], row["rule"] or {}, row["user"]
         level_rows = []
         current_id = (result.current_level or {}).get("id")
-        for level in sorted(rule.get("levels") or [], key=lambda item: item.get("id", -1)):
+        sorted_levels = sorted(rule.get("levels") or [], key=lambda item: item.get("id", -1))
+        minimum_retention_level = next((
+            level for level in sorted_levels
+            if (level.get("groupType") or "user") == "user" and level.get("isKept")
+        ), None)
+        minimum_retention_id = (minimum_retention_level or {}).get("id")
+        for level in sorted_levels:
             evaluation = evaluate_requirement(user, level)
-            reached = current_id is not None and level.get("id", -1) <= current_id
-            if reached:
-                icon, color, detail = "mdi-check-circle", "success", "已达到"
-            elif result.next_level and level.get("id") == result.next_level.get("id"):
-                icon, color, detail = "mdi-arrow-right-circle", "warning", self._gap_text(result)
-            elif evaluation.status == "unknown":
-                icon, color, detail = "mdi-help-circle", "grey", "数据不足"
-            elif evaluation.status == "met":
-                icon, color, detail = "mdi-check-circle-outline", "info", "条件已满足"
+            if result.current_group == "user":
+                reached = (
+                    (level.get("groupType") or "user") == "user"
+                    and current_id is not None
+                    and level.get("id", -1) <= current_id
+                )
             else:
-                icon, color, detail = "mdi-circle-outline", "grey", "未达到"
+                reached = current_id is not None and level.get("id") == current_id
+            if reached:
+                icon = "mdi-check-circle-outline"
+                color = "success" if level.get("id") == minimum_retention_id else "info"
+                detail = "已达到"
+            elif evaluation.status == "unknown":
+                icon, color, detail = "mdi-circle-outline", None, "数据不足"
+            elif evaluation.status == "met":
+                icon, color, detail = "mdi-circle-outline", None, "已满足条件，等级未确认"
+            else:
+                icon, color, detail = "mdi-circle-outline", None, "未达到"
+            level_name = level.get("name") or "未命名等级"
+            if minimum_retention_id is not None and level.get("id") == minimum_retention_id:
+                level_name += "（最低保号等级）"
+            item_props = {
+                "prepend-icon": icon,
+                "title": level_name,
+                "subtitle": (
+                    f"{detail}；上传 {self._requirement_size(level, 'uploaded')}；下载 {self._requirement_size(level, 'downloaded')}；"
+                    f"注册时长 {self._duration(level.get('interval'))}{self._extra_requirement_text(level)}"
+                ),
+            }
+            if color:
+                item_props["base-color"] = color
             level_rows.append({
                 "component": "VListItem",
-                "props": {
-                    "prepend-icon": icon,
-                    "base-color": color,
-                    "title": level.get("name") or "未命名等级",
-                    "subtitle": (
-                        f"{detail}；上传 {self._requirement_size(level, 'uploaded')}；下载 {self._requirement_size(level, 'downloaded')}；"
-                        f"注册时长 {self._duration(level.get('interval'))}{self._extra_requirement_text(level)}"
-                    ),
-                },
+                "props": item_props,
             })
         if not level_rows:
             level_rows = [{
@@ -503,8 +526,6 @@ class PTDepilerMp(_PluginBase):
     def _summary_cards(summary: Dict[str, int]) -> Dict[str, Any]:
         """构建摘要统计卡片。"""
         items = [
-            ("启用站点", summary["configured"], "primary"),
-            ("规则匹配", summary["matched"], "info"),
             ("已保号", summary["retained"], "success"),
             ("未保号", summary["unretained"], "warning"),
             ("无法判断", summary["unknown"], "grey"),
@@ -514,14 +535,15 @@ class PTDepilerMp(_PluginBase):
             "component": "VRow",
             "content": [{
                 "component": "VCol",
-                "props": {"cols": 6, "sm": 4, "md": 2},
+                "props": {"cols": 6, "sm": 3, "md": 3},
                 "content": [{
                     "component": "VCard",
                     "props": {"variant": "tonal", "color": color},
-                    "content": [
-                        {"component": "VCardTitle", "text": str(value)},
-                        {"component": "VCardSubtitle", "text": label},
-                    ],
+                    "content": [{
+                        "component": "VCardText",
+                        "props": {"class": "text-center py-4 text-subtitle-1 font-weight-medium"},
+                        "text": f"{label} {value}",
+                    }],
                 }],
             } for label, value, color in items],
         }

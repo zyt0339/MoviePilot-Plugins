@@ -405,6 +405,51 @@ class RuleRepository:
         rule_id = self._name_index.get(str(site_name or "").strip().casefold())
         return (rule_id, self.sites.get(rule_id)) if rule_id else (None, None)
 
+    @staticmethod
+    def resolve_rule(user: Dict[str, Any], rule: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        """根据入站时间应用 JSON 中声明的等级条件覆盖。"""
+        if not rule:
+            return rule
+        overrides = rule.get("levelRequirementOverrides")
+        if not isinstance(overrides, list) or not overrides:
+            return rule
+        try:
+            join_at = _parse_datetime(user.get("join_at"))
+        except (TypeError, ValueError, OverflowError):
+            return rule
+        if not join_at:
+            return rule
+        levels = rule.get("levels") or []
+        changed = False
+        for override in overrides:
+            if not isinstance(override, dict):
+                continue
+            try:
+                join_before = _parse_datetime(override.get("joinBefore"))
+            except (TypeError, ValueError, OverflowError):
+                continue
+            if not join_before:
+                continue
+            compared_join_at, compared_join_before = join_at, join_before
+            if compared_join_at.tzinfo and not compared_join_before.tzinfo:
+                compared_join_before = compared_join_before.replace(tzinfo=compared_join_at.tzinfo)
+            elif compared_join_before.tzinfo and not compared_join_at.tzinfo:
+                compared_join_at = compared_join_at.replace(tzinfo=compared_join_before.tzinfo)
+            if compared_join_at >= compared_join_before:
+                continue
+            remove_fields = {
+                str(field) for field in (override.get("removeFields") or []) if str(field)
+            }
+            if not remove_fields:
+                continue
+            levels = [
+                {key: value for key, value in level.items() if key not in remove_fields}
+                if isinstance(level, dict) else level
+                for level in levels
+            ]
+            changed = True
+        return {**rule, "levels": levels} if changed else rule
+
     def evaluate_site(
         self,
         user: Dict[str, Any],
@@ -421,6 +466,11 @@ class RuleRepository:
         ordinary_levels = [item for item in levels if (item.get("groupType") or "user") == "user"]
         raw_level_name = str(user.get("user_level") or "")
         current, group = find_level(raw_level_name, levels)
+        inferred = [
+            level for level in ordinary_levels
+            if any(field in level for field in INFERABLE_REQUIREMENT_FIELDS)
+            and evaluate_requirement(user, level, now=now).status == "met"
+        ]
         standard_index = _standard_level_index(raw_level_name)
         if current is not None and group == "user" and standard_index is not None:
             standard_name = clean_level_name(STANDARD_USER_LEVELS[standard_index])
@@ -431,13 +481,11 @@ class RuleRepository:
             if not has_explicit_standard_name:
                 # MoviePilot 有时返回 NexusPHP 通用等级名，而站点规则使用更多自定义等级。
                 # 此时按已保存的站点数据向上校正到最高“明确满足”的等级，避免序号错位。
-                inferred = [
-                    level for level in ordinary_levels
-                    if any(field in level for field in INFERABLE_REQUIREMENT_FIELDS)
-                    and evaluate_requirement(user, level, now=now).status == "met"
-                ]
                 if inferred and inferred[-1].get("id", -1) > current.get("id", -1):
                     current = inferred[-1]
+        elif current is None and group == "user" and inferred:
+            # 站点返回自定义头衔或未返回标准等级名时，按适用规则推断最高明确满足等级。
+            current = inferred[-1]
         if current is None and group == "user":
             return SiteLevelResult(rule_id, None, group, None, None, None, "无法识别当前等级")
         retained_level = next((item for item in ordinary_levels if item.get("isKept")), None)

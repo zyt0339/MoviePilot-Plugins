@@ -1,6 +1,14 @@
 {
   "name": "天空",
   "is_dead": false,
+  "levelRequirementOverrides": [
+    {
+      "joinBefore": "2025-03-01T00:00:00+00:00",
+      "removeFields": [
+        "bonus"
+      ]
+    }
+  ],
   "levels": [
     {
       "id": 1,
