@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from app import schemas
 from app.chain.site import SiteChain
@@ -18,7 +19,13 @@ from app.log import logger
 from app.plugins import _PluginBase
 from app.utils.string import StringUtils
 
-from app.plugins.ptdepilermp.rules import RuleRepository, SiteLevelResult, evaluate_requirement, parse_size
+from app.plugins.ptdepilermp.rules import (
+    RequirementResult,
+    RuleRepository,
+    SiteLevelResult,
+    evaluate_requirement,
+    parse_size,
+)
 
 
 class PTDepilerMp(_PluginBase):
@@ -27,15 +34,17 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT站点等级监控"
     plugin_desc = "展示站点当前等级、保号状态和下一等级缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.2.0"
+    plugin_version = "1.5.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
     plugin_order = 20
     auth_level = 2
 
-    _enabled = False
-    _allow_refresh_all = False
+    _show_dashboard = False
+    _diagnose_once = False
+    _onlyonce = False
+    _cron = ""
     _scheduler: Optional[BackgroundScheduler] = None
 
     def __init__(self):
@@ -48,13 +57,58 @@ class PTDepilerMp(_PluginBase):
         """载入插件配置和磁盘站点规则。"""
         self.stop_service()
         config = dict(config or {})
-        self._enabled = bool(config.get("enabled", False))
-        self._allow_refresh_all = bool(config.get("allow_refresh_all", False))
+        self._show_dashboard = bool(config.get("show_dashboard", config.get("enabled", False)))
+        self._diagnose_once = bool(config.get("diagnose_once", False))
+        self._onlyonce = bool(config.get("onlyonce", False))
+        self._cron = str(config.get("cron") or "").strip()
         self._repository.reload()
+        self._configure_refresh_jobs()
 
     def get_state(self) -> bool:
         """返回插件启用状态。"""
-        return self._enabled
+        return self._show_dashboard or bool(self._scheduler)
+
+    def _save_current_config(self) -> None:
+        """保存当前配置，并确保一次性开关不会重复执行。"""
+        self.update_config({
+            "show_dashboard": self._show_dashboard,
+            "onlyonce": self._onlyonce,
+            "cron": self._cron,
+            "diagnose_once": self._diagnose_once,
+        })
+
+    def _configure_refresh_jobs(self) -> None:
+        """注册一次性与 cron 全站数据刷新任务。"""
+        if not self._onlyonce and not self._cron:
+            return
+        scheduler = BackgroundScheduler(timezone=settings.TZ)
+        has_jobs = False
+        if self._onlyonce:
+            scheduler.add_job(
+                self._run_refresh_all,
+                "date",
+                run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3),
+                max_instances=1,
+                name="PT站点等级数据立即刷新",
+            )
+            has_jobs = True
+            self._onlyonce = False
+            self._save_current_config()
+        if self._cron:
+            try:
+                scheduler.add_job(
+                    self._run_refresh_all,
+                    CronTrigger.from_crontab(self._cron),
+                    max_instances=1,
+                    coalesce=True,
+                    name="PT站点等级数据定时刷新",
+                )
+                has_jobs = True
+            except Exception as error:
+                logger.error(f"PT站点等级监控：cron 表达式无效：{error}")
+        if has_jobs:
+            self._scheduler = scheduler
+            scheduler.start()
 
     @staticmethod
     def get_command() -> List[Dict[str, Any]]:
@@ -68,22 +122,13 @@ class PTDepilerMp(_PluginBase):
 
     def get_api(self) -> List[Dict[str, Any]]:
         """返回带 Bearer 鉴权的手动刷新接口。"""
-        return [
-            {
-                "path": "/refresh_site",
-                "endpoint": self.refresh_site,
-                "methods": ["POST"],
-                "auth": "bear",
-                "summary": "刷新单个站点数据",
-            },
-            {
-                "path": "/refresh_all",
-                "endpoint": self.refresh_all,
-                "methods": ["POST"],
-                "auth": "bear",
-                "summary": "刷新全部启用站点数据",
-            },
-        ]
+        return [{
+            "path": "/refresh_site",
+            "endpoint": self.refresh_site,
+            "methods": ["POST"],
+            "auth": "bear",
+            "summary": "刷新单个站点数据",
+        }]
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """返回插件配置表单和默认值。"""
@@ -99,27 +144,56 @@ class PTDepilerMp(_PluginBase):
                                 "props": {"cols": 12, "md": 4},
                                 "content": [{
                                     "component": "VSwitch",
-                                    "props": {"model": "enabled", "label": "启用插件"},
+                                    "props": {
+                                        "model": "onlyonce",
+                                        "label": "立即刷新一次全部站点",
+                                        "color": "error",
+                                    },
                                 }],
                             },
                             {
                                 "component": "VCol",
-                                "props": {"cols": 12, "md": 8},
+                                "props": {"cols": 12, "md": 4},
+                                "content": [{
+                                    "component": "VSwitch",
+                                    "props": {"model": "show_dashboard", "label": "显示仪表板"},
+                                }],
+                            },
+                            {
+                                "component": "VCol",
+                                "props": {"cols": 12, "md": 4},
                                 "content": [{
                                     "component": "VSwitch",
                                     "props": {
-                                        "model": "allow_refresh_all",
-                                        "label": "允许刷新全部站点（默认关闭）",
-                                        "color": "error",
+                                        "model": "diagnose_once",
+                                        "label": "输出一次调查日志",
+                                        "color": "warning",
                                     },
                                 }],
                             },
                         ],
                     },
                     {
+                        "component": "VRow",
+                        "content": [{
+                            "component": "VCol",
+                            "props": {"cols": 12},
+                            "content": [{
+                                "component": "VTextField",
+                                "props": {
+                                    "model": "cron",
+                                    "label": "全站数据刷新周期",
+                                    "placeholder": "5 位 cron 表达式，留空不定时刷新",
+                                    "hint": "例如：0 8 * * * 表示每天 08:00",
+                                    "persistent-hint": True,
+                                },
+                            }],
+                        }],
+                    },
+                    {
                         "component": "VAlert",
                         "props": {"type": "warning", "variant": "tonal", "class": "mb-4"},
-                        "text": "刷新会真实访问 PT 站点，并可能触发 MoviePilot 的站点消息、低分享率提醒等既有副作用。",
+                        "text": "立即运行和 cron 会刷新全部启用站点；单站按钮只刷新对应站点。刷新会真实访问 PT 站点，并可能触发站点消息和低分享率提醒。",
                     },
                     {
                         "component": "VAlert",
@@ -129,8 +203,10 @@ class PTDepilerMp(_PluginBase):
                 ],
             }
         ], {
-            "enabled": False,
-            "allow_refresh_all": False,
+            "show_dashboard": False,
+            "onlyonce": False,
+            "cron": "",
+            "diagnose_once": False,
         }
 
     @staticmethod
@@ -166,7 +242,37 @@ class PTDepilerMp(_PluginBase):
                 "result": result,
                 "stale": not data or user.get("updated_day") != today or bool(user.get("err_msg")),
             })
+        if self._diagnose_once:
+            self._write_diagnostic_log(rows)
+            self._diagnose_once = False
+            self._save_current_config()
         return rows
+
+    def _write_diagnostic_log(self, rows: List[Dict[str, Any]]) -> None:
+        """输出一次不含域名和认证信息的等级判断调查日志。"""
+        logger.info(
+            f"PT站点等级监控调查：站点数={len(rows)}，规则数={len(self._repository.sites)}，"
+            f"无效规则数={self._repository.load_errors}"
+        )
+        for row in rows:
+            result = row["result"]
+            if result.retained is not None and not row["stale"]:
+                continue
+            retained_level = self._retention_level(row)
+            requirement = evaluate_requirement(row["user"], retained_level) if retained_level else None
+            unknown = requirement.unknown if requirement else []
+            logger.info(
+                "PT站点等级监控调查："
+                f"站点={row['site_name']}，当前等级={row['user'].get('user_level') or '缺失'}，"
+                f"规则={result.rule_id or '未匹配'}，状态="
+                f"{'已保号' if result.retained is True else '未保号' if result.retained is False else '无法判断'}，"
+                f"原因={result.reason or '无'}，保号等级="
+                f"{(retained_level or {}).get('name') or '未配置'}，保号未知条件={','.join(unknown) or '无'}，"
+                f"快照={'陈旧或失败' if row['stale'] else '正常'}"
+            )
+        for start in range(0, len(self._repository.load_error_details), 20):
+            details = self._repository.load_error_details[start:start + 20]
+            logger.info("PT站点等级监控调查：无效规则=" + "；".join(f"{name}: {reason}" for name, reason in details))
 
     @staticmethod
     def _size(value: Any) -> str:
@@ -196,6 +302,34 @@ class PTDepilerMp(_PluginBase):
             return "无"
         return str(value).removeprefix("P").replace("Y", "年").replace("M", "月").replace("W", "周").replace("D", "天")
 
+    def _requirement_size(self, requirement: Dict[str, Any], key: str) -> str:
+        """区分等级没有该门槛与门槛值无效。"""
+        return self._size(requirement.get(key)) if key in requirement else "无要求"
+
+    @staticmethod
+    def _field_label(key: str) -> str:
+        return {
+            "bonus": "魔力", "seedingBonus": "做种积分", "ratio": "分享率",
+            "seeding": "做种数", "seedingSize": "做种量", "uploads": "发布数",
+            "alternative": "可选条件", "interval": "注册时长",
+        }.get(key, key)
+
+    def _extra_requirement_text(self, level: Dict[str, Any]) -> str:
+        """展示常见的非流量等级门槛。"""
+        parts = []
+        for key in ("ratio", "bonus", "seedingBonus", "seeding", "seedingSize", "uploads"):
+            if key not in level:
+                continue
+            value = level[key]
+            if key == "seedingSize":
+                text = self._size(value)
+            elif isinstance(value, list):
+                text = "～".join(self._number(item) for item in value)
+            else:
+                text = self._number(value)
+            parts.append(f"{self._field_label(key)} {text}")
+        return "；" + "；".join(parts) if parts else ""
+
     def _gap_text(self, result: SiteLevelResult) -> str:
         """把下一等级三态结果转为简洁文本。"""
         requirement = result.next_requirement
@@ -214,9 +348,9 @@ class PTDepilerMp(_PluginBase):
             parts.append(f"时间 {days}天")
         other = [key for key in requirement.gaps if key not in {"uploaded", "downloaded", "interval"}]
         if other:
-            parts.append("其他条件 " + "、".join(other))
+            parts.append("其他条件 " + "、".join(self._field_label(key) for key in other))
         if requirement.unknown:
-            parts.append("数据不足：" + "、".join(requirement.unknown))
+            parts.append("数据不足：" + "、".join(self._field_label(key) for key in requirement.unknown))
         return "；".join(parts) if parts else "已满足已知条件"
 
     @staticmethod
@@ -268,19 +402,56 @@ class PTDepilerMp(_PluginBase):
             "stale": sum(1 for row in rows if row["stale"]),
         }
 
+    @staticmethod
+    def _retention_level(row: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """返回首个普通保号等级；VIP/管理等级直接返回当前特殊等级。"""
+        result = row["result"]
+        if result.current_group in {"vip", "manager"}:
+            return result.current_level or {"name": row["user"].get("user_level") or "VIP/管理等级"}
+        levels = sorted((row["rule"] or {}).get("levels") or [], key=lambda item: item.get("id", -1))
+        return next((
+            level for level in levels
+            if (level.get("groupType") or "user") == "user" and level.get("isKept")
+        ), None)
+
+    def _retention_summary(
+        self,
+        result: SiteLevelResult,
+        retained_level: Optional[Dict[str, Any]],
+        requirement: Optional[RequirementResult],
+    ) -> str:
+        """生成围绕保号等级的结论，而不是下一等级结论。"""
+        if result.reason:
+            return result.reason
+        if result.current_group in {"vip", "manager"}:
+            return "VIP/管理等级，已保号"
+        if not retained_level:
+            return "规则未配置保号等级"
+        if result.retained:
+            return "已达到保号等级"
+        if not requirement:
+            return "保号条件数据不足"
+        proxy = SiteLevelResult(
+            result.rule_id, result.current_level, result.current_group,
+            retained_level, requirement, result.retained,
+        )
+        detail = self._gap_text(proxy)
+        return "尚未达到保号等级；" + detail
+
     def get_page(self) -> List[dict]:
         """返回站点等级详情页。"""
         rows = self._rows()
         summary = self._summary(rows)
         header_names = [
-            "站点", "状态", "当前等级", "上传/下载", "分享率", "入站时间", "下一等级",
-            "目标上传/下载", "所需时间", "缺少值/其他条件", "数据时间", "操作",
+            "站点", "状态", "当前等级", "保号等级", "上传/下载", "分享率",
+            "保号上传/下载", "保号总结", "数据时间", "操作",
         ]
         table_rows = []
         panels = []
         for row in rows:
             user, result = row["user"], row["result"]
-            next_level = result.next_level or {}
+            retained_level = self._retention_level(row)
+            retained_requirement = evaluate_requirement(user, retained_level) if retained_level else None
             current_name = (result.current_level or {}).get("name") or user.get("user_level") or "数据不足"
             update_text = " ".join(filter(None, [user.get("updated_day"), user.get("updated_time")])) or "无快照"
             if row["stale"]:
@@ -291,30 +462,20 @@ class PTDepilerMp(_PluginBase):
                     self._cell(row["site_name"]),
                     self._cell("", [self._status_chip(result)]),
                     self._cell(current_name),
+                    self._cell((retained_level or {}).get("name") or "未配置"),
                     self._cell(f"{self._size(user.get('upload'))} / {self._size(user.get('download'))}"),
                     self._cell(self._number(user.get("ratio"))),
-                    self._cell(user.get("join_at") or "数据不足"),
-                    self._cell(next_level.get("name") or "—"),
-                    self._cell(f"{self._size(next_level.get('uploaded'))} / {self._size(next_level.get('downloaded'))}"),
-                    self._cell(self._duration(next_level.get("interval"))),
-                    self._cell(result.reason or self._gap_text(result)),
+                    self._cell(
+                        f"{self._requirement_size(retained_level or {}, 'uploaded')} / "
+                        f"{self._requirement_size(retained_level or {}, 'downloaded')}"
+                    ),
+                    self._cell(self._retention_summary(result, retained_level, retained_requirement)),
                     self._cell(update_text),
                     self._cell("", [self._refresh_button(row["site_id"])]),
                 ],
             })
             panels.append(self._level_panel(row))
 
-        actions = []
-        if self._allow_refresh_all:
-            actions = [{
-                "component": "VBtn",
-                "props": {"color": "error", "variant": "tonal", "prepend-icon": "mdi-refresh"},
-                "text": "刷新全部站点",
-                "events": {"click": {
-                    "api": f"plugin/{self.__class__.__name__}/refresh_all",
-                    "method": "post",
-                }},
-            }]
         return [{
             "component": "div",
             "content": [
@@ -327,10 +488,9 @@ class PTDepilerMp(_PluginBase):
                         + (f" 当前有 {self._repository.load_errors} 个规则文件无效并已跳过。" if self._repository.load_errors else "")
                     ),
                 },
-                {"component": "div", "props": {"class": "d-flex justify-end mb-3"}, "content": actions},
                 {
                     "component": "VTable",
-                    "props": {"hover": True, "fixed-header": True},
+                    "props": {"hover": True, "fixed-header": True, "density": "compact"},
                     "content": [
                         {"component": "thead", "content": [{
                             "component": "tr",
@@ -358,6 +518,8 @@ class PTDepilerMp(_PluginBase):
                 icon, color, detail = "mdi-arrow-right-circle", "warning", self._gap_text(result)
             elif evaluation.status == "unknown":
                 icon, color, detail = "mdi-help-circle", "grey", "数据不足"
+            elif evaluation.status == "met":
+                icon, color, detail = "mdi-check-circle-outline", "info", "条件已满足"
             else:
                 icon, color, detail = "mdi-circle-outline", "grey", "未达到"
             level_rows.append({
@@ -367,8 +529,8 @@ class PTDepilerMp(_PluginBase):
                     "base-color": color,
                     "title": level.get("name") or "未命名等级",
                     "subtitle": (
-                        f"{detail}；上传 {self._size(level.get('uploaded'))}；下载 {self._size(level.get('downloaded'))}；"
-                        f"注册时长 {self._duration(level.get('interval'))}"
+                        f"{detail}；上传 {self._requirement_size(level, 'uploaded')}；下载 {self._requirement_size(level, 'downloaded')}；"
+                        f"注册时长 {self._duration(level.get('interval'))}{self._extra_requirement_text(level)}"
                     ),
                 },
             })
@@ -389,7 +551,7 @@ class PTDepilerMp(_PluginBase):
     def _summary_cards(summary: Dict[str, int]) -> Dict[str, Any]:
         """构建摘要统计卡片。"""
         items = [
-            ("已配置", summary["configured"], "primary"),
+            ("启用站点", summary["configured"], "primary"),
             ("规则匹配", summary["matched"], "info"),
             ("已保号", summary["retained"], "success"),
             ("未保号", summary["unretained"], "warning"),
@@ -413,8 +575,8 @@ class PTDepilerMp(_PluginBase):
         }
 
     def get_dashboard(self, **kwargs) -> Optional[Tuple[Dict[str, Any], Dict[str, Any], List[dict]]]:
-        """返回带自动刷新的等级摘要仪表板。"""
-        if not self._enabled:
+        """返回等级摘要仪表板；仅在页面加载时读取一次快照。"""
+        if not self._show_dashboard:
             return None
         rows = self._rows()
         summary = self._summary(rows)
@@ -425,9 +587,26 @@ class PTDepilerMp(_PluginBase):
             "props": {"type": "warning" if pending else "success", "variant": "tonal", "class": "mt-2"},
             "text": "未保号站点：" + "、".join(pending) if pending else "当前没有明确未保号的站点",
         })
-        return {"cols": 12}, {"refresh": 60}, elements
+        return {"cols": 12}, {}, elements
 
-    def _enqueue_refresh(self, mode: str, site_id: Optional[int] = None) -> bool:
+    def _run_refresh_all(self) -> None:
+        """互斥执行全部启用站点的数据刷新。"""
+        with self._refresh_lock:
+            if self._refresh_pending:
+                logger.warning("PT站点等级监控：已有刷新任务，跳过本次全站刷新")
+                return
+            self._refresh_pending = True
+        try:
+            logger.info("PT站点等级监控：开始刷新全部启用站点数据")
+            SiteChain().refresh_userdatas()
+            logger.info("PT站点等级监控：全部启用站点数据刷新完成")
+        except Exception as error:
+            logger.error(f"PT站点等级监控：全站刷新任务失败：{error}")
+        finally:
+            with self._refresh_lock:
+                self._refresh_pending = False
+
+    def _enqueue_refresh(self, site_id: int) -> bool:
         """把刷新请求放入插件单任务调度器，并拒绝重复请求。"""
         with self._refresh_lock:
             if self._refresh_pending:
@@ -440,18 +619,15 @@ class PTDepilerMp(_PluginBase):
                 self._run_refresh,
                 "date",
                 run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=1),
-                args=[mode, site_id],
+                args=[site_id],
                 max_instances=1,
                 name="PT站点等级数据刷新",
             )
             return True
 
-    def _run_refresh(self, mode: str, site_id: Optional[int]):
+    def _run_refresh(self, site_id: int):
         """在后台复用 MoviePilot 宿主刷新逻辑。"""
         try:
-            if mode == "all":
-                SiteChain().refresh_userdatas()
-                return
             site = next((item for item in (SiteOper().list_active() or []) if item.id == site_id), None)
             if not site:
                 logger.warning("PT站点等级监控：待刷新站点不存在或未启用")
@@ -469,8 +645,6 @@ class PTDepilerMp(_PluginBase):
 
     def refresh_site(self, site_id: int) -> schemas.Response:
         """校验并受理单站刷新请求。"""
-        if not self._enabled:
-            return schemas.Response(success=False, message="插件未启用")
         try:
             selected_id = int(site_id)
         except (TypeError, ValueError):
@@ -480,19 +654,9 @@ class PTDepilerMp(_PluginBase):
             return schemas.Response(success=False, message="站点不存在或未启用")
         if not SitesHelper().get_indexer(site.domain):
             return schemas.Response(success=False, message="站点定义不存在")
-        if not self._enqueue_refresh("site", selected_id):
+        if not self._enqueue_refresh(selected_id):
             return schemas.Response(success=False, message="已有刷新任务正在执行")
         return schemas.Response(success=True, message="单站刷新任务已受理")
-
-    def refresh_all(self) -> schemas.Response:
-        """在配置允许时受理全站刷新请求。"""
-        if not self._enabled:
-            return schemas.Response(success=False, message="插件未启用")
-        if not self._allow_refresh_all:
-            return schemas.Response(success=False, message="全站刷新未开启")
-        if not self._enqueue_refresh("all"):
-            return schemas.Response(success=False, message="已有刷新任务正在执行")
-        return schemas.Response(success=True, message="全站刷新任务已受理")
 
     def stop_service(self):
         """幂等停止调度器并释放刷新状态。"""

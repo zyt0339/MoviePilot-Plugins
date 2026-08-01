@@ -60,6 +60,10 @@ SPECIAL_LEVEL_KEYWORDS = {
     ),
     "vip": ("vip", "贵宾", "honor", "荣誉", "donor", "捐赠"),
 }
+STANDARD_USER_LEVELS = (
+    "User", "Power User", "Elite User", "Crazy User", "Insane User",
+    "Veteran User", "Extreme User", "Ultimate User", "Nexus Master",
+)
 
 
 @dataclass
@@ -87,6 +91,15 @@ class SiteLevelResult:
 def clean_level_name(value: Any) -> str:
     """规范化等级名称，用于处理中英文空格和下划线差异。"""
     return re.sub(r"[\s_]+", "", str(value or "")).lower()
+
+
+def _standard_level_index(level_name: Any) -> Optional[int]:
+    """从带站点头衔的文本中识别 NexusPHP 标准普通等级。"""
+    normalized = clean_level_name(level_name)
+    for index in range(len(STANDARD_USER_LEVELS) - 1, -1, -1):
+        if clean_level_name(STANDARD_USER_LEVELS[index]) in normalized:
+            return index
+    return None
 
 
 def parse_size(value: Any) -> Optional[float]:
@@ -160,6 +173,7 @@ def find_level(level_name: str, levels: Iterable[Dict[str, Any]]) -> Tuple[Optio
     normalized = clean_level_name(level_name)
     if not normalized:
         return None, "user"
+    levels = list(levels)
     for level in levels:
         names = [level.get("name"), *(level.get("nameAka") or [])]
         if any(clean_level_name(name) == normalized or clean_level_name(name).find(normalized) >= 0 for name in names if name):
@@ -168,6 +182,24 @@ def find_level(level_name: str, levels: Iterable[Dict[str, Any]]) -> Tuple[Optio
     if group != "user":
         special = next((level for level in levels if level.get("groupType") == group), None)
         return special, group
+    standard_index = _standard_level_index(level_name)
+    if standard_index is not None:
+        ordinary_levels = [level for level in levels if (level.get("groupType") or "user") == "user"]
+        # 先找规则名称中显式包含同一标准等级的项，兼容“憨笑如花 Ultimate User”等名称。
+        standard_name = clean_level_name(STANDARD_USER_LEVELS[standard_index])
+        explicit = next((
+            level for level in ordinary_levels
+            if any(
+                standard_name in clean_level_name(name)
+                for name in [level.get("name"), *(level.get("nameAka") or [])]
+                if name
+            )
+        ), None)
+        if explicit:
+            return explicit, "user"
+        # 自定义等级名与 MoviePilot 标准等级名不一致时，按 NexusPHP 的固定等级顺序关联。
+        if len(ordinary_levels) >= len(STANDARD_USER_LEVELS):
+            return ordinary_levels[standard_index], "user"
     return None, "user"
 
 
@@ -289,6 +321,10 @@ def evaluate_requirement(
     for field_name, user_key in NUMBER_FIELDS.items():
         if field_name not in requirement:
             continue
+        if field_name == "seedingBonus":
+            # MoviePilot V2 的 SiteUserData 暂无独立做种积分字段。现阶段按已满足处理，
+            # 避免所有含 seedingBonus 的等级被误判为“数据不足”；宿主补充该字段后恢复校验。
+            continue
         expected = _known_number(requirement, field_name)
         current = _known_number(user, user_key)
         if expected is None or current is None:
@@ -327,6 +363,7 @@ class RuleRepository:
         self.sites: Dict[str, Dict[str, Any]] = {}
         self._name_index: Dict[str, str] = {}
         self.load_errors = 0
+        self.load_error_details: List[Tuple[str, str]] = []
         self.reload()
 
     def reload(self) -> None:
@@ -334,6 +371,7 @@ class RuleRepository:
         sites: Dict[str, Dict[str, Any]] = {}
         name_keys = set()
         errors = 0
+        error_details: List[Tuple[str, str]] = []
         if self.rules_path.is_dir():
             for path in sorted(self.rules_path.glob("*.json")):
                 try:
@@ -348,12 +386,14 @@ class RuleRepository:
                         raise ValueError("规则 name 忽略大小写后必须唯一")
                     name_keys.add(name_key)
                     sites[rule_id] = rule
-                except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                except (OSError, ValueError, TypeError, json.JSONDecodeError) as error:
                     errors += 1
+                    error_details.append((path.name, str(error)))
         name_index = {rule_id.strip().casefold(): rule_id for rule_id in sites}
         self.sites = sites
         self._name_index = name_index
         self.load_errors = errors
+        self.load_error_details = error_details
 
     def match(self, site_name: Any) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
         """按去除首尾空白且忽略大小写的站点名称匹配规则。"""
@@ -376,13 +416,20 @@ class RuleRepository:
         current, group = find_level(str(user.get("user_level") or ""), levels)
         if current is None and group == "user":
             return SiteLevelResult(rule_id, None, group, None, None, None, "无法识别当前等级")
-        retained = True if group in {"vip", "manager"} else bool(current and current.get("isKept"))
+        ordinary_levels = [item for item in levels if (item.get("groupType") or "user") == "user"]
+        retained_level = next((item for item in ordinary_levels if item.get("isKept")), None)
+        retained = group in {"vip", "manager"}
+        if current is not None and group == "user":
+            retained = bool(
+                retained_level
+                and current.get("id", -1) >= retained_level.get("id", -1)
+            )
         next_level = None
         next_requirement = None
         if current is not None:
             current_id = current.get("id", -1)
             next_level = next(
-                (item for item in levels if (item.get("groupType") or "user") == "user" and item.get("id", -1) > current_id),
+                (item for item in ordinary_levels if item.get("id", -1) > current_id),
                 None,
             )
             if next_level:

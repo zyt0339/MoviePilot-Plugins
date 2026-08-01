@@ -17,7 +17,9 @@ PT-depiler 的站点定义位于 `src/packages/site/definitions/`，通常每个
 - `interval`：注册时长，使用 ISO 8601 日期区间，例如 `P4W`、`P6M`、`P1Y`。
 - `uploaded`、`downloaded`、`totalTraffic`、`seedingSize`：容量条件，可使用 `GiB`、`TiB` 等单位。
 - `ratio`：最低分享率；二元素数组表示最小值和最大值区间。
-- `bonus`、`seedingBonus`、`seeding`、`uploads`、`snatches` 等：最低数值条件。
+- `bonus`（魔力）、`seedingBonus`（做种积分）、`seeding`、`uploads`、`snatches` 等：最低数值条件。
+
+当前 MoviePilot V2 没有独立采集 `seedingBonus`，插件暂时将该条件视为已满足；规则字段仍需保留，以便宿主后续支持后恢复校验。
 - `hnrUnsatisfied`：允许的未解决 H&R 最大值，是上限条件。
 - `alternative`：可选条件数组，其中任意一项满足即可；它与同等级的其他顶层条件仍为 AND 关系。
 
