@@ -33,7 +33,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.31.0"
+    plugin_version = "1.32.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -128,11 +128,13 @@ class PTDepilerMp(_PluginBase):
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """返回插件配置表单和默认值。"""
         donor_site_options = []
+        donor_site_keys = set()
         for site in SiteOper().list_active() or []:
             site_name = str(getattr(site, "name", None) or "").strip()
-            _, rule = self._repository.match(site_name)
-            if site_name and rule and rule.get("donorAccountKept") is True:
+            site_name_key = site_name.casefold()
+            if site_name and site_name_key not in donor_site_keys:
                 donor_site_options.append({"title": site_name, "value": site_name})
+                donor_site_keys.add(site_name_key)
         return [
             {
                 "component": "VForm",
@@ -194,7 +196,7 @@ class PTDepilerMp(_PluginBase):
                     {
                         "component": "VAlert",
                         "props": {"type": "info", "variant": "tonal", "class": "mt-4"},
-                        "text": "等级配置来自插件 site_rules 目录。黄星特殊保号仅在规则允许且上方选中当前账号所在站点时生效；黄星失效后请及时取消。修改规则后请执行一次立即重算或重新加载插件。",
+                        "text": "等级配置来自插件 site_rules 目录。上方可从全部启用站点中选择当前拥有黄星或捐赠者身份的站点；黄星失效后请及时取消。修改规则后请执行一次立即重算或重新加载插件。",
                     },
                 ],
             }

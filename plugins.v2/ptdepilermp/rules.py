@@ -462,11 +462,21 @@ class RuleRepository:
         now: Optional[datetime] = None,
     ) -> SiteLevelResult:
         """计算站点当前等级、保号状态和下一等级缺口。"""
+        donor_retained = user.get("is_donor") is True
         if not rule:
+            if donor_retained:
+                return SiteLevelResult(
+                    rule_id, None, "user", None, None, True,
+                    retention_type="donor",
+                )
             return SiteLevelResult(rule_id, None, None, None, None, None, "未匹配等级规则")
         if rule.get("is_dead"):
+            if donor_retained:
+                return SiteLevelResult(
+                    rule_id, None, "user", None, None, True,
+                    retention_type="donor",
+                )
             return SiteLevelResult(rule_id, None, None, None, None, None, "上游规则已标记站点失效")
-        donor_retained = bool(user.get("is_donor") is True and rule.get("donorAccountKept") is True)
         levels = sorted(rule.get("levels") or [], key=lambda item: item.get("id", -1))
         ordinary_levels = [item for item in levels if (item.get("groupType") or "user") == "user"]
         raw_level_name = str(user.get("user_level") or "")
