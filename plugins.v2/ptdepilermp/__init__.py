@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from threading import Lock
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -33,7 +34,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.32.0"
+    plugin_version = "1.33.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -215,6 +216,25 @@ class PTDepilerMp(_PluginBase):
         )
         return {key: getattr(value, key, None) for key in keys}
 
+    @staticmethod
+    def _safe_site_url(value: Any) -> Optional[str]:
+        """仅允许浏览器打开不含认证信息的 HTTP(S) 站点地址。"""
+        site_url = str(value or "").strip()
+        if not site_url:
+            return None
+        try:
+            parsed = urlparse(site_url)
+        except (TypeError, ValueError):
+            return None
+        if (
+            parsed.scheme.lower() not in {"http", "https"}
+            or not parsed.netloc
+            or parsed.username
+            or parsed.password
+        ):
+            return None
+        return site_url
+
     def _calculate_rows(self) -> List[Dict[str, Any]]:
         """读取 MoviePilot 已有快照并计算保号结果，不访问 PT 站点。"""
         self._repository.reload()
@@ -253,6 +273,7 @@ class PTDepilerMp(_PluginBase):
             result = self._repository.evaluate_site(user, rule_id, rule)
             rows.append({
                 "site_name": site.name,
+                "site_url": self._safe_site_url(getattr(site, "url", None)),
                 "user": user,
                 "rule": rule,
                 "result": result,
@@ -542,6 +563,23 @@ class PTDepilerMp(_PluginBase):
         detail = self._gap_text(proxy)
         return "目标：" + detail
 
+    def _site_cell(self, row: Dict[str, Any], width: str) -> Dict[str, Any]:
+        """未保号或无法判断的站点提供带下划线的新窗口入口。"""
+        site_name = row["site_name"]
+        site_url = row.get("site_url")
+        if row["result"].retained is not True and site_url:
+            return self._cell("", [{
+                "component": "a",
+                "props": {
+                    "href": site_url,
+                    "target": "_blank",
+                    "rel": "noopener noreferrer",
+                    "class": "text-decoration-underline",
+                },
+                "text": site_name,
+            }], width=width)
+        return self._cell(site_name, width=width)
+
     @staticmethod
     def _join_at_sort_key(row: Dict[str, Any]) -> Tuple[int, float]:
         """按入站时间升序排列，缺失或异常时间统一放在最后。"""
@@ -585,7 +623,7 @@ class PTDepilerMp(_PluginBase):
             table_rows.append({
                 "component": "tr",
                 "content": [
-                    self._cell(row["site_name"], width=headers[0][1]),
+                    self._site_cell(row, width=headers[0][1]),
                     self._cell("", [self._status_chip(result)], width=headers[1][1]),
                     self._cell(current_name, width=headers[2][1]),
                     self._cell((retained_level or {}).get("name") or "未配置", width=headers[3][1]),
