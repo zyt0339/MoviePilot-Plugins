@@ -64,6 +64,11 @@ STANDARD_USER_LEVELS = (
     "User", "Power User", "Elite User", "Crazy User", "Insane User",
     "Veteran User", "Extreme User", "Ultimate User", "Nexus Master",
 )
+INFERABLE_REQUIREMENT_FIELDS = {
+    "interval", "ratio", "trueRatio", "hnrUnsatisfied", "alternative",
+    *SIZE_FIELDS.keys(), *DURATION_FIELDS.keys(),
+    *(field for field in NUMBER_FIELDS if field != "seedingBonus"),
+}
 
 
 @dataclass
@@ -413,10 +418,28 @@ class RuleRepository:
         if rule.get("is_dead"):
             return SiteLevelResult(rule_id, None, None, None, None, None, "上游规则已标记站点失效")
         levels = sorted(rule.get("levels") or [], key=lambda item: item.get("id", -1))
-        current, group = find_level(str(user.get("user_level") or ""), levels)
+        ordinary_levels = [item for item in levels if (item.get("groupType") or "user") == "user"]
+        raw_level_name = str(user.get("user_level") or "")
+        current, group = find_level(raw_level_name, levels)
+        standard_index = _standard_level_index(raw_level_name)
+        if current is not None and group == "user" and standard_index is not None:
+            standard_name = clean_level_name(STANDARD_USER_LEVELS[standard_index])
+            current_names = [current.get("name"), *(current.get("nameAka") or [])]
+            has_explicit_standard_name = any(
+                standard_name in clean_level_name(name) for name in current_names if name
+            )
+            if not has_explicit_standard_name:
+                # MoviePilot 有时返回 NexusPHP 通用等级名，而站点规则使用更多自定义等级。
+                # 此时按已保存的站点数据向上校正到最高“明确满足”的等级，避免序号错位。
+                inferred = [
+                    level for level in ordinary_levels
+                    if any(field in level for field in INFERABLE_REQUIREMENT_FIELDS)
+                    and evaluate_requirement(user, level, now=now).status == "met"
+                ]
+                if inferred and inferred[-1].get("id", -1) > current.get("id", -1):
+                    current = inferred[-1]
         if current is None and group == "user":
             return SiteLevelResult(rule_id, None, group, None, None, None, "无法识别当前等级")
-        ordinary_levels = [item for item in levels if (item.get("groupType") or "user") == "user"]
         retained_level = next((item for item in ordinary_levels if item.get("isKept")), None)
         retained = group in {"vip", "manager"}
         if current is not None and group == "user":

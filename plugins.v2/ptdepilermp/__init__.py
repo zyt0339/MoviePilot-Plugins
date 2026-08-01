@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from threading import Lock
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -10,11 +10,8 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from app import schemas
-from app.chain.site import SiteChain
 from app.core.config import settings
 from app.db.site_oper import SiteOper
-from app.helper.sites import SitesHelper
 from app.log import logger
 from app.plugins import _PluginBase
 from app.utils.string import StringUtils
@@ -32,17 +29,15 @@ class PTDepilerMp(_PluginBase):
     """使用 MoviePilot 站点快照计算 PT 等级与保号状态。"""
 
     plugin_name = "PT站点等级监控"
-    plugin_desc = "展示站点当前等级、保号状态和下一等级缺口。"
+    plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.5.0"
+    plugin_version = "1.7.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
     plugin_order = 20
     auth_level = 2
 
-    _show_dashboard = False
-    _diagnose_once = False
     _onlyonce = False
     _cron = ""
     _scheduler: Optional[BackgroundScheduler] = None
@@ -50,58 +45,48 @@ class PTDepilerMp(_PluginBase):
     def __init__(self):
         super().__init__()
         self._repository = RuleRepository()
-        self._refresh_lock = Lock()
-        self._refresh_pending = False
+        self._calculation_lock = Lock()
+        self._cached_rows: List[Dict[str, Any]] = []
+        self._has_calculated = False
 
     def init_plugin(self, config: dict = None):
         """载入插件配置和磁盘站点规则。"""
         self.stop_service()
         config = dict(config or {})
-        self._show_dashboard = bool(config.get("show_dashboard", config.get("enabled", False)))
-        self._diagnose_once = bool(config.get("diagnose_once", False))
         self._onlyonce = bool(config.get("onlyonce", False))
         self._cron = str(config.get("cron") or "").strip()
-        self._repository.reload()
-        self._configure_refresh_jobs()
+        self._recalculate()
+        if self._onlyonce:
+            # 保存配置会重新加载插件，上面的计算已经立即完成；这里只负责复位一次性开关。
+            self._onlyonce = False
+            self._save_current_config()
+        self._configure_calculation_jobs()
 
     def get_state(self) -> bool:
         """返回插件启用状态。"""
-        return self._show_dashboard or bool(self._scheduler)
+        return True
 
     def _save_current_config(self) -> None:
         """保存当前配置，并确保一次性开关不会重复执行。"""
         self.update_config({
-            "show_dashboard": self._show_dashboard,
             "onlyonce": self._onlyonce,
             "cron": self._cron,
-            "diagnose_once": self._diagnose_once,
         })
 
-    def _configure_refresh_jobs(self) -> None:
-        """注册一次性与 cron 全站数据刷新任务。"""
-        if not self._onlyonce and not self._cron:
+    def _configure_calculation_jobs(self) -> None:
+        """注册 cron 保号数据重算任务。"""
+        if not self._cron:
             return
         scheduler = BackgroundScheduler(timezone=settings.TZ)
         has_jobs = False
-        if self._onlyonce:
-            scheduler.add_job(
-                self._run_refresh_all,
-                "date",
-                run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=3),
-                max_instances=1,
-                name="PT站点等级数据立即刷新",
-            )
-            has_jobs = True
-            self._onlyonce = False
-            self._save_current_config()
         if self._cron:
             try:
                 scheduler.add_job(
-                    self._run_refresh_all,
+                    self._recalculate,
                     CronTrigger.from_crontab(self._cron),
                     max_instances=1,
                     coalesce=True,
-                    name="PT站点等级数据定时刷新",
+                    name="PT站点保号数据定时重算",
                 )
                 has_jobs = True
             except Exception as error:
@@ -121,14 +106,8 @@ class PTDepilerMp(_PluginBase):
         return []
 
     def get_api(self) -> List[Dict[str, Any]]:
-        """返回带 Bearer 鉴权的手动刷新接口。"""
-        return [{
-            "path": "/refresh_site",
-            "endpoint": self.refresh_site,
-            "methods": ["POST"],
-            "auth": "bear",
-            "summary": "刷新单个站点数据",
-        }]
+        """本插件不提供 API。"""
+        return []
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """返回插件配置表单和默认值。"""
@@ -146,28 +125,8 @@ class PTDepilerMp(_PluginBase):
                                     "component": "VSwitch",
                                     "props": {
                                         "model": "onlyonce",
-                                        "label": "立即刷新一次全部站点",
-                                        "color": "error",
-                                    },
-                                }],
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 4},
-                                "content": [{
-                                    "component": "VSwitch",
-                                    "props": {"model": "show_dashboard", "label": "显示仪表板"},
-                                }],
-                            },
-                            {
-                                "component": "VCol",
-                                "props": {"cols": 12, "md": 4},
-                                "content": [{
-                                    "component": "VSwitch",
-                                    "props": {
-                                        "model": "diagnose_once",
-                                        "label": "输出一次调查日志",
-                                        "color": "warning",
+                                        "label": "立即重新计算一次",
+                                        "color": "primary",
                                     },
                                 }],
                             },
@@ -182,8 +141,8 @@ class PTDepilerMp(_PluginBase):
                                 "component": "VTextField",
                                 "props": {
                                     "model": "cron",
-                                    "label": "全站数据刷新周期",
-                                    "placeholder": "5 位 cron 表达式，留空不定时刷新",
+                                    "label": "保号数据重算周期",
+                                    "placeholder": "5 位 cron 表达式，留空不定时重算",
                                     "hint": "例如：0 8 * * * 表示每天 08:00",
                                     "persistent-hint": True,
                                 },
@@ -192,21 +151,19 @@ class PTDepilerMp(_PluginBase):
                     },
                     {
                         "component": "VAlert",
-                        "props": {"type": "warning", "variant": "tonal", "class": "mb-4"},
-                        "text": "立即运行和 cron 会刷新全部启用站点；单站按钮只刷新对应站点。刷新会真实访问 PT 站点，并可能触发站点消息和低分享率提醒。",
+                        "props": {"type": "info", "variant": "tonal", "class": "mb-4"},
+                        "text": "立即重算和 cron 只读取 MoviePilot 已保存的站点快照并重新计算保号结果，不会连接 PT 站点。",
                     },
                     {
                         "component": "VAlert",
                         "props": {"type": "info", "variant": "tonal", "class": "mt-4"},
-                        "text": "等级配置来自插件 site_rules 目录。修改或新增单站 JSON 后刷新详情页即可重新读取。",
+                        "text": "等级配置来自插件 site_rules 目录。修改或新增单站 JSON 后，请执行一次立即重算或重新加载插件。",
                     },
                 ],
             }
         ], {
-            "show_dashboard": False,
             "onlyonce": False,
             "cron": "",
-            "diagnose_once": False,
         }
 
     @staticmethod
@@ -218,8 +175,8 @@ class PTDepilerMp(_PluginBase):
         )
         return {key: getattr(value, key, None) for key in keys}
 
-    def _rows(self) -> List[Dict[str, Any]]:
-        """读取启用站点和最新快照，生成页面安全数据。"""
+    def _calculate_rows(self) -> List[Dict[str, Any]]:
+        """读取 MoviePilot 已有快照并计算保号结果，不访问 PT 站点。"""
         self._repository.reload()
         sites = SiteOper().list_active() or []
         latest = SiteOper().get_userdata_latest() or []
@@ -235,22 +192,31 @@ class PTDepilerMp(_PluginBase):
             rule_id, rule = self._repository.match(site.name)
             result = self._repository.evaluate_site(user, rule_id, rule)
             rows.append({
-                "site_id": site.id,
                 "site_name": site.name,
                 "user": user,
                 "rule": rule,
                 "result": result,
                 "stale": not data or user.get("updated_day") != today or bool(user.get("err_msg")),
             })
-        if self._diagnose_once:
-            self._write_diagnostic_log(rows)
-            self._diagnose_once = False
-            self._save_current_config()
         return rows
 
-    def _write_diagnostic_log(self, rows: List[Dict[str, Any]]) -> None:
-        """输出一次不含域名和认证信息的等级判断调查日志。"""
-        logger.info(
+    def _recalculate(self) -> None:
+        """重新计算并缓存保号数据。"""
+        with self._calculation_lock:
+            rows = self._calculate_rows()
+            self._cached_rows = rows
+            self._has_calculated = True
+            self._write_debug_log(rows)
+
+    def _rows(self) -> List[Dict[str, Any]]:
+        """返回最近一次计算结果；首次缺失时即时计算。"""
+        if not self._has_calculated:
+            self._recalculate()
+        return self._cached_rows
+
+    def _write_debug_log(self, rows: List[Dict[str, Any]]) -> None:
+        """默认输出不含域名和认证信息的 debug 调查日志。"""
+        logger.debug(
             f"PT站点等级监控调查：站点数={len(rows)}，规则数={len(self._repository.sites)}，"
             f"无效规则数={self._repository.load_errors}"
         )
@@ -261,7 +227,7 @@ class PTDepilerMp(_PluginBase):
             retained_level = self._retention_level(row)
             requirement = evaluate_requirement(row["user"], retained_level) if retained_level else None
             unknown = requirement.unknown if requirement else []
-            logger.info(
+            logger.debug(
                 "PT站点等级监控调查："
                 f"站点={row['site_name']}，当前等级={row['user'].get('user_level') or '缺失'}，"
                 f"规则={result.rule_id or '未匹配'}，状态="
@@ -272,7 +238,7 @@ class PTDepilerMp(_PluginBase):
             )
         for start in range(0, len(self._repository.load_error_details), 20):
             details = self._repository.load_error_details[start:start + 20]
-            logger.info("PT站点等级监控调查：无效规则=" + "；".join(f"{name}: {reason}" for name, reason in details))
+            logger.debug("PT站点等级监控调查：无效规则=" + "；".join(f"{name}: {reason}" for name, reason in details))
 
     @staticmethod
     def _size(value: Any) -> str:
@@ -378,19 +344,6 @@ class PTDepilerMp(_PluginBase):
             cell["text"] = str(text)
         return cell
 
-    def _refresh_button(self, site_id: Any) -> Dict[str, Any]:
-        """构建单站刷新按钮。"""
-        return {
-            "component": "VBtn",
-            "props": {"size": "small", "variant": "tonal", "prepend-icon": "mdi-refresh"},
-            "text": "刷新",
-            "events": {"click": {
-                "api": f"plugin/{self.__class__.__name__}/refresh_site",
-                "method": "post",
-                "params": {"site_id": site_id},
-            }},
-        }
-
     def _summary(self, rows: List[Dict[str, Any]]) -> Dict[str, int]:
         """汇总站点匹配、保号和陈旧数据数量。"""
         return {
@@ -428,7 +381,7 @@ class PTDepilerMp(_PluginBase):
         if not retained_level:
             return "规则未配置保号等级"
         if result.retained:
-            return "已达到保号等级"
+            return "已保号"
         if not requirement:
             return "保号条件数据不足"
         proxy = SiteLevelResult(
@@ -436,7 +389,7 @@ class PTDepilerMp(_PluginBase):
             retained_level, requirement, result.retained,
         )
         detail = self._gap_text(proxy)
-        return "尚未达到保号等级；" + detail
+        return "目标：" + detail
 
     def get_page(self) -> List[dict]:
         """返回站点等级详情页。"""
@@ -444,7 +397,7 @@ class PTDepilerMp(_PluginBase):
         summary = self._summary(rows)
         header_names = [
             "站点", "状态", "当前等级", "保号等级", "上传/下载", "分享率",
-            "保号上传/下载", "保号总结", "数据时间", "操作",
+            "保号上传/下载", "保号总结", "数据时间",
         ]
         table_rows = []
         panels = []
@@ -471,7 +424,6 @@ class PTDepilerMp(_PluginBase):
                     ),
                     self._cell(self._retention_summary(result, retained_level, retained_requirement)),
                     self._cell(update_text),
-                    self._cell("", [self._refresh_button(row["site_id"])]),
                 ],
             })
             panels.append(self._level_panel(row))
@@ -482,9 +434,9 @@ class PTDepilerMp(_PluginBase):
                 self._summary_cards(summary),
                 {
                     "component": "VAlert",
-                    "props": {"type": "warning", "variant": "tonal", "class": "my-4"},
+                    "props": {"type": "info", "variant": "tonal", "class": "my-4"},
                     "text": (
-                        "刷新会真实访问 PT 站点，并可能触发站点消息；非当天快照统一标记为陈旧。"
+                        "插件只读取 MoviePilot 已保存的站点快照；非当天快照统一标记为陈旧。"
                         + (f" 当前有 {self._repository.load_errors} 个规则文件无效并已跳过。" if self._repository.load_errors else "")
                     ),
                 },
@@ -576,8 +528,6 @@ class PTDepilerMp(_PluginBase):
 
     def get_dashboard(self, **kwargs) -> Optional[Tuple[Dict[str, Any], Dict[str, Any], List[dict]]]:
         """返回等级摘要仪表板；仅在页面加载时读取一次快照。"""
-        if not self._show_dashboard:
-            return None
         rows = self._rows()
         summary = self._summary(rows)
         pending = [row["site_name"] for row in rows if row["result"].retained is False]
@@ -589,77 +539,8 @@ class PTDepilerMp(_PluginBase):
         })
         return {"cols": 12}, {}, elements
 
-    def _run_refresh_all(self) -> None:
-        """互斥执行全部启用站点的数据刷新。"""
-        with self._refresh_lock:
-            if self._refresh_pending:
-                logger.warning("PT站点等级监控：已有刷新任务，跳过本次全站刷新")
-                return
-            self._refresh_pending = True
-        try:
-            logger.info("PT站点等级监控：开始刷新全部启用站点数据")
-            SiteChain().refresh_userdatas()
-            logger.info("PT站点等级监控：全部启用站点数据刷新完成")
-        except Exception as error:
-            logger.error(f"PT站点等级监控：全站刷新任务失败：{error}")
-        finally:
-            with self._refresh_lock:
-                self._refresh_pending = False
-
-    def _enqueue_refresh(self, site_id: int) -> bool:
-        """把刷新请求放入插件单任务调度器，并拒绝重复请求。"""
-        with self._refresh_lock:
-            if self._refresh_pending:
-                return False
-            self._refresh_pending = True
-            if not self._scheduler:
-                self._scheduler = BackgroundScheduler(timezone=settings.TZ)
-                self._scheduler.start()
-            self._scheduler.add_job(
-                self._run_refresh,
-                "date",
-                run_date=datetime.now(tz=pytz.timezone(settings.TZ)) + timedelta(seconds=1),
-                args=[site_id],
-                max_instances=1,
-                name="PT站点等级数据刷新",
-            )
-            return True
-
-    def _run_refresh(self, site_id: int):
-        """在后台复用 MoviePilot 宿主刷新逻辑。"""
-        try:
-            site = next((item for item in (SiteOper().list_active() or []) if item.id == site_id), None)
-            if not site:
-                logger.warning("PT站点等级监控：待刷新站点不存在或未启用")
-                return
-            indexer = SitesHelper().get_indexer(site.domain)
-            if not indexer:
-                logger.warning("PT站点等级监控：待刷新站点未找到站点定义")
-                return
-            SiteChain().refresh_userdata(site=indexer)
-        except Exception as error:
-            logger.error(f"PT站点等级监控：刷新任务失败：{error}")
-        finally:
-            with self._refresh_lock:
-                self._refresh_pending = False
-
-    def refresh_site(self, site_id: int) -> schemas.Response:
-        """校验并受理单站刷新请求。"""
-        try:
-            selected_id = int(site_id)
-        except (TypeError, ValueError):
-            return schemas.Response(success=False, message="站点 ID 无效")
-        site = next((item for item in (SiteOper().list_active() or []) if item.id == selected_id), None)
-        if not site:
-            return schemas.Response(success=False, message="站点不存在或未启用")
-        if not SitesHelper().get_indexer(site.domain):
-            return schemas.Response(success=False, message="站点定义不存在")
-        if not self._enqueue_refresh(selected_id):
-            return schemas.Response(success=False, message="已有刷新任务正在执行")
-        return schemas.Response(success=True, message="单站刷新任务已受理")
-
     def stop_service(self):
-        """幂等停止调度器并释放刷新状态。"""
+        """幂等停止重算调度器。"""
         scheduler = self._scheduler
         self._scheduler = None
         if scheduler:
@@ -668,5 +549,3 @@ class PTDepilerMp(_PluginBase):
                 scheduler.shutdown(wait=False)
             except Exception as error:
                 logger.debug(f"PT站点等级监控：停止调度器时忽略异常：{error}")
-        with self._refresh_lock:
-            self._refresh_pending = False
