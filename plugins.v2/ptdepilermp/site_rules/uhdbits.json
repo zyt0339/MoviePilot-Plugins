@@ -1,0 +1,59 @@
+{
+  "name": "UHDBits",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Peasant"
+    },
+    {
+      "id": 1,
+      "interval": "P1W",
+      "name": "User",
+      "privilege": "Access to Top 10; Can create and edit Wiki pages.",
+      "ratio": 0.7
+    },
+    {
+      "downloaded": "100GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power",
+      "privilege": "Ability to make New Requests; Enable Users online and Users on IRC on front page; Access to full Staff page.",
+      "ratio": 1.5,
+      "snatches": 20
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Extreme",
+      "privilege": "Access to the Invite Forum.",
+      "ratio": 2,
+      "snatches": 60
+    },
+    {
+      "downloaded": "900GB",
+      "id": 4,
+      "interval": "P16W",
+      "name": "Elite",
+      "ratio": 2.5,
+      "snatches": 180
+    },
+    {
+      "downloaded": "2700GB",
+      "id": 5,
+      "interval": "P32W",
+      "name": "Guru",
+      "ratio": 3,
+      "snatches": 540
+    },
+    {
+      "downloaded": "8100GB",
+      "id": 6,
+      "interval": "P64W",
+      "name": "Master",
+      "ratio": 3.5,
+      "snatches": 1620
+    }
+  ]
+}

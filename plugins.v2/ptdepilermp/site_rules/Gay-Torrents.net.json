@@ -1,0 +1,10 @@
+{
+  "name": "Gay-Torrents.net",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Newbie"
+    }
+  ]
+}

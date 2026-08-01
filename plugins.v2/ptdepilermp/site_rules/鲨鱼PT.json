@@ -1,0 +1,83 @@
+{
+  "name": "鲨鱼PT",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "downloaded": "30GB",
+      "id": 1,
+      "interval": "P5W",
+      "name": "Power User",
+      "privilege": "请求续种；查看NFO文档；发送邀请；查看排行榜；删除自己的字幕；发布种子；购买邀请；允许个性条。",
+      "ratio": 1,
+      "seedingBonus": 100000
+    },
+    {
+      "downloaded": "60GB",
+      "id": 2,
+      "interval": "P13W",
+      "name": "Elite User",
+      "privilege": "",
+      "ratio": 1,
+      "seedingBonus": 300000
+    },
+    {
+      "downloaded": "90GB",
+      "id": 3,
+      "interval": "P18W",
+      "name": "Crazy User",
+      "privilege": "查看特别区种子。",
+      "ratio": 1,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "120GB",
+      "id": 4,
+      "interval": "P43W",
+      "name": "Insane User",
+      "privilege": "",
+      "ratio": 1,
+      "seedingBonus": 1000000
+    },
+    {
+      "downloaded": "150GB",
+      "id": 5,
+      "interval": "P65W",
+      "name": "Veteran User",
+      "privilege": "查看历史记录。",
+      "ratio": 1,
+      "seedingBonus": 1500000
+    },
+    {
+      "downloaded": "180GB",
+      "id": 6,
+      "interval": "P90W",
+      "name": "Extreme User",
+      "privilege": "更新外部信息。",
+      "ratio": 1,
+      "seedingBonus": 2100000
+    },
+    {
+      "downloaded": "210GB",
+      "id": 7,
+      "interval": "P120W",
+      "name": "Ultimate User",
+      "privilege": "查看种子结构。",
+      "ratio": 1,
+      "seedingBonus": 2800000
+    },
+    {
+      "downloaded": "240GB",
+      "id": 8,
+      "interval": "P155W",
+      "name": "Nexus Master",
+      "privilege": "",
+      "ratio": 1,
+      "seedingBonus": 3600000
+    }
+  ]
+}

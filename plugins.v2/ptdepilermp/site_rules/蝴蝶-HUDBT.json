@@ -1,0 +1,101 @@
+{
+  "name": "蝴蝶-HUDBT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别。"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "nameAka": [
+        "易形"
+      ],
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "120GB",
+      "id": 3,
+      "interval": "P9W",
+      "name": "Elite User",
+      "nameAka": [
+        "化蛹"
+      ],
+      "privilege": "化蛹(Elite User)及以上用户封存账号后不会被删除。",
+      "ratio": 1.55
+    },
+    {
+      "downloaded": "300GB",
+      "id": 4,
+      "interval": "P16W",
+      "name": "Crazy User",
+      "nameAka": [
+        "破茧"
+      ],
+      "ratio": 2.05
+    },
+    {
+      "downloaded": "500GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User",
+      "nameAka": [
+        "恋风"
+      ],
+      "privilege": "可以查看普通日志。",
+      "ratio": 2.55
+    },
+    {
+      "downloaded": "750GB",
+      "id": 6,
+      "interval": "P36W",
+      "isKept": true,
+      "name": "Veteran User",
+      "nameAka": [
+        "翩跹"
+      ],
+      "privilege": "得到一个邀请名额；可以查看其它用户的评论、帖子历史。翩跹(Veteran User)及以上用户会永远保留账号。",
+      "ratio": 3.05
+    },
+    {
+      "downloaded": "1TB",
+      "id": 7,
+      "interval": "P49W",
+      "isKept": true,
+      "name": "Extreme User",
+      "nameAka": [
+        "归尘"
+      ],
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。（未启用）",
+      "ratio": 3.55
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 8,
+      "interval": "P64W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "nameAka": [
+        "幻梦"
+      ],
+      "privilege": "",
+      "ratio": 4.05
+    },
+    {
+      "downloaded": "3TB",
+      "id": 9,
+      "interval": "P81W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "nameAka": [
+        "逍遥"
+      ],
+      "privilege": "",
+      "ratio": 4.55
+    }
+  ]
+}

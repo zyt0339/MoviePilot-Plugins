@@ -1,0 +1,18 @@
+{
+  "name": "BakaBT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User"
+    },
+    {
+      "downloaded": "25GB",
+      "id": 2,
+      "name": "Power User",
+      "privilege": "View peer lists & report torrents; Access to RSS; Can make up to 5 torrent offers simultaneously.",
+      "ratio": 0.5,
+      "seedingSize": "25GB"
+    }
+  ]
+}

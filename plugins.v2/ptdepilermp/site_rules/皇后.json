@@ -1,0 +1,222 @@
+{
+  "name": "皇后",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "nameAka": [
+        "採女-正八品"
+      ],
+      "privilege": "新用户的默认级别；可以查看NFO/LOG文档。"
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "20GB"
+        },
+        {
+          "uploads": 5
+        }
+      ],
+      "id": 2,
+      "interval": "P5W",
+      "name": "Power User",
+      "nameAka": [
+        "常在-正七品"
+      ],
+      "privilege": "得到一个邀请名额；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "ratio": 1.5
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "60GB"
+        },
+        {
+          "uploads": 20
+        }
+      ],
+      "id": 3,
+      "interval": "P10W",
+      "name": "Elite User",
+      "nameAka": [
+        "贵人-正六品"
+      ],
+      "privilege": "得到两个邀请名额；贵人-正六品(Elite User)及以上用户封存账号后规定时间内不会被删除；发布三个种子后无需经过候选 可直接发布种子。",
+      "ratio": 2
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "200GB"
+        },
+        {
+          "uploads": 50
+        }
+      ],
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "nameAka": [
+        "良媛-正五品"
+      ],
+      "privilege": "得到三个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.5
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "400GB"
+        },
+        {
+          "uploads": 100
+        }
+      ],
+      "id": 5,
+      "interval": "P20W",
+      "name": "Insane User",
+      "nameAka": [
+        "容华-正四品"
+      ],
+      "privilege": "得到四个邀请名额；可以查看普通日志。",
+      "ratio": 3
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "600GB"
+        },
+        {
+          "uploads": 200
+        }
+      ],
+      "id": 6,
+      "interval": "P25W",
+      "isKept": true,
+      "name": "Veteran User",
+      "nameAka": [
+        "贵嫔-正三品"
+      ],
+      "privilege": "得到五个邀请名额；可以查看用户列表，可以查看其它用户的评论、帖子历史。贵嫔-正三品(Veteran User)及以上用户会永远保留账号。",
+      "ratio": 3.5
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "1TB"
+        },
+        {
+          "uploads": 300
+        }
+      ],
+      "id": 7,
+      "interval": "P25W",
+      "isKept": true,
+      "name": "Extreme User",
+      "nameAka": [
+        "淑仪-正二品"
+      ],
+      "privilege": "得到六个邀请名额；可以更新过期的外部信息。",
+      "ratio": 4
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "2TB"
+        },
+        {
+          "uploads": 450
+        }
+      ],
+      "id": 8,
+      "interval": "P30W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "nameAka": [
+        "贵妃-正一品"
+      ],
+      "privilege": "得到七个邀请名额；查看种子文件的结构。",
+      "ratio": 4.5
+    },
+    {
+      "alternative": [
+        {
+          "downloaded": "3TB"
+        },
+        {
+          "uploads": 600
+        }
+      ],
+      "id": 9,
+      "interval": "P30W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "nameAka": [
+        "皇后"
+      ],
+      "privilege": "得到十个邀请名额。",
+      "ratio": 5
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "貴賓(VIP)"
+    },
+    {
+      "groupType": "vip",
+      "id": 101,
+      "name": "養老族",
+      "nameAka": [
+        "养老族"
+      ]
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "保種員",
+      "nameAka": [
+        "保种员"
+      ]
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "發布員",
+      "nameAka": [
+        "发布员"
+      ]
+    },
+    {
+      "groupType": "manager",
+      "id": 203,
+      "name": "工作人員"
+    },
+    {
+      "groupType": "manager",
+      "id": 204,
+      "name": "管理员"
+    },
+    {
+      "groupType": "manager",
+      "id": 205,
+      "name": "論壇版主",
+      "nameAka": [
+        "论坛版主"
+      ]
+    },
+    {
+      "groupType": "manager",
+      "id": 206,
+      "name": "總版主",
+      "nameAka": [
+        "总版主"
+      ]
+    },
+    {
+      "groupType": "manager",
+      "id": 207,
+      "name": "維護開发員"
+    }
+  ]
+}

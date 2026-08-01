@@ -1,0 +1,130 @@
+{
+  "name": "MoreThanTV",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Runner",
+      "privilege": "Userclass for newly registered users"
+    },
+    {
+      "id": 2,
+      "interval": "P2W",
+      "name": "Grip",
+      "privilege": "Request Creation; Bookmarks; Poll Making; Notifications Access; Can play the slots",
+      "uploaded": "10GB"
+    },
+    {
+      "id": 3,
+      "interval": "P4W",
+      "name": "Key Grip",
+      "privilege": "Upload privileges; Subscription, Creation & Personal Collage Access; Top 10 Access; Advanced Search Access; Inactivity disabled after a few months",
+      "uploaded": "200GB"
+    },
+    {
+      "id": 4,
+      "interval": "P8W",
+      "name": "Camera Operator",
+      "privilege": "Advanced top 10 Access; Invite Forum Access; View Site Stats; Can Add Tags; Can Vote on Tags; Can set a torrent signature",
+      "uploaded": "500GB"
+    },
+    {
+      "id": 5,
+      "interval": "P12W",
+      "name": "Boom Operator",
+      "posts": 5,
+      "privilege": "Advanced Site Stats; Boom Operator Restricted forum; Can make/delete private upload templates; Can purchase invites from bonus shop",
+      "uploaded": "1000GB",
+      "uploads": 10
+    },
+    {
+      "id": 6,
+      "interval": "P24W",
+      "name": "Gaffer",
+      "posts": 10,
+      "privilege": "Gaffer Restricted forum; Can send invites while site is past user limit",
+      "uploaded": "2000GB",
+      "uploads": 100
+    },
+    {
+      "id": 7,
+      "interval": "P48W",
+      "isKept": true,
+      "name": "Engineer",
+      "posts": 25,
+      "privilege": "Engineer Restricted forum; FREE Invites (Send a staff PM for us to credit your account); Immune from inactivity disablement",
+      "uploaded": "3000GB",
+      "uploads": 500
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "Assistant Producer"
+    },
+    {
+      "groupType": "vip",
+      "id": 101,
+      "name": "Donor"
+    },
+    {
+      "groupType": "vip",
+      "id": 102,
+      "name": "Network Affiliate"
+    },
+    {
+      "groupType": "vip",
+      "id": 103,
+      "name": "Former Staff"
+    },
+    {
+      "groupType": "vip",
+      "id": 104,
+      "name": "Internal"
+    },
+    {
+      "groupType": "manager",
+      "id": 200,
+      "name": "Production Supervisor"
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "Junior Developer"
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "Manager"
+    },
+    {
+      "groupType": "manager",
+      "id": 203,
+      "name": "Executive Producer"
+    },
+    {
+      "groupType": "manager",
+      "id": 204,
+      "name": "Senior Developer"
+    },
+    {
+      "groupType": "manager",
+      "id": 205,
+      "name": "Director"
+    },
+    {
+      "groupType": "manager",
+      "id": 206,
+      "name": "Showrunner"
+    },
+    {
+      "groupType": "manager",
+      "id": 210,
+      "name": "First Line Support"
+    },
+    {
+      "groupType": "manager",
+      "id": 211,
+      "name": "Tagger"
+    }
+  ]
+}

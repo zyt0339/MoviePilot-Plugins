@@ -1,0 +1,75 @@
+{
+  "name": "AnimeZ",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Leech",
+      "privilege": "Can only download torrents older than 7 days. Cannot upload. Any Hit & Runs disable downloading until cleared."
+    },
+    {
+      "id": 2,
+      "name": "Newbie",
+      "privilege": "Newly registered users. Can only download torrents older than 7 days. Cannot use RSS or upload torrents."
+    },
+    {
+      "alternative": [
+        {
+          "interval": "P1W"
+        }
+      ],
+      "id": 3,
+      "name": "Member",
+      "privilege": "Registered users in good standing with 5 GB+ upload and a ratio of 1.0 or above.",
+      "ratio": 1,
+      "uploaded": "5GB"
+    },
+    {
+      "id": 4,
+      "name": "Power User",
+      "privilege": "Experienced members with strong upload history and consistently good ratio."
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "VIP",
+      "privilege": "Distinguished member, donator, or retired staff."
+    },
+    {
+      "groupType": "manager",
+      "id": 200,
+      "name": "Uploader",
+      "privilege": "Promoted by staff for quality and quantity of uploads. Access to the upload API and tag creation."
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "Editor",
+      "privilege": "Promoted by staff. Can create and edit anime database entries."
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "Staff",
+      "privilege": "Site assistant with access to the admin panel and moderation tools."
+    },
+    {
+      "groupType": "manager",
+      "id": 203,
+      "name": "Moderator",
+      "privilege": "Moderates the site and its users."
+    },
+    {
+      "groupType": "manager",
+      "id": 204,
+      "name": "Administrator",
+      "privilege": "Administers and moderates the site."
+    },
+    {
+      "groupType": "manager",
+      "id": 205,
+      "name": "Super Admin",
+      "privilege": "Site owner."
+    }
+  ]
+}

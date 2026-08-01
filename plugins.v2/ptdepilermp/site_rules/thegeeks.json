@@ -1,0 +1,27 @@
+{
+  "name": "TheGeeks",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "Can leech up to 10 torrents at a time."
+    },
+    {
+      "id": 2,
+      "interval": "P28D",
+      "name": "Power User",
+      "privilege": "Able to leech 50 torrents at a time. Has full request privileges.",
+      "ratio": 1.05,
+      "uploaded": "25GB"
+    },
+    {
+      "id": 3,
+      "interval": "P60D",
+      "name": "Extreme User",
+      "privilege": "Able to leech 100 torrents at a time.",
+      "ratio": 2.05,
+      "uploaded": "60GB"
+    }
+  ]
+}

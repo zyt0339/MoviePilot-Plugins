@@ -1,0 +1,30 @@
+{
+  "name": "HDBits",
+  "is_dead": false,
+  "levels": [
+    {
+      "downloaded": "30GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "1080i",
+      "privilege": "You can view NFOs and request reseeds on poorly seeded torrents.",
+      "ratio": 0.95
+    },
+    {
+      "downloaded": "500GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "1080p",
+      "privilege": "As 1080i",
+      "ratio": 1.4
+    },
+    {
+      "downloaded": "500GB",
+      "id": 3,
+      "interval": "P4W",
+      "name": "UHD",
+      "privilege": "As 1080i",
+      "ratio": 2.5
+    }
+  ]
+}

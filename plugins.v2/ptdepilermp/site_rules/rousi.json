@@ -1,0 +1,91 @@
+{
+  "name": "Rousi",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别"
+    },
+    {
+      "downloaded": "50GB",
+      "groupType": "user",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "首次升级至此等级的用户没有任何邀请名额",
+      "ratio": 1.05,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "120GB",
+      "groupType": "user",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "首次升级至此等级的用户将获得1个邀请名额",
+      "ratio": 1.55,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "1024GB",
+      "groupType": "user",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额",
+      "ratio": 2.05,
+      "seedingBonus": 1000000
+    },
+    {
+      "downloaded": "2048GB",
+      "groupType": "user",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "首次升级至此等级的用户将获得5个邀请名额",
+      "ratio": 2.55,
+      "seedingBonus": 2000000
+    },
+    {
+      "downloaded": "5120GB",
+      "groupType": "user",
+      "id": 6,
+      "interval": "P40W",
+      "name": "Veteran User",
+      "privilege": "首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 3.05,
+      "seedingBonus": 3000000
+    },
+    {
+      "downloaded": "10240GB",
+      "groupType": "user",
+      "id": 7,
+      "interval": "P60W",
+      "name": "Extreme User",
+      "privilege": "首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 3.55,
+      "seedingBonus": 5000000
+    },
+    {
+      "downloaded": "20480GB",
+      "groupType": "user",
+      "id": 8,
+      "interval": "P80W",
+      "name": "Ultimate User",
+      "privilege": "首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 4.05,
+      "seedingBonus": 8000000
+    },
+    {
+      "downloaded": "30720GB",
+      "groupType": "user",
+      "id": 9,
+      "interval": "P100W",
+      "name": "Nexus Master",
+      "privilege": "首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 4.55,
+      "seedingBonus": 10000000
+    }
+  ]
+}

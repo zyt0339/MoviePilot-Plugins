@@ -1,0 +1,86 @@
+{
+  "name": "HaresClub",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "downloaded": "100GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "可以在邀请区回复；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以查看排行榜",
+      "ratio": 2,
+      "seedingBonus": 20000
+    },
+    {
+      "downloaded": "350GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕",
+      "ratio": 2.5,
+      "seedingBonus": 50000
+    },
+    {
+      "downloaded": "500GB",
+      "id": 3,
+      "interval": "P16W",
+      "name": "Crazy User",
+      "privilege": "可以直接发布种子；可以发送邀请；可以在做种/下载/发布的时候选择匿名模式",
+      "ratio": 3,
+      "seedingBonus": 200000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 4,
+      "interval": "P20W",
+      "name": "Insane User",
+      "privilege": "得到两个邀请名额；可以查看普通日志",
+      "ratio": 3.5,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "2TB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Veteran User",
+      "privilege": "得到四个邀请名额；可以查看其它用户的评论、帖子历史",
+      "ratio": 4,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "4TB",
+      "id": 6,
+      "interval": "P30W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "得到六个邀请名额；可以更新过期的外部信息；可以查看Extreme User论坛。Extreme User用户封存后将永远保留账号",
+      "ratio": 4.5,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "6TB",
+      "id": 7,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "得到八个邀请名额",
+      "ratio": 5,
+      "seedingBonus": 1000000
+    },
+    {
+      "downloaded": "8TB",
+      "id": 8,
+      "interval": "P52W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "得到十个邀请名额。Nexus Master用户会永远保留账号",
+      "ratio": 5.5,
+      "seedingBonus": 1200000
+    }
+  ]
+}

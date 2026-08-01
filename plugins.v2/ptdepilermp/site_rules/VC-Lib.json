@@ -1,0 +1,109 @@
+{
+  "name": "VC-Lib",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "一重加害",
+      "nameAka": [
+        "User"
+      ],
+      "privilege": "新用户的默认级别"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "二重变革",
+      "nameAka": [
+        "Power User"
+      ],
+      "privilege": "可以开始邀请新用户",
+      "ratio": 1,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "100GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "三重爱恋",
+      "nameAka": [
+        "Elite User"
+      ],
+      "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "ratio": 2,
+      "seedingBonus": 100000
+    },
+    {
+      "downloaded": "150GB",
+      "id": 3,
+      "interval": "P15W",
+      "name": "四重罪孽",
+      "nameAka": [
+        "Crazy User"
+      ],
+      "ratio": 3,
+      "seedingBonus": 300000
+    },
+    {
+      "downloaded": "200GB",
+      "id": 4,
+      "interval": "P25W",
+      "name": "五重空洞",
+      "nameAka": [
+        "Insane User"
+      ],
+      "ratio": 4,
+      "seedingBonus": 500000
+    },
+    {
+      "downloaded": "250GB",
+      "id": 5,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "六重不忠",
+      "nameAka": [
+        "Veteran User"
+      ],
+      "privilege": "Veteran User及以上用户会永远保留账号。",
+      "ratio": 5,
+      "seedingBonus": 1000000
+    },
+    {
+      "downloaded": "300GB",
+      "id": 6,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "七重痼病",
+      "nameAka": [
+        "Extreme User"
+      ],
+      "ratio": 6,
+      "seedingBonus": 1500000
+    },
+    {
+      "downloaded": "350GB",
+      "id": 7,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "八重回归",
+      "nameAka": [
+        "Ultimate User"
+      ],
+      "ratio": 6,
+      "seedingBonus": 2000000
+    },
+    {
+      "downloaded": "400GB",
+      "id": 8,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "九重现实",
+      "nameAka": [
+        "Nexus Master"
+      ],
+      "ratio": 8,
+      "seedingBonus": 5000000
+    }
+  ]
+}

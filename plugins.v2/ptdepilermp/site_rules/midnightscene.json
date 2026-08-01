@@ -1,0 +1,75 @@
+{
+  "name": "MidnightScene",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Leech",
+      "privilege": "1下载槽",
+      "ratio": 0
+    },
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "无限下载槽 上传种子",
+      "ratio": 0
+    },
+    {
+      "id": 2,
+      "interval": "P1M",
+      "name": "PowerUser",
+      "privilege": "无限下载槽 上传种子",
+      "ratio": 0.4,
+      "uploaded": "1TiB"
+    },
+    {
+      "id": 3,
+      "interval": "P2M",
+      "name": "SuperUser",
+      "privilege": "无限下载槽 上传种子",
+      "ratio": 0.4,
+      "uploaded": "5TiB"
+    },
+    {
+      "id": 4,
+      "interval": "P3M",
+      "name": "ExtremeUser",
+      "privilege": "无限下载槽 上传种子 免审核发布",
+      "ratio": 0.4,
+      "uploaded": "20TiB"
+    },
+    {
+      "id": 5,
+      "interval": "P6M",
+      "name": "InsaneUser",
+      "privilege": "无限下载槽 上传种子 免审核发布",
+      "ratio": 0.4,
+      "uploaded": "50TiB"
+    },
+    {
+      "id": 6,
+      "interval": "P1Y",
+      "name": "Veteran",
+      "privilege": "无限下载槽 上传种子 全站免费 免审核发布",
+      "ratio": 0.4,
+      "uploaded": "100TiB"
+    },
+    {
+      "id": 7,
+      "interval": "P1M",
+      "name": "Seeder",
+      "privilege": "无限下载槽 上传种子 免疫自动 HnR 警告 免审核发布",
+      "ratio": 0.4,
+      "seedingSize": "5TiB"
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 8,
+      "interval": "P3M",
+      "name": "Archivist",
+      "privilege": "无限下载槽 上传种子 全站免费 免疫自动 HnR 警告 免审核发布",
+      "ratio": 0.4,
+      "seedingSize": "10TiB"
+    }
+  ]
+}

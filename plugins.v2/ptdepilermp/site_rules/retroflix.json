@@ -1,0 +1,49 @@
+{
+  "name": "RetroFlix",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Film Dummy"
+    },
+    {
+      "id": 2,
+      "name": "Film Stunt"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 3,
+      "interval": "P4W",
+      "name": "Movie Lover",
+      "privilege": "Can view Topten, ask for reseed, section.",
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "120GB",
+      "id": 4,
+      "interval": "P8W",
+      "name": "Cinema Addicted",
+      "privilege": "Cinema Addicted or above would never be deleted if parked.",
+      "ratio": 1.55
+    },
+    {
+      "downloaded": "300GB",
+      "id": 5,
+      "interval": "P15W",
+      "name": "Film Critic",
+      "privilege": "Can view torrent structure and can set an userbar. Film Critic or above would never be deleted when parked.",
+      "ratio": 2.05
+    },
+    {
+      "groupType": "vip",
+      "id": 6,
+      "name": "VIP"
+    },
+    {
+      "groupType": "manager",
+      "id": 7,
+      "name": "Uploader",
+      "privilege": "Can upload torrents, view anonymous uploaders and view banned torrents."
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "name": "52PT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": "新用户的默认级别"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "得到一个邀请名额；可以查看NFO文档；可以请求续种； 可以发送邀请；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 允许发布新的趣味盒内容及编辑自己发布的趣味盒内容;可以删除自己上传的字幕。",
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "120GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "ratio": 1.55
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.05
+    },
+    {
+      "downloaded": "1536GB",
+      "id": 4,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "可以查看普通日志。",
+      "ratio": 2.55
+    },
+    {
+      "downloaded": "2560GB",
+      "id": 5,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Veteran User",
+      "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "ratio": 3.05
+    },
+    {
+      "downloaded": "3072GB",
+      "id": 6,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 3.55
+    },
+    {
+      "downloaded": "4608GB",
+      "id": 7,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "得到五个邀请名额。",
+      "ratio": 4.05
+    },
+    {
+      "downloaded": "5632GB",
+      "id": 8,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "得到十个邀请名额。",
+      "ratio": 4.55
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "名誉校长",
+      "nameAka": [
+        "名誉校长",
+        "名誉校长(VIP)",
+        "VIP",
+        "贵宾"
+      ],
+      "privilege": "VIP等级，享受特殊权限。"
+    },
+    {
+      "groupType": "manager",
+      "id": 101,
+      "name": "离退休",
+      "nameAka": [
+        "离退休",
+        "离退休(Retiree)",
+        "Retiree"
+      ],
+      "privilege": "离退休人员等级。"
+    },
+    {
+      "groupType": "manager",
+      "id": 102,
+      "name": "教员",
+      "nameAka": [
+        "教员",
+        "教员(Uploader)",
+        "Uploader"
+      ],
+      "privilege": "教员等级，负责内容上传。"
+    },
+    {
+      "groupType": "manager",
+      "id": 103,
+      "name": "教授",
+      "nameAka": [
+        "教授",
+        "教授(Moderator)",
+        "Moderator"
+      ],
+      "privilege": "教授等级，负责内容审核。"
+    },
+    {
+      "groupType": "manager",
+      "id": 104,
+      "name": "校长",
+      "nameAka": [
+        "校长",
+        "校长(Administrator)",
+        "Administrator"
+      ],
+      "privilege": "校长等级，最高管理权限。"
+    },
+    {
+      "groupType": "manager",
+      "id": 105,
+      "name": "校区维护",
+      "nameAka": [
+        "校区维护",
+        "校区维护(Sysop)",
+        "Sysop"
+      ],
+      "privilege": "校区维护等级，负责系统维护。"
+    },
+    {
+      "groupType": "manager",
+      "id": 106,
+      "name": "校区创始人",
+      "nameAka": [
+        "校区创始人",
+        "校区创始人(Staff Leader)",
+        "Staff Leader"
+      ],
+      "privilege": "校区创始人等级，最高权限。"
+    }
+  ]
+}

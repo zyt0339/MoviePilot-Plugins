@@ -1,0 +1,143 @@
+{
+  "name": "LST",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Leech"
+    },
+    {
+      "id": 1,
+      "name": "Crab",
+      "privilege": "5下载槽 上传种子",
+      "ratio": 0.4
+    },
+    {
+      "alternative": [
+        {
+          "uploaded": "1TiB"
+        },
+        {
+          "seedingSize": "100GiB"
+        }
+      ],
+      "averageSeedingTime": "P1W",
+      "id": 2,
+      "interval": "P1M",
+      "name": "Goldfish",
+      "privilege": "10下载槽 上传种子",
+      "ratio": 0.6
+    },
+    {
+      "alternative": [
+        {
+          "uploaded": "5TiB"
+        },
+        {
+          "seedingSize": "500GiB"
+        }
+      ],
+      "averageSeedingTime": "P2W",
+      "id": 3,
+      "interval": "P2M",
+      "name": "Lobster",
+      "privilege": "15下载槽 上传种子 发送邀请",
+      "ratio": 0.7
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 4,
+      "interval": "P6M",
+      "name": "Sailboat",
+      "privilege": "25下载槽 上传种子 发送邀请 站免",
+      "ratio": 1,
+      "seedingSize": "10TiB"
+    },
+    {
+      "averageSeedingTime": "P3M",
+      "id": 5,
+      "interval": "P1Y",
+      "name": "Ship",
+      "privilege": "50下载槽 上传种子 发送邀请 站免 免疫HR",
+      "ratio": 1.5,
+      "seedingSize": "20TiB"
+    },
+    {
+      "averageSeedingTime": "P6M",
+      "id": 6,
+      "interval": "P2Y",
+      "name": "Cargo Ship",
+      "privilege": "75下载槽 上传种子 发送邀请 站免 免疫HR",
+      "ratio": 2,
+      "seedingSize": "50TiB"
+    },
+    {
+      "alternative": [
+        {
+          "uploaded": "10TiB"
+        },
+        {
+          "seedingSize": "2TiB"
+        }
+      ],
+      "averageSeedingTime": "P2W6D",
+      "id": 7,
+      "interval": "P3M",
+      "name": "Dolphin",
+      "privilege": "20下载槽 上传种子 发送邀请 站免 自动通过候选",
+      "ratio": 1,
+      "uploads": 5
+    },
+    {
+      "alternative": [
+        {
+          "uploaded": "25TiB"
+        },
+        {
+          "seedingSize": "6TiB"
+        }
+      ],
+      "averageSeedingTime": "P1M",
+      "id": 8,
+      "interval": "P4M",
+      "name": "Whale",
+      "privilege": "25下载槽 上传种子 发送邀请 站免 免疫HR 自动通过候选",
+      "ratio": 1,
+      "uploads": 10
+    },
+    {
+      "alternative": [
+        {
+          "uploaded": "50TiB"
+        },
+        {
+          "seedingSize": "20TiB"
+        }
+      ],
+      "averageSeedingTime": "P3M",
+      "id": 9,
+      "interval": "P1Y",
+      "name": "Leviathan",
+      "privilege": "50下载槽 上传种子 发送邀请 站免 免疫HR 自动通过候选",
+      "ratio": 1.5,
+      "uploads": 15
+    },
+    {
+      "alternative": [
+        {
+          "uploaded": "100TiB"
+        },
+        {
+          "seedingSize": "50TiB"
+        }
+      ],
+      "averageSeedingTime": "P6M",
+      "id": 10,
+      "interval": "P2Y",
+      "name": "Cthulhu",
+      "privilege": "75下载槽 上传种子 发送邀请 站免 免疫HR 自动通过候选",
+      "ratio": 2,
+      "uploads": 20
+    }
+  ]
+}

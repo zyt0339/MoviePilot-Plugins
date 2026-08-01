@@ -1,0 +1,109 @@
+{
+  "name": "PTTime",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Peasant",
+      "nameAka": [
+        "婴儿"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "User",
+      "nameAka": [
+        "幼儿园"
+      ],
+      "privilege": "新用户的默认级别。"
+    },
+    {
+      "downloaded": "512GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "nameAka": [
+        "小学"
+      ],
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "2048GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User",
+      "nameAka": [
+        "初中"
+      ],
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 1.55
+    },
+    {
+      "downloaded": "4096GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "nameAka": [
+        "高中"
+      ],
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 2.05
+    },
+    {
+      "downloaded": "8192GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User",
+      "nameAka": [
+        "专科"
+      ],
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 2.55
+    },
+    {
+      "downloaded": "16384GB",
+      "id": 6,
+      "interval": "P52W",
+      "name": "Veteran User",
+      "nameAka": [
+        "本科"
+      ],
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 3.05
+    },
+    {
+      "downloaded": "25000GB",
+      "id": 7,
+      "interval": "P80W",
+      "name": "Extreme User",
+      "nameAka": [
+        "研究生"
+      ],
+      "privilege": "该级别及以上将不再有账户必须180-360天内登录一次要求。首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 3.55
+    },
+    {
+      "downloaded": "45000GB",
+      "id": 8,
+      "interval": "P104W",
+      "name": "Ultimate User",
+      "nameAka": [
+        "博士生"
+      ],
+      "privilege": "首次升级至此等级的用户将获得5个邀请名额。",
+      "ratio": 4.05
+    },
+    {
+      "downloaded": "90000GB",
+      "id": 9,
+      "interval": "P130W",
+      "name": "Nexus Master",
+      "nameAka": [
+        "博士后"
+      ],
+      "privilege": "首次升级至此等级的用户将获得10个邀请名额。",
+      "ratio": 4.55
+    }
+  ]
+}

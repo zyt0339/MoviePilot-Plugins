@@ -1,0 +1,69 @@
+{
+  "name": "ANIMELOVERS",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户默认等级；可以发布种子"
+    },
+    {
+      "id": 2,
+      "interval": "P1M",
+      "name": "PowerUser",
+      "privilege": "直接发布种子，可以寄出邀请",
+      "ratio": 1.55,
+      "uploaded": "1TiB"
+    },
+    {
+      "id": 3,
+      "interval": "P2M",
+      "name": "SuperUser",
+      "privilege": "直接发布种子，可以寄出邀请",
+      "ratio": 2.5,
+      "uploaded": "5TiB"
+    },
+    {
+      "id": 4,
+      "interval": "P3M",
+      "name": "ExtremeUser",
+      "privilege": "直接发布种子，可以寄出邀请",
+      "ratio": 3,
+      "uploaded": "20TiB"
+    },
+    {
+      "id": 5,
+      "interval": "P6M",
+      "name": "InsaneUser",
+      "privilege": "直接发布种子，可以寄出邀请",
+      "ratio": 4.15,
+      "uploaded": "50TiB"
+    },
+    {
+      "id": 6,
+      "interval": "P12M",
+      "name": "Veteran",
+      "privilege": "直接发布种子，可以寄出邀请，全局免费",
+      "ratio": 5.2,
+      "uploaded": "100TiB"
+    },
+    {
+      "averageSeedingTime": "P1M",
+      "id": 7,
+      "interval": "P1M",
+      "name": "Seeder",
+      "privilege": "直接发布种子，可以寄出邀请，可以无视H&R",
+      "ratio": 0.4,
+      "seedingSize": "5TiB"
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 8,
+      "interval": "P3M",
+      "name": "Archivist",
+      "privilege": "直接发布种子，可以寄出邀请，可以无视H&R，全局免费，双倍上传",
+      "ratio": 0.4,
+      "seedingSize": "10TiB"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "HD-Space",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Members",
+      "privilege": "Have access to Torrents, Seed Bonus, Upload, Helpdesk, Lottery pages."
+    },
+    {
+      "id": 2,
+      "name": "HD Spacer",
+      "privilege": "Have access to BlackJack, Expected, Catalog, Games pages.",
+      "ratio": 1.05,
+      "uploaded": "100GB"
+    },
+    {
+      "id": 3,
+      "name": "HD Astronaut",
+      "privilege": "Have access to HD Spacer extras and Top 10, Members, Requests, Episode pages.",
+      "ratio": 2.25,
+      "uploaded": "500GB"
+    },
+    {
+      "id": 4,
+      "name": "HD Alien",
+      "privilege": "Same access like HD Astronaut.",
+      "ratio": 4.25,
+      "uploaded": "2TB"
+    },
+    {
+      "id": 5,
+      "name": "HD Internal",
+      "privilege": "Same access like HD Alien. Plus Golden Status for the uploaded torrents."
+    },
+    {
+      "groupType": "vip",
+      "id": 6,
+      "name": "VIP",
+      "nameAka": [
+        "V.I.P."
+      ],
+      "privilege": "Same access like HD Astronaut, immune to automatic demotion, automated HnR warnings and ratio watch."
+    },
+    {
+      "groupType": "manager",
+      "id": 7,
+      "name": "Uploader",
+      "privilege": "Access to HD Spacer and HD Astronaut extras. May upload and download any torrents.",
+      "uploads": 20
+    },
+    {
+      "groupType": "manager",
+      "id": 8,
+      "name": "Elite Uploader",
+      "privilege": "Same access like Uploader.",
+      "ratio": 7,
+      "uploaded": "20TB",
+      "uploads": 100
+    }
+  ]
+}

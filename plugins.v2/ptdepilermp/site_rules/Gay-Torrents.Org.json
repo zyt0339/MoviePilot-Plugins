@@ -1,0 +1,25 @@
+{
+  "name": "Gay-Torrents.Org",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Member",
+      "ratio": 0.4
+    },
+    {
+      "id": 2,
+      "name": "Poweruser",
+      "privilege": "Access to: Online Users, Tracker info",
+      "ratio": 1.05,
+      "uploaded": "50GB"
+    },
+    {
+      "id": 3,
+      "name": "Extrauser",
+      "privilege": "Access to: Online Users, Tracker info, Requests, Top 10 and Users",
+      "ratio": 2,
+      "uploaded": "250GB"
+    }
+  ]
+}

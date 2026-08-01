@@ -1,0 +1,72 @@
+{
+  "name": "LAT-Team",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "5下载槽 上传种子 发送邀请",
+      "ratio": 0.25
+    },
+    {
+      "id": 2,
+      "interval": "P1M",
+      "name": "PowerUser",
+      "privilege": "10下载槽 上传种子 发送邀请",
+      "ratio": 0.4,
+      "uploaded": "1TiB"
+    },
+    {
+      "id": 3,
+      "interval": "P2M",
+      "name": "SuperUser",
+      "privilege": "15下载槽 上传种子 发送邀请",
+      "ratio": 0.4,
+      "uploaded": "5TiB"
+    },
+    {
+      "id": 4,
+      "interval": "P3M",
+      "name": "ExtremeUser",
+      "privilege": "20下载槽 上传种子 发送邀请",
+      "ratio": 0.4,
+      "uploaded": "20TiB"
+    },
+    {
+      "id": 5,
+      "interval": "P6M",
+      "name": "InsaneUser",
+      "privilege": "25下载槽 上传种子 发送邀请",
+      "ratio": 0.4,
+      "uploaded": "50TiB"
+    },
+    {
+      "id": 6,
+      "interval": "P1Y",
+      "name": "Veteran",
+      "privilege": "30下载槽 上传种子 发送邀请 免疫HR",
+      "ratio": 0.4,
+      "uploaded": "100TiB"
+    },
+    {
+      "averageSeedingTime": "P1M",
+      "groupType": "user",
+      "id": 7,
+      "interval": "P1M",
+      "name": "Seeder",
+      "privilege": "35下载槽 上传种子 发送邀请 免疫HR",
+      "ratio": 0.4,
+      "seedingSize": "5TiB"
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "groupType": "user",
+      "id": 8,
+      "interval": "P3M",
+      "name": "Archivist",
+      "privilege": "无限下载槽 上传种子 发送邀请 站免 免疫HR",
+      "ratio": 0.4,
+      "seedingSize": "10TiB"
+    }
+  ]
+}

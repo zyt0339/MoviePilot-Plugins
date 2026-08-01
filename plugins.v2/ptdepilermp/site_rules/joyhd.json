@@ -1,0 +1,78 @@
+{
+  "name": "JoyHD",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别。"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "正兵/Power User",
+      "ratio": 1.2
+    },
+    {
+      "downloaded": "100GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "军士/Elite User",
+      "privilege": "军士及以上用户封存账号后不会被删除; 可以发送邀请；可以请求续种。",
+      "ratio": 1.5
+    },
+    {
+      "downloaded": "200GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "副军校/Crazy User",
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.5
+    },
+    {
+      "downloaded": "400GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "正军校/Insane User",
+      "privilege": "可以查看普通日志。得到一个邀请名额。",
+      "ratio": 3.5
+    },
+    {
+      "downloaded": "600GB",
+      "id": 6,
+      "interval": "P25W",
+      "isKept": true,
+      "name": "副参领/Veteran User",
+      "privilege": "可以查看其它用户的评论、帖子历史。副参领及以上用户会永远保留账号。得到二个邀请名额。",
+      "ratio": 4.5
+    },
+    {
+      "downloaded": "1000GB",
+      "id": 7,
+      "interval": "P25W",
+      "isKept": true,
+      "name": "正参领/Extreme User",
+      "privilege": "可以更新过期的外部信息；得到二个邀请名额。",
+      "ratio": 5.5
+    },
+    {
+      "downloaded": "2000GB",
+      "id": 8,
+      "interval": "P30W",
+      "isKept": true,
+      "name": "副都统/Ultimate User",
+      "privilege": "得到三个邀请名额。",
+      "ratio": 6
+    },
+    {
+      "downloaded": "5000GB",
+      "id": 9,
+      "interval": "P50W",
+      "isKept": true,
+      "name": "大将军/Nexus Master",
+      "privilege": "得到五个邀请名额。",
+      "ratio": 6
+    }
+  ]
+}

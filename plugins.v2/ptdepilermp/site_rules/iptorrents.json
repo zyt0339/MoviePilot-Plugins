@@ -1,0 +1,29 @@
+{
+  "name": "IPTorrents",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Peasant"
+    },
+    {
+      "id": 1,
+      "name": "User"
+    },
+    {
+      "downloaded": "5GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "Are able to make requests for torrents, view the Top 10, and apply for Uploader status.",
+      "ratio": 1.05,
+      "uploaded": "50GB"
+    },
+    {
+      "groupType": "vip",
+      "id": 3,
+      "name": "VIP",
+      "privilege": "Immune from H&R."
+    }
+  ]
+}

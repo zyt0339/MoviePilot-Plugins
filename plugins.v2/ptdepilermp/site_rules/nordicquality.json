@@ -1,0 +1,62 @@
+{
+  "name": "NordicQuality",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "4下载槽 上传种子 发送邀请",
+      "ratio": 0.4
+    },
+    {
+      "id": 2,
+      "interval": "P1M",
+      "name": "Power User",
+      "privilege": "10下载槽 上传种子 发送邀请",
+      "ratio": 1,
+      "uploaded": "250GiB"
+    },
+    {
+      "id": 3,
+      "interval": "P2M",
+      "name": "Super User",
+      "privilege": "25下载槽 上传种子 发送邀请",
+      "ratio": 1.2,
+      "uploaded": "750GiB"
+    },
+    {
+      "id": 4,
+      "interval": "P3M",
+      "name": "Extreme User",
+      "privilege": "35下载槽 上传种子 发送邀请",
+      "ratio": 1.4,
+      "uploaded": "4TiB"
+    },
+    {
+      "id": 5,
+      "interval": "P6M",
+      "name": "Insane User",
+      "privilege": "50下载槽 上传种子 发送邀请",
+      "ratio": 1.5,
+      "uploaded": "15TiB"
+    },
+    {
+      "averageSeedingTime": "P1W",
+      "groupType": "user",
+      "id": 6,
+      "name": "Super Seeder",
+      "privilege": "50下载槽 上传种子 发送邀请 免疫HR",
+      "ratio": 1,
+      "seedingSize": "5TiB"
+    },
+    {
+      "averageSeedingTime": "P4W",
+      "groupType": "user",
+      "id": 7,
+      "name": "Torrent King",
+      "privilege": "50下载槽 上传种子 发送邀请 不计算下载量 免疫HR",
+      "ratio": 1,
+      "seedingSize": "10TiB"
+    }
+  ]
+}

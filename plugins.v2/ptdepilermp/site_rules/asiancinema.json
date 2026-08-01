@@ -1,0 +1,83 @@
+{
+  "name": "AsianCinema",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Leech"
+    },
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "4 download slots",
+      "ratio": 0.4
+    },
+    {
+      "id": 2,
+      "interval": "P1M",
+      "name": "Power User",
+      "privilege": "10 download slots",
+      "ratio": 0.4,
+      "uploaded": "1TB",
+      "uploads": 1
+    },
+    {
+      "id": 3,
+      "interval": "P2M",
+      "name": "Super User",
+      "privilege": "25 download slots",
+      "ratio": 0.4,
+      "uploaded": "5TB",
+      "uploads": 5
+    },
+    {
+      "id": 4,
+      "interval": "P3M",
+      "name": "Extreme User",
+      "privilege": "50 download slots; Trusted member",
+      "ratio": 0.4,
+      "uploaded": "20TB",
+      "uploads": 10
+    },
+    {
+      "id": 5,
+      "interval": "P6M",
+      "name": "Insane User",
+      "privilege": "50 download slots; Trusted member",
+      "ratio": 0.4,
+      "uploaded": "50TB",
+      "uploads": 15
+    },
+    {
+      "id": 6,
+      "interval": "P1Y",
+      "name": "Veteran",
+      "privilege": "Special freeleech",
+      "ratio": 0.4,
+      "uploaded": "100TB",
+      "uploads": 20
+    },
+    {
+      "averageSeedingTime": "P1M",
+      "id": 7,
+      "interval": "P1M",
+      "name": "Seeder",
+      "privilege": "Trusted member",
+      "ratio": 1.5,
+      "seedingSize": "20TB",
+      "uploaded": "200TB",
+      "uploads": 5
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 8,
+      "interval": "P3M",
+      "name": "Archivist",
+      "privilege": "Immunity from H&Rs & Special freeleech",
+      "ratio": 1.5,
+      "seedingSize": "40TB",
+      "uploaded": "400TB",
+      "uploads": 10
+    }
+  ]
+}

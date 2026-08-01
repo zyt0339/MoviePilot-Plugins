@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 import re
@@ -11,7 +10,6 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
-from urllib.parse import urlparse
 
 SIZE_UNITS = {
     "B": 1,
@@ -89,21 +87,6 @@ class SiteLevelResult:
 def clean_level_name(value: Any) -> str:
     """规范化等级名称，用于处理中英文空格和下划线差异。"""
     return re.sub(r"[\s_]+", "", str(value or "")).lower()
-
-
-def normalize_host(value: str) -> str:
-    """从域名或 URL 中提取规范化主机名。"""
-    raw = str(value or "").strip()
-    if not raw:
-        return ""
-    parsed = urlparse(raw if "://" in raw else f"https://{raw}")
-    return (parsed.hostname or "").lower().removeprefix("www.")
-
-
-def host_fingerprint(value: str) -> str:
-    """生成与规则快照一致的主机名 SHA-256 指纹。"""
-    host = normalize_host(value)
-    return hashlib.sha256(host.encode("utf-8")).hexdigest() if host else ""
 
 
 def parse_size(value: Any) -> Optional[float]:
@@ -337,43 +320,44 @@ def evaluate_requirement(
 
 
 class RuleRepository:
-    """加载内置快照，并按站点指纹或用户覆盖返回等级规则。"""
+    """加载站点规则目录，并按 MoviePilot 站点名称匹配规则。"""
 
-    def __init__(self, snapshot_path: Optional[Path] = None):
-        path = snapshot_path or Path(__file__).with_name("rules.snapshot.json")
-        self.snapshot = json.loads(path.read_text(encoding="utf-8"))
-        self.sites: Dict[str, Dict[str, Any]] = self.snapshot.get("sites") or {}
-        self._fingerprint_index: Dict[str, str] = {}
-        for rule_id, rule in self.sites.items():
-            for fingerprint in rule.get("host_fingerprints") or []:
-                self._fingerprint_index.setdefault(fingerprint, rule_id)
+    def __init__(self, rules_path: Optional[Path] = None):
+        self.rules_path = rules_path or Path(__file__).with_name("site_rules")
+        self.sites: Dict[str, Dict[str, Any]] = {}
+        self._name_index: Dict[str, str] = {}
+        self.load_errors = 0
+        self.reload()
 
-    @property
-    def source_commit(self) -> str:
-        """返回规则快照对应的 PT-depiler 提交。"""
-        return str(self.snapshot.get("source_commit") or "")
+    def reload(self) -> None:
+        """重新扫描规则目录，使磁盘新增和修改在运行时生效。"""
+        sites: Dict[str, Dict[str, Any]] = {}
+        name_keys = set()
+        errors = 0
+        if self.rules_path.is_dir():
+            for path in sorted(self.rules_path.glob("*.json")):
+                try:
+                    rule = json.loads(path.read_text(encoding="utf-8"))
+                    if not isinstance(rule, dict) or not isinstance(rule.get("levels"), list):
+                        raise ValueError("规则必须是对象且包含 levels 数组")
+                    rule_id = path.stem
+                    if str(rule.get("name") or "").strip() != rule_id:
+                        raise ValueError("规则 name 必须与文件名一致")
+                    name_key = rule_id.casefold()
+                    if name_key in name_keys:
+                        raise ValueError("规则 name 忽略大小写后必须唯一")
+                    name_keys.add(name_key)
+                    sites[rule_id] = rule
+                except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                    errors += 1
+        name_index = {rule_id.strip().casefold(): rule_id for rule_id in sites}
+        self.sites = sites
+        self._name_index = name_index
+        self.load_errors = errors
 
-    @staticmethod
-    def parse_overrides(raw: Any) -> Dict[str, Dict[str, Any]]:
-        """解析以 MoviePilot 站点 ID 为键的完整规则覆盖。"""
-        if not raw:
-            return {}
-        value = json.loads(raw) if isinstance(raw, str) else raw
-        if not isinstance(value, dict):
-            raise ValueError("规则覆盖必须是 JSON 对象")
-        result = {}
-        for site_id, rule in value.items():
-            if not isinstance(rule, dict) or not isinstance(rule.get("levels"), list):
-                raise ValueError(f"站点 {site_id} 的覆盖必须包含 levels 数组")
-            result[str(site_id)] = rule
-        return result
-
-    def match(self, site_id: Any, domain: str, overrides: Dict[str, Dict[str, Any]]) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
-        """优先返回站点完整覆盖，否则按域名指纹匹配内置规则。"""
-        override = overrides.get(str(site_id))
-        if override:
-            return f"override:{site_id}", override
-        rule_id = self._fingerprint_index.get(host_fingerprint(domain))
+    def match(self, site_name: Any) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
+        """按去除首尾空白且忽略大小写的站点名称匹配规则。"""
+        rule_id = self._name_index.get(str(site_name or "").strip().casefold())
         return (rule_id, self.sites.get(rule_id)) if rule_id else (None, None)
 
     def evaluate_site(

@@ -1,0 +1,83 @@
+{
+  "name": "PTSBao",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "downloaded": "50GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "低于0.95分享率将被降级",
+      "ratio": 1.05,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "120GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "低于1.45分享率将被降级；首次升级至此等级的用户将获得1个邀请名额",
+      "ratio": 1.55,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "1024GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "低于1.95分享率将被降级；首次升级至此等级的用户将获得2个邀请名额",
+      "ratio": 2.05,
+      "seedingBonus": 1000000
+    },
+    {
+      "downloaded": "2048GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "低于2.45分享率将被降级；首次升级至此等级的用户将获得5个邀请名额",
+      "ratio": 2.55,
+      "seedingBonus": 2000000
+    },
+    {
+      "downloaded": "5120GB",
+      "id": 6,
+      "interval": "P40W",
+      "name": "Veteran User",
+      "privilege": "低于2.95分享率将被降级；首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 3.05,
+      "seedingBonus": 3000000
+    },
+    {
+      "downloaded": "10240GB",
+      "id": 7,
+      "interval": "P60W",
+      "name": "Extreme User",
+      "privilege": "低于3.45分享率将被降级；首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 3.55,
+      "seedingBonus": 5000000
+    },
+    {
+      "downloaded": "20480GB",
+      "id": 8,
+      "interval": "P80W",
+      "name": "Ultimate User",
+      "privilege": "低于3.95分享率将被降级；首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 4.05,
+      "seedingBonus": 8000000
+    },
+    {
+      "downloaded": "30720GB",
+      "id": 9,
+      "interval": "P100W",
+      "name": "Nexus Master",
+      "privilege": "低于4.45分享率将被降级；首次升级至此等级的用户将获得10个邀请名额",
+      "ratio": 4.55,
+      "seedingBonus": 10000000
+    }
+  ]
+}

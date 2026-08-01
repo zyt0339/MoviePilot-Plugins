@@ -1,0 +1,76 @@
+{
+  "name": "WinterSakura",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": "新用户的默认级别；可以上传的字幕"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "name": "Power User",
+      "privilege": "可以查看NFO文档；可以请求续种； 可以购买/发送邀请；可以删除自己上传的字幕。可以申请友情链接；可以使用个性条。",
+      "ratio": 1,
+      "seedingBonus": 50000
+    },
+    {
+      "downloaded": "400GB",
+      "id": 2,
+      "name": "Elite User",
+      "privilege": "可以查看种子结构；可以更新外部信息",
+      "ratio": 1.5,
+      "seedingBonus": 120000
+    },
+    {
+      "downloaded": "800GB",
+      "id": 3,
+      "name": "Crazy User",
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2,
+      "seedingBonus": 200000
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 4,
+      "name": "Insane User",
+      "privilege": "可以查看排行榜。",
+      "ratio": 3,
+      "seedingBonus": 500000
+    },
+    {
+      "downloaded": "3TB",
+      "id": 5,
+      "name": "Veteran User",
+      "privilege": "可以查看其它用户种子历史。（只有用户的隐私等级没有设为’强‘时才生效）",
+      "ratio": 4,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "5TB",
+      "id": 6,
+      "name": "Extreme User",
+      "privilege": "可以更新过期的外部信息。Extreme User 及以上用户封存账号后不会被删除",
+      "ratio": 6,
+      "seedingBonus": 1400000
+    },
+    {
+      "downloaded": "6TB",
+      "id": 7,
+      "name": "Ultimate User",
+      "privilege": "首次到达此等级得到1个邀请名额。",
+      "ratio": 8,
+      "seedingBonus": 2000000
+    },
+    {
+      "downloaded": "10TB",
+      "id": 8,
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "首次到达此等级得到1个邀请名额Nexus Master及以上用户会永远保留账号。",
+      "ratio": 9.5,
+      "seedingBonus": 2800000
+    }
+  ]
+}

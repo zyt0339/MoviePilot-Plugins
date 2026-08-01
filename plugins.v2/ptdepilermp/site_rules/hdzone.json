@@ -1,0 +1,76 @@
+{
+  "name": "HDZone",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "downloaded": "120GB",
+      "id": 1,
+      "interval": "P5W",
+      "name": "Power User",
+      "privilege": "新晋等级用户，只能在每周六中午12点至每周日晚上11点59分发布种子。",
+      "ratio": 2
+    },
+    {
+      "downloaded": "220GB",
+      "id": 2,
+      "interval": "P5W",
+      "name": "Elite User",
+      "privilege": "Elite User权限同上。",
+      "ratio": 2.5
+    },
+    {
+      "downloaded": "400GB",
+      "id": 3,
+      "interval": "P10W",
+      "name": "Crazy User",
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 3
+    },
+    {
+      "downloaded": "600GB",
+      "id": 4,
+      "interval": "P10W",
+      "name": "Insane User",
+      "privilege": "可以查看普通日志。",
+      "ratio": 3.5
+    },
+    {
+      "downloaded": "900GB",
+      "id": 5,
+      "interval": "P10W",
+      "name": "Veteran User",
+      "privilege": "可以查看其它用户的评论、帖子历史。",
+      "ratio": 4
+    },
+    {
+      "downloaded": "2TB",
+      "id": 6,
+      "interval": "P10W",
+      "name": "Extreme User",
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 4.5
+    },
+    {
+      "downloaded": "4TB",
+      "id": 7,
+      "interval": "P10W",
+      "name": "Ultimate User",
+      "privilege": "得到2个邀请名额。",
+      "ratio": 5
+    },
+    {
+      "downloaded": "8TB",
+      "id": 8,
+      "interval": "P10W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "得到3个邀请名额。账号永久保留。",
+      "ratio": 5.5
+    }
+  ]
+}

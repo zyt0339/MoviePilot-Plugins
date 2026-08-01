@@ -1,0 +1,83 @@
+{
+  "name": "红叶",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别"
+    },
+    {
+      "downloaded": "100GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "首次升级PU将获得1个邀请",
+      "ratio": 1.05,
+      "seedingBonus": 60000
+    },
+    {
+      "downloaded": "200GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "Elite User及以上等级用户封存账号（在控制面板）后不会被禁用账号",
+      "ratio": 1.55,
+      "seedingBonus": 120000
+    },
+    {
+      "downloaded": "400GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "首次升级CU将获得2个邀请",
+      "ratio": 2.05,
+      "seedingBonus": 200000
+    },
+    {
+      "downloaded": "800GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "",
+      "ratio": 2.55,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "1600GB",
+      "id": 6,
+      "interval": "P40W",
+      "name": "Veteran User",
+      "privilege": "Veteran User及以上等级的用户可免除不活跃封禁；首次升级VU将获得3个邀请",
+      "ratio": 3.05,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "2400GB",
+      "id": 7,
+      "interval": "P60W",
+      "name": "Extreme User",
+      "privilege": "",
+      "ratio": 3.55,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "3200GB",
+      "id": 8,
+      "interval": "P80W",
+      "name": "Ultimate User",
+      "privilege": "首次升级UU将获得5邀请",
+      "ratio": 4.05,
+      "seedingBonus": 1000000
+    },
+    {
+      "downloaded": "4000GB",
+      "id": 9,
+      "interval": "P100W",
+      "name": "四川简州猫 NEXUS MASTER",
+      "privilege": "首次升级NM将获得10个邀请",
+      "ratio": 4.55,
+      "seedingBonus": 2000000
+    }
+  ]
+}

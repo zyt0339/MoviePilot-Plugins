@@ -1,0 +1,67 @@
+{
+  "name": "朱雀",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "筑基",
+      "privilege": "入站初始等级"
+    },
+    {
+      "downloaded": "10GB",
+      "id": 2,
+      "interval": "P5W",
+      "name": "结丹",
+      "privilege": "无",
+      "ratio": 2
+    },
+    {
+      "downloaded": "25GB",
+      "id": 3,
+      "interval": "P10W",
+      "name": "元婴",
+      "privilege": "无",
+      "ratio": 2
+    },
+    {
+      "downloaded": "50GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "出窍",
+      "privilege": "无",
+      "ratio": 2
+    },
+    {
+      "downloaded": "100GB",
+      "id": 5,
+      "interval": "P20W",
+      "name": "炼虚",
+      "privilege": "无",
+      "ratio": 2
+    },
+    {
+      "downloaded": "200GB",
+      "id": 6,
+      "interval": "P25W",
+      "name": "合体",
+      "privilege": "无",
+      "ratio": 4
+    },
+    {
+      "downloaded": "300GB",
+      "id": 7,
+      "interval": "P30W",
+      "name": "大乘",
+      "privilege": "无",
+      "ratio": 6
+    },
+    {
+      "downloaded": "400GB",
+      "id": 8,
+      "interval": "P35W",
+      "name": "真仙",
+      "privilege": "无",
+      "ratio": 8
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "name": "Anthelion",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "Can download, upload, vote on requests, use advanced search, access top 10, and bookmark content."
+    },
+    {
+      "bonus": 5000,
+      "id": 2,
+      "interval": "P2W",
+      "name": "Member",
+      "privilege": "Create & manage collections; Send invites",
+      "ratio": 0.8,
+      "uploaded": "0.5TiB"
+    },
+    {
+      "alternative": [
+        {
+          "uploads": 5
+        },
+        {
+          "adoptions": 10
+        }
+      ],
+      "bonus": 25000,
+      "id": 3,
+      "interval": "P1M",
+      "name": "Power User",
+      "privilege": "Upload images; Access Top 10; Purchase Invites; Invite forums",
+      "ratio": 1,
+      "uploaded": "1TiB"
+    },
+    {
+      "alternative": [
+        {
+          "uploads": 25
+        },
+        {
+          "adoptions": 50
+        }
+      ],
+      "bonus": 25000,
+      "id": 4,
+      "interval": "P3M",
+      "name": "Fanatic",
+      "privilege": "Can have 1 personal collage; Receives periodic invites (max 1)",
+      "ratio": 1,
+      "uploaded": "1TiB",
+      "uploads": 5
+    },
+    {
+      "alternative": [
+        {
+          "uploads": 100
+        },
+        {
+          "adoptions": 200
+        }
+      ],
+      "bonus": 250000,
+      "id": 5,
+      "interval": "P6M",
+      "name": "Elite",
+      "privilege": "Can have a up to 2 personal collages; Can edit film descriptions/trailers; Receives periodic invites (max 2)",
+      "ratio": 2.5,
+      "uploaded": "5TiB",
+      "uploads": 10
+    },
+    {
+      "alternative": [
+        {
+          "uploads": 250
+        },
+        {
+          "adoptions": 500
+        }
+      ],
+      "bonus": 500000,
+      "id": 6,
+      "interval": "P1Y",
+      "name": "Guru",
+      "privilege": "Immune from being put on ratio watch; Receives periodic invites (max 4)",
+      "ratio": 3,
+      "uploaded": "5TiB",
+      "uploads": 25
+    },
+    {
+      "alternative": [
+        {
+          "uploads": 500
+        },
+        {
+          "adoptions": 1000
+        }
+      ],
+      "bonus": 1000000,
+      "id": 7,
+      "interval": "P2Y",
+      "name": "Torrent Master",
+      "privilege": "Can have a up to 3 personal collages; Can edit torrents",
+      "ratio": 3.5,
+      "uploaded": "10TiB",
+      "uploads": 50
+    }
+  ]
+}

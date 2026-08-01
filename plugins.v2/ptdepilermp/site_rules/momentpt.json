@@ -1,0 +1,106 @@
+{
+  "name": "MomentPT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "nameAka": [
+        "取景者"
+      ],
+      "privilege": "新用户的默认级别。注册7天内无数据零保将封禁账号。不零保的情况下，永久保留账号（违规除外）。"
+    },
+    {
+      "downloaded": "8GB",
+      "id": 1,
+      "interval": "P2W",
+      "name": "Power User",
+      "nameAka": [
+        "快门手"
+      ],
+      "privilege": "Power User及以上用户可以发送邀请，可以发布摄影作品到候选区。",
+      "ratio": 1.2
+    },
+    {
+      "downloaded": "20GB",
+      "id": 2,
+      "interval": "P6W",
+      "name": "Elite User",
+      "nameAka": [
+        "暗房师"
+      ],
+      "privilege": "Elite User及以上用户可以查看工具区。",
+      "ratio": 1.6
+    },
+    {
+      "downloaded": "50GB",
+      "id": 3,
+      "interval": "P12W",
+      "name": "Crazy User",
+      "nameAka": [
+        "追光者"
+      ],
+      "privilege": "Crazy User以上用户可以直接发布摄影作品，无需候选。",
+      "ratio": 2.05
+    },
+    {
+      "downloaded": "100GB",
+      "id": 4,
+      "interval": "P20W",
+      "name": "Insane User",
+      "nameAka": [
+        "显示师"
+      ],
+      "privilege": "可以查看普通日志。",
+      "ratio": 2.55
+    },
+    {
+      "downloaded": "300GB",
+      "id": 5,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Veteran User",
+      "nameAka": [
+        "镜界者"
+      ],
+      "privilege": "得到1个邀请名额；可以查看其它用户的评论、帖子历史。",
+      "ratio": 3.05
+    },
+    {
+      "downloaded": "500GB",
+      "id": 6,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User",
+      "nameAka": [
+        "光影师"
+      ],
+      "privilege": "得到1个邀请名额；可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 3.55
+    },
+    {
+      "downloaded": "800GB",
+      "id": 7,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "nameAka": [
+        "造影者"
+      ],
+      "privilege": "得到1个邀请名额。",
+      "ratio": 4.05
+    },
+    {
+      "downloaded": "1TB",
+      "id": 8,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "nameAka": [
+        "永恒之眼"
+      ],
+      "privilege": "得到2个邀请名额。",
+      "ratio": 4.55
+    }
+  ]
+}

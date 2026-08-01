@@ -1,0 +1,89 @@
+{
+  "name": "CapybaraBR",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Lesma",
+      "privilege": "0下载槽 上传种子"
+    },
+    {
+      "id": 2,
+      "name": "Capivarinha",
+      "privilege": "5下载槽 上传种子",
+      "ratio": 1
+    },
+    {
+      "averageSeedingTime": "P3D",
+      "id": 3,
+      "interval": "P1M",
+      "name": "Arara",
+      "privilege": "25下载槽 上传种子 发送邀请",
+      "ratio": 1,
+      "uploaded": "1TiB"
+    },
+    {
+      "averageSeedingTime": "P1W",
+      "id": 4,
+      "interval": "P3M",
+      "name": "Mico-Leao",
+      "privilege": "25下载槽 上传种子 发送邀请",
+      "ratio": 1,
+      "uploaded": "5TiB"
+    },
+    {
+      "averageSeedingTime": "P2W6D",
+      "id": 5,
+      "interval": "P6M",
+      "name": "Onça",
+      "privilege": "25下载槽 上传种子 发送邀请",
+      "ratio": 1,
+      "uploaded": "25TiB"
+    },
+    {
+      "averageSeedingTime": "P1M",
+      "id": 6,
+      "interval": "P9M",
+      "name": "Tatu",
+      "privilege": "25下载槽 上传种子 发送邀请",
+      "ratio": 1,
+      "uploaded": "50TiB"
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 7,
+      "interval": "P12M",
+      "name": "Caramelo",
+      "privilege": "30下载槽 上传种子 发送邀请",
+      "ratio": 1,
+      "uploaded": "70TiB"
+    },
+    {
+      "averageSeedingTime": "P3M",
+      "id": 8,
+      "interval": "P1Y5M",
+      "name": "Lobo-Guara",
+      "privilege": "30下载槽 上传种子 发送邀请 双倍计算上传量",
+      "ratio": 1,
+      "uploaded": "100TiB"
+    },
+    {
+      "averageSeedingTime": "P6M",
+      "id": 9,
+      "interval": "P1Y11M",
+      "name": "Capivara-Master",
+      "privilege": "50下载槽 上传种子 发送邀请 双倍计算上传量",
+      "ratio": 1,
+      "uploaded": "200TiB"
+    },
+    {
+      "groupType": "user",
+      "id": 10,
+      "interval": "P3M",
+      "name": "Tartaruga",
+      "privilege": "不限下载槽 上传种子 发送邀请 不计算下载量 双倍计算上传量",
+      "ratio": 1,
+      "seedingSize": "20TiB"
+    }
+  ]
+}

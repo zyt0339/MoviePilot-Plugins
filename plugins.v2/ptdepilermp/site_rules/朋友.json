@@ -1,0 +1,128 @@
+{
+  "name": "朋友",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别。可以查看NFO文档；"
+    },
+    {
+      "bonus": 3200,
+      "downloaded": "50GB",
+      "id": 2,
+      "interval": "P5W",
+      "name": "Power User",
+      "privilege": "请求续种；查看排行榜；查看其它用户的种子历史；查看IMDB/Douban信息；使用魔力值",
+      "ratio": 1
+    },
+    {
+      "bonus": 19200,
+      "downloaded": "150GB",
+      "id": 3,
+      "interval": "P10W",
+      "name": "Elite User",
+      "privilege": "封存账号后不会被删除；查看排行榜，IMDB/Douban Top榜单和论坛的邀请区",
+      "ratio": 1.5
+    },
+    {
+      "bonus": 76800,
+      "downloaded": "300GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "在做种/下载的时候选择匿名模式；使用自动合集功能",
+      "ratio": 2
+    },
+    {
+      "bonus": 256000,
+      "downloaded": "500GB",
+      "id": 5,
+      "interval": "P30W",
+      "name": "Insane User",
+      "privilege": "查看普通日志",
+      "ratio": 2.5
+    },
+    {
+      "bonus": 640000,
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Veteran User",
+      "privilege": "查看其它用户的评论、帖子历史；永远保留账号",
+      "ratio": 3.5
+    },
+    {
+      "bonus": 1280000,
+      "downloaded": "2TB",
+      "id": 7,
+      "interval": "P90W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "上传量按照等级对应的限速计算",
+      "ratio": 4
+    },
+    {
+      "bonus": 1920000,
+      "downloaded": "3TB",
+      "id": 8,
+      "interval": "P120W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "上传速度限制提升为普通用户的二倍",
+      "ratio": 4.5
+    },
+    {
+      "bonus": 2560000,
+      "downloaded": "4TB",
+      "id": 9,
+      "interval": "P150W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "除了数据考核要求，其他权利等同于VIP，包括没有上传速度的限制",
+      "ratio": 5
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "贵宾",
+      "privilege": "为 FRDS 做出过卓越贡献的精英成员。免除自动降级。"
+    },
+    {
+      "groupType": "manager",
+      "id": 200,
+      "name": "养老族",
+      "privilege": "退休后的管理组成员。"
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "发布员",
+      "privilege": "专注的发布者。可以查看匿名用户的真实身份。"
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "总版主"
+    },
+    {
+      "groupType": "manager",
+      "id": 203,
+      "name": "管理员",
+      "privilege": "除了不能改变站点设定、管理捐赠外，可以做任何事。"
+    },
+    {
+      "groupType": "manager",
+      "id": 204,
+      "name": "维护开发员",
+      "privilege": "网站开发/维护人员，可以改变站点设定，不能管理捐赠。"
+    },
+    {
+      "groupType": "manager",
+      "id": 205,
+      "name": "主管",
+      "privilege": "网站主管，可以做任何事。"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "name": "HDTime",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "nameAka": [
+        "未烧"
+      ],
+      "privilege": "新用户的默认级别。"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "nameAka": [
+        "感冒"
+      ],
+      "ratio": 1.05,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "150GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User",
+      "nameAka": [
+        "发热"
+      ],
+      "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "ratio": 1.55,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "500GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "nameAka": [
+        "低烧"
+      ],
+      "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.05,
+      "seedingBonus": 150000
+    },
+    {
+      "downloaded": "750GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User",
+      "nameAka": [
+        "中烧"
+      ],
+      "privilege": "可以查看普通日志。",
+      "ratio": 2.55,
+      "seedingBonus": 250000
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 6,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Veteran User",
+      "nameAka": [
+        "高烧"
+      ],
+      "privilege": "免除增量考核；得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "ratio": 3.05,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "3TB",
+      "id": 7,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User",
+      "nameAka": [
+        "烧糊涂"
+      ],
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 3.55,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "5TB",
+      "id": 8,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "nameAka": [
+        "走火入魔"
+      ],
+      "privilege": "得到五个邀请名额。",
+      "ratio": 4.05,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "10TB",
+      "id": 9,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "HDtime Master",
+      "nameAka": [
+        "骨灰"
+      ],
+      "privilege": "得到十个邀请名额。",
+      "ratio": 4.55,
+      "seedingBonus": 1000000
+    }
+  ]
+}

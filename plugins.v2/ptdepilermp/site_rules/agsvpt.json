@@ -1,0 +1,110 @@
+{
+  "name": "AGSVPT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": "新用户的默认级别。只能在每周六中午12点至每周日晚上11点59分发布种子。"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "name": "Power User",
+      "nameAka": [
+        "北冰珍珠熊"
+      ],
+      "privilege": "可以进入银行贷款",
+      "ratio": 1.05,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "120GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "Elite User",
+      "nameAka": [
+        "深渊蔚蓝熊"
+      ],
+      "privilege": "可以得到一个邀请名额；Elite User及以上用户封存账号后不会被删除。  ",
+      "ratio": 1.55,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P12W",
+      "name": "Crazy User",
+      "nameAka": [
+        "翡翠森林熊"
+      ],
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.05,
+      "seedingBonus": 150000
+    },
+    {
+      "downloaded": "500GB",
+      "id": 4,
+      "interval": "P20W",
+      "name": "Insane User",
+      "nameAka": [
+        "神秘紫晶熊"
+      ],
+      "privilege": "查看普通日志",
+      "ratio": 2.55,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "750GB",
+      "id": 5,
+      "interval": "P28W",
+      "isKept": true,
+      "name": "Veteran User",
+      "nameAka": [
+        "寒冰白金熊"
+      ],
+      "privilege": "永远保留账号；查看其它用户的评论、帖子历史",
+      "ratio": 4.05,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Extreme User",
+      "nameAka": [
+        "皇家金辉熊"
+      ],
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。  ",
+      "ratio": 5.05,
+      "seedingBonus": 1400000
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 7,
+      "interval": "P52W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "nameAka": [
+        "永恒铂金熊"
+      ],
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 6.05,
+      "seedingBonus": 2200000
+    },
+    {
+      "downloaded": "3TB",
+      "id": 8,
+      "interval": "P70W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "nameAka": [
+        "钻石之冠北极熊"
+      ],
+      "privilege": "首次升级至此等级的用户将获得2个邀请名额。",
+      "ratio": 7.05,
+      "seedingBonus": 3200000
+    }
+  ]
+}

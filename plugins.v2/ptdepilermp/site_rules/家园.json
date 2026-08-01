@@ -1,0 +1,110 @@
+{
+  "name": "家园",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "nameAka": [
+        "临时演员"
+      ],
+      "privilege": "新用户的默认级别。"
+    },
+    {
+      "downloaded": "256GB",
+      "id": 2,
+      "interval": "P5W",
+      "name": "Power User",
+      "nameAka": [
+        "跑龙套"
+      ],
+      "privilege": "无",
+      "ratio": 2,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "386GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User",
+      "nameAka": [
+        "配角"
+      ],
+      "privilege": "无",
+      "ratio": 2.5,
+      "seedingBonus": 100000
+    },
+    {
+      "downloaded": "512GB",
+      "id": 4,
+      "interval": "P12W",
+      "name": "Crazy User",
+      "nameAka": [
+        "主演"
+      ],
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式",
+      "ratio": 3,
+      "seedingBonus": 180000
+    },
+    {
+      "downloaded": "768GB",
+      "id": 5,
+      "interval": "P16W",
+      "name": "Insane User",
+      "nameAka": [
+        "领衔主演"
+      ],
+      "privilege": "无",
+      "ratio": 3.5,
+      "seedingBonus": 280000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P20W",
+      "name": "Veteran User",
+      "nameAka": [
+        "明星"
+      ],
+      "privilege": "可以查看其它用户的评论、帖子历史",
+      "ratio": 4,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "2TB",
+      "id": 7,
+      "interval": "P24W",
+      "name": "Extreme User",
+      "nameAka": [
+        "国际大腕"
+      ],
+      "privilege": "得到1个邀请名额，可以更新过期的外部信息；可以查看Extreme User论坛",
+      "ratio": 4.5,
+      "seedingBonus": 540000
+    },
+    {
+      "downloaded": "8TB",
+      "id": 8,
+      "interval": "P30W",
+      "name": "Ultimate User",
+      "nameAka": [
+        "影帝"
+      ],
+      "privilege": "得到1个邀请名额",
+      "ratio": 5,
+      "seedingBonus": 700000
+    },
+    {
+      "downloaded": "10TB",
+      "id": 9,
+      "interval": "P36W",
+      "name": "Nexus Master",
+      "nameAka": [
+        "终身影帝"
+      ],
+      "privilege": "得到1个邀请名额，账号永久保留",
+      "ratio": 10,
+      "seedingBonus": 1000000
+    }
+  ]
+}

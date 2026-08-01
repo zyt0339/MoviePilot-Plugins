@@ -1,0 +1,50 @@
+{
+  "name": "kufirc",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Apprentice",
+      "privilege": "The default class of new members."
+    },
+    {
+      "id": 2,
+      "interval": "P1W",
+      "name": "Perv",
+      "privilege": "Must have been be a member for at least 1 week, uploaded 10GB+, ratio 0.7+",
+      "ratio": 0.7,
+      "uploaded": "10GB"
+    },
+    {
+      "id": 3,
+      "interval": "P4W",
+      "name": "Good Perv",
+      "privilege": "Must have been be a member for at least 4 weeks, uploaded 25GB+, ratio 1.05+",
+      "ratio": 1.05,
+      "uploaded": "25GB"
+    },
+    {
+      "id": 4,
+      "interval": "P13W",
+      "name": "Sextreme Perv",
+      "privilege": "Must have been be a member for at least 13 weeks, uploaded 1TB+, uploaded 50+ torrents, ratio 1.05+",
+      "ratio": 1.05,
+      "uploaded": "1TB",
+      "uploads": 50
+    },
+    {
+      "id": 5,
+      "interval": "P26W",
+      "name": "Smut Peddler",
+      "privilege": "Must have been be a member for at least 26 weeks, uploaded 10TB+, uploaded 250+ torrents, ratio 1.05+",
+      "ratio": 1.05,
+      "uploaded": "10TB",
+      "uploads": 250
+    },
+    {
+      "id": 6,
+      "name": "Legenda",
+      "privilege": "Legendary user with special privileges."
+    }
+  ]
+}

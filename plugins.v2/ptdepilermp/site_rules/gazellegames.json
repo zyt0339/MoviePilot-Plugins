@@ -1,0 +1,50 @@
+{
+  "name": "GazelleGames",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Amateur"
+    },
+    {
+      "id": 2,
+      "name": "Gamer",
+      "privilege": "Can send invites",
+      "seedingBonus": 600
+    },
+    {
+      "id": 3,
+      "isKept": true,
+      "name": "Pro Gamer",
+      "privilege": "Access to the Pro Gamers forum and Invites forum; Immunity from inactivity pruning",
+      "seedingBonus": 1200
+    },
+    {
+      "id": 4,
+      "isKept": true,
+      "name": "Elite Gamer",
+      "privilege": "Edit any torrent; Immunity from Hit 'n' Runs",
+      "seedingBonus": 2100
+    },
+    {
+      "id": 5,
+      "isKept": true,
+      "name": "Legendary Gamer",
+      "privilege": "Access to the Legendary Gamer Invites forum",
+      "seedingBonus": 3000
+    },
+    {
+      "id": 6,
+      "isKept": true,
+      "name": "Master Gamer",
+      "seedingBonus": 4200
+    },
+    {
+      "id": 7,
+      "isKept": true,
+      "name": "Gaming God",
+      "privilege": "Can send unlimited Invites",
+      "seedingBonus": 6000
+    }
+  ]
+}

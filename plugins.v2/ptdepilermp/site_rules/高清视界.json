@@ -1,0 +1,79 @@
+{
+  "name": "高清视界",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": "新用户的默认级别"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "得到1个邀请名额；可以直接发布种子；可以查看NFO文档；；可以请求续种； 可以发送邀请（开放邀请权限时）； 可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "120GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "权限同上。",
+      "ratio": 3
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P10W",
+      "name": "Crazy User",
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 3.5
+    },
+    {
+      "downloaded": "750GB",
+      "id": 4,
+      "interval": "P12W",
+      "name": "Insane User",
+      "privilege": "可以查看普通日志。Insane User及以上用户封存账号后不会被删除。",
+      "ratio": 4
+    },
+    {
+      "downloaded": "1024GB",
+      "id": 5,
+      "interval": "P20W",
+      "isKept": true,
+      "name": "Veteran User",
+      "privilege": "可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "ratio": 4.5
+    },
+    {
+      "downloaded": "2TB",
+      "id": 6,
+      "interval": "P25W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 5
+    },
+    {
+      "downloaded": "5TB",
+      "id": 7,
+      "interval": "P30W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "得到1个邀请名额。",
+      "ratio": 5.5
+    },
+    {
+      "downloaded": "10TB",
+      "id": 8,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "得到2个邀请名额。",
+      "ratio": 6
+    }
+  ]
+}

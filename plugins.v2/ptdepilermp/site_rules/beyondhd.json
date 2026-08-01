@@ -1,0 +1,139 @@
+{
+  "name": "BeyondHD",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Recruit",
+      "privilege": "Can Download; Can rescue 5 torrents per day until 25 pending completion; Members in this class are capped at receiving 1,000 BP in gifts/tips per member.",
+      "ratio": 0.25
+    },
+    {
+      "id": 2,
+      "interval": "P14D",
+      "name": "User",
+      "privilege": "Can Request Reseeds; Can Request Torrents; Can Remove HNRs (with BP); Bypass Upload Moderation; Change Avatar;Can rescue 6 torrents per day until 30 pending completion.",
+      "ratio": 0.25,
+      "seedingTime": "P25D",
+      "snatches": 5,
+      "uploaded": "50GiB"
+    },
+    {
+      "averageSeedingTime": "P10D",
+      "id": 3,
+      "interval": "P1M",
+      "name": "Member",
+      "privilege": "View Workhouse; View Internals; View Staff; View Site Stats; Change Title; Change About; Change Signature; Can rescue 10 torrents per day until 30 pending completion.",
+      "ratio": 0.4,
+      "seedingTime": "P8M10D",
+      "snatches": 25,
+      "uploaded": "400GiB"
+    },
+    {
+      "averageSeedingTime": "P15D",
+      "id": 4,
+      "interval": "P3M",
+      "name": "Expert",
+      "privilege": "Send Invites; View Torrent Peers; View Torrent History; Change Profile Cover; Can rescue 11 torrents per day until 33 pending completion.",
+      "ratio": 0.55,
+      "seedingTime": "P2Y20D",
+      "snatches": 50,
+      "uploaded": "800GiB"
+    },
+    {
+      "averageSeedingTime": "P30D",
+      "id": 5,
+      "interval": "P6M",
+      "name": "Pro",
+      "privilege": "View Invite Forum; View Chat History; Can rescue 12 torrents per day until 36 pending completion.",
+      "ratio": 0.7,
+      "seedingTime": "P4Y11M",
+      "snatches": 60,
+      "uploaded": "1.25TiB"
+    },
+    {
+      "averageSeedingTime": "P45D",
+      "id": 6,
+      "interval": "P9M",
+      "name": "Elite",
+      "privilege": "Can rescue 15 torrents per day until 45 pending completion. Receive 2 FL token(s) for every 30 days this class is retained.",
+      "ratio": 0.85,
+      "seedingTime": "P9Y3M",
+      "snatches": 75,
+      "uploaded": "2.5TiB"
+    },
+    {
+      "averageSeedingTime": "P60D",
+      "id": 7,
+      "interval": "P1Y",
+      "name": "Master",
+      "privilege": "View Torrent Changes; View Movie / TV Edits; Can rescue 16 torrents per day until 48 pending completion. Receive 2 FL token(s) for every 30 days this class is retained. Receive 25% discount on all downloads.",
+      "ratio": 1,
+      "seedingTime": "P41Y1M5D",
+      "snatches": 250,
+      "uploaded": "8TiB"
+    },
+    {
+      "averageSeedingTime": "P90D",
+      "id": 8,
+      "interval": "P2Y",
+      "name": "King",
+      "privilege": "Edit Movie / TV Details; Can rescue 20 torrents per day until 60 pending completion. Receive 2 FL token(s) for every 30 days this class is retained. Receive 50% discount on all downloads.",
+      "ratio": 1.25,
+      "seedingTime": "P123Y3M15D",
+      "snatches": 500,
+      "uploaded": "24TiB"
+    },
+    {
+      "averageSeedingTime": "P180D",
+      "id": 9,
+      "interval": "P5Y",
+      "name": "Emperor",
+      "privilege": "Can rescue 40 torrents per day until 120 pending completion. Receive 5 FL token(s) for every 30 days this class is retained. Receive 1 invite(s) for every 30 days this class is retained. Receive 100% discount on all downloads.",
+      "ratio": 4,
+      "seedingTime": "P123Y3M15D",
+      "snatches": 10000,
+      "uploaded": "96TiB"
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "Pirater"
+    },
+    {
+      "groupType": "vip",
+      "id": 101,
+      "name": "Celebrity"
+    },
+    {
+      "groupType": "vip",
+      "id": 102,
+      "name": "Legend"
+    },
+    {
+      "groupType": "vip",
+      "id": 103,
+      "name": "Uploader"
+    },
+    {
+      "groupType": "vip",
+      "id": 104,
+      "name": "Internal"
+    },
+    {
+      "groupType": "manager",
+      "id": 200,
+      "name": "Moderator"
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "Bot"
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "SysOp"
+    }
+  ]
+}

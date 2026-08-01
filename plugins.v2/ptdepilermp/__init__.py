@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from datetime import datetime, timedelta
 from threading import Lock
 from typing import Any, Dict, List, Optional, Tuple
@@ -28,7 +27,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT站点等级监控"
     plugin_desc = "展示站点当前等级、保号状态和下一等级缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.0.0"
+    plugin_version = "1.2.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -37,8 +36,6 @@ class PTDepilerMp(_PluginBase):
 
     _enabled = False
     _allow_refresh_all = False
-    _rule_overrides_raw = ""
-    _overrides: Dict[str, Dict[str, Any]] = {}
     _scheduler: Optional[BackgroundScheduler] = None
 
     def __init__(self):
@@ -48,27 +45,12 @@ class PTDepilerMp(_PluginBase):
         self._refresh_pending = False
 
     def init_plugin(self, config: dict = None):
-        """载入配置；插件升级时清除旧版本规则覆盖。"""
+        """载入插件配置和磁盘站点规则。"""
         self.stop_service()
         config = dict(config or {})
         self._enabled = bool(config.get("enabled", False))
         self._allow_refresh_all = bool(config.get("allow_refresh_all", False))
-        self._rule_overrides_raw = config.get("rule_overrides") or ""
-        changed = False
-        if config.get("config_version") != self.plugin_version:
-            self._rule_overrides_raw = ""
-            config["rule_overrides"] = ""
-            config["config_version"] = self.plugin_version
-            changed = True
-        try:
-            self._overrides = self._repository.parse_overrides(self._rule_overrides_raw)
-        except (ValueError, TypeError, json.JSONDecodeError) as error:
-            self._overrides = {}
-            logger.error(f"PT站点等级监控：规则覆盖无效，已回退内置规则：{error}")
-        if config and changed:
-            config["enabled"] = self._enabled
-            config["allow_refresh_all"] = self._allow_refresh_all
-            self.update_config(config=config)
+        self._repository.reload()
 
     def get_state(self) -> bool:
         """返回插件启用状态。"""
@@ -140,26 +122,15 @@ class PTDepilerMp(_PluginBase):
                         "text": "刷新会真实访问 PT 站点，并可能触发 MoviePilot 的站点消息、低分享率提醒等既有副作用。",
                     },
                     {
-                        "component": "VTextarea",
-                        "props": {
-                            "model": "rule_overrides",
-                            "label": "单站完整规则覆盖（JSON）",
-                            "rows": 8,
-                            "placeholder": '{"站点ID":{"name":"自定义","levels":[...]}}',
-                        },
-                    },
-                    {
                         "component": "VAlert",
                         "props": {"type": "info", "variant": "tonal", "class": "mt-4"},
-                        "text": "覆盖按 MoviePilot 站点 ID 整站替换内置规则；插件版本变化时全部清除，不做字段合并。",
+                        "text": "等级配置来自插件 site_rules 目录。修改或新增单站 JSON 后刷新详情页即可重新读取。",
                     },
                 ],
             }
         ], {
             "enabled": False,
             "allow_refresh_all": False,
-            "rule_overrides": "",
-            "config_version": self.plugin_version,
         }
 
     @staticmethod
@@ -173,6 +144,7 @@ class PTDepilerMp(_PluginBase):
 
     def _rows(self) -> List[Dict[str, Any]]:
         """读取启用站点和最新快照，生成页面安全数据。"""
+        self._repository.reload()
         sites = SiteOper().list_active() or []
         latest = SiteOper().get_userdata_latest() or []
         # get_userdata_latest 可能返回同一天的多条记录，查询结果按时间倒序；只保留第一条。
@@ -184,7 +156,7 @@ class PTDepilerMp(_PluginBase):
         for site in sites:
             data = latest_by_domain.get(getattr(site, "domain", None))
             user = self._object_dict(data) if data else {}
-            rule_id, rule = self._repository.match(site.id, site.domain, self._overrides)
+            rule_id, rule = self._repository.match(site.name)
             result = self._repository.evaluate_site(user, rule_id, rule)
             rows.append({
                 "site_id": site.id,
@@ -350,7 +322,10 @@ class PTDepilerMp(_PluginBase):
                 {
                     "component": "VAlert",
                     "props": {"type": "warning", "variant": "tonal", "class": "my-4"},
-                    "text": "刷新会真实访问 PT 站点，并可能触发站点消息；非当天快照统一标记为陈旧。",
+                    "text": (
+                        "刷新会真实访问 PT 站点，并可能触发站点消息；非当天快照统一标记为陈旧。"
+                        + (f" 当前有 {self._repository.load_errors} 个规则文件无效并已跳过。" if self._repository.load_errors else "")
+                    ),
                 },
                 {"component": "div", "props": {"class": "d-flex justify-end mb-3"}, "content": actions},
                 {

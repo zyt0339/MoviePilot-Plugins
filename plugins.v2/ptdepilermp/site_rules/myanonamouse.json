@@ -1,0 +1,30 @@
+{
+  "name": "MyAnonamouse",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Mouse"
+    },
+    {
+      "id": 2,
+      "name": "User",
+      "privilege": "Receive 1 request per month; Can have 50 unsatisfied torrents at maximum",
+      "ratio": 1
+    },
+    {
+      "id": 3,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "Receive 2 requests per month; Can have 100 unsatisfied torrents at maximum",
+      "ratio": 2,
+      "uploaded": "25GB"
+    },
+    {
+      "groupType": "vip",
+      "id": 4,
+      "name": "VIP",
+      "privilege": "Receive 4 requests per month; Can have 150 unsatisfied torrents at maximum"
+    }
+  ]
+}

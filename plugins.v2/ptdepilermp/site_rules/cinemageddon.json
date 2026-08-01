@@ -1,0 +1,22 @@
+{
+  "name": "Cinemageddon",
+  "is_dead": false,
+  "levels": [
+    {
+      "downloaded": "20GB",
+      "id": 1,
+      "name": "Power User",
+      "privilege": "Maximum of 8 concurrent downloads",
+      "ratio": 1.2,
+      "uploaded": "25GB"
+    },
+    {
+      "downloaded": "20GB",
+      "id": 2,
+      "name": "CG Superfan",
+      "privilege": "Maximum of 12 concurrent downloads",
+      "ratio": 1.5,
+      "uploaded": "200GB"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "Portugas",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Mouro",
+      "privilege": "3下载槽",
+      "ratio": 0.4
+    },
+    {
+      "id": 2,
+      "interval": "P3M",
+      "name": "Hispanus",
+      "privilege": "5下载槽 发送邀请",
+      "ratio": 1.25,
+      "uploaded": "250GiB"
+    },
+    {
+      "id": 3,
+      "interval": "P6M",
+      "name": "Lusitanus",
+      "privilege": "10下载槽 发送邀请",
+      "ratio": 1.25,
+      "uploaded": "1TiB"
+    },
+    {
+      "id": 4,
+      "interval": "P1Y",
+      "name": "Portucale",
+      "privilege": "15下载槽 上传种子 发送邀请",
+      "ratio": 1.25,
+      "uploaded": "5TiB"
+    },
+    {
+      "id": 5,
+      "interval": "P1Y",
+      "name": "Portuga",
+      "privilege": "20下载槽 上传种子 发送邀请",
+      "ratio": 1.25,
+      "uploaded": "15TiB"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Third-party notices
 
-The bundled site-level metadata and the level-evaluation design are derived from
+The initial bundled site-level metadata and the level-evaluation design were derived from
 [PT-depiler](https://github.com/pt-plugins/PT-depiler), copyright (c) 2020
 pt-plugins, under the MIT License. The complete MIT license text is reproduced
 below.

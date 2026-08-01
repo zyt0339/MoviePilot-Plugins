@@ -1,0 +1,87 @@
+{
+  "name": "雨",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认等级"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User（灯火通明）",
+      "privilege": "得到一个邀请名额；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "ratio": 1.05,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "120GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User（月华如水）",
+      "privilege": "User及以上用户封存账号后不会被删除。",
+      "ratio": 1.55,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "300GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User（流光溢彩）",
+      "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.05,
+      "seedingBonus": 15000
+    },
+    {
+      "downloaded": "500GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User（光芒万丈）",
+      "privilege": "可以查看普通日志。",
+      "ratio": 2.55,
+      "seedingBonus": 25000
+    },
+    {
+      "downloaded": "750GB",
+      "id": 6,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Veteran User（星火燎原）",
+      "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "ratio": 3.05,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 7,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User（光耀四方）",
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 3.55,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 8,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User（烈日当空）",
+      "privilege": "得到五个邀请名额。",
+      "ratio": 4.05,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "3TB",
+      "id": 9,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "Nexus Master（星河璀璨）",
+      "privilege": "得到十个邀请名额。",
+      "ratio": 4.55,
+      "seedingBonus": 1000000
+    }
+  ]
+}

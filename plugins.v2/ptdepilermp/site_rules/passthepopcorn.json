@@ -1,0 +1,81 @@
+{
+  "name": "PassThePopcorn",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "Upload torrents. Download torrents"
+    },
+    {
+      "id": 2,
+      "interval": "P1W",
+      "name": "Member",
+      "privilege": "Create requests. Hide username from peerlists. Download a .zip file of snatches on their profile",
+      "ratio": 1.05,
+      "uploaded": "40GB"
+    },
+    {
+      "id": 3,
+      "interval": "P4W",
+      "isKept": true,
+      "name": "Power User",
+      "nameAka": [
+        "PU"
+      ],
+      "privilege": "Immunity to inactivity pruning. Access to PU forums. Access to invite forums. Freeleech access in advanced search. Can send bonus points to other users. Can edit movie group information. Access to on-site notifications. Access to the IRC announce channels. Create collections and edit existing ones",
+      "ratio": 1.05,
+      "uploaded": "80GB",
+      "uploads": 1
+    },
+    {
+      "id": 4,
+      "interval": "P10W",
+      "isKept": true,
+      "name": "Elite",
+      "privilege": "Access to Elite forums. Can purchase invites from the bonus point store",
+      "ratio": 1.05,
+      "uploaded": "500GB",
+      "uploads": 50
+    },
+    {
+      "id": 5,
+      "interval": "P16W",
+      "isKept": true,
+      "name": "Torrent Master",
+      "nameAka": [
+        "TM"
+      ],
+      "privilege": "Access to TM forums. Receive 2 invites per month",
+      "ratio": 1.05,
+      "uploaded": "1TB",
+      "uploads": 200
+    },
+    {
+      "id": 6,
+      "interval": "P24W",
+      "isKept": true,
+      "name": "Torrent King",
+      "nameAka": [
+        "TK"
+      ],
+      "privilege": "Can create personal collections to feature on their profile. Granted ability to double post in forums. Unlimited search and log results. Immunity from ratio-based demotion",
+      "ratio": 1.05,
+      "uploaded": "5TB",
+      "uploads": 500
+    },
+    {
+      "id": 7,
+      "interval": "P36W",
+      "isKept": true,
+      "name": "Custom Class",
+      "nameAka": [
+        "CC"
+      ],
+      "privilege": "Can chose their own class title. Immunity from ratio-based demotion",
+      "ratio": 1.05,
+      "uploaded": "10TB",
+      "uploads": 1000
+    }
+  ]
+}

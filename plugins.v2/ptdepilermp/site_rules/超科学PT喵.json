@@ -1,0 +1,70 @@
+{
+  "name": "超科学PT喵",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "查看、搜索用户列表,查看一般日志，不能查看机密日志,查看其他用户的种子历史记录,在发布种子、上传字幕时选择匿名[仅限里番分类]",
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "120GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "Elite User",
+      "ratio": 1.55
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "ratio": 2.05
+    },
+    {
+      "downloaded": "500GB",
+      "id": 4,
+      "interval": "P25W",
+      "name": "Insane User",
+      "ratio": 2.55
+    },
+    {
+      "downloaded": "750GB",
+      "id": 5,
+      "interval": "P40W",
+      "name": "Veteran User",
+      "ratio": 3.05
+    },
+    {
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P60W",
+      "name": "Extreme User",
+      "privilege": "查看其他用户的评论和帖子历史记录",
+      "ratio": 3.55
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 7,
+      "interval": "P80W",
+      "name": "Ultimate User",
+      "ratio": 4.05
+    },
+    {
+      "downloaded": "3TB",
+      "id": 8,
+      "interval": "P100W",
+      "name": "Nexus Master",
+      "privilege": "网站一般用户最高等级",
+      "ratio": 4.55
+    }
+  ]
+}

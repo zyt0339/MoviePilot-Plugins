@@ -1,0 +1,43 @@
+{
+  "name": "TorrentLeech",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "id": 1,
+      "interval": "P2W",
+      "name": "Power User",
+      "privilege": "Increased Points: 3%, Minimum Seeding Time: 8 days",
+      "ratio": 1.1,
+      "uploaded": "200GB"
+    },
+    {
+      "id": 2,
+      "interval": "P12W",
+      "name": "Super User",
+      "privilege": "Increased Points: 5%, Minimum Seeding Time: 7 days",
+      "ratio": 2,
+      "uploaded": "1TB"
+    },
+    {
+      "id": 3,
+      "interval": "P24W",
+      "name": "Extreme User",
+      "privilege": "Increased Points: 6%, Minimum Seeding Time: 6 days",
+      "ratio": 5,
+      "uploaded": "10TB"
+    },
+    {
+      "id": 4,
+      "interval": "P52W",
+      "name": "TL GOD",
+      "privilege": "Increased Points: 8%, Minimum Seeding Time: 4 days",
+      "ratio": 8,
+      "uploaded": "50TB"
+    }
+  ]
+}

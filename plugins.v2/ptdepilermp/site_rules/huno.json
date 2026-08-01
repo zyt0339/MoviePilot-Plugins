@@ -1,0 +1,36 @@
+{
+  "name": "HUNO",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Silent Sisters",
+      "privilege": "Can download"
+    },
+    {
+      "id": 2,
+      "name": "Iron Fleet",
+      "privilege": "Can upload; Can request"
+    },
+    {
+      "id": 3,
+      "name": "White Walkers",
+      "privilege": "RSS; IRC Server; IRC Announce; Upload API; Can apply for hawke-one Discord access"
+    },
+    {
+      "id": 4,
+      "name": "Dothraki",
+      "privilege": "Listed uploads; HnR immunity"
+    },
+    {
+      "id": 5,
+      "name": "Unsullied",
+      "privilege": "Can invite; Can see peers; Trusted uploader; Worthy; hawke-one Discord invite; Unsullied on hawke-one Discord with added perks"
+    },
+    {
+      "id": 6,
+      "name": "Targaryen",
+      "privilege": "Internal; Custom branding; Targaryen on hawke-one Discord with added perks"
+    }
+  ]
+}

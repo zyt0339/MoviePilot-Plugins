@@ -1,0 +1,85 @@
+{
+  "name": "高清杜比",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别。"
+    },
+    {
+      "downloaded": "120GB",
+      "id": 2,
+      "interval": "P2W",
+      "name": "Power User",
+      "ratio": 2,
+      "seedingBonus": 60000
+    },
+    {
+      "downloaded": "256GB",
+      "id": 3,
+      "interval": "P4W",
+      "name": "(连长)Elite User",
+      "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "ratio": 2.5,
+      "seedingBonus": 120000
+    },
+    {
+      "downloaded": "512GB",
+      "id": 4,
+      "interval": "P8W",
+      "name": "Crazy User",
+      "privilege": "得到0个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 3,
+      "seedingBonus": 240000
+    },
+    {
+      "downloaded": "768GB",
+      "id": 5,
+      "interval": "P12W",
+      "name": "Insane User",
+      "privilege": "无",
+      "ratio": 3.5,
+      "seedingBonus": 360000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P20W",
+      "name": "Veteran User",
+      "privilege": "可以查看其它用户的评论、帖子历史。",
+      "ratio": 4,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "2TB",
+      "id": 7,
+      "interval": "P28W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "Extreme User及以上用户会永远保留账号。",
+      "ratio": 4.5,
+      "seedingBonus": 720000
+    },
+    {
+      "downloaded": "4TB",
+      "id": 8,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "无",
+      "ratio": 5,
+      "seedingBonus": 1200000
+    },
+    {
+      "downloaded": "8TB",
+      "id": 9,
+      "interval": "P56W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "无",
+      "ratio": 5.5,
+      "seedingBonus": 1680000
+    }
+  ]
+}

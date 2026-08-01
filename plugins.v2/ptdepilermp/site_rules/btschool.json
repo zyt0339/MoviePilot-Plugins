@@ -1,0 +1,133 @@
+{
+  "name": "BTSCHOOL",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 2,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "一个邀请名额；查看NFO文档；查看用户列表；请求续种；查看其它用户的种子历史； 删除自己上传的字幕。",
+      "ratio": 2,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "100GB",
+      "id": 3,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "直接发布种子； 查看排行榜",
+      "ratio": 2.5,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "300GB",
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "两个邀请名额；在做种/下载/发布的时候选择匿名模式",
+      "ratio": 3,
+      "seedingBonus": 150000
+    },
+    {
+      "downloaded": "500GB",
+      "id": 5,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "查看普通日志",
+      "ratio": 3.5,
+      "seedingBonus": 250000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P40W",
+      "name": "Veteran User",
+      "privilege": "三个邀请名额；查看其它用户的评论、帖子历史；封存账号后不会被删除",
+      "ratio": 4,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "2TB",
+      "id": 7,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "更新过期的外部信息；查看Extreme User论坛；永远保留账号",
+      "ratio": 4.5,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "5TB",
+      "id": 8,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "五个邀请名额",
+      "ratio": 5,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "10TB",
+      "id": 9,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "十个邀请名额；发送邀请",
+      "ratio": 5.5,
+      "seedingBonus": 1000000
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "贵宾(VIP)",
+      "privilege": "和 Nexus Master 拥有相同权限并被认为是精英成员。免除自动降级。"
+    },
+    {
+      "groupType": "vip",
+      "id": 101,
+      "name": "其他",
+      "privilege": "自定义等级"
+    },
+    {
+      "groupType": "manager",
+      "id": 200,
+      "name": "养老族(Retiree)",
+      "privilege": "退休后的管理组成员。"
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "发布员(Uploader)",
+      "privilege": "专注的发布者。免除自动降级；可以查看匿名用户的真实身份。"
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "总版主(Moderator)"
+    },
+    {
+      "groupType": "manager",
+      "id": 203,
+      "name": "管理员(Administrator)",
+      "privilege": "除了不能改变站点设定、管理捐赠外，可以做任何事。"
+    },
+    {
+      "groupType": "manager",
+      "id": 204,
+      "name": "维护开发员(Sysop)",
+      "privilege": "网站开发/维护人员，可以改变站点设定，不能管理捐赠。"
+    },
+    {
+      "groupType": "manager",
+      "id": 205,
+      "name": "主管(Staff Leader)",
+      "privilege": "网站主管，可以做任何事。"
+    }
+  ]
+}

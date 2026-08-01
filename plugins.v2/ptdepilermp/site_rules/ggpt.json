@@ -1,0 +1,94 @@
+{
+  "name": "GGPT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "ratio": 2,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "100GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "没有新权限增加",
+      "ratio": 2.5,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 3,
+      "seedingBonus": 150000
+    },
+    {
+      "downloaded": "500GB",
+      "id": 4,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "可以查看普通日志。",
+      "ratio": 3.5,
+      "seedingBonus": 250000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 5,
+      "interval": "P40W",
+      "name": "Veteran User",
+      "privilege": "可以查看其它用户的评论、帖子历史。",
+      "ratio": 4,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "2TB",
+      "id": 6,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "可以更新过期的外部信息。游戏大仙(Extreme User)及以上用户会永远保留账号。",
+      "ratio": 4.5,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "5TB",
+      "id": 7,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "这个等级会永远保留账号。",
+      "ratio": 5,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "10TB",
+      "id": 8,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "这个等级会永远保留账号。",
+      "ratio": 5.5,
+      "seedingBonus": 1000000
+    },
+    {
+      "id": 9,
+      "name": "养老族(Retiree)",
+      "nameAka": [
+        "养老，散仙"
+      ],
+      "privilege": "散仙等级，享受养老待遇"
+    }
+  ]
+}

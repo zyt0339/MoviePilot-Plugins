@@ -1,0 +1,160 @@
+{
+  "name": "PTzone",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Peasant",
+      "privilege": "被降级的用户，他们有30天时间来提升分享率，否则他们会被踢。不能发表趣味盒内容;不能申请友情链接;不能上传字幕。"
+    },
+    {
+      "id": 2,
+      "name": "User",
+      "privilege": "新用户的默认级别。只能在每周六中午12点至每周日晚上11点59分发布种子。"
+    },
+    {
+      "downloaded": "50GB",
+      "id": 3,
+      "interval": "P4W",
+      "name": "Power User",
+      "ratio": 1.05,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "120GB",
+      "id": 4,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "ratio": 1.55,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "300GB",
+      "id": 5,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "得到两个邀请名额;可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.05,
+      "seedingBonus": 150000
+    },
+    {
+      "downloaded": "500GB",
+      "id": 6,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "可以查看普通日志。",
+      "ratio": 2.55,
+      "seedingBonus": 250000
+    },
+    {
+      "downloaded": "750GB",
+      "id": 7,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Veteran User",
+      "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "ratio": 3.05,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "1024GB",
+      "id": 8,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 3.55,
+      "seedingBonus": 600000
+    },
+    {
+      "downloaded": "1536GB",
+      "id": 9,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "得到五个邀请名额。",
+      "ratio": 4.05,
+      "seedingBonus": 800000
+    },
+    {
+      "downloaded": "3072GB",
+      "id": 10,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "得到十个邀请名额。",
+      "ratio": 4.55,
+      "seedingBonus": 1000000
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "VIP",
+      "nameAka": [
+        "贵宾",
+        "贵宾(VIP)"
+      ],
+      "privilege": "和Nexus Master拥有相同权限并被认为是精英成员。免除自动降级。"
+    },
+    {
+      "groupType": "manager",
+      "id": 200,
+      "name": "Retiree",
+      "nameAka": [
+        "养老族",
+        "养老族(Retiree)"
+      ],
+      "privilege": "退休后的管理组成员。"
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "Uploader",
+      "nameAka": [
+        "发布员",
+        "发布员(Uploader)"
+      ],
+      "privilege": "专注的发布者。免除自动降级；可以查看匿名用户的真实身份。"
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "Moderator",
+      "nameAka": [
+        "总版主",
+        "总版主(Moderator)"
+      ]
+    },
+    {
+      "groupType": "manager",
+      "id": 203,
+      "name": "Administrator",
+      "nameAka": [
+        "管理员",
+        "管理员(Administrator)"
+      ],
+      "privilege": "除了不能改变站点设定、管理捐赠外，可以做任何事。"
+    },
+    {
+      "groupType": "manager",
+      "id": 204,
+      "name": "Sysop",
+      "nameAka": [
+        "维护开发员",
+        "维护开发员(Sysop)"
+      ],
+      "privilege": "网站开发/维护人员，可以改变站点设定，不能管理捐赠。"
+    },
+    {
+      "groupType": "manager",
+      "id": 205,
+      "name": "Staff Leader",
+      "nameAka": [
+        "主管",
+        "主管(Staff Leader)"
+      ],
+      "privilege": "网站主管，可以做任何事。"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "name": "Redacted",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User"
+    },
+    {
+      "id": 2,
+      "interval": "P1W",
+      "name": "Member",
+      "privilege": "",
+      "ratio": 0.65,
+      "uploaded": "10GB"
+    },
+    {
+      "id": 3,
+      "interval": "P2W",
+      "isKept": true,
+      "name": "Power User",
+      "privilege": "Invites forums; Immunity from inactivity disabling",
+      "ratio": 0.65,
+      "uploaded": "25GB",
+      "uploads": 5
+    },
+    {
+      "id": 4,
+      "interval": "P4W",
+      "isKept": true,
+      "name": "Elite",
+      "privilege": "",
+      "ratio": 0.65,
+      "uploaded": "100GB",
+      "uploads": 50
+    },
+    {
+      "id": 5,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Torrent Master",
+      "privilege": "Unlimited invites",
+      "ratio": 0.65,
+      "uploaded": "500GB",
+      "uploads": 500
+    },
+    {
+      "id": 6,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Power TM",
+      "privilege": "",
+      "ratio": 0.65,
+      "uploaded": "500GB"
+    },
+    {
+      "id": 7,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Elite TM",
+      "perfectFlacs": 500,
+      "privilege": "",
+      "ratio": 0.65,
+      "uploaded": "500GB"
+    }
+  ]
+}

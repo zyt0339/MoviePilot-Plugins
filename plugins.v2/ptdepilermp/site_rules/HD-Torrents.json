@@ -1,0 +1,32 @@
+{
+  "name": "HD-Torrents",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "HD Newbie",
+      "privilege": "Can access \"Index\", \"Torrents\", \"Donate\", \"Requests\", \"Subtitles\", \"Forum\""
+    },
+    {
+      "id": 2,
+      "name": "HD Maniac",
+      "privilege": "Gain access to \"Top 10\"",
+      "ratio": 1.05,
+      "uploaded": "50GB"
+    },
+    {
+      "id": 3,
+      "name": "HD Monster",
+      "privilege": "Gain access to \"Tracker Info\", \"Invites\" section of the forums",
+      "ratio": 2,
+      "uploaded": "250GB"
+    },
+    {
+      "id": 4,
+      "name": "HD Daemon",
+      "privilege": "Gain access to \"Users\"",
+      "ratio": 4,
+      "uploaded": "1TB"
+    }
+  ]
+}

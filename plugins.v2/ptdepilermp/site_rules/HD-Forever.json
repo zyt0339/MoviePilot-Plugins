@@ -1,0 +1,25 @@
+{
+  "name": "HD-Forever",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Novice",
+      "privilege": "Can download, vote on applications, use advanced search, and access the top 10."
+    },
+    {
+      "id": 2,
+      "interval": "P1W",
+      "name": "Member",
+      "privilege": "Can upload, send requests, create bookmarks, edit wiki pages, download multiple torrents at once, and reset own password/authkey.",
+      "uploaded": "55GB"
+    },
+    {
+      "id": 3,
+      "name": "Elite",
+      "privilege": "Can access torrents notification system, create collections and a personal collection, create polls in forums, view snatch torrent lists, add own torrents to recommendations, display tag aliases, change password, and add artists to any group.",
+      "ratio": 1,
+      "uploaded": "1TiB"
+    }
+  ]
+}

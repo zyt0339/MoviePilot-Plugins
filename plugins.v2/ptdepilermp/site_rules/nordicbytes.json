@@ -1,0 +1,68 @@
+{
+  "name": "NordicBytes",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Noob",
+      "privilege": "受限用户，无法访问论坛、聊天和评论。"
+    },
+    {
+      "id": 2,
+      "name": "Beginner",
+      "privilege": "发送邀请",
+      "uploaded": "50GiB"
+    },
+    {
+      "id": 3,
+      "interval": "P30D",
+      "name": "Explorer",
+      "privilege": "发送邀请",
+      "uploaded": "500GiB"
+    },
+    {
+      "id": 4,
+      "interval": "P60D",
+      "name": "Contributor",
+      "privilege": "发送邀请",
+      "uploaded": "1TiB"
+    },
+    {
+      "id": 5,
+      "interval": "P90D",
+      "name": "Pirate",
+      "privilege": "发送邀请",
+      "uploaded": "5TiB"
+    },
+    {
+      "id": 6,
+      "interval": "P180D",
+      "name": "Veteran",
+      "privilege": "发送邀请",
+      "uploaded": "10TiB"
+    },
+    {
+      "id": 7,
+      "interval": "P365D",
+      "name": "Guru",
+      "privilege": "发送邀请",
+      "uploaded": "50TiB"
+    },
+    {
+      "id": 8,
+      "interval": "P730D",
+      "name": "Legend",
+      "privilege": "发送邀请",
+      "uploaded": "100TiB"
+    },
+    {
+      "averageSeedingTime": "P60D",
+      "groupType": "user",
+      "id": 9,
+      "interval": "P90D",
+      "name": "Archivist",
+      "privilege": "发送邀请 免疫HR 全局免费",
+      "seedingSize": "10TiB"
+    }
+  ]
+}

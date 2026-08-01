@@ -1,0 +1,88 @@
+{
+  "name": "SpeedApp",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Peasant",
+      "nameAka": [
+        "农民"
+      ]
+    },
+    {
+      "id": 2,
+      "interval": "P30D",
+      "name": "User",
+      "nameAka": [
+        "用户"
+      ],
+      "privilege": "Can invite other people.",
+      "ratio": 1.05,
+      "uploaded": "25GB"
+    },
+    {
+      "id": 3,
+      "interval": "P90D",
+      "name": "Power User",
+      "nameAka": [
+        "超级用户"
+      ],
+      "privilege": "Can make requests.",
+      "ratio": 2,
+      "uploaded": "200GB"
+    },
+    {
+      "id": 4,
+      "interval": "P180D",
+      "name": "Elite User",
+      "nameAka": [
+        "精英用户"
+      ],
+      "privilege": "Can be chosen as Hyperseeders (immune to HnR).",
+      "ratio": 3,
+      "uploaded": "1TB"
+    },
+    {
+      "id": 5,
+      "interval": "P12M",
+      "name": "Xtreme User",
+      "nameAka": [
+        "极端用户"
+      ],
+      "privilege": "Same privileges as Elite User.",
+      "ratio": 4,
+      "uploaded": "5TB"
+    },
+    {
+      "id": 6,
+      "interval": "P2Y",
+      "name": "Super User",
+      "nameAka": [
+        "超级用户"
+      ],
+      "privilege": "Same privileges as Elite User.",
+      "ratio": 5,
+      "uploaded": "20TB"
+    },
+    {
+      "id": 7,
+      "interval": "P6Y",
+      "name": "Legend User",
+      "nameAka": [
+        "传奇用户"
+      ],
+      "privilege": "Same privileges as Elite User.",
+      "ratio": 6,
+      "uploaded": "100TB"
+    },
+    {
+      "groupType": "vip",
+      "id": 8,
+      "name": "VIP",
+      "nameAka": [
+        "贵宾"
+      ],
+      "privilege": "Same privileges as Elite User, immune to automated HnR warnings."
+    }
+  ]
+}

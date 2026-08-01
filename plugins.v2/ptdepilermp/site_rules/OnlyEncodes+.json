@@ -1,0 +1,122 @@
+{
+  "name": "OnlyEncodes+",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Leech",
+      "privilege": "无限下载槽 上传种子"
+    },
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "无限下载槽 上传种子",
+      "ratio": 0.4
+    },
+    {
+      "id": 2,
+      "interval": "P1M",
+      "name": "Explorer",
+      "privilege": "无限下载槽 上传种子",
+      "ratio": 0.4,
+      "uploaded": "1TiB"
+    },
+    {
+      "id": 3,
+      "interval": "P2M",
+      "name": "Trailblazer",
+      "privilege": "无限下载槽 上传种子 发送邀请",
+      "ratio": 0.4,
+      "seedingSize": "100GiB",
+      "uploaded": "5TiB"
+    },
+    {
+      "id": 4,
+      "interval": "P3M",
+      "name": "Adventurer",
+      "privilege": "无限下载槽 上传种子 发送邀请",
+      "ratio": 0.4,
+      "seedingSize": "100GiB",
+      "uploaded": "20TiB"
+    },
+    {
+      "id": 5,
+      "interval": "P6M",
+      "name": "Legendary",
+      "privilege": "无限下载槽 上传种子 发送邀请",
+      "ratio": 0.4,
+      "seedingSize": "100GiB",
+      "uploaded": "50TiB"
+    },
+    {
+      "averageSeedingTime": "P1M",
+      "id": 6,
+      "interval": "P1M",
+      "name": "Eternal",
+      "privilege": "无限下载槽 上传种子 发送邀请 免疫HR",
+      "ratio": 0.4,
+      "seedingSize": "5TiB",
+      "uploaded": "1TiB"
+    },
+    {
+      "id": 7,
+      "interval": "P1Y",
+      "name": "Ascendan",
+      "privilege": "无限下载槽 上传种子 发送邀请 免疫HR 站免",
+      "ratio": 0.4,
+      "seedingSize": "100GiB",
+      "uploaded": "100TiB"
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 8,
+      "interval": "P3M",
+      "name": "Video Virtuoso",
+      "privilege": "无限下载槽 上传种子 发送邀请 免疫HR 站免",
+      "ratio": 0.4,
+      "seedingSize": "10TiB",
+      "uploaded": "1TiB"
+    },
+    {
+      "averageSeedingTime": "P3M",
+      "id": 9,
+      "interval": "P6M",
+      "name": "Encode Lover",
+      "privilege": "无限下载槽 上传种子 发送邀请 免疫HR 站免 2x上传",
+      "ratio": 0.4,
+      "seedingSize": "20TiB",
+      "uploaded": "1TiB"
+    },
+    {
+      "averageSeedingTime": "P6D",
+      "id": 10,
+      "interval": "P2M",
+      "name": "BeachBum",
+      "privilege": "无限下载槽 上传种子 发送邀请 免疫HR 站免 2x上传",
+      "ratio": 1,
+      "seedingSize": "20TiB",
+      "uploaded": "100TiB"
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 11,
+      "interval": "P3M",
+      "name": "OnlyKings",
+      "privilege": "无限下载槽 上传种子 发送邀请 免疫HR 站免 2x上传",
+      "ratio": 1,
+      "seedingSize": "10TiB",
+      "uploaded": "1TiB",
+      "uploads": 35
+    },
+    {
+      "averageSeedingTime": "P2D7H33M20S",
+      "id": 12,
+      "interval": "P1Y",
+      "name": "OnlyCoinSpender",
+      "privilege": "无限下载槽 上传种子 发送邀请 免疫HR 站免 2x上传",
+      "ratio": 1,
+      "seedingSize": "5TiB",
+      "uploaded": "908.59TiB"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "PornoLab",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "nameAka": [
+        "Пользователь"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "GayTorrent.ru",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User"
+    },
+    {
+      "id": 2,
+      "interval": "P28D",
+      "name": "PowerUser",
+      "ratio": 1.05,
+      "uploaded": "40GB"
+    }
+  ]
+}

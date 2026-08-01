@@ -1,0 +1,98 @@
+{
+  "name": "Luminarr",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Leech",
+      "privilege": "上传种子 0下载槽"
+    },
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "上传种子 3下载槽"
+    },
+    {
+      "id": 2,
+      "interval": "P2W",
+      "name": "Member",
+      "privilege": "上传种子 5下载槽 发送邀请",
+      "ratio": 0.6,
+      "uploaded": "500GiB"
+    },
+    {
+      "averageSeedingTime": "P1M",
+      "id": 3,
+      "interval": "P1M",
+      "name": "Seeder",
+      "privilege": "上传种子 10下载槽 发送邀请 自动通过候选",
+      "ratio": 0.8,
+      "seedingSize": "5TiB",
+      "uploaded": "5TiB"
+    },
+    {
+      "id": 4,
+      "interval": "P1M",
+      "name": "Power User",
+      "privilege": "上传种子 10下载槽 发送邀请 自动通过候选",
+      "ratio": 0.8,
+      "uploaded": "5TiB",
+      "uploads": 10
+    },
+    {
+      "averageSeedingTime": "P2M",
+      "id": 5,
+      "interval": "P3M",
+      "name": "Archivist",
+      "privilege": "上传种子 25下载槽 发送邀请 自动通过候选 访问邀请区 站免 免疫HR",
+      "ratio": 1,
+      "seedingSize": "10TiB",
+      "uploaded": "10TiB"
+    },
+    {
+      "id": 6,
+      "interval": "P3M",
+      "name": "Elite",
+      "privilege": "上传种子 25下载槽 发送邀请 自动通过候选 访问邀请区 站免 免疫HR",
+      "ratio": 1,
+      "uploaded": "10TiB",
+      "uploads": 50
+    },
+    {
+      "averageSeedingTime": "P3M",
+      "id": 7,
+      "interval": "P6M",
+      "name": "DataHoarder",
+      "privilege": "上传种子 50下载槽 发送邀请 自动通过候选 访问邀请区 站免 免疫HR 双倍上传",
+      "ratio": 1,
+      "seedingSize": "20TiB",
+      "uploaded": "25TiB"
+    },
+    {
+      "id": 8,
+      "interval": "P6M",
+      "name": "Torrent Master",
+      "privilege": "上传种子 50下载槽 发送邀请 自动通过候选 访问邀请区 站免 免疫HR 双倍上传",
+      "ratio": 1,
+      "uploaded": "25TiB",
+      "uploads": 100
+    },
+    {
+      "averageSeedingTime": "P3M",
+      "id": 9,
+      "interval": "P1Y",
+      "name": "Elite Torrent Master",
+      "privilege": "上传种子 100下载槽 发送邀请 自动通过候选 访问邀请区 站免 免疫HR 双倍上传",
+      "ratio": 1,
+      "seedingSize": "20TiB",
+      "uploaded": "50TiB",
+      "uploads": 100
+    },
+    {
+      "groupType": "vip",
+      "id": 10,
+      "name": "Luminal",
+      "privilege": "上传种子 100下载槽 发送邀请 自动通过候选 访问邀请区 站免 免疫HR 双倍上传"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "name": "Orpheus",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "None. Standard class for all new members"
+    },
+    {
+      "id": 2,
+      "interval": "P1W",
+      "name": "Member",
+      "privilege": "Must remain active per the Account Inactivity policy",
+      "ratio": 0.7,
+      "uploaded": "10GB",
+      "uploads": 5
+    },
+    {
+      "id": 3,
+      "interval": "P2W",
+      "isKept": true,
+      "name": "Power User",
+      "privilege": "Immune to inactivity pruning;Torrent Notification system;Collage Creation (other than Personal) privileges;Access the Power User forums and IRC channels.",
+      "ratio": 1.05,
+      "uploaded": "25GB",
+      "uploads": 5
+    },
+    {
+      "id": 4,
+      "interval": "P4W",
+      "isKept": true,
+      "name": "Elite",
+      "privilege": "ame as lower classes, plus can access the Invitations and Elite forums and IRC channels. Can edit torrents. Able to rename their personal collages.",
+      "ratio": 1.05,
+      "uploaded": "100GB",
+      "uploads": 50
+    },
+    {
+      "id": 5,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Torrent Master",
+      "privilege": "Same as lower classes, plus can access TM forums and IRC channels. Can request their own custom title.",
+      "ratio": 1.05,
+      "uploaded": "500GB",
+      "uploads": 500
+    },
+    {
+      "id": 6,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Power Torrent Master",
+      "nameAka": [
+        "Power TM"
+      ],
+      "privilege": "Same as lower classes",
+      "ratio": 1.05,
+      "uploaded": "500GB"
+    },
+    {
+      "id": 7,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Elite Torrent Master",
+      "nameAka": [
+        "Elite TM"
+      ],
+      "perfectFlacs": 500,
+      "privilege": "Same as lower classes, plus can access ETM forums and IRC channels. Gets unlimited invites. Can edit Missing Lineage flag on torrents",
+      "ratio": 1.05,
+      "uploaded": "500GB"
+    },
+    {
+      "id": 8,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Ultimate Torrent Master",
+      "nameAka": [
+        "Ultimate TM"
+      ],
+      "perfectFlacs": 2000,
+      "privilege": "Can view search past page 20",
+      "ratio": 1.05,
+      "uploaded": "2048GB"
+    }
+  ]
+}

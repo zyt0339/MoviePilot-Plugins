@@ -1,0 +1,120 @@
+{
+  "name": "我堡",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "新用户的默认级别。最多可以同时下载10个种子。"
+    },
+    {
+      "downloaded": 107374182400,
+      "id": 2,
+      "interval": "P5W",
+      "name": "Power User",
+      "privilege": "可以查看NFO文档；可以查看用户列表；可以请求续种；可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")；可以删除自己上传的字幕。最多可以同时下载20个种子",
+      "ratio": 2
+    },
+    {
+      "downloaded": 375809638400,
+      "id": 3,
+      "interval": "P10W",
+      "name": "Elite User",
+      "privilege": "Elite User及以上用户封存账号后不会被删除。此等级及以上没有下载数限制。可以查看论坛Elite User(邀请交流版)",
+      "ratio": 2.5
+    },
+    {
+      "downloaded": 536870912000,
+      "id": 4,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "可以在做种/下载/发布的时候选择匿名模式",
+      "ratio": 3
+    },
+    {
+      "downloaded": 1099511627776,
+      "id": 5,
+      "interval": "P20W",
+      "name": "Insane User",
+      "privilege": "可以查看普通日志",
+      "ratio": 3.5
+    },
+    {
+      "downloaded": 2199023255552,
+      "id": 6,
+      "interval": "P25W",
+      "isKept": true,
+      "name": "Veteran User",
+      "privilege": "可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号",
+      "ratio": 4
+    },
+    {
+      "downloaded": 4398046511104,
+      "id": 7,
+      "interval": "P30W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "得到一个永久邀请；可以更新过期的外部信息",
+      "ratio": 4.5
+    },
+    {
+      "downloaded": 6597069766656,
+      "id": 8,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "得到两个永久邀请",
+      "ratio": 5
+    },
+    {
+      "downloaded": 8796093022208,
+      "id": 9,
+      "interval": "P52W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "得到三个永久邀请",
+      "ratio": 5.5
+    },
+    {
+      "groupType": "vip",
+      "id": 100,
+      "name": "贵宾",
+      "privilege": "免除自动降级，只计算上传量，不计算下载量。"
+    },
+    {
+      "groupType": "vip",
+      "id": 101,
+      "name": "荣誉会员",
+      "privilege": "退休后的管理组成员。"
+    },
+    {
+      "groupType": "manager",
+      "id": 200,
+      "name": "发布员",
+      "privilege": "官方小组的成员。免除自动降级；可以查看匿名用户的真实身份。"
+    },
+    {
+      "groupType": "manager",
+      "id": 201,
+      "name": "总版主"
+    },
+    {
+      "groupType": "manager",
+      "id": 202,
+      "name": "管理员",
+      "privilege": "除了不能改变站点设定、管理捐赠外，可以做任何事。"
+    },
+    {
+      "groupType": "manager",
+      "id": 203,
+      "name": "维护开发员",
+      "privilege": "网站开发/维护人员，可以改变站点设定，不能管理捐赠。"
+    },
+    {
+      "groupType": "manager",
+      "id": 204,
+      "name": "主管",
+      "privilege": "网站主管，可以做任何事。"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "name": "Nebulance",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Colonial"
+    },
+    {
+      "bonus": 100000,
+      "id": 2,
+      "interval": "P4W",
+      "name": "Ensign",
+      "privilege": "Access to recruitment forum",
+      "snatches": 100,
+      "uploaded": "100GB"
+    },
+    {
+      "bonus": 250000,
+      "id": 3,
+      "interval": "P8W",
+      "name": "Flattop",
+      "privilege": "Can add tags",
+      "snatches": 250,
+      "uploaded": "250GB"
+    },
+    {
+      "bonus": 500000,
+      "id": 4,
+      "interval": "P16W",
+      "name": "Nugget",
+      "privilege": "Can view uploaders; Can edit own torrents after edit timelock",
+      "snatches": 500,
+      "uploaded": "500GB"
+    },
+    {
+      "bonus": 850000,
+      "id": 5,
+      "interval": "P32W",
+      "name": "Raptor",
+      "snatches": 1000,
+      "uploaded": "1TB"
+    },
+    {
+      "bonus": 2500000,
+      "id": 6,
+      "interval": "P64W",
+      "name": "Viper",
+      "privilege": "Can download multiple torrents at once aka (DownThemAll)",
+      "snatches": 2500,
+      "uploaded": "2.5TB",
+      "uploads": 50
+    },
+    {
+      "bonus": 3000000,
+      "id": 7,
+      "interval": "P100W",
+      "name": "Orion",
+      "privilege": "Can view ratio; Can view downloaded",
+      "snatches": 8500,
+      "uploaded": "8.5TB",
+      "uploads": 150
+    },
+    {
+      "bonus": 250000000,
+      "id": 8,
+      "interval": "P150W",
+      "name": "Valkyrie",
+      "privilege": "Can view the site stats page; Can use advanced bbcode tags",
+      "snatches": 35000,
+      "uploaded": "100TB",
+      "uploads": 300
+    }
+  ]
+}

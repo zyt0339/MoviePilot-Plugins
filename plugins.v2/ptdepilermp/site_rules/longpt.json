@@ -1,0 +1,86 @@
+{
+  "name": "LongPT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "鹰角龙",
+      "privilege": "新用户的默认级别"
+    },
+    {
+      "downloaded": "200GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "甲龙",
+      "ratio": 1.5,
+      "seedingBonus": 40000
+    },
+    {
+      "downloaded": "400GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "迅猛龙",
+      "privilege": "迅猛龙及以上用户封存账号后不会被删除。",
+      "ratio": 2.5,
+      "seedingBonus": 80000
+    },
+    {
+      "downloaded": "800GB",
+      "id": 3,
+      "interval": "P20W",
+      "name": "双嵴龙",
+      "privilege": "得到一个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 3.5,
+      "seedingBonus": 150000
+    },
+    {
+      "downloaded": "1TB",
+      "id": 4,
+      "interval": "P30W",
+      "name": "神翼龙",
+      "privilege": "可以查看普通日志。",
+      "ratio": 5,
+      "seedingBonus": 250000
+    },
+    {
+      "downloaded": "2TB",
+      "id": 5,
+      "interval": "P50W",
+      "isKept": true,
+      "name": "棘龙",
+      "privilege": "得到一个邀请名额；可以查看其它用户的评论、帖子历史。棘龙及以上用户会永远保留账号。",
+      "ratio": 6,
+      "seedingBonus": 400000
+    },
+    {
+      "downloaded": "3TB",
+      "id": 6,
+      "interval": "P70W",
+      "isKept": true,
+      "name": "泰坦巨龙",
+      "privilege": "得到一个邀请名额；可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 7,
+      "seedingBonus": 700000
+    },
+    {
+      "downloaded": "4TB",
+      "id": 7,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "沧龙",
+      "privilege": "得到两个邀请名额。",
+      "ratio": 8,
+      "seedingBonus": 1200000
+    },
+    {
+      "downloaded": "5TB",
+      "id": 8,
+      "interval": "P130W",
+      "isKept": true,
+      "name": "霸王龙",
+      "privilege": "得到三个邀请名额。",
+      "ratio": 9,
+      "seedingBonus": 1600000
+    }
+  ]
+}

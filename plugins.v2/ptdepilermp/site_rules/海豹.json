@@ -1,0 +1,85 @@
+{
+  "name": "海豹",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": "所有新用户的默认等级；能够使用 RSS 订阅系统；具有论坛「茶话会」版块的阅读权限"
+    },
+    {
+      "id": 1,
+      "interval": "P1W",
+      "name": "Member",
+      "privilege": "发起求种；查看部分排行榜；完全访问「茶话会」版块",
+      "ratio": 0.8,
+      "trueDownloaded": "80GB"
+    },
+    {
+      "id": 2,
+      "interval": "P2W",
+      "isKept": true,
+      "name": "Power User",
+      "privilege": "免疫账号不活跃；发送邀请；赠送1枚邀请；访问论坛的「求邀区」「发邀区」「Power User」",
+      "ratio": 1.2,
+      "trueDownloaded": "200GB",
+      "uploads": 1
+    },
+    {
+      "id": 3,
+      "interval": "P4W",
+      "isKept": true,
+      "name": "Elite",
+      "privilege": "赠送1枚邀请；访问论坛的「Elite」；检查自己发布的种子；编辑所有种子",
+      "ratio": 1.2,
+      "trueDownloaded": "500GB",
+      "uploads": 25
+    },
+    {
+      "id": 4,
+      "interval": "P8W",
+      "isKept": true,
+      "name": "Torrent Master",
+      "privilege": "赠送2枚邀请；每月获赠1枚临时邀请；访问论坛的「Torrent Master」",
+      "ratio": 1.2,
+      "trueDownloaded": "1TB",
+      "uploads": 100
+    },
+    {
+      "id": 5,
+      "interval": "P12W",
+      "isKept": true,
+      "name": "Power Torrent Master",
+      "nameAka": [
+        "Power TM"
+      ],
+      "privilege": "赠送2枚邀请；每月获赠2枚临时邀请；检查所有种子",
+      "ratio": 1.2,
+      "trueDownloaded": "2TB",
+      "uploads": 250
+    },
+    {
+      "id": 6,
+      "interval": "P16W",
+      "isKept": true,
+      "name": "Elite Torrent Master",
+      "nameAka": [
+        "Elite TM"
+      ],
+      "privilege": "赠送3枚邀请；每月获赠3枚临时邀请；访问论坛的「Elite Torrent Master」",
+      "ratio": 1.2,
+      "trueDownloaded": "5TB",
+      "uploads": 500
+    },
+    {
+      "id": 7,
+      "interval": "P20W",
+      "isKept": true,
+      "name": "Guru",
+      "privilege": "无限邀请；访问论坛的「Guru」；查看种子检查日志",
+      "ratio": 1.2,
+      "trueDownloaded": "10TB",
+      "uploads": 1000
+    }
+  ]
+}

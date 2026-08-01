@@ -1,0 +1,154 @@
+{
+  "name": "SugoiMusic",
+  "is_dead": true,
+  "levels": [
+    {
+      "bonus": 0,
+      "id": 1,
+      "name": "User",
+      "privilege": "Default class; SugoiMusic ;) ; Can access basic Top 10",
+      "ratio": 0,
+      "uploaded": "0B",
+      "uploads": 0
+    },
+    {
+      "bonus": 1000,
+      "id": 2,
+      "name": "Member",
+      "privilege": "Top 10 filters; Make requests; Use torrent notifications system",
+      "ratio": 0,
+      "uploaded": "0B",
+      "uploads": 0
+    },
+    {
+      "bonus": 2500,
+      "id": 3,
+      "isKept": true,
+      "name": "Merit",
+      "privilege": "Comment in Suggestions forum; Inactivity-pruning disabled",
+      "ratio": 0,
+      "uploaded": "0B",
+      "uploads": 5
+    },
+    {
+      "bonus": 5000,
+      "id": 4,
+      "isKept": true,
+      "name": "Power User",
+      "privilege": "Power User Forum; Batch download torrents; Collage subscriptions; Edit artist/group info; Make new suggestions",
+      "ratio": 0,
+      "uploaded": "1GB",
+      "uploads": 25
+    },
+    {
+      "bonus": 25000,
+      "id": 5,
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "1 Personal collage; Submit 1 login background; Add/delete own screenshots",
+      "ratio": 0,
+      "uploaded": "5GB",
+      "uploads": 50
+    },
+    {
+      "bonus": 100000,
+      "id": 6,
+      "isKept": true,
+      "name": "Pro User",
+      "privilege": "Invite forum; 2 Personal collages; Comment on suggestions/bugs forums",
+      "ratio": 0,
+      "uploaded": "20GB",
+      "uploads": 200
+    },
+    {
+      "bonus": 250000,
+      "id": 7,
+      "isKept": true,
+      "name": "Commandant",
+      "privilege": "Search results beyond page 20; 4 Personal collages; Rename own collages",
+      "ratio": 0,
+      "uploaded": "50GB",
+      "uploads": 500
+    },
+    {
+      "bonus": 500000,
+      "id": 8,
+      "isKept": true,
+      "name": "Elite",
+      "privilege": "Elite Forum; 5 Personal collages; Edit any torrent; Add artists to groups",
+      "ratio": 0,
+      "uploaded": "200GB",
+      "uploads": 1000
+    },
+    {
+      "bonus": 750000,
+      "id": 9,
+      "isKept": true,
+      "name": "Senior Elite",
+      "privilege": "Create polls; Delete tags",
+      "ratio": 0,
+      "uploaded": "300GB",
+      "uploads": 2000
+    },
+    {
+      "bonus": 1500000,
+      "id": 10,
+      "isKept": true,
+      "name": "Patriarch / Matriarch",
+      "privilege": "6 Personal collages; Create a forum (with staff approval of topic)",
+      "ratio": 0,
+      "uploaded": "500GB",
+      "uploads": 3000
+    },
+    {
+      "bonus": 3000000,
+      "id": 11,
+      "isKept": true,
+      "name": "Torrent Master",
+      "privilege": "Torrent Master forum; 7 Personal collages; Project Team invite; Forum double post",
+      "ratio": 0,
+      "uploaded": "2TB",
+      "uploads": 5000
+    },
+    {
+      "bonus": 5000000,
+      "id": 12,
+      "isKept": true,
+      "name": "Senior Torrent Master",
+      "privilege": "8 Personal collages; Submit a contest",
+      "ratio": 0,
+      "uploaded": "3TB",
+      "uploads": 7500
+    },
+    {
+      "bonus": 10000000,
+      "id": 13,
+      "isKept": true,
+      "name": "Elite Torrent Master",
+      "privilege": "9 Personal collages; Request debug info; JPS Blue horse badge",
+      "ratio": 0,
+      "uploaded": "5TB",
+      "uploads": 10000
+    },
+    {
+      "bonus": 15000000,
+      "id": 14,
+      "isKept": true,
+      "name": "Overlord / Dame",
+      "privilege": "Unlimited collages & invites; Custom badge; Create multiple forums",
+      "ratio": 0,
+      "uploaded": "10TB",
+      "uploads": 15000
+    },
+    {
+      "bonus": 50000000,
+      "id": 15,
+      "isKept": true,
+      "name": "Torrent God / Goddess",
+      "privilege": "Custom forum header colour; Personal class name; Secret perks",
+      "ratio": 0,
+      "uploaded": "50TB",
+      "uploads": 20000
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "JPopSuki",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "isKept": true,
+      "name": "User",
+      "privilege": "Can download/upload."
+    },
+    {
+      "downloaded": "1KB",
+      "id": 2,
+      "interval": "P1W",
+      "isKept": true,
+      "name": "Member",
+      "privilege": "Can use invites, notifications, set a forum signature, access the Top 10 and edit the Knowledge base.",
+      "ratio": 0.7,
+      "uploaded": "10GB"
+    },
+    {
+      "downloaded": "1KB",
+      "id": 3,
+      "interval": "P2W",
+      "isKept": true,
+      "name": "Power User",
+      "ratio": 1.05,
+      "uploaded": "25GB",
+      "uploads": 5
+    }
+  ]
+}

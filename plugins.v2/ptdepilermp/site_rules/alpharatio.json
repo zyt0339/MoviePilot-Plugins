@@ -1,0 +1,105 @@
+{
+  "name": "AlphaRatio",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Mortal"
+    },
+    {
+      "id": 2,
+      "interval": "P4W",
+      "name": "Philosopher",
+      "privilege": "Mortal privileges plus can invite users, upload torrents, and submit requests.",
+      "seedingBonus": 60000,
+      "uploaded": "80GB"
+    },
+    {
+      "id": 3,
+      "interval": "P8W",
+      "name": "Gladiator",
+      "privilege": "Philosopher privileges plus can use bookmarks and view top ten user/torrent stats.",
+      "seedingBonus": 120000,
+      "uploaded": "260GB"
+    },
+    {
+      "id": 4,
+      "interval": "P12W",
+      "name": "Giant",
+      "privilege": "Gladiator privileges plus can create polls in the forum.",
+      "seedingBonus": 360000,
+      "uploaded": "600GB"
+    },
+    {
+      "id": 5,
+      "interval": "P18W",
+      "name": "Centaur",
+      "privilege": "Giant privileges.",
+      "seedingBonus": 720000,
+      "uploaded": "1.6TB"
+    },
+    {
+      "id": 6,
+      "interval": "P26W",
+      "name": "Sphinx",
+      "privilege": "Centaur privileges plus access to the Invite Forum.",
+      "seedingBonus": 1440000,
+      "uploaded": "3.2TB"
+    },
+    {
+      "id": 7,
+      "interval": "P38W",
+      "name": "Harpy",
+      "privilege": "Sphinx privileges.",
+      "seedingBonus": 1920000,
+      "uploaded": "6TB"
+    },
+    {
+      "id": 8,
+      "interval": "P60W",
+      "name": "Satyr",
+      "privilege": "Harpy privileges plus exemption from hit and runs and can see other users' active torrents.",
+      "seedingBonus": 2400000,
+      "uploaded": "12TB"
+    },
+    {
+      "id": 9,
+      "interval": "P60W",
+      "name": "Adonis",
+      "privilege": "Harpy privileges plus exemption from hit and runs and can see other users' active torrents.",
+      "seedingBonus": 2000000,
+      "uploaded": "12TB"
+    },
+    {
+      "id": 10,
+      "interval": "P90W",
+      "name": "Cyclops",
+      "privilege": "Satyr privileges.",
+      "seedingBonus": 4800000,
+      "uploaded": "18TB"
+    },
+    {
+      "id": 11,
+      "interval": "P90W",
+      "name": "Chimera",
+      "privilege": "Satyr privileges.",
+      "seedingBonus": 4000000,
+      "uploaded": "18TB"
+    },
+    {
+      "groupType": "vip",
+      "id": 12,
+      "name": "Deity",
+      "privilege": "Given by Staff at their discretion. Same as Satyr privileges plus can send invites even when invites are closed."
+    },
+    {
+      "groupType": "vip",
+      "id": 13,
+      "interval": "P120W",
+      "name": "Spartan",
+      "privilege": "Same as Deity privileges.",
+      "seedingBonus": 6200000,
+      "uploaded": "10TB"
+    }
+  ]
+}

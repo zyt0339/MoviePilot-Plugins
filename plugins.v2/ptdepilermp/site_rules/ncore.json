@@ -1,0 +1,33 @@
+{
+  "name": "nCore",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Felhasználó"
+    },
+    {
+      "id": 2,
+      "interval": "P26W",
+      "name": "Tag",
+      "uploaded": "250GB"
+    },
+    {
+      "id": 3,
+      "interval": "P52W",
+      "name": "Elite",
+      "uploaded": "1TB"
+    },
+    {
+      "id": 4,
+      "interval": "P52W",
+      "name": "Legend",
+      "uploaded": "1TB"
+    },
+    {
+      "id": 5,
+      "name": "VAGY",
+      "uploaded": "10TB"
+    }
+  ]
+}

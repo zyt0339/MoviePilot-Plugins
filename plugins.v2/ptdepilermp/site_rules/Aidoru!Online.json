@@ -1,0 +1,37 @@
+{
+  "name": "Aidoru!Online",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Member",
+      "privilege": "Can download, upload torrents；Ratio effects availability of new torrents"
+    },
+    {
+      "averageSeedingTime": "P20H",
+      "id": 2,
+      "interval": "P6M",
+      "name": "Sharer ",
+      "privilege": "Can download, upload torrents；Ratio has no effect on availability of new torrents；Notification and highlighting of new comments",
+      "uploads": 50
+    },
+    {
+      "averageSeedingTime": "P5D",
+      "id": 3,
+      "name": "Distributor",
+      "privilege": "Can download, upload torrents；Ratio has no effect on availability of new torrents；Notification and highlighting of new comments；Can view peers on torrents；Can view user list of who completed downloading a torrent",
+      "ratio": 1,
+      "uploads": 500
+    },
+    {
+      "id": 4,
+      "name": "Uploader",
+      "privilege": "user who uploads new content to the site on a regular basis"
+    },
+    {
+      "id": 5,
+      "name": "Uploader+",
+      "privilege": "uploader who has a low freeleech ratio"
+    }
+  ]
+}

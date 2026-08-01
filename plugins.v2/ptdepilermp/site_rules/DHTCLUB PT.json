@@ -1,0 +1,79 @@
+{
+  "name": "DHTCLUB PT",
+  "is_dead": true,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": ""
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "Power User",
+      "privilege": "得到一个邀请名额；可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "120GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "Elite User",
+      "privilege": "封存账号后不会被删除",
+      "ratio": 1.55
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P15W",
+      "name": "Crazy User",
+      "privilege": "得到两个邀请名额；在做种/下载/发布的时候选择匿名模式",
+      "ratio": 2.05
+    },
+    {
+      "downloaded": "500GB",
+      "id": 4,
+      "interval": "P25W",
+      "name": "Insane User",
+      "privilege": "查看普通日志",
+      "ratio": 2.55
+    },
+    {
+      "downloaded": "750GB",
+      "id": 5,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "Veteran User",
+      "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。此级别及以上用户会永远保留账号。",
+      "ratio": 3.05
+    },
+    {
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "Extreme User",
+      "privilege": "可以更新过期的外部信息。",
+      "ratio": 3.55
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 7,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "Ultimate User",
+      "privilege": "得到五个邀请名额。",
+      "ratio": 4.05
+    },
+    {
+      "downloaded": "3TB",
+      "id": 8,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "Nexus Master",
+      "privilege": "得到十个邀请名额。",
+      "ratio": 4.55
+    }
+  ]
+}

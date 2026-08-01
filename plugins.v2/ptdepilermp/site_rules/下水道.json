@@ -1,0 +1,102 @@
+{
+  "name": "下水道",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "User",
+      "privilege": "新用户的默认级别。只能在每周六中午12点至每周日晚上11点59分发布种子。 "
+    },
+    {
+      "downloaded": "50GB",
+      "id": 1,
+      "interval": "P4W",
+      "name": "大工",
+      "nameAka": [
+        "Power User"
+      ],
+      "ratio": 1.05
+    },
+    {
+      "downloaded": "120GB",
+      "id": 2,
+      "interval": "P8W",
+      "name": "技工",
+      "nameAka": [
+        "Elite User"
+      ],
+      "privilege": "Elite User及以上用户封存账号后不会被删除。",
+      "ratio": 1.55
+    },
+    {
+      "downloaded": "300GB",
+      "id": 3,
+      "interval": "P15W",
+      "name": "安全员",
+      "nameAka": [
+        "Crazy User"
+      ],
+      "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
+      "ratio": 2.05
+    },
+    {
+      "downloaded": "500GB",
+      "id": 4,
+      "interval": "P25W",
+      "name": "技术员",
+      "nameAka": [
+        "Insane User"
+      ],
+      "privilege": "可以查看普通日志。",
+      "ratio": 2.55
+    },
+    {
+      "downloaded": "750GB",
+      "id": 5,
+      "interval": "P40W",
+      "isKept": true,
+      "name": "工长",
+      "nameAka": [
+        "Veteran User"
+      ],
+      "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。",
+      "ratio": 3.05
+    },
+    {
+      "downloaded": "1TB",
+      "id": 6,
+      "interval": "P60W",
+      "isKept": true,
+      "name": "包工头",
+      "nameAka": [
+        "Extreme User"
+      ],
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。",
+      "ratio": 3.55
+    },
+    {
+      "downloaded": "1.5TB",
+      "id": 7,
+      "interval": "P80W",
+      "isKept": true,
+      "name": "工程师",
+      "nameAka": [
+        "Ultimate User"
+      ],
+      "privilege": "得到五个邀请名额。",
+      "ratio": 4.05
+    },
+    {
+      "downloaded": "3TB",
+      "id": 8,
+      "interval": "P100W",
+      "isKept": true,
+      "name": "老板",
+      "nameAka": [
+        "Nexus Master"
+      ],
+      "privilege": "得到十个邀请名额。",
+      "ratio": 4.55
+    }
+  ]
+}
