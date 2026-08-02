@@ -838,9 +838,9 @@ class PTDepilerMp(_PluginBase):
                                             "component": "div",
                                             "props": {
                                                 "class": (
-                                                    "px-2 py-2 text-center font-weight-bold whitespace-nowrap"
+                                                    "px-2 py-2 text-sm text-center font-weight-bold whitespace-nowrap"
                                                     if index == 1
-                                                    else "px-2 py-2 text-left font-weight-bold whitespace-nowrap"
+                                                    else "px-2 py-2 text-sm text-left font-weight-bold whitespace-nowrap"
                                                 ),
                                             },
                                             "text": name,
@@ -967,18 +967,56 @@ class PTDepilerMp(_PluginBase):
         for filter_key, label, value, color in items:
             selected = active_filter == filter_key
             display_text = f"✓ 当前 · {label} {value}" if selected else f"{label} {value}"
+            mobile_text = f"✓{label}{value}" if selected else f"{label}{value}"
             selected_style = (
-                "transform: translateY(-3px); "
                 "filter: brightness(1.18); "
                 "box-shadow: 0 8px 20px rgba(0, 0, 0, 0.38); "
-                "transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;"
+                "transition: filter 0.2s ease, box-shadow 0.2s ease;"
                 if selected else None
             )
             column_props = (
-                {"cols": 6, "sm": "auto", "class": "flex-grow-1"}
+                {
+                    "sm": "auto",
+                    "class": "flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
+                    "style": {"min-width": "0"},
+                }
                 if active_filter is not None
                 else {"cols": 6, "sm": 3, "md": 3}
             )
+            if active_filter is not None:
+                card_text = {
+                    "component": "VCardText",
+                    "props": {"class": "text-center py-4 px-1"},
+                    "content": [
+                        {
+                            "component": "span",
+                            "props": {
+                                "class": (
+                                    "d-sm-none text-no-wrap "
+                                    + ("font-weight-bold" if selected else "font-weight-medium")
+                                ),
+                                "style": {"font-size": "0.625rem"},
+                            },
+                            "text": mobile_text,
+                        },
+                        {
+                            "component": "span",
+                            "props": {
+                                "class": (
+                                    "d-none d-sm-inline text-subtitle-1 "
+                                    + ("font-weight-bold" if selected else "font-weight-medium")
+                                ),
+                            },
+                            "text": display_text,
+                        },
+                    ],
+                }
+            else:
+                card_text = {
+                    "component": "VCardText",
+                    "props": {"class": "text-center py-4 text-subtitle-1 font-weight-medium"},
+                    "text": display_text,
+                }
             card = {
                 "component": "VCol",
                 "props": column_props,
@@ -988,22 +1026,12 @@ class PTDepilerMp(_PluginBase):
                         "variant": "tonal",
                         "color": color,
                         "hover": active_filter is not None,
-                        "border": selected,
                         "elevation": 8 if selected else 0,
                         "aria-pressed": selected,
                         "style": selected_style,
                         "class": "cursor-pointer transition-all" if active_filter is not None else "",
                     },
-                    "content": [{
-                        "component": "VCardText",
-                        "props": {
-                            "class": (
-                                "text-center py-4 text-subtitle-1 "
-                                + ("font-weight-bold" if selected else "font-weight-medium")
-                            ),
-                        },
-                        "text": display_text,
-                    }],
+                    "content": [card_text],
                 }],
             }
             if active_filter is not None:
@@ -1015,10 +1043,13 @@ class PTDepilerMp(_PluginBase):
                     }
                 }
             cards.append(card)
-        return {
+        row = {
             "component": "VRow",
             "content": cards,
         }
+        if active_filter is not None:
+            row["props"] = {"class": "flex-nowrap"}
+        return row
 
     def get_dashboard(self, **kwargs) -> Optional[Tuple[Dict[str, Any], Dict[str, Any], List[dict]]]:
         """返回等级摘要仪表板；仅在页面加载时读取一次快照。"""
