@@ -606,6 +606,7 @@ class PTDepilerMp(_PluginBase):
         if row["result"].retained is True:
             return self._cell(site_name, width=width)
         if row["result"].retained is not True and site_url:
+            link_color = "warning" if row["result"].retained is False else "grey"
             return self._cell("", [{
                 "component": "VBtn",
                 "props": {
@@ -614,7 +615,9 @@ class PTDepilerMp(_PluginBase):
                     "rel": "noopener noreferrer",
                     "variant": "text",
                     "density": "compact",
-                    "class": "px-0 text-none",
+                    "color": link_color,
+                    "class": "px-0 text-none justify-start",
+                    "style": {"min-width": "0"},
                 },
                 "content": [{"component": "u", "text": site_name}],
             }], width=width)
@@ -630,14 +633,14 @@ class PTDepilerMp(_PluginBase):
                     "component": "VExpansionPanelTitle",
                     "props": {
                         "hide-actions": True,
-                        "class": "px-2 py-2 text-sm overflow-hidden",
+                        "class": "px-2 py-2 text-sm",
                         "style": {"min-height": "auto"},
                     },
                 }
             else:
                 grid_cell = {
                     "component": "div",
-                    "props": {"class": "px-2 py-2 text-sm whitespace-nowrap overflow-hidden"},
+                    "props": {"class": "px-2 py-2 text-sm whitespace-nowrap"},
                 }
             if "content" in cell:
                 grid_cell["content"] = cell["content"]
@@ -647,8 +650,12 @@ class PTDepilerMp(_PluginBase):
         return [{
             "component": "div",
             "props": {
-                "class": "d-grid align-center w-100",
-                "style": {"grid-template-columns": " ".join(widths)},
+                "class": "align-center w-100",
+                "style": {
+                    "display": "grid",
+                    "grid-template-columns": " ".join(widths),
+                    "min-width": "1400px",
+                },
             },
             "content": grid_cells,
         }]
@@ -674,13 +681,13 @@ class PTDepilerMp(_PluginBase):
         rows = sorted(self._rows(), key=self._join_at_sort_key)
         summary = self._summary(rows)
         headers = [
-            ("站点", "7%"),
-            ("状态", "7%"),
-            ("当前等级", "8%"),
-            ("保号等级", "12%"),
-            ("上传/下载/分享率", "19%"),
-            ("保号上传/下载/分享率", "22%"),
-            ("总结", "13%"),
+            ("站点", "6%"),
+            ("状态", "6%"),
+            ("当前等级", "13%"),
+            ("保号等级", "13%"),
+            ("上传/下载/分享率", "15%"),
+            ("保号上传/下载/分享率", "15%"),
+            ("总结", "20%"),
             ("数据时间", "12%"),
         ]
         table_rows = []
@@ -739,7 +746,12 @@ class PTDepilerMp(_PluginBase):
                 self._summary_cards(summary),
                 {
                     "component": "VTable",
-                    "props": {"hover": True, "fixed-header": True, "density": "compact", "class": "mt-4"},
+                    "props": {
+                        "hover": True,
+                        "fixed-header": True,
+                        "density": "compact",
+                        "class": "mt-4",
+                    },
                     "content": [
                         {"component": "thead", "content": [{
                             "component": "tr",
