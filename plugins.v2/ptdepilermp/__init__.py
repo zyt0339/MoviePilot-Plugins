@@ -1242,9 +1242,32 @@ class PTDepilerMp(_PluginBase):
                 + f"</div>{rule_detail}</div>"
             )
 
-        markup = f"""
+        markup = f"""<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{{--v-theme-primary:33,150,243;--v-theme-success:83,194,139;--v-theme-warning:230,180,85;
+    --v-theme-error:239,107,115;--v-theme-info:103,157,220;--v-theme-on-surface:220,228,240;
+    --v-theme-surface:24,34,53;--v-theme-background:11,19,34;--v-border-color:135,146,166;
+    --v-border-opacity:.24}}
+  html{{box-sizing:border-box;min-block-size:100%;margin:0;
+    background-color:rgb(var(--v-theme-background));
+    background-image:linear-gradient(135deg,rgba(var(--v-theme-on-surface),.06),transparent 70%),
+      linear-gradient(135deg,rgb(var(--v-theme-surface)),rgb(var(--v-theme-background)));
+    background-size:cover;color:rgb(var(--v-theme-on-surface));
+    font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}}
+  html[data-theme="glass"]{{background-image:linear-gradient(135deg,rgba(255,255,255,.09),
+      transparent 28%,rgba(255,255,255,.03) 72%,transparent),
+      linear-gradient(135deg,#22334e 0%,#16263e 55%,#1c1b30 100%)}}
+  body{{box-sizing:border-box;min-block-size:100%;margin:0;background:transparent;overflow:auto;color:inherit}}
+</style>
+</head>
+<body>
 <div class="ptd-dashboard-filter">
   <style>
+    .ptd-dashboard-filter{{box-sizing:border-box;min-block-size:100%;padding:1px}}
     .ptd-dashboard-filter>input{{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}}
     .ptd-filter-cards{{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}}
     .ptd-filter-card{{display:flex;align-items:center;justify-content:center;box-sizing:border-box;
@@ -1257,10 +1280,10 @@ class PTDepilerMp(_PluginBase):
     .ptd-filter-warning{{color:rgb(var(--v-theme-warning));background:rgba(var(--v-theme-warning),.16)}}
     .ptd-filter-grey{{color:rgb(var(--v-theme-on-surface));background:rgba(var(--v-theme-on-surface),.12)}}
     .ptd-filter-error{{color:rgb(var(--v-theme-error));background:rgba(var(--v-theme-error),.16)}}
-    .ptd-filter-table{{max-block-size:480px;margin-block-start:12px;overflow:auto}}
+    .ptd-filter-table{{margin-block-start:12px;overflow-x:auto}}
     .ptd-table-head,.ptd-data-row{{display:grid;grid-template-columns:5fr 6fr 10fr 10fr 16fr 16fr 20fr 12fr;
       min-inline-size:1250px;align-items:center}}
-    .ptd-table-head{{position:sticky;z-index:1;inset-block-start:0;background:rgb(var(--v-theme-surface))}}
+    .ptd-table-head{{background:transparent}}
     .ptd-row-group{{min-inline-size:1250px}}
     .ptd-row-toggle{{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}}
     .ptd-data-row{{border-block-start:1px solid rgba(var(--v-border-color),var(--v-border-opacity))}}
@@ -1305,8 +1328,110 @@ class PTDepilerMp(_PluginBase):
     {''.join(row_html)}
   </div>
 </div>
+<script>
+  (function(){{
+    try {{
+      var frame = window.frameElement;
+      var themeOwner = frame && frame.closest('[class*="v-theme--"]');
+      var gridItem = frame && frame.closest('.dashboard-grid-item');
+      var dashboardGrid = gridItem && gridItem.closest('.dashboard-grid');
+      var card = frame && frame.closest('.v-card');
+      var cardText = frame && frame.closest('.v-card-text');
+      var defaultFrameHeight = 'clamp(420px, 72vh, 760px)';
+      var themeVariables = [
+        '--v-theme-primary','--v-theme-success','--v-theme-warning','--v-theme-error',
+        '--v-theme-info','--v-theme-on-surface','--v-theme-surface','--v-theme-background',
+        '--v-border-color','--v-border-opacity'
+      ];
+      var syncTheme = function(){{
+        var sourceNode = themeOwner || parent.document.documentElement;
+        var source = parent.getComputedStyle(sourceNode);
+        themeVariables.forEach(function(name){{
+          var value = source.getPropertyValue(name);
+          if (value) document.documentElement.style.setProperty(name, value);
+        }});
+        var themeName = parent.document.documentElement.getAttribute('data-theme');
+        if (themeName) document.documentElement.setAttribute('data-theme', themeName);
+        var rootStyle = parent.getComputedStyle(parent.document.documentElement);
+        document.documentElement.style.colorScheme = rootStyle.colorScheme;
+        if (source.fontFamily) document.body.style.fontFamily = source.fontFamily;
+      }};
+      var syncPending = false;
+      var queueThemeSync = function(){{
+        if (syncPending) return;
+        syncPending = true;
+        parent.requestAnimationFrame(function(){{
+          syncPending = false;
+          syncTheme();
+        }});
+      }};
+      var frameHeightPending = false;
+      var syncFrameHeight = function(){{
+        if (!frame || !gridItem || !card || !cardText) return;
+        var usesManualHeight = gridItem.classList.contains('is-manual-height')
+          || (dashboardGrid && dashboardGrid.classList.contains('is-editing'));
+        if (!usesManualHeight) {{
+          frame.style.height = defaultFrameHeight;
+          return;
+        }}
+        var cardHeader = card.querySelector('.v-card-item');
+        var textStyle = parent.getComputedStyle(cardText);
+        var verticalPadding = (parseFloat(textStyle.paddingTop) || 0)
+          + (parseFloat(textStyle.paddingBottom) || 0);
+        var headerHeight = cardHeader ? cardHeader.offsetHeight : 0;
+        var availableHeight = Math.floor(card.clientHeight - headerHeight - verticalPadding);
+        frame.style.height = Math.max(120, availableHeight) + 'px';
+      }};
+      var queueFrameHeightSync = function(){{
+        if (frameHeightPending) return;
+        frameHeightPending = true;
+        parent.requestAnimationFrame(function(){{
+          frameHeightPending = false;
+          syncFrameHeight();
+        }});
+      }};
+      syncTheme();
+      syncFrameHeight();
+      var observer = new parent.MutationObserver(queueThemeSync);
+      var observedNodes = [parent.document.documentElement, parent.document.body, themeOwner];
+      observedNodes.forEach(function(node, index){{
+        if (node && observedNodes.indexOf(node) === index) observer.observe(node, {{attributes:true}});
+      }});
+      var layoutObserver = new parent.MutationObserver(queueFrameHeightSync);
+      if (gridItem) layoutObserver.observe(gridItem, {{attributes:true,attributeFilter:['class','style']}});
+      if (dashboardGrid) layoutObserver.observe(dashboardGrid, {{attributes:true,attributeFilter:['class']}});
+      var resizeObserver = new parent.ResizeObserver(queueFrameHeightSync);
+      if (card) resizeObserver.observe(card);
+      if (gridItem) resizeObserver.observe(gridItem);
+      window.addEventListener('beforeunload', function(){{
+        observer.disconnect();
+        layoutObserver.disconnect();
+        resizeObserver.disconnect();
+      }}, {{once:true}});
+    }} catch (error) {{}}
+  }})();
+</script>
+</body>
+</html>
 """
-        return {"component": "div", "html": markup}
+        return {
+            "component": "iframe",
+            "props": {
+                "srcdoc": markup,
+                "title": "PT 站点保号状态仪表盘",
+                "class": "dashboard-grid-no-drag",
+                "style": {
+                    "display": "block",
+                    "width": "100%",
+                    "height": "clamp(420px, 72vh, 760px)",
+                    "border": "0",
+                    "background": (
+                        "linear-gradient(135deg, rgba(var(--v-theme-on-surface), .06), transparent 70%), "
+                        "linear-gradient(135deg, rgb(var(--v-theme-surface)), rgb(var(--v-theme-background)))"
+                    ),
+                },
+            },
+        }
 
     def get_dashboard(self, **kwargs) -> Optional[Tuple[Dict[str, Any], Dict[str, Any], List[dict]]]:
         """返回等级摘要仪表板；仅在页面加载时读取一次快照。"""
