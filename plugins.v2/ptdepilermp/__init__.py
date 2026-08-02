@@ -45,6 +45,8 @@ class PTDepilerMp(_PluginBase):
     _cron = ""
     _donor_sites: List[str] = []
     _scheduler: Optional[BackgroundScheduler] = None
+    _page_filter_options = {"all", "retained", "unretained", "unknown", "stale"}
+    _page_filter_data_key = "page_filter"
 
     def __init__(self):
         super().__init__()
@@ -52,10 +54,14 @@ class PTDepilerMp(_PluginBase):
         self._calculation_lock = Lock()
         self._cached_rows: List[Dict[str, Any]] = []
         self._has_calculated = False
+        self._page_filter = "all"
 
     def init_plugin(self, config: dict = None):
         """载入插件配置和磁盘站点规则。"""
         self.stop_service()
+        # 筛选仅属于当前运行周期；通过插件数据在热重载前后的实例间传递点击结果。
+        self._page_filter = "all"
+        self.save_data(self._page_filter_data_key, self._page_filter)
         config = dict(config or {})
         self._onlyonce = bool(config.get("onlyonce", False))
         self._cron = str(config.get("cron") or "").strip()
@@ -123,8 +129,34 @@ class PTDepilerMp(_PluginBase):
         return []
 
     def get_api(self) -> List[Dict[str, Any]]:
-        """本插件不提供 API。"""
-        return []
+        """提供详情页状态筛选接口。"""
+        return [{
+            "path": "/page_filter",
+            "endpoint": self.set_page_filter,
+            "methods": ["GET"],
+            "auth": "bear",
+            "summary": "切换详情页站点状态筛选",
+        }]
+
+    def set_page_filter(self, status: str = "all") -> Dict[str, Any]:
+        """切换详情页临时筛选状态，不写入插件配置。"""
+        normalized = str(status or "all").strip().lower()
+        if normalized not in self._page_filter_options:
+            return {"success": False, "message": "不支持的筛选状态"}
+        self._page_filter = normalized
+        # MoviePilot 本地热重载不会重新绑定插件 API，旧实例也必须能通知新页面实例。
+        self.save_data(self._page_filter_data_key, normalized)
+        return {"success": True, "status": normalized}
+
+    def _current_page_filter(self) -> str:
+        """消费一次跨热重载实例共享的页面筛选状态。"""
+        stored_filter = str(self.get_data(self._page_filter_data_key) or "").strip().lower()
+        active_filter = stored_filter if stored_filter in self._page_filter_options else "all"
+        self._page_filter = active_filter
+        # 点击后的页面重载读取一次即清除；关闭面板再打开时自然恢复“全部”。
+        if stored_filter:
+            self.del_data(self._page_filter_data_key)
+        return active_filter
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """返回插件配置表单和默认值。"""
@@ -553,6 +585,7 @@ class PTDepilerMp(_PluginBase):
     def _summary(self, rows: List[Dict[str, Any]]) -> Dict[str, int]:
         """汇总站点保号和陈旧数据数量。"""
         return {
+            "all": len(rows),
             "retained": sum(1 for row in rows if row["result"].retained is True),
             "unretained": sum(1 for row in rows if row["result"].retained is False),
             "unknown": sum(1 for row in rows if row["result"].retained is None),
@@ -696,8 +729,17 @@ class PTDepilerMp(_PluginBase):
 
     def get_page(self) -> List[dict]:
         """返回站点等级详情页。"""
-        rows = sorted(self._rows(), key=self._join_at_sort_key)
-        summary = self._summary(rows)
+        all_rows = sorted(self._rows(), key=self._join_at_sort_key)
+        summary = self._summary(all_rows)
+        active_filter = self._current_page_filter()
+        rows = [
+            row for row in all_rows
+            if active_filter == "all"
+            or (active_filter == "retained" and row["result"].retained is True)
+            or (active_filter == "unretained" and row["result"].retained is False)
+            or (active_filter == "unknown" and row["result"].retained is None)
+            or (active_filter == "stale" and row["stale"])
+        ]
         headers = [
             ("站点", "5fr"),
             ("状态", "6fr"),
@@ -757,11 +799,20 @@ class PTDepilerMp(_PluginBase):
                     }],
                 }],
             })
+        if not table_rows:
+            table_rows.append({
+                "component": "tr",
+                "content": [{
+                    "component": "td",
+                    "props": {"colspan": len(headers), "class": "text-center py-6"},
+                    "text": "当前筛选没有站点",
+                }],
+            })
 
         return [{
             "component": "div",
             "content": [
-                self._summary_cards(summary),
+                self._summary_cards(summary, active_filter=active_filter),
                 {
                     "component": "VTable",
                     "props": {
@@ -897,30 +948,76 @@ class PTDepilerMp(_PluginBase):
             ],
         }
 
-    @staticmethod
-    def _summary_cards(summary: Dict[str, int]) -> Dict[str, Any]:
+    def _summary_cards(
+        self,
+        summary: Dict[str, int],
+        active_filter: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """构建摘要统计卡片。"""
         items = [
-            ("已保号", summary["retained"], "success"),
-            ("未保号", summary["unretained"], "warning"),
-            ("无法判断", summary["unknown"], "grey"),
-            ("陈旧/失败", summary["stale"], "error"),
+            ("retained", "已保号", summary["retained"], "success"),
+            ("unretained", "未保号", summary["unretained"], "warning"),
+            ("unknown", "无法判断", summary["unknown"], "grey"),
+            ("stale", "陈旧/失败", summary["stale"], "error"),
         ]
-        return {
-            "component": "VRow",
-            "content": [{
+        if active_filter is not None:
+            items.insert(0, ("all", "全部", summary["all"], "primary"))
+
+        cards = []
+        for filter_key, label, value, color in items:
+            selected = active_filter == filter_key
+            display_text = f"✓ 当前 · {label} {value}" if selected else f"{label} {value}"
+            selected_style = (
+                "transform: translateY(-3px); "
+                "filter: brightness(1.18); "
+                "box-shadow: 0 8px 20px rgba(0, 0, 0, 0.38); "
+                "transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;"
+                if selected else None
+            )
+            column_props = (
+                {"cols": 6, "sm": "auto", "class": "flex-grow-1"}
+                if active_filter is not None
+                else {"cols": 6, "sm": 3, "md": 3}
+            )
+            card = {
                 "component": "VCol",
-                "props": {"cols": 6, "sm": 3, "md": 3},
+                "props": column_props,
                 "content": [{
                     "component": "VCard",
-                    "props": {"variant": "tonal", "color": color},
+                    "props": {
+                        "variant": "tonal",
+                        "color": color,
+                        "hover": active_filter is not None,
+                        "border": selected,
+                        "elevation": 8 if selected else 0,
+                        "aria-pressed": selected,
+                        "style": selected_style,
+                        "class": "cursor-pointer transition-all" if active_filter is not None else "",
+                    },
                     "content": [{
                         "component": "VCardText",
-                        "props": {"class": "text-center py-4 text-subtitle-1 font-weight-medium"},
-                        "text": f"{label} {value}",
+                        "props": {
+                            "class": (
+                                "text-center py-4 text-subtitle-1 "
+                                + ("font-weight-bold" if selected else "font-weight-medium")
+                            ),
+                        },
+                        "text": display_text,
                     }],
                 }],
-            } for label, value, color in items],
+            }
+            if active_filter is not None:
+                card["content"][0]["events"] = {
+                    "click": {
+                        "api": f"plugin/{self.__class__.__name__}/page_filter",
+                        "method": "get",
+                        "params": {"status": filter_key},
+                    }
+                }
+            cards.append(card)
+        return {
+            "component": "VRow",
+            "content": cards,
         }
 
     def get_dashboard(self, **kwargs) -> Optional[Tuple[Dict[str, Any], Dict[str, Any], List[dict]]]:
