@@ -624,24 +624,46 @@ class PTDepilerMp(_PluginBase):
         return self._cell(site_name, width=width)
 
     @staticmethod
+    def _table_grid_style(widths: List[str]) -> Dict[str, str]:
+        """主表标题与数据行共用同一套网格尺寸。"""
+        return {
+            "display": "grid",
+            "grid-template-columns": " ".join(widths),
+            "min-width": "1250px",
+        }
+
+    @staticmethod
     def _table_panel_title(cells: List[Dict[str, Any]], widths: List[str]) -> List[Dict[str, Any]]:
         """构建表格行，仅让状态单元格成为折叠面板触发器。"""
         grid_cells = []
+        wrap_columns = {2, 3, 6}
         for index, cell in enumerate(cells):
             if index == 1:
                 grid_cell = {
                     "component": "VExpansionPanelTitle",
                     "props": {
                         "hide-actions": True,
-                        "class": "px-2 py-2 text-sm",
+                        "class": "px-2 py-2 text-sm justify-center",
                         "style": {"min-height": "auto"},
                     },
                 }
             else:
                 grid_cell = {
                     "component": "div",
-                    "props": {"class": "px-2 py-2 text-sm whitespace-nowrap"},
+                    "props": {
+                        "class": (
+                            "px-2 py-2 text-sm"
+                            if index in wrap_columns
+                            else "px-2 py-2 text-sm whitespace-nowrap"
+                        ),
+                    },
                 }
+                if index in wrap_columns:
+                    grid_cell["props"]["style"] = {
+                        "white-space": "normal",
+                        "overflow-wrap": "anywhere",
+                        "word-break": "break-word",
+                    }
             if "content" in cell:
                 grid_cell["content"] = cell["content"]
             else:
@@ -651,11 +673,7 @@ class PTDepilerMp(_PluginBase):
             "component": "div",
             "props": {
                 "class": "align-center w-100",
-                "style": {
-                    "display": "grid",
-                    "grid-template-columns": " ".join(widths),
-                    "min-width": "1400px",
-                },
+                "style": PTDepilerMp._table_grid_style(widths),
             },
             "content": grid_cells,
         }]
@@ -681,14 +699,14 @@ class PTDepilerMp(_PluginBase):
         rows = sorted(self._rows(), key=self._join_at_sort_key)
         summary = self._summary(rows)
         headers = [
-            ("站点", "6%"),
-            ("状态", "6%"),
-            ("当前等级", "13%"),
-            ("保号等级", "13%"),
-            ("上传/下载/分享率", "15%"),
-            ("保号上传/下载/分享率", "15%"),
-            ("总结", "20%"),
-            ("数据时间", "12%"),
+            ("站点", "5fr"),
+            ("状态", "6fr"),
+            ("当前等级", "10fr"),
+            ("保号等级", "10fr"),
+            ("上传/下载/分享率", "16fr"),
+            ("保号上传/下载/分享率", "16fr"),
+            ("总结", "20fr"),
+            ("数据时间", "12fr"),
         ]
         table_rows = []
         widths = [width for _, width in headers]
@@ -755,14 +773,31 @@ class PTDepilerMp(_PluginBase):
                     "content": [
                         {"component": "thead", "content": [{
                             "component": "tr",
-                            "content": [
-                                {
-                                    "component": "th",
-                                    "props": {"style": {"width": width}},
-                                    "text": name,
-                                }
-                                for name, width in headers
-                            ],
+                            "content": [{
+                                "component": "th",
+                                "props": {"colspan": len(headers), "class": "pa-0"},
+                                "content": [{
+                                    "component": "div",
+                                    "props": {
+                                        "class": "align-center w-100",
+                                        "style": self._table_grid_style(widths),
+                                    },
+                                    "content": [
+                                        {
+                                            "component": "div",
+                                            "props": {
+                                                "class": (
+                                                    "px-2 py-2 text-center font-weight-bold whitespace-nowrap"
+                                                    if index == 1
+                                                    else "px-2 py-2 text-left font-weight-bold whitespace-nowrap"
+                                                ),
+                                            },
+                                            "text": name,
+                                        }
+                                        for index, (name, _width) in enumerate(headers)
+                                    ],
+                                }],
+                            }],
                         }]},
                         {"component": "tbody", "content": table_rows},
                     ],
@@ -846,11 +881,18 @@ class PTDepilerMp(_PluginBase):
                     {
                         "component": "div",
                         "props": {
-                            "class": "px-0 px-sm-4 pt-2 pb-1 text-body-2 font-weight-medium",
+                            "class": (
+                                "ml-n4 ml-sm-0 px-0 px-sm-4 pt-2 pb-1 "
+                                "text-body-2 font-weight-medium"
+                            ),
                         },
                         "content": self._current_level_data_content(user, displayed_retention_level),
                     },
-                    {"component": "VList", "content": level_rows},
+                    {
+                        "component": "VList",
+                        "props": {"class": "ml-n4 ml-sm-0"},
+                        "content": level_rows,
+                    },
                 ]},
             ],
         }
