@@ -35,7 +35,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.0"
+    plugin_version = "1.38.1"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -742,7 +742,7 @@ class PTDepilerMp(_PluginBase):
             or (active_filter == "stale" and row["stale"])
         ]
         headers = [
-            ("站点", "5fr"),
+            ("站点", "6fr"),
             ("状态", "6fr"),
             ("当前等级", "10fr"),
             ("保号等级", "10fr"),
