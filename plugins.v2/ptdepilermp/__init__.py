@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from html import escape
 from threading import Lock
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlparse
@@ -952,6 +953,7 @@ class PTDepilerMp(_PluginBase):
         self,
         summary: Dict[str, int],
         active_filter: Optional[str] = None,
+        page_layout: bool = False,
     ) -> Dict[str, Any]:
         """构建摘要统计卡片。"""
         items = [
@@ -960,7 +962,8 @@ class PTDepilerMp(_PluginBase):
             ("unknown", "无法判断", summary["unknown"], "grey"),
             ("stale", "陈旧/失败", summary["stale"], "error"),
         ]
-        if active_filter is not None:
+        filter_layout = active_filter is not None or page_layout
+        if filter_layout:
             items.insert(0, ("all", "全部", summary["all"], "primary"))
 
         cards = []
@@ -980,13 +983,13 @@ class PTDepilerMp(_PluginBase):
                     "class": "flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
                     "style": {"min-width": "0"},
                 }
-                if active_filter is not None
+                if filter_layout
                 else {"cols": 6, "sm": 3, "md": 3}
             )
-            if active_filter is not None:
+            if filter_layout:
                 card_text = {
                     "component": "VCardText",
-                    "props": {"class": "text-center py-4 px-1"},
+                    "props": {"class": "text-center py-2 py-sm-4 px-1"},
                     "content": [
                         {
                             "component": "span",
@@ -1047,22 +1050,269 @@ class PTDepilerMp(_PluginBase):
             "component": "VRow",
             "content": cards,
         }
-        if active_filter is not None:
+        if filter_layout:
             row["props"] = {"class": "flex-nowrap"}
         return row
 
+    def _dashboard_rule_detail(self, row: Dict[str, Any]) -> str:
+        """生成仪表盘单站等级详情；计算和配色规则与详情页一致。"""
+        result, rule, user = row["result"], row.get("rule") or {}, row["user"]
+        sorted_levels = sorted(rule.get("levels") or [], key=lambda item: item.get("id", -1))
+        minimum_retention_level = next((
+            level for level in sorted_levels
+            if (level.get("groupType") or "user") == "user" and level.get("isKept")
+        ), None)
+        displayed_retention_level = (
+            self._retention_level(row)
+            if result.retention_type == "donor"
+            else minimum_retention_level
+        )
+        requirement = (
+            evaluate_requirement(user, displayed_retention_level)
+            if displayed_retention_level else None
+        )
+        fields = [
+            ("上传", self._size(user.get("upload")), ("uploaded", "trueUploaded")),
+            ("下载", self._size(user.get("download")), ("downloaded", "trueDownloaded")),
+            ("注册时长", self._membership_weeks(user.get("join_at")), ("interval",)),
+            ("分享率", self._number(user.get("ratio")), ("ratio", "trueRatio")),
+            ("魔力", self._number(user.get("bonus")), ("bonus",)),
+        ]
+        current_parts = []
+        for index, (label, value, keys) in enumerate(fields):
+            metric_class = ""
+            if displayed_retention_level and requirement:
+                metric_class = (
+                    " ptd-rule-success"
+                    if self._retention_field_met(displayed_retention_level, requirement, keys)
+                    else " ptd-rule-warning"
+                )
+            separator = "；" if index < len(fields) - 1 else ""
+            current_parts.append(
+                f'<span class="ptd-current-metric{metric_class}">'
+                f'{escape(label)} {escape(value)}{separator}</span>'
+            )
+
+        current_id = (result.current_level or {}).get("id")
+        minimum_retention_id = (minimum_retention_level or {}).get("id")
+        level_rows = []
+        for level in sorted_levels:
+            if result.current_group == "user":
+                reached = (
+                    (level.get("groupType") or "user") == "user"
+                    and current_id is not None
+                    and level.get("id", -1) <= current_id
+                )
+            else:
+                reached = current_id is not None and level.get("id") == current_id
+            is_retention = minimum_retention_id is not None and level.get("id") == minimum_retention_id
+            level_class = " ptd-rule-success" if is_retention else (" ptd-rule-info" if reached else "")
+            level_name = str(level.get("name") or "未命名等级")
+            if is_retention:
+                level_name += "（保号等级）"
+            requirement_parts = [
+                f"上传 {self._requirement_size(level, 'uploaded')}",
+                f"下载 {self._requirement_size(level, 'downloaded')}",
+                f"注册时长 {self._duration(level.get('interval'))}",
+                *self._extra_requirement_parts(level),
+            ]
+            level_rows.append(
+                f'<div class="ptd-rule-level{level_class}">'
+                f'<span class="ptd-rule-icon">{"✓" if reached else "○"}</span>'
+                f'<div><div class="ptd-rule-name">{escape(level_name)}</div>'
+                f'<div class="ptd-rule-requirements">{escape("；".join(requirement_parts))}</div></div>'
+                '</div>'
+            )
+        if not level_rows:
+            level_rows.append(f'<div class="ptd-rule-empty">{escape(result.reason or "无可用规则")}</div>')
+        return (
+            '<div class="ptd-rule-detail">'
+            f'<div class="ptd-current-data"><strong>当前：</strong>{"".join(current_parts)}</div>'
+            f'<div class="ptd-rule-levels">{"".join(level_rows)}</div>'
+            '</div>'
+        )
+
+    def _dashboard_filter(self, rows: List[Dict[str, Any]], summary: Dict[str, int]) -> Dict[str, Any]:
+        """构建仪表盘本地筛选表格，规避仪表盘渲染器不处理 API events 的限制。"""
+        filters = [
+            ("all", "全部", "primary"),
+            ("retained", "已保号", "success"),
+            ("unretained", "未保号", "warning"),
+            ("unknown", "无法判断", "grey"),
+            ("stale", "陈旧/失败", "error"),
+        ]
+        counts = {"all": summary["all"], **summary}
+        inputs = []
+        cards = []
+        selected_rules = []
+        for index, (filter_key, label, color) in enumerate(filters):
+            input_id = f"ptd-dashboard-{filter_key}"
+            inputs.append(
+                f'<input type="radio" name="ptd-dashboard-filter" id="{input_id}"'
+                f'{" checked" if index == 0 else ""}>'
+            )
+            cards.append(
+                f'<label class="ptd-filter-card ptd-filter-{color}" for="{input_id}" '
+                'onclick="this.closest(\'.ptd-dashboard-filter\').querySelectorAll(\'.ptd-row-toggle\')'
+                '.forEach(function(item){item.checked=false})">'
+                f'<span class="ptd-filter-check">✓</span>{escape(label)} {counts[filter_key]}</label>'
+            )
+            selected_rules.append(
+                f'#{input_id}:checked ~ .ptd-filter-cards label[for="{input_id}"]'
+                '{filter:brightness(1.18);box-shadow:0 8px 20px rgba(0,0,0,.38);font-weight:700}'
+                f'#{input_id}:checked ~ .ptd-filter-cards label[for="{input_id}"] .ptd-filter-check'
+                '{display:inline}'
+            )
+            if filter_key != "all":
+                selected_rules.append(
+                    f'#{input_id}:checked ~ .ptd-filter-table .ptd-row-group:not(.ptd-status-{filter_key})'
+                    '{display:none}'
+                )
+
+        headers = [
+            "站点", "状态", "当前等级", "保号等级", "上传/下载/分享率",
+            "保号上传/下载/分享率", "总结", "数据时间",
+        ]
+        header_html = "".join(
+            f'<div class="ptd-table-cell ptd-table-header ptd-column-{index}">{escape(name)}</div>'
+            for index, name in enumerate(headers)
+        )
+        row_html = []
+        for row_index, row in enumerate(rows):
+            user, result = row["user"], row["result"]
+            retained_level = self._retention_level(row)
+            retained_requirement = evaluate_requirement(user, retained_level) if retained_level else None
+            current_name = (result.current_level or {}).get("name") or user.get("user_level") or "数据不足"
+            retained_name = (retained_level or {}).get("name") or "未配置"
+            current_values = (
+                f"{self._size(user.get('upload'))} / {self._size(user.get('download'))} / "
+                f"{self._number(user.get('ratio'))}"
+            )
+            retained_values = (
+                f"{self._requirement_size(retained_level or {}, 'uploaded')} / "
+                f"{self._requirement_size(retained_level or {}, 'downloaded')} / "
+                f"{self._number(retained_level.get('ratio')) if retained_level and 'ratio' in retained_level else '无要求'}"
+            )
+            summary_text = self._retention_summary(result, retained_level, retained_requirement)
+            update_text = " ".join(filter(None, [user.get("updated_day"), user.get("updated_time")])) or "无快照"
+            if row["stale"]:
+                update_text += "（陈旧/失败）"
+
+            if result.retained is True:
+                status_key, status_text = "retained", "已保号"
+            elif result.retained is False:
+                status_key, status_text = "unretained", "未保号"
+            else:
+                status_key, status_text = "unknown", "无法判断"
+            row_classes = f"ptd-row-group ptd-status-{status_key}"
+            if row["stale"]:
+                row_classes += " ptd-status-stale"
+            row_toggle_id = f"ptd-dashboard-row-{row_index}"
+
+            site_name = escape(str(row.get("site_name") or "未知站点"))
+            site_url = row.get("site_url")
+            if result.retained is not True and site_url:
+                link_class = "ptd-site-warning" if result.retained is False else "ptd-site-grey"
+                site_name = (
+                    f'<a class="ptd-site-link {link_class}" href="{escape(str(site_url), quote=True)}" '
+                    f'target="_blank" rel="noopener noreferrer">{site_name}</a>'
+                )
+            values = [
+                site_name,
+                (
+                    f'<label class="ptd-status-chip ptd-chip-{status_key}" '
+                    f'for="{row_toggle_id}" title="展开或收起完整等级规则">{status_text}</label>'
+                ),
+                escape(str(current_name)),
+                escape(str(retained_name)),
+                escape(current_values),
+                escape(retained_values),
+                escape(summary_text),
+                escape(update_text),
+            ]
+            rule_detail = self._dashboard_rule_detail(row)
+            row_html.append(
+                f'<div class="{row_classes}">'
+                f'<input class="ptd-row-toggle" type="checkbox" id="{row_toggle_id}">'
+                '<div class="ptd-data-row">'
+                + "".join(
+                    f'<div class="ptd-table-cell ptd-column-{index}">{value}</div>'
+                    for index, value in enumerate(values)
+                )
+                + f"</div>{rule_detail}</div>"
+            )
+
+        markup = f"""
+<div class="ptd-dashboard-filter">
+  <style>
+    .ptd-dashboard-filter>input{{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}}
+    .ptd-filter-cards{{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}}
+    .ptd-filter-card{{display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+      min-inline-size:0;padding:16px 4px;border-radius:12px;cursor:pointer;text-align:center;
+      white-space:nowrap;font-size:1rem;font-weight:500;transition:filter .2s ease,box-shadow .2s ease}}
+    .ptd-filter-card:hover{{filter:brightness(1.18)}}
+    .ptd-filter-check{{display:none;margin-inline-end:4px}}
+    .ptd-filter-primary{{color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.16)}}
+    .ptd-filter-success{{color:rgb(var(--v-theme-success));background:rgba(var(--v-theme-success),.16)}}
+    .ptd-filter-warning{{color:rgb(var(--v-theme-warning));background:rgba(var(--v-theme-warning),.16)}}
+    .ptd-filter-grey{{color:rgb(var(--v-theme-on-surface));background:rgba(var(--v-theme-on-surface),.12)}}
+    .ptd-filter-error{{color:rgb(var(--v-theme-error));background:rgba(var(--v-theme-error),.16)}}
+    .ptd-filter-table{{max-block-size:480px;margin-block-start:12px;overflow:auto}}
+    .ptd-table-head,.ptd-data-row{{display:grid;grid-template-columns:5fr 6fr 10fr 10fr 16fr 16fr 20fr 12fr;
+      min-inline-size:1250px;align-items:center}}
+    .ptd-table-head{{position:sticky;z-index:1;inset-block-start:0;background:rgb(var(--v-theme-surface))}}
+    .ptd-row-group{{min-inline-size:1250px}}
+    .ptd-row-toggle{{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}}
+    .ptd-data-row{{border-block-start:1px solid rgba(var(--v-border-color),var(--v-border-opacity))}}
+    .ptd-data-row:hover{{background:rgba(var(--v-theme-on-surface),.05)}}
+    .ptd-table-cell{{min-inline-size:0;padding:12px 8px;font-size:.875rem;line-height:1.45}}
+    .ptd-table-header{{padding-block:14px;font-weight:700;white-space:nowrap}}
+    .ptd-column-1{{text-align:center}}
+    .ptd-column-0,.ptd-column-4,.ptd-column-5,.ptd-column-7{{white-space:nowrap}}
+    .ptd-column-2,.ptd-column-3,.ptd-column-6{{overflow-wrap:anywhere}}
+    .ptd-status-chip{{display:inline-flex;padding:4px 10px;border-radius:999px;white-space:nowrap;cursor:pointer}}
+    .ptd-chip-retained{{color:rgb(var(--v-theme-success));background:rgba(var(--v-theme-success),.16)}}
+    .ptd-chip-unretained{{color:rgb(var(--v-theme-warning));background:rgba(var(--v-theme-warning),.16)}}
+    .ptd-chip-unknown{{color:rgb(var(--v-theme-on-surface));background:rgba(var(--v-theme-on-surface),.12)}}
+    .ptd-rule-detail{{display:none;padding:12px 24px 18px;border-block-start:1px solid
+      rgba(var(--v-border-color),var(--v-border-opacity));background:rgba(var(--v-theme-on-surface),.025)}}
+    .ptd-row-toggle:checked + .ptd-data-row + .ptd-rule-detail{{display:block}}
+    .ptd-current-data{{display:flex;flex-wrap:wrap;gap:0 6px;margin-block-end:8px;font-size:.875rem}}
+    .ptd-current-metric{{white-space:nowrap}}
+    .ptd-rule-level{{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;padding:7px 8px}}
+    .ptd-rule-icon{{font-size:1.35rem;line-height:1.35}}
+    .ptd-rule-name{{font-size:.95rem}}
+    .ptd-rule-requirements{{font-size:.875rem;color:rgba(var(--v-theme-on-surface),.7);overflow-wrap:anywhere}}
+    .ptd-rule-success,.ptd-rule-success .ptd-rule-requirements{{color:rgb(var(--v-theme-success))}}
+    .ptd-rule-warning{{color:rgb(var(--v-theme-warning))}}
+    .ptd-rule-info,.ptd-rule-info .ptd-rule-requirements{{color:rgb(var(--v-theme-info))}}
+    .ptd-rule-empty{{padding:10px 8px;color:rgba(var(--v-theme-on-surface),.7)}}
+    .ptd-site-link{{text-decoration:underline}}
+    .ptd-site-warning{{color:rgb(var(--v-theme-warning))}}
+    .ptd-site-grey{{color:rgb(var(--v-theme-on-surface))}}
+    {''.join(selected_rules)}
+    @media(max-width:600px){{
+      .ptd-filter-cards{{gap:4px}}
+      .ptd-filter-card{{padding:10px 1px;font-size:.625rem}}
+      .ptd-filter-check{{margin-inline-end:1px}}
+      .ptd-rule-detail{{padding-inline:8px}}
+    }}
+  </style>
+  {''.join(inputs)}
+  <div class="ptd-filter-cards">{''.join(cards)}</div>
+  <div class="ptd-filter-table">
+    <div class="ptd-table-head">{header_html}</div>
+    {''.join(row_html)}
+  </div>
+</div>
+"""
+        return {"component": "div", "html": markup}
+
     def get_dashboard(self, **kwargs) -> Optional[Tuple[Dict[str, Any], Dict[str, Any], List[dict]]]:
         """返回等级摘要仪表板；仅在页面加载时读取一次快照。"""
-        rows = self._rows()
+        rows = sorted(self._rows(), key=self._join_at_sort_key)
         summary = self._summary(rows)
-        pending = [row["site_name"] for row in rows if row["result"].retained is False]
-        elements = [self._summary_cards(summary)]
-        elements.append({
-            "component": "VAlert",
-            "props": {"type": "warning" if pending else "success", "variant": "tonal", "class": "mt-2"},
-            "text": "未保号站点：" + "、".join(pending) if pending else "当前没有明确未保号的站点",
-        })
-        return {"cols": 12}, {}, elements
+        return {"cols": 12}, {}, [self._dashboard_filter(rows, summary)]
 
     def stop_service(self):
         """幂等停止重算调度器。"""
