@@ -34,7 +34,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.35.0"
+    plugin_version = "1.37.0"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -603,18 +603,55 @@ class PTDepilerMp(_PluginBase):
         """未保号或无法判断的站点提供带下划线的新窗口入口。"""
         site_name = row["site_name"]
         site_url = row.get("site_url")
+        if row["result"].retained is True:
+            return self._cell(site_name, width=width)
         if row["result"].retained is not True and site_url:
             return self._cell("", [{
-                "component": "a",
+                "component": "VBtn",
                 "props": {
                     "href": site_url,
                     "target": "_blank",
                     "rel": "noopener noreferrer",
-                    "class": "text-decoration-underline",
+                    "variant": "text",
+                    "density": "compact",
+                    "class": "px-0 text-none",
                 },
-                "text": site_name,
+                "content": [{"component": "u", "text": site_name}],
             }], width=width)
         return self._cell(site_name, width=width)
+
+    @staticmethod
+    def _table_panel_title(cells: List[Dict[str, Any]], widths: List[str]) -> List[Dict[str, Any]]:
+        """构建表格行，仅让状态单元格成为折叠面板触发器。"""
+        grid_cells = []
+        for index, cell in enumerate(cells):
+            if index == 1:
+                grid_cell = {
+                    "component": "VExpansionPanelTitle",
+                    "props": {
+                        "hide-actions": True,
+                        "class": "px-2 py-2 text-sm overflow-hidden",
+                        "style": {"min-height": "auto"},
+                    },
+                }
+            else:
+                grid_cell = {
+                    "component": "div",
+                    "props": {"class": "px-2 py-2 text-sm whitespace-nowrap overflow-hidden"},
+                }
+            if "content" in cell:
+                grid_cell["content"] = cell["content"]
+            else:
+                grid_cell["text"] = cell.get("text", "")
+            grid_cells.append(grid_cell)
+        return [{
+            "component": "div",
+            "props": {
+                "class": "d-grid align-center w-100",
+                "style": {"grid-template-columns": " ".join(widths)},
+            },
+            "content": grid_cells,
+        }]
 
     @staticmethod
     def _join_at_sort_key(row: Dict[str, Any]) -> Tuple[int, float]:
@@ -647,7 +684,7 @@ class PTDepilerMp(_PluginBase):
             ("数据时间", "12%"),
         ]
         table_rows = []
-        panels = []
+        widths = [width for _, width in headers]
         for row in rows:
             user, result = row["user"], row["result"]
             retained_level = self._retention_level(row)
@@ -656,33 +693,45 @@ class PTDepilerMp(_PluginBase):
             update_text = " ".join(filter(None, [user.get("updated_day"), user.get("updated_time")])) or "无快照"
             if row["stale"]:
                 update_text += "（陈旧/失败）"
+            display_cells = [
+                self._site_cell(row, width=headers[0][1]),
+                self._cell("", [self._status_chip(result)], width=headers[1][1]),
+                self._cell(current_name, width=headers[2][1]),
+                self._cell((retained_level or {}).get("name") or "未配置", width=headers[3][1]),
+                self._cell(
+                    f"{self._size(user.get('upload'))} / "
+                    f"{self._size(user.get('download'))} / "
+                    f"{self._number(user.get('ratio'))}",
+                    width=headers[4][1],
+                ),
+                self._cell(
+                    f"{self._requirement_size(retained_level or {}, 'uploaded')} / "
+                    f"{self._requirement_size(retained_level or {}, 'downloaded')} / "
+                    f"{self._number(retained_level.get('ratio')) if retained_level and 'ratio' in retained_level else '无要求'}",
+                    width=headers[5][1],
+                ),
+                self._cell(
+                    self._retention_summary(result, retained_level, retained_requirement),
+                    width=headers[6][1],
+                ),
+                self._cell(update_text, width=headers[7][1]),
+            ]
+            panel = self._level_panel(
+                row,
+                title_content=self._table_panel_title(display_cells, widths),
+            )
             table_rows.append({
                 "component": "tr",
-                "content": [
-                    self._site_cell(row, width=headers[0][1]),
-                    self._cell("", [self._status_chip(result)], width=headers[1][1]),
-                    self._cell(current_name, width=headers[2][1]),
-                    self._cell((retained_level or {}).get("name") or "未配置", width=headers[3][1]),
-                    self._cell(
-                        f"{self._size(user.get('upload'))} / "
-                        f"{self._size(user.get('download'))} / "
-                        f"{self._number(user.get('ratio'))}",
-                        width=headers[4][1],
-                    ),
-                    self._cell(
-                        f"{self._requirement_size(retained_level or {}, 'uploaded')} / "
-                        f"{self._requirement_size(retained_level or {}, 'downloaded')} / "
-                        f"{self._number(retained_level.get('ratio')) if retained_level and 'ratio' in retained_level else '无要求'}",
-                        width=headers[5][1],
-                    ),
-                    self._cell(
-                        self._retention_summary(result, retained_level, retained_requirement),
-                        width=headers[6][1],
-                    ),
-                    self._cell(update_text, width=headers[7][1]),
-                ],
+                "content": [{
+                    "component": "td",
+                    "props": {"colspan": len(headers), "class": "pa-0"},
+                    "content": [{
+                        "component": "VExpansionPanels",
+                        "props": {"variant": "accordion", "class": "w-100"},
+                        "content": [panel],
+                    }],
+                }],
             })
-            panels.append(self._level_panel(row))
 
         return [{
             "component": "div",
@@ -706,12 +755,14 @@ class PTDepilerMp(_PluginBase):
                         {"component": "tbody", "content": table_rows},
                     ],
                 },
-                {"component": "h3", "props": {"class": "mt-6 mb-2"}, "text": "完整等级规则"},
-                {"component": "VExpansionPanels", "props": {"variant": "accordion"}, "content": panels},
             ],
         }]
 
-    def _level_panel(self, row: Dict[str, Any]) -> Dict[str, Any]:
+    def _level_panel(
+        self,
+        row: Dict[str, Any],
+        title_content: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
         """构建单站完整等级规则折叠面板。"""
         result, rule, user = row["result"], row["rule"] or {}, row["user"]
         level_rows = []
@@ -763,19 +814,22 @@ class PTDepilerMp(_PluginBase):
                 "component": "VListItem",
                 "props": {"title": result.reason or "无可用规则"},
             }]
-        panel_title = {"component": "VExpansionPanelTitle"}
-        if result.retained is True:
-            panel_title["content"] = [{
+        if title_content is not None:
+            panel_header = title_content[0]
+        else:
+            panel_header = {"component": "VExpansionPanelTitle"}
+        if title_content is None and result.retained is True:
+            panel_header["content"] = [{
                 "component": "span",
                 "props": {"class": "text-success"},
                 "text": row["site_name"],
             }]
-        else:
-            panel_title["text"] = row["site_name"]
+        elif title_content is None:
+            panel_header["text"] = row["site_name"]
         return {
             "component": "VExpansionPanel",
             "content": [
-                panel_title,
+                panel_header,
                 {"component": "VExpansionPanelText", "content": [
                     {
                         "component": "div",
