@@ -376,12 +376,13 @@ return (_ctx, _cache) => {
                         _createElementVNode("span", _hoisted_4, _toDisplayString(ruleTitle(index, rule)), 1),
                         _createVNode(_component_VSpacer),
                         _createVNode(_component_VBtn, {
-                          icon: expanded.value === index ? 'mdi-chevron-down' : 'mdi-chevron-right',
+                          icon: "mdi-delete-outline",
                           size: "small",
                           variant: "text",
-                          title: expanded.value === index ? '折叠' : '展开',
-                          onClick: _withModifiers($event => (toggleRule(index)), ["stop"])
-                        }, null, 8, ["icon", "title", "onClick"]),
+                          color: "error",
+                          title: "删除",
+                          onClick: _withModifiers($event => (deleteRule(index)), ["stop"])
+                        }, null, 8, ["onClick"]),
                         _createVNode(_component_VBtn, {
                           icon: "mdi-arrow-up",
                           size: "small",
@@ -399,13 +400,12 @@ return (_ctx, _cache) => {
                           onClick: _withModifiers($event => (moveRule(index, 1)), ["stop"])
                         }, null, 8, ["disabled", "onClick"]),
                         _createVNode(_component_VBtn, {
-                          icon: "mdi-delete-outline",
+                          icon: expanded.value === index ? 'mdi-chevron-down' : 'mdi-chevron-right',
                           size: "small",
                           variant: "text",
-                          color: "error",
-                          title: "删除",
-                          onClick: _withModifiers($event => (deleteRule(index)), ["stop"])
-                        }, null, 8, ["onClick"])
+                          title: expanded.value === index ? '折叠' : '展开',
+                          onClick: _withModifiers($event => (toggleRule(index)), ["stop"])
+                        }, null, 8, ["icon", "title", "onClick"])
                       ])
                     ]),
                     _: 2
@@ -556,6 +556,6 @@ return (_ctx, _cache) => {
 }
 
 };
-const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-afb5950d"]]);
+const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-cff711a3"]]);
 
 export { Config as default };

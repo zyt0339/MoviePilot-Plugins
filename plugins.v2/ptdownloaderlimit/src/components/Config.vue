@@ -237,11 +237,12 @@ onMounted(() => {
               <span class="font-weight-medium text-truncate">{{ ruleTitle(index, rule) }}</span>
               <VSpacer />
               <VBtn
-                :icon="expanded === index ? 'mdi-chevron-down' : 'mdi-chevron-right'"
+                icon="mdi-delete-outline"
                 size="small"
                 variant="text"
-                :title="expanded === index ? '折叠' : '展开'"
-                @click.stop="toggleRule(index)"
+                color="error"
+                title="删除"
+                @click.stop="deleteRule(index)"
               />
               <VBtn
                 icon="mdi-arrow-up"
@@ -260,12 +261,11 @@ onMounted(() => {
                 @click.stop="moveRule(index, 1)"
               />
               <VBtn
-                icon="mdi-delete-outline"
+                :icon="expanded === index ? 'mdi-chevron-down' : 'mdi-chevron-right'"
                 size="small"
                 variant="text"
-                color="error"
-                title="删除"
-                @click.stop="deleteRule(index)"
+                :title="expanded === index ? '折叠' : '展开'"
+                @click.stop="toggleRule(index)"
               />
             </div>
           </VExpansionPanelTitle>

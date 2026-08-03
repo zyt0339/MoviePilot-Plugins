@@ -140,13 +140,14 @@
     "name": "QB&TR上传限速",
     "description": "按下载器、PT站点和时间段动态配置种子上传限速。",
     "labels": "限速,下载器",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "icon": "upload.png",
     "author": "zyt",
     "level": 2,
     "v2": true,
     "release": true,
     "history": {
+      "v1.0.2": "调整删除、排序和折叠按钮顺序",
       "v1.0.1": "限速规则默认折叠并仅允许箭头触发展开",
       "v1.0.0": "动态新增、删除、排序和折叠限速规则"
     }
