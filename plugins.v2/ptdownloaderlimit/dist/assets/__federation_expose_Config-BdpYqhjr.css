@@ -1,0 +1,14 @@
+
+.pt-limit-config[data-v-4995e976] {
+  width: 100%;
+}
+.rule-title[data-v-4995e976] {
+  min-width: 0;
+}
+@media (max-width: 600px) {
+.rule-title[data-v-4995e976] .toggle-button {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+}
+}

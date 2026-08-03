@@ -29,7 +29,7 @@ class PTDownloaderLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.2"
+    plugin_version = "1.0.3"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -420,7 +420,7 @@ class PTDownloaderLimit(_PluginBase):
             for torrent in all_torrents:
                 state = torrent.state  # str
                 if torrent.state_enum.is_downloading:  # 包含多种下载态
-                    logger.info(f"{downloader} {torrent.name} 下载中，跳过 ...")
+                    logger.debug(f"{downloader} {torrent.name} 下载中，跳过 ...")
                     continue
                 # 当前种子 tags list
                 current_torrent_tag_list = [element.strip() for element in torrent.tags.split(',')]

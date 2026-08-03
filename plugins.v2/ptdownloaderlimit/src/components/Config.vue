@@ -262,7 +262,9 @@ onMounted(() => {
               />
               <VBtn
                 :icon="expanded === index ? 'mdi-chevron-down' : 'mdi-chevron-right'"
-                size="small"
+                class="toggle-button"
+                color="white"
+                size="default"
                 variant="text"
                 :title="expanded === index ? '折叠' : '展开'"
                 @click.stop="toggleRule(index)"
@@ -365,6 +367,12 @@ onMounted(() => {
     margin-inline: -2px;
     width: 32px;
     height: 32px;
+  }
+
+  .rule-title :deep(.toggle-button) {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
   }
 }
 </style>

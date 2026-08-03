@@ -401,7 +401,9 @@ return (_ctx, _cache) => {
                         }, null, 8, ["disabled", "onClick"]),
                         _createVNode(_component_VBtn, {
                           icon: expanded.value === index ? 'mdi-chevron-down' : 'mdi-chevron-right',
-                          size: "small",
+                          class: "toggle-button",
+                          color: "white",
+                          size: "default",
                           variant: "text",
                           title: expanded.value === index ? '折叠' : '展开',
                           onClick: _withModifiers($event => (toggleRule(index)), ["stop"])
@@ -556,6 +558,6 @@ return (_ctx, _cache) => {
 }
 
 };
-const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-cff711a3"]]);
+const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-4995e976"]]);
 
 export { Config as default };

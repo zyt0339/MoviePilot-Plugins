@@ -262,7 +262,7 @@ class PTDownloaderLimitTest(unittest.TestCase):
         self.assertEqual([item["value"] for item in response.data["sites"]], [1, 2])
 
         package = json.loads((ROOT / "package.v2.json").read_text(encoding="utf-8"))
-        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.2")
+        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.3")
         self.assertTrue(package["PTDownloaderLimit"]["release"])
 
     def test_onlyonce_resets_switch_and_stop_is_idempotent(self):
@@ -369,9 +369,16 @@ class PTDownloaderLimitTest(unittest.TestCase):
             "__is_current_time_in_range_site_config",
             "__is_valid_time_range",
         ):
+            current_source = method_source(PLUGIN_DIR / "__init__.py", method_name)
+            original_source = method_source(ORIGINAL_PLUGIN, method_name)
+            if method_name == "limit_per_downloader":
+                current_source = current_source.replace(
+                    'logger.debug(f"{downloader} {torrent.name} 下载中，跳过 ...")',
+                    'logger.info(f"{downloader} {torrent.name} 下载中，跳过 ...")',
+                )
             self.assertEqual(
-                method_source(PLUGIN_DIR / "__init__.py", method_name),
-                method_source(ORIGINAL_PLUGIN, method_name),
+                current_source,
+                original_source,
                 method_name,
             )
 
@@ -546,6 +553,14 @@ class PTDownloaderLimitTest(unittest.TestCase):
             "重新开始种子个数",
         ):
             self.assertIn(marker, source)
+        self.assertIn(
+            'logger.debug(f"{downloader} {torrent.name} 下载中，跳过 ...")',
+            source,
+        )
+        self.assertNotIn(
+            'logger.info(f"{downloader} {torrent.name} 下载中，跳过 ...")',
+            source,
+        )
 
     def test_frontend_dynamic_controls_and_release_assets_exist(self):
         source = (PLUGIN_DIR / "src" / "components" / "Config.vue").read_text(encoding="utf-8")
@@ -554,7 +569,8 @@ class PTDownloaderLimitTest(unittest.TestCase):
             "`${title}：${rule.mark.trim()}`", "padding-inline: 8px",
             "emit('save', payload)", "规则按列表顺序逐条执行",
             "const expanded = ref()", "expanded.value = undefined", "toggleRule(index)",
-            "readonly", "hide-actions", "mdi-chevron-right",
+            "readonly", "hide-actions", "mdi-chevron-right", 'class="toggle-button"',
+            'color="white"', 'size="default"', "min-width: 36px",
         ):
             self.assertIn(marker, source)
         self.assertNotIn("请勿同时启用旧版", source)
