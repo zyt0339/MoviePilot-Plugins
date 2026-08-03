@@ -37,7 +37,7 @@ const emit = __emit;
 const config = ref(defaultConfig());
 const downloaderOptions = ref([]);
 const siteOptions = ref([]);
-const expanded = ref(0);
+const expanded = ref();
 const loadingOptions = ref(false);
 const snackbar = ref({ show: false, text: '', color: 'info' });
 
@@ -142,6 +142,10 @@ function moveRule(index, offset) {
   expanded.value = target;
 }
 
+function toggleRule(index) {
+  expanded.value = expanded.value === index ? undefined : index;
+}
+
 function chineseNumber(value) {
   const digits = '零一二三四五六七八九';
   if (value < 10) return digits[value]
@@ -195,7 +199,7 @@ function saveConfig() {
 onMounted(() => {
   emit('layout', { maxWidth: '90rem' });
   config.value = normalizeConfig(props.initialConfig);
-  expanded.value = config.value.rules.length ? 0 : undefined;
+  expanded.value = undefined;
   loadOptions();
 });
 
@@ -362,14 +366,22 @@ return (_ctx, _cache) => {
             (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(config.value.rules, (rule, index) => {
               return (_openBlock(), _createBlock(_component_VExpansionPanel, {
                 key: rule.id,
-                value: index
+                value: index,
+                readonly: ""
               }, {
                 default: _withCtx(() => [
-                  _createVNode(_component_VExpansionPanelTitle, null, {
+                  _createVNode(_component_VExpansionPanelTitle, { "hide-actions": "" }, {
                     default: _withCtx(() => [
                       _createElementVNode("div", _hoisted_3, [
                         _createElementVNode("span", _hoisted_4, _toDisplayString(ruleTitle(index, rule)), 1),
                         _createVNode(_component_VSpacer),
+                        _createVNode(_component_VBtn, {
+                          icon: expanded.value === index ? 'mdi-chevron-down' : 'mdi-chevron-right',
+                          size: "small",
+                          variant: "text",
+                          title: expanded.value === index ? '折叠' : '展开',
+                          onClick: _withModifiers($event => (toggleRule(index)), ["stop"])
+                        }, null, 8, ["icon", "title", "onClick"]),
                         _createVNode(_component_VBtn, {
                           icon: "mdi-arrow-up",
                           size: "small",
@@ -544,6 +556,6 @@ return (_ctx, _cache) => {
 }
 
 };
-const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-28c63982"]]);
+const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-afb5950d"]]);
 
 export { Config as default };

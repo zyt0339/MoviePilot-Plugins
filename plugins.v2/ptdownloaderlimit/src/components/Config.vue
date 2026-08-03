@@ -12,7 +12,7 @@ const emit = defineEmits(['save', 'close', 'layout'])
 const config = ref(defaultConfig())
 const downloaderOptions = ref([])
 const siteOptions = ref([])
-const expanded = ref(0)
+const expanded = ref()
 const loadingOptions = ref(false)
 const snackbar = ref({ show: false, text: '', color: 'info' })
 
@@ -117,6 +117,10 @@ function moveRule(index, offset) {
   expanded.value = target
 }
 
+function toggleRule(index) {
+  expanded.value = expanded.value === index ? undefined : index
+}
+
 function chineseNumber(value) {
   const digits = '零一二三四五六七八九'
   if (value < 10) return digits[value]
@@ -170,7 +174,7 @@ function saveConfig() {
 onMounted(() => {
   emit('layout', { maxWidth: '90rem' })
   config.value = normalizeConfig(props.initialConfig)
-  expanded.value = config.value.rules.length ? 0 : undefined
+  expanded.value = undefined
   loadOptions()
 })
 </script>
@@ -222,11 +226,23 @@ onMounted(() => {
       </VAlert>
 
       <VExpansionPanels v-model="expanded" variant="accordion" class="rule-panels">
-        <VExpansionPanel v-for="(rule, index) in config.rules" :key="rule.id" :value="index">
-          <VExpansionPanelTitle>
+        <VExpansionPanel
+          v-for="(rule, index) in config.rules"
+          :key="rule.id"
+          :value="index"
+          readonly
+        >
+          <VExpansionPanelTitle hide-actions>
             <div class="d-flex align-center w-100 pe-2 rule-title">
               <span class="font-weight-medium text-truncate">{{ ruleTitle(index, rule) }}</span>
               <VSpacer />
+              <VBtn
+                :icon="expanded === index ? 'mdi-chevron-down' : 'mdi-chevron-right'"
+                size="small"
+                variant="text"
+                :title="expanded === index ? '折叠' : '展开'"
+                @click.stop="toggleRule(index)"
+              />
               <VBtn
                 icon="mdi-arrow-up"
                 size="small"

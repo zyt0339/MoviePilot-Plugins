@@ -262,7 +262,7 @@ class PTDownloaderLimitTest(unittest.TestCase):
         self.assertEqual([item["value"] for item in response.data["sites"]], [1, 2])
 
         package = json.loads((ROOT / "package.v2.json").read_text(encoding="utf-8"))
-        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.0")
+        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.1")
         self.assertTrue(package["PTDownloaderLimit"]["release"])
 
     def test_onlyonce_resets_switch_and_stop_is_idempotent(self):
@@ -553,6 +553,8 @@ class PTDownloaderLimitTest(unittest.TestCase):
             "VExpansionPanels", "addRule", "deleteRule", "moveRule", "新增规则",
             "`${title}：${rule.mark.trim()}`", "padding-inline: 8px",
             "emit('save', payload)", "规则按列表顺序逐条执行",
+            "const expanded = ref()", "expanded.value = undefined", "toggleRule(index)",
+            "readonly", "hide-actions", "mdi-chevron-right",
         ):
             self.assertIn(marker, source)
         self.assertNotIn("请勿同时启用旧版", source)
