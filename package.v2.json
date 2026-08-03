@@ -136,6 +136,20 @@
       "v1.0.1": "自定义时间点执行限速逻辑,只支持qb"
     }
   },
+  "PTDownloaderLimit": {
+    "name": "QB&TR上传限速",
+    "description": "按下载器、PT站点和时间段动态配置种子上传限速。",
+    "labels": "限速,下载器",
+    "version": "1.0.0",
+    "icon": "upload.png",
+    "author": "zyt",
+    "level": 2,
+    "v2": true,
+    "release": true,
+    "history": {
+      "v1.0.0": "动态新增、删除、排序和折叠限速规则"
+    }
+  },
   "QBBanIp": {
     "name": "QB IP黑名单",
     "description": "自定义时间点执行限速逻辑",
