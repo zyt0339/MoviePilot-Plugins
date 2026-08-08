@@ -1,14 +1,6 @@
 {
   "name": "天空",
   "is_dead": false,
-  "levelRequirementOverrides": [
-    {
-      "joinBefore": "2025-03-01T00:00:00+00:00",
-      "removeFields": [
-        "bonus"
-      ]
-    }
-  ],
   "levels": [
     {
       "id": 1,
@@ -72,7 +64,7 @@
     {
       "id": 8,
       "name": "Ultimate User",
-      "isKept": true,
+      "isKept": false,
       "privilege": "永远保留账号",
       "interval": "P45W",
       "downloaded": "8TB",
@@ -82,7 +74,7 @@
     {
       "id": 9,
       "name": "Nexus Master",
-      "isKept": true,
+      "isKept": false,
       "privilege": "直接发布种子；可以查看排行榜；在网站开放邀请期间发送邀请",
       "interval": "P65W",
       "downloaded": "10TB",

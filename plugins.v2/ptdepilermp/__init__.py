@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from datetime import datetime, timedelta
 from html import escape
 from threading import Lock
@@ -35,7 +36,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.1"
+    plugin_version = "1.38.3"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -315,7 +316,6 @@ class PTDepilerMp(_PluginBase):
             # MoviePilot 暂不保存黄星状态；该瞬时字段只来自用户配置，不访问站点也不持久化。
             user["is_donor"] = site_name_key in donor_site_keys
             rule_id, rule = self._repository.match(site.name)
-            rule = self._repository.resolve_rule(user, rule)
             result = self._repository.evaluate_site(user, rule_id, rule)
             rows.append({
                 "site_name": site.name,
@@ -621,7 +621,7 @@ class PTDepilerMp(_PluginBase):
         if result.current_group in {"vip", "manager"}:
             return "VIP/管理等级，已保号"
         if not retained_level:
-            return "规则未配置保号等级"
+            return "站点无保号等级"
         if result.retained:
             return "已保号"
         if not requirement:
@@ -658,6 +658,87 @@ class PTDepilerMp(_PluginBase):
         return self._cell(site_name, width=width)
 
     @staticmethod
+    def _bulk_open_buttons(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """构建批量打开站点的浏览器端按钮，不由插件后端访问站点。"""
+        all_urls = list(dict.fromkeys(
+            row.get("site_url") for row in rows if row.get("site_url")
+        ))
+        unretained_urls = list(dict.fromkeys(
+            row.get("site_url") for row in rows
+            if row["result"].retained is not True and row.get("site_url")
+        ))
+        payload = json.dumps(
+            {"unretained": unretained_urls, "all": all_urls},
+            ensure_ascii=False,
+        ).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+        markup = f"""<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{{--v-theme-error:239,107,115;--v-theme-surface:24,34,53;--v-theme-on-surface:220,228,240}}
+  html,body{{margin:0;background:rgb(58,46,63);
+    background:color-mix(in srgb,rgb(var(--v-theme-error)) 16%,rgb(var(--v-theme-surface)) 84%);
+    color:rgb(var(--v-theme-on-surface));
+    font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}}
+  .actions{{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    height:64px;border-radius:12px;overflow:hidden}}
+  button{{min-height:0;padding:0;border:0;cursor:pointer;white-space:nowrap;background:transparent;
+    font:inherit;font-size:1rem;font-weight:500;text-decoration:underline}}
+  .unretained{{color:rgb(230,180,85)}}
+  .all{{color:rgb(var(--v-theme-on-surface))}}
+  button:hover{{filter:brightness(1.18)}}
+  button:disabled{{cursor:not-allowed;filter:none;opacity:.45}}
+  @media(max-width:600px){{button{{font-size:.75rem}}}}
+</style>
+</head>
+<body>
+<div class="actions">
+  <button class="unretained" data-group="unretained">打开未保号站点({len(unretained_urls)})</button>
+  <button class="all" data-group="all">打开所有站点({len(all_urls)})</button>
+</div>
+<script>
+  (function(){{
+    var groups = {payload};
+    try {{
+      var frame = window.frameElement;
+      var themeOwner = frame && frame.closest('[class*="v-theme--"]');
+      var source = parent.getComputedStyle(themeOwner || parent.document.documentElement);
+      ['--v-theme-error','--v-theme-surface','--v-theme-on-surface'].forEach(function(name){{
+        var value = source.getPropertyValue(name);
+        if (value) document.documentElement.style.setProperty(name, value);
+      }});
+    }} catch (error) {{}}
+    document.querySelectorAll('button[data-group]').forEach(function(button){{
+      var urls = groups[button.dataset.group] || [];
+      button.disabled = urls.length === 0;
+      button.addEventListener('click', function(){{
+        urls.forEach(function(url){{ window.open(url, '_blank', 'noopener,noreferrer'); }});
+      }});
+    }});
+  }})();
+</script>
+</body>
+</html>"""
+        return {
+            "component": "iframe",
+            "props": {
+                "srcdoc": markup,
+                "title": "批量打开 PT 站点",
+                "allowtransparency": True,
+                "style": {
+                    "display": "block",
+                    "width": "100%",
+                    "height": "64px",
+                    "border": "0",
+                    "border-radius": "12px",
+                    "background": "rgb(58, 46, 63)",
+                },
+            },
+        }
+
+    @staticmethod
     def _table_grid_style(widths: List[str]) -> Dict[str, str]:
         """主表标题与数据行共用同一套网格尺寸。"""
         return {
@@ -677,8 +758,8 @@ class PTDepilerMp(_PluginBase):
                     "component": "VExpansionPanelTitle",
                     "props": {
                         "hide-actions": True,
-                        "class": "px-2 py-2 text-sm justify-center",
-                        "style": {"min-height": "auto"},
+                        "class": "px-2 py-2 text-sm justify-center rounded-0",
+                        "style": {"min-height": "auto", "border-radius": "0"},
                     },
                 }
             else:
@@ -795,7 +876,11 @@ class PTDepilerMp(_PluginBase):
                     "props": {"colspan": len(headers), "class": "pa-0"},
                     "content": [{
                         "component": "VExpansionPanels",
-                        "props": {"variant": "accordion", "class": "w-100"},
+                        "props": {
+                            "variant": "accordion",
+                            "class": "w-100 rounded-0",
+                            "style": {"border-radius": "0"},
+                        },
                         "content": [panel],
                     }],
                 }],
@@ -813,7 +898,11 @@ class PTDepilerMp(_PluginBase):
         return [{
             "component": "div",
             "content": [
-                self._summary_cards(summary, active_filter=active_filter),
+                self._summary_cards(
+                    summary,
+                    active_filter=active_filter,
+                    trailing_content=self._bulk_open_buttons(all_rows),
+                ),
                 {
                     "component": "VTable",
                     "props": {
@@ -927,9 +1016,19 @@ class PTDepilerMp(_PluginBase):
             panel_header["text"] = row["site_name"]
         return {
             "component": "VExpansionPanel",
+            "props": {
+                "class": "rounded-0 elevation-0",
+                "style": {"background": "transparent", "border-radius": "0"},
+            },
             "content": [
                 panel_header,
-                {"component": "VExpansionPanelText", "content": [
+                {
+                    "component": "VExpansionPanelText",
+                    "props": {
+                        "class": "rounded-0",
+                        "style": {"border-radius": "0"},
+                    },
+                    "content": [
                     {
                         "component": "div",
                         "props": {
@@ -945,7 +1044,8 @@ class PTDepilerMp(_PluginBase):
                         "props": {"class": "ml-n4 ml-sm-0"},
                         "content": level_rows,
                     },
-                ]},
+                    ],
+                },
             ],
         }
 
@@ -954,6 +1054,7 @@ class PTDepilerMp(_PluginBase):
         summary: Dict[str, int],
         active_filter: Optional[str] = None,
         page_layout: bool = False,
+        trailing_content: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """构建摘要统计卡片。"""
         items = [
@@ -965,6 +1066,8 @@ class PTDepilerMp(_PluginBase):
         filter_layout = active_filter is not None or page_layout
         if filter_layout:
             items.insert(0, ("all", "全部", summary["all"], "primary"))
+        if trailing_content:
+            items = [item for item in items if item[0] != "stale"]
 
         cards = []
         for filter_key, label, value, color in items:
@@ -981,7 +1084,7 @@ class PTDepilerMp(_PluginBase):
                 {
                     "sm": "auto",
                     "class": "flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
-                    "style": {"min-width": "0"},
+                    "style": {"min-width": "0", "flex-basis": "0"},
                 }
                 if filter_layout
                 else {"cols": 6, "sm": 3, "md": 3}
@@ -1046,6 +1149,16 @@ class PTDepilerMp(_PluginBase):
                     }
                 }
             cards.append(card)
+        if trailing_content:
+            cards.append({
+                "component": "VCol",
+                "props": {
+                    "sm": "auto",
+                    "class": "d-none d-sm-flex flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
+                    "style": {"min-width": "0", "flex-basis": "0"},
+                },
+                "content": [trailing_content],
+            })
         row = {
             "component": "VRow",
             "content": cards,
