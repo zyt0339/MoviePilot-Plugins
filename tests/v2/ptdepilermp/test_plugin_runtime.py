@@ -508,8 +508,15 @@ class PluginRuntimeTest(unittest.TestCase):
                 )
             site_cells[site_name] = site_cell
 
-        self.assertEqual(site_cells["已保号站"]["text"], "已保号站")
-        self.assertNotIn("content", site_cells["已保号站"])
+        kept_link = site_cells["已保号站"]["content"][0]
+        self.assertEqual(kept_link["component"], "VBtn")
+        self.assertEqual(kept_link["props"]["href"], "https://kept.example/")
+        self.assertNotIn("color", kept_link["props"])
+        self.assertEqual(kept_link["props"]["style"]["color"], "inherit")
+        self.assertEqual(
+            kept_link["content"][0]["props"]["style"]["text-decoration-color"],
+            "currentColor",
+        )
         pending_link = site_cells["未保号站"]["content"][0]
         self.assertEqual(pending_link["component"], "VBtn")
         self.assertEqual(pending_link["props"]["href"], "https://pending.example/")
@@ -521,6 +528,10 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertEqual(pending_link["props"]["style"]["min-width"], "0")
         self.assertEqual(pending_link["content"][0]["component"], "u")
         self.assertEqual(pending_link["content"][0]["text"], "未保号站")
+        self.assertEqual(
+            pending_link["content"][0]["props"]["style"]["text-decoration-color"],
+            "currentColor",
+        )
         self.assertEqual(
             site_cells["无法判断站"]["content"][0]["props"]["href"],
             "https://unknown.example/",

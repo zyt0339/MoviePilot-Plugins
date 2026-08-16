@@ -53,11 +53,11 @@ class PluginContractTest(unittest.TestCase):
 
         package = json.loads(PACKAGE.read_text(encoding="utf-8"))
         self.assertEqual(package["PTDepilerMp"]["name"], "PT 站点保号状态")
-        self.assertEqual(package["PTDepilerMp"]["version"], "1.38.4")
+        self.assertEqual(package["PTDepilerMp"]["version"], "1.38.5")
         self.assertIs(package["PTDepilerMp"]["release"], True)
         source = PLUGIN.read_text(encoding="utf-8")
         self.assertIn('plugin_name = "PT 站点保号状态"', source)
-        self.assertIn('plugin_version = "1.38.4"', source)
+        self.assertIn('plugin_version = "1.38.5"', source)
 
     def test_release_workflow_uses_moviepilot_asset_contract(self):
         workflow = WORKFLOW.read_text(encoding="utf-8")

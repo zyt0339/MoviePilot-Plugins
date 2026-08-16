@@ -36,7 +36,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.4"
+    plugin_version = "1.38.5"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -634,26 +634,33 @@ class PTDepilerMp(_PluginBase):
         return "目标：" + detail
 
     def _site_cell(self, row: Dict[str, Any], width: str) -> Dict[str, Any]:
-        """未保号或无法判断的站点提供带下划线的新窗口入口。"""
+        """有安全地址的站点均提供带下划线的新窗口入口。"""
         site_name = row["site_name"]
         site_url = row.get("site_url")
-        if row["result"].retained is True:
-            return self._cell(site_name, width=width)
-        if row["result"].retained is not True and site_url:
-            link_color = "warning" if row["result"].retained is False else "grey"
+        if site_url:
+            retained = row["result"].retained
+            link_props = {
+                "href": site_url,
+                "target": "_blank",
+                "rel": "noopener noreferrer",
+                "variant": "text",
+                "density": "compact",
+                "class": "px-0 text-none justify-start",
+                "style": {"min-width": "0"},
+            }
+            if retained is True:
+                # 已保号站点只增加链接样式，文字继续继承原表格颜色。
+                link_props["style"]["color"] = "inherit"
+            else:
+                link_props["color"] = "warning" if retained is False else "grey"
             return self._cell("", [{
                 "component": "VBtn",
-                "props": {
-                    "href": site_url,
-                    "target": "_blank",
-                    "rel": "noopener noreferrer",
-                    "variant": "text",
-                    "density": "compact",
-                    "color": link_color,
-                    "class": "px-0 text-none justify-start",
-                    "style": {"min-width": "0"},
-                },
-                "content": [{"component": "u", "text": site_name}],
+                "props": link_props,
+                "content": [{
+                    "component": "u",
+                    "props": {"style": {"text-decoration-color": "currentColor"}},
+                    "text": site_name,
+                }],
             }], width=width)
         return self._cell(site_name, width=width)
 
