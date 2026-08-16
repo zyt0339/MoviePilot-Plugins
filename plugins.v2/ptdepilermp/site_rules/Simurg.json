@@ -1,0 +1,46 @@
+{
+  "name": "Simurg",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "Initial class for regular members."
+    },
+    {
+      "id": 2,
+      "name": "Member",
+      "privilege": "Create requests and bookmarks; use the ZIP collector; purchase eligible Bonus Shop items.",
+      "interval": "P1W",
+      "uploaded": "10 GiB",
+      "ratio": 0.7
+    },
+    {
+      "id": 3,
+      "name": "Power User",
+      "privilege": "Access upload notifications and the private Power User forum; create collages and forum polls.",
+      "interval": "P2W",
+      "uploaded": "25 GiB",
+      "ratio": 1.05,
+      "uploads": 5
+    },
+    {
+      "id": 4,
+      "name": "Elite",
+      "privilege": "View the Advanced Top 10; edit catalogue metadata; access the Elite and Invitations forums.",
+      "interval": "P4W",
+      "uploaded": "100 GiB",
+      "ratio": 1.05,
+      "uploads": 50
+    },
+    {
+      "id": 5,
+      "name": "Torrent Master",
+      "privilege": "Access the Torrent Masters forum; purchase custom titles for free.",
+      "interval": "P8W",
+      "uploaded": "500 GiB",
+      "ratio": 1.05,
+      "uploads": 500
+    }
+  ]
+}

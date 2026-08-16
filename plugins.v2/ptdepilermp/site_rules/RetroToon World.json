@@ -1,0 +1,35 @@
+{
+  "name": "RetroToon World",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Sketch",
+      "nameAka": [
+        "Toon"
+      ],
+      "privilege": "Initial user class."
+    },
+    {
+      "id": 1,
+      "name": "Toon Hero",
+      "interval": "P60D",
+      "uploaded": "50GB",
+      "ratio": 1.05
+    },
+    {
+      "id": 2,
+      "name": "Toon Legend",
+      "interval": "P180D",
+      "uploaded": "250GB",
+      "ratio": 2.05
+    },
+    {
+      "id": 3,
+      "name": "Toon Superstar",
+      "interval": "P360D",
+      "uploaded": "1500GB",
+      "ratio": 2.05
+    }
+  ]
+}

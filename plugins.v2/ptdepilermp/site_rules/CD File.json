@@ -1,6 +1,6 @@
 {
   "name": "CD File",
-  "is_dead": true,
+  "is_dead": false,
   "levels": [
     {
       "id": 1,

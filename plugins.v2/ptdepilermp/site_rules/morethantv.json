@@ -1,6 +1,6 @@
 {
   "name": "MoreThanTV",
-  "is_dead": false,
+  "is_dead": true,
   "levels": [
     {
       "id": 1,
