@@ -261,6 +261,20 @@ class RequirementTest(unittest.TestCase):
         sky_rule = repository.sites["天空"]
         self.assertNotIn("levelRequirementOverrides", sky_rule)
         self.assertFalse(any(level.get("isKept") for level in sky_rule["levels"]))
+        self.assertEqual(
+            [level.get("nameAka") for level in sky_rule["levels"]],
+            [
+                ["临时演员"],
+                ["跑龙套"],
+                ["配角"],
+                ["主演"],
+                ["领衔主演"],
+                ["明星"],
+                ["国际大腕"],
+                ["影帝"],
+                ["终身影帝"],
+            ],
+        )
 
     def test_unmatched_dead_and_unknown_level_reasons(self):
         repository = object.__new__(rules.RuleRepository)
