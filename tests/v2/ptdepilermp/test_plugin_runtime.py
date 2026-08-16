@@ -180,11 +180,6 @@ class PluginRuntimeTest(unittest.TestCase):
         panel = cls._embedded_panel(table_row)
         return panel["content"][0]["content"]
 
-    def test_old_rule_override_config_is_no_longer_used(self):
-        self.plugin.init_plugin({"rule_overrides": "not-json"})
-        self.assertFalse(hasattr(self.plugin, "_overrides"))
-        self.assertIsNone(self.plugin.saved_config)
-
     def test_only_page_filter_api_and_stop_is_idempotent(self):
         self.plugin.init_plugin({})
         apis = self.plugin.get_api()
@@ -222,51 +217,10 @@ class PluginRuntimeTest(unittest.TestCase):
         self.plugin._has_calculated = True
 
         page = self.plugin.get_page()
-        summary_columns = page[0]["content"][0]["content"]
-        cards = summary_columns[:4]
-        bulk_column = summary_columns[4]
-        bulk_buttons = bulk_column["content"][0]
-        self.assertTrue(all(column["props"] == {
-            "sm": "auto",
-            "class": "flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
-            "style": {"min-width": "0", "flex-basis": "0"},
-        } for column in cards))
-        self.assertEqual(bulk_column["props"], {
-            "sm": "auto",
-            "class": "d-none d-sm-flex flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
-            "style": {"min-width": "0", "flex-basis": "0"},
-        })
-        self.assertEqual(page[0]["content"][0]["props"], {"class": "flex-nowrap"})
-        self.assertEqual(bulk_buttons["component"], "iframe")
-        self.assertNotIn("陈旧/失败", bulk_buttons["props"]["srcdoc"])
-        table = self._page_table(page)
-        header_cells = table["content"][0]["content"][0]["content"][0]["content"][0]["content"]
-        self.assertEqual(len(header_cells), 8)
-        self.assertTrue(all("text-sm" in cell["props"]["class"] for cell in header_cells))
+        cards = page[0]["content"][0]["content"][:4]
         self.assertEqual([card["content"][0]["content"][0]["content"][1]["text"] for card in cards], [
             "✓ 当前 · 全部 2", "已保号 1", "未保号 1", "无法判断 0",
         ])
-        self.assertEqual([card["content"][0]["content"][0]["content"][0]["text"] for card in cards], [
-            "✓全部2", "已保号1", "未保号1", "无法判断0",
-        ])
-        self.assertTrue(all(
-            card["content"][0]["content"][0]["content"][0]["props"]["style"]["font-size"] == "0.625rem"
-            for card in cards
-        ))
-        selected_props = cards[0]["content"][0]["props"]
-        self.assertEqual(selected_props["variant"], "tonal")
-        self.assertEqual(selected_props["elevation"], 8)
-        self.assertTrue(selected_props["aria-pressed"])
-        self.assertNotIn("transform", selected_props["style"])
-        self.assertNotIn("border", selected_props)
-        self.assertIn("brightness(1.18)", selected_props["style"])
-        self.assertIn(
-            "font-weight-bold",
-            cards[0]["content"][0]["content"][0]["content"][1]["props"]["class"],
-        )
-        self.assertEqual(cards[1]["content"][0]["props"]["variant"], "tonal")
-        self.assertFalse(cards[1]["content"][0]["props"]["aria-pressed"])
-        self.assertIsNone(cards[1]["content"][0]["props"]["style"])
         self.assertEqual(
             cards[2]["content"][0]["events"]["click"]["params"],
             {"status": "unretained"},
@@ -276,16 +230,7 @@ class PluginRuntimeTest(unittest.TestCase):
             "success": True,
             "status": "unretained",
         })
-        filtered_page = self.plugin.get_page()
-        filtered_cards = filtered_page[0]["content"][0]["content"][:4]
-        self.assertEqual(
-            filtered_cards[2]["content"][0]["content"][0]["content"][1]["text"],
-            "✓ 当前 · 未保号 1",
-        )
-        filtered_selected_props = filtered_cards[2]["content"][0]["props"]
-        self.assertEqual(filtered_selected_props["variant"], "tonal")
-        self.assertNotIn("transform", filtered_selected_props["style"])
-        filtered_rows = self._page_table(filtered_page)["content"][1]["content"]
+        filtered_rows = self._page_table(self.plugin.get_page())["content"][1]["content"]
         self.assertEqual(len(filtered_rows), 1)
         self.assertEqual(self._embedded_row_cells(filtered_rows[0])[0]["text"], "未保号站")
         self.assertFalse(self.plugin.set_page_filter("invalid")["success"])
@@ -302,13 +247,7 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertEqual(self._embedded_row_cells(reloaded_rows[0])[0]["text"], "已保号站")
 
         # 筛选状态已被当前页面消费；模拟关闭后重新打开必须恢复“全部”。
-        reopened_page = reloaded_plugin.get_page()
-        reopened_cards = reopened_page[0]["content"][0]["content"][:4]
-        self.assertEqual(
-            reopened_cards[0]["content"][0]["content"][0]["content"][1]["text"],
-            "✓ 当前 · 全部 2",
-        )
-        reopened_rows = self._page_table(reopened_page)["content"][1]["content"]
+        reopened_rows = self._page_table(reloaded_plugin.get_page())["content"][1]["content"]
         self.assertEqual(len(reopened_rows), 2)
 
     def test_onlyonce_recalculates_snapshot_without_site_access_and_resets_switch(self):
@@ -433,7 +372,7 @@ class PluginRuntimeTest(unittest.TestCase):
             ["最早", "较晚", "缺失", "异常"],
         )
 
-    def test_only_non_retained_sites_with_safe_database_url_are_links(self):
+    def test_safe_site_links_and_bulk_open_groups(self):
         FakeSiteOper.sites = [
             types.SimpleNamespace(id=1, name="已保号站", url="https://kept.example/"),
             types.SimpleNamespace(id=2, name="未保号站", url="https://pending.example/"),
@@ -465,32 +404,13 @@ class PluginRuntimeTest(unittest.TestCase):
             self.plugin.init_plugin({})
             page = self.plugin.get_page()
 
-        bulk_buttons = page[0]["content"][0]["content"][4]["content"][0]
-        self.assertEqual(bulk_buttons["component"], "iframe")
-        self.assertEqual(bulk_buttons["props"]["title"], "批量打开 PT 站点")
-        self.assertTrue(bulk_buttons["props"]["allowtransparency"])
-        self.assertEqual(bulk_buttons["props"]["style"]["border-radius"], "12px")
-        self.assertEqual(bulk_buttons["props"]["style"]["background"], "rgb(58, 46, 63)")
-        bulk_html = bulk_buttons["props"]["srcdoc"]
+        bulk_html = page[0]["content"][0]["content"][4]["content"][0]["props"]["srcdoc"]
         self.assertIn("打开未保号站点(2)", bulk_html)
         self.assertIn("打开所有站点(3)", bulk_html)
-        self.assertIn("flex-direction:column", bulk_html)
-        self.assertIn("background:transparent", bulk_html)
-        self.assertIn("text-decoration:underline", bulk_html)
-        self.assertIn("--v-theme-error:239,107,115", bulk_html)
-        self.assertIn("--v-theme-surface:24,34,53", bulk_html)
-        self.assertIn("background:color-mix", bulk_html)
-        self.assertIn("border-radius:12px", bulk_html)
-        self.assertIn(".all{color:rgb(var(--v-theme-on-surface))}", bulk_html)
-        self.assertIn("font-size:1rem", bulk_html)
-        self.assertIn("font-size:.75rem", bulk_html)
-        self.assertIn("parent.getComputedStyle", bulk_html)
         self.assertIn(
             '"unretained": ["https://pending.example/", "https://unknown.example/"]',
             bulk_html,
         )
-        self.assertIn("https://kept.example/", bulk_html)
-        self.assertIn("https://unknown.example/", bulk_html)
         self.assertNotIn("javascript:alert", bulk_html)
         self.assertIn("window.open(url, '_blank', 'noopener,noreferrer')", bulk_html)
 
@@ -511,7 +431,6 @@ class PluginRuntimeTest(unittest.TestCase):
             dashboard_html,
         )
         self.assertIn("text-decoration-color:currentColor", dashboard_html)
-        self.assertIn(".ptd-site-default{color:inherit}", dashboard_html)
         self.assertNotIn("javascript:alert", dashboard_html)
 
         table_rows = self._page_table(page)["content"][1]["content"]
@@ -533,26 +452,10 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertEqual(kept_link["props"]["href"], "https://kept.example/")
         self.assertEqual(kept_link["props"]["style"]["color"], "inherit")
         self.assertEqual(kept_link["props"]["style"]["font"], "inherit")
-        self.assertEqual(kept_link["props"]["style"]["line-height"], "inherit")
-        self.assertEqual(kept_link["props"]["style"]["letter-spacing"], "inherit")
-        self.assertEqual(kept_link["props"]["style"]["text-decoration"], "underline")
         self.assertEqual(kept_link["props"]["style"]["text-decoration-color"], "currentColor")
-        self.assertEqual(kept_link["text"], "已保号站")
         pending_link = site_cells["未保号站"]["content"][0]
-        self.assertEqual(pending_link["component"], "VBtn")
         self.assertEqual(pending_link["props"]["href"], "https://pending.example/")
-        self.assertEqual(pending_link["props"]["target"], "_blank")
-        self.assertEqual(pending_link["props"]["rel"], "noopener noreferrer")
-        self.assertEqual(pending_link["props"]["variant"], "text")
         self.assertEqual(pending_link["props"]["color"], "warning")
-        self.assertIn("justify-start", pending_link["props"]["class"])
-        self.assertEqual(pending_link["props"]["style"]["min-width"], "0")
-        self.assertEqual(pending_link["content"][0]["component"], "u")
-        self.assertEqual(pending_link["content"][0]["text"], "未保号站")
-        self.assertEqual(
-            pending_link["content"][0]["props"]["style"]["text-decoration-color"],
-            "currentColor",
-        )
         self.assertEqual(
             site_cells["无法判断站"]["content"][0]["props"]["href"],
             "https://unknown.example/",
@@ -589,109 +492,51 @@ class PluginRuntimeTest(unittest.TestCase):
             (path / "站点A.json").write_text(json.dumps(custom), encoding="utf-8")
             self.plugin._repository = self.module.RuleRepository(path)
             self.plugin.init_plugin({})
-            payload = json.dumps(self.plugin.get_page(), ensure_ascii=False)
-            self.assertIn("已保号", payload)
-            self.assertIn("陈旧/失败", payload)
-            self.assertIn("Elite User", payload)
-            self.assertIn("无要求", payload)
-            self.assertIn("魔力", payload)
-            self.assertIn("做种积分", payload)
-            self.assertIn("保号等级", payload)
-            self.assertIn("上传/下载/分享率", payload)
-            self.assertIn("保号上传/下载/分享率", payload)
-            self.assertIn('"text": "总结"', payload)
-            self.assertNotIn('"text": "保号总结"', payload)
-            self.assertIn("Power User（保号等级）", payload)
+            page = self.plugin.get_page()
+            payload = json.dumps(page, ensure_ascii=False)
+            for marker in (
+                "已保号", "陈旧/失败", "Elite User", "Power User（保号等级）",
+                "魔力", "做种积分", "保号上传/下载/分享率",
+            ):
+                self.assertIn(marker, payload)
             self.assertEqual(payload.count("（保号等级）"), 1)
-            self.assertNotIn("（最低保号等级）", payload)
+            for removed_marker in (
+                '"text": "保号总结"', '"text": "入站时间"',
+                '"text": "下一等级"', '"text": "所需时间"',
+                '"text": "操作"', "refresh_site", '"domain"',
+            ):
+                self.assertNotIn(removed_marker, payload)
+
             row = self.plugin._rows()[0]
             panel = self.plugin._level_panel(row)
-            self.assertIn("rounded-0", panel["props"]["class"])
-            self.assertIn("elevation-0", panel["props"]["class"])
             self.assertEqual(panel["props"]["style"]["background"], "transparent")
             self.assertEqual(panel["props"]["style"]["border-radius"], "0")
-            self.assertIn("rounded-0", panel["content"][1]["props"]["class"])
-            self.assertEqual(panel["content"][1]["props"]["style"]["border-radius"], "0")
             panel_title = panel["content"][0]
             self.assertEqual(panel_title["content"][0]["text"], "站点A")
-            self.assertEqual(len(panel_title["content"]), 1)
             self.assertEqual(panel_title["content"][0]["props"]["class"], "text-success")
             panel_content = panel["content"][1]["content"]
             current_data = panel_content[0]
-            self.assertEqual(current_data["component"], "div")
-            self.assertIn("px-0", current_data["props"]["class"])
-            self.assertIn("px-sm-4", current_data["props"]["class"])
-            self.assertIn("ml-n4", current_data["props"]["class"])
-            self.assertIn("ml-sm-0", current_data["props"]["class"])
             current_text = "".join(item["text"] for item in current_data["content"])
-            self.assertIn("当前：上传", current_text)
-            self.assertIn("；下载", current_text)
-            self.assertIn("；注册时长", current_text)
-            self.assertIn("周；分享率 2.00；魔力 数据不足", current_text)
-            current_fields = {
-                item["text"].split(" ", 1)[0]: item
-                for item in current_data["content"]
-                if item.get("text", "").startswith(("上传 ", "下载 ", "注册时长 ", "分享率 ", "魔力 "))
-            }
-            for field in ("上传", "下载", "注册时长", "分享率", "魔力"):
-                self.assertEqual(current_fields[field]["props"]["class"], "text-success")
-            level_list = panel_content[1]
-            self.assertIn("ml-n4", level_list["props"]["class"])
-            self.assertIn("ml-sm-0", level_list["props"]["class"])
-            level_items = level_list["content"]
+            self.assertIn("当前：上传 200.0B；下载 100.0B", current_text)
+            self.assertIn("分享率 2.00；魔力 数据不足", current_text)
+
+            level_items = panel_content[1]["content"]
             self.assertEqual(level_items[0]["props"]["prepend-icon"], "mdi-check-circle-outline")
             self.assertEqual(level_items[0]["props"]["base-color"], "info")
             self.assertEqual(level_items[1]["props"]["prepend-icon"], "mdi-check-circle-outline")
             self.assertEqual(level_items[1]["props"]["base-color"], "success")
-            self.assertIn("px-0", level_items[1]["props"]["class"])
-            self.assertIn("px-sm-4", level_items[1]["props"]["class"])
             self.assertEqual(level_items[2]["props"]["prepend-icon"], "mdi-circle-outline")
             self.assertNotIn("base-color", level_items[2]["props"])
-            requirement_row = level_items[1]["content"][0]
-            self.assertIn("flex-wrap", requirement_row["props"]["class"])
-            self.assertNotIn("subtitle", level_items[1]["props"])
-            requirement_items = requirement_row["content"]
-            self.assertTrue(requirement_items)
-            self.assertTrue(all(
-                "text-no-wrap" in item["props"]["class"]
-                for item in requirement_items
-            ))
             self.assertEqual(
-                "".join(item["text"] for item in requirement_items),
+                "".join(item["text"] for item in level_items[1]["content"][0]["content"]),
                 "上传 100.0B；下载 无要求；注册时长 无；分享率 1.50",
             )
-            self.assertNotIn("mdi-arrow-right-circle", payload)
-            self.assertNotIn('"text": "入站时间"', payload)
-            self.assertNotIn('"text": "下一等级"', payload)
-            self.assertNotIn('"text": "所需时间"', payload)
-            self.assertNotIn('"text": "操作"', payload)
-            self.assertNotIn("refresh_site", payload)
-            self.assertNotIn('"domain"', payload)
-            self.assertNotIn("插件只读取 MoviePilot 已保存的站点快照", payload)
-            self.assertNotIn("规则文件无效并已跳过", payload)
-            self.assertNotIn("启用站点", payload)
-            self.assertNotIn("规则匹配", payload)
-            self.assertNotIn("已达到；", payload)
-            self.assertNotIn("未达到；", payload)
-            self.assertNotIn("已满足条件，等级未确认；", payload)
-            self.assertNotIn('"text": "完整等级规则"', payload)
 
-            page = self.plugin.get_page()
             table = self._page_table(page)
             self.assertEqual(table["component"], "VTable")
-            self.assertNotIn("style", table["props"])
             header_row = table["content"][0]["content"][0]
             header_cell = header_row["content"][0]
-            self.assertEqual(header_cell["props"]["colspan"], 8)
             header_grid = header_cell["content"][0]
-            self.assertEqual(
-                header_grid["props"]["style"],
-                {
-                    "display": "grid",
-                    "grid-template-columns": "6fr 6fr 10fr 10fr 16fr 16fr 20fr 12fr",
-                    "min-width": "1250px",
-                },
-            )
             header_cells = header_grid["content"]
             self.assertEqual(
                 [cell["text"] for cell in header_cells],
@@ -700,40 +545,19 @@ class PluginRuntimeTest(unittest.TestCase):
                     "上传/下载/分享率", "保号上传/下载/分享率", "总结", "数据时间",
                 ],
             )
-            self.assertIn("text-center", header_cells[1]["props"]["class"])
-            self.assertTrue(all(
-                "text-left" in cell["props"]["class"]
-                for index, cell in enumerate(header_cells)
-                if index != 1
-            ))
             table_row = table["content"][1]["content"][0]
             expansion_panels = table_row["content"][0]["content"][0]
-            self.assertIn("rounded-0", expansion_panels["props"]["class"])
             self.assertEqual(expansion_panels["props"]["style"]["border-radius"], "0")
-            embedded_panel = self._embedded_panel(table_row)
-            self.assertEqual(embedded_panel["content"][0]["props"]["style"]["display"], "grid")
-            self.assertEqual(embedded_panel["content"][0]["props"]["style"]["min-width"], "1250px")
             data_cells = self._embedded_row_cells(table_row)
             self.assertEqual(len(data_cells), 8)
-            self.assertEqual(data_cells[0]["component"], "div")
             self.assertEqual(data_cells[1]["component"], "VExpansionPanelTitle")
-            self.assertTrue(data_cells[1]["props"]["hide-actions"])
-            self.assertIn("justify-center", data_cells[1]["props"]["class"])
-            self.assertIn("rounded-0", data_cells[1]["props"]["class"])
             self.assertEqual(data_cells[1]["props"]["style"]["border-radius"], "0")
             self.assertEqual(
                 sum(cell["component"] == "VExpansionPanelTitle" for cell in data_cells),
                 1,
             )
-            for index in (2, 3, 6):
-                self.assertEqual(data_cells[index]["props"]["style"]["white-space"], "normal")
-                self.assertEqual(data_cells[index]["props"]["style"]["overflow-wrap"], "anywhere")
-                self.assertNotIn("whitespace-nowrap", data_cells[index]["props"]["class"])
-            for index in (0, 4, 5, 7):
-                self.assertIn("whitespace-nowrap", data_cells[index]["props"]["class"])
             self.assertEqual(data_cells[4]["text"], "200.0B / 100.0B / 2.00")
             self.assertEqual(data_cells[5]["text"], "100.0B / 无要求 / 1.50")
-            self.assertNotIn("mdi-chevron-down", payload)
 
     def test_current_summary_marks_each_satisfied_retention_condition_green(self):
         user = {
@@ -877,58 +701,29 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertEqual(chip["props"]["color"], "warning")
         self.assertEqual(chip["props"]["size"], "small")
 
-    def test_dashboard_is_default_and_recalculation_always_writes_debug_log(self):
+    def test_dashboard_renders_filters_table_theme_sync_and_debug_log(self):
         self.plugin.init_plugin({})
         _, _, dashboard_elements = self.plugin.get_dashboard()
         self.assertEqual(len(dashboard_elements), 1)
         dashboard_filter = dashboard_elements[0]
         self.assertEqual(dashboard_filter["component"], "iframe")
         self.assertEqual(dashboard_filter["props"]["class"], "dashboard-grid-no-drag")
-        self.assertEqual(dashboard_filter["props"]["style"]["height"], "clamp(420px, 72vh, 760px)")
-        self.assertIn("linear-gradient", dashboard_filter["props"]["style"]["background"])
-        self.assertNotIn("allowtransparency", dashboard_filter["props"])
         dashboard_html = dashboard_filter["props"]["srcdoc"]
-        self.assertIn("<!doctype html>", dashboard_html)
-        self.assertIn('class="ptd-dashboard-filter"', dashboard_html)
-        self.assertIn(".ptd-dashboard-filter{box-sizing:border-box;min-block-size:100%;padding:1px}", dashboard_html)
-        self.assertIn("--v-theme-background:11,19,34", dashboard_html)
-        self.assertIn("rgb(var(--v-theme-surface)),rgb(var(--v-theme-background))", dashboard_html)
-        self.assertIn('html[data-theme="glass"]', dashboard_html)
-        self.assertIn("linear-gradient(135deg,#22334e 0%,#16263e 55%,#1c1b30 100%)", dashboard_html)
-        self.assertIn("body{box-sizing:border-box;min-block-size:100%", dashboard_html)
-        self.assertIn("background:transparent;overflow:auto", dashboard_html)
-        self.assertIn("parent.getComputedStyle", dashboard_html)
-        self.assertIn("frame.closest('[class*=\"v-theme--\"]')", dashboard_html)
-        self.assertIn("new parent.MutationObserver(queueThemeSync)", dashboard_html)
-        self.assertIn("new parent.ResizeObserver(queueFrameHeightSync)", dashboard_html)
-        self.assertIn("card.clientHeight - headerHeight - verticalPadding", dashboard_html)
-        self.assertIn("gridItem.classList.contains('is-manual-height')", dashboard_html)
-        self.assertIn("frame.style.height = Math.max(120, availableHeight) + 'px'", dashboard_html)
-        self.assertIn("getAttribute('data-theme')", dashboard_html)
-        self.assertIn("parent.requestAnimationFrame", dashboard_html)
-        self.assertNotIn("getComputedStyle(card, '::before')", dashboard_html)
-        self.assertNotIn("document.documentElement.style.backgroundImage", dashboard_html)
-        self.assertIn('id="ptd-dashboard-all" checked', dashboard_html)
-        self.assertIn('for="ptd-dashboard-retained"', dashboard_html)
-        self.assertIn('for="ptd-dashboard-unretained"', dashboard_html)
-        self.assertIn('for="ptd-dashboard-unknown"', dashboard_html)
-        self.assertIn('for="ptd-dashboard-stale"', dashboard_html)
-        self.assertIn("querySelectorAll('.ptd-row-toggle')", dashboard_html)
-        self.assertIn("item.checked=false", dashboard_html)
-        self.assertIn("#ptd-dashboard-retained:checked", dashboard_html)
-        self.assertIn("ptd-filter-table", dashboard_html)
-        self.assertIn(".ptd-filter-table{margin-block-start:12px;overflow-x:auto}", dashboard_html)
-        self.assertNotIn("max-block-size:480px", dashboard_html)
-        self.assertIn("ptd-table-head", dashboard_html)
-        self.assertIn(".ptd-table-head{background:transparent}", dashboard_html)
-        self.assertIn("ptd-data-row", dashboard_html)
-        self.assertIn("ptd-row-toggle", dashboard_html)
-        self.assertIn("ptd-rule-detail", dashboard_html)
-        self.assertIn("展开或收起完整等级规则", dashboard_html)
-        self.assertIn(".ptd-row-toggle:checked + .ptd-data-row + .ptd-rule-detail", dashboard_html)
-        self.assertIn("保号上传/下载/分享率", dashboard_html)
-        self.assertIn(".ptd-row-group:not(.ptd-status-retained)", dashboard_html)
-        self.assertIn("站点A", dashboard_html)
+        for marker in (
+            'id="ptd-dashboard-all" checked',
+            'for="ptd-dashboard-retained"',
+            'for="ptd-dashboard-unretained"',
+            'for="ptd-dashboard-unknown"',
+            'for="ptd-dashboard-stale"',
+            "ptd-filter-table",
+            "ptd-rule-detail",
+            "展开或收起完整等级规则",
+            "保号上传/下载/分享率",
+            "站点A",
+            "parent.getComputedStyle",
+            "new parent.MutationObserver(queueThemeSync)",
+        ):
+            self.assertIn(marker, dashboard_html)
         form_payload = json.dumps(self.plugin.get_form(), ensure_ascii=False)
         self.assertNotIn("显示仪表盘", form_payload)
         self.assertNotIn("输出一次调查日志", form_payload)

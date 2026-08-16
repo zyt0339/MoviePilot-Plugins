@@ -45,6 +45,9 @@ class RuleDirectoryTest(unittest.TestCase):
             self.assertNotIn(f'"{removed}"', site_payload)
         self.assertTrue(all("host_fingerprints" not in site for site in sites))
         self.assertTrue(all("moviepilot_site_ids" not in site for site in sites))
+        repository = rules.RuleRepository(RULES_DIR)
+        self.assertEqual(repository.load_errors, 0)
+        self.assertGreaterEqual(len(repository.sites), 225)
 
     def test_site_files_have_deterministic_format(self):
         for path in RULES_DIR.glob("*.json"):
@@ -222,30 +225,18 @@ class RequirementTest(unittest.TestCase):
         current, _ = rules.find_level("Nexus Master", custom)
         self.assertEqual(current["id"], 8)
 
-    def test_repository_loads_builtin_directory(self):
+    def test_required_site_rules_match_database_names(self):
         repository = rules.RuleRepository(RULES_DIR)
-        self.assertGreaterEqual(len(repository.sites), 225)
-        self.assertEqual(repository.load_errors, 0)
-
-    def test_four_requested_site_rules_are_loaded_by_database_name(self):
-        repository = rules.RuleRepository(RULES_DIR)
-        for site_name in ("Sunny", "朋友", "青蛙", "馒头"):
+        archive_names = {path.stem.casefold() for path in RULES_DIR.glob("*.json")}
+        for site_name in ("Sunny", "朋友", "青蛙", "馒头", "UBits", "AGSVPT", "CARPT"):
             rule_id, rule = repository.match(site_name)
             self.assertEqual(rule_id, site_name)
             self.assertEqual(rule["name"], site_name)
             self.assertTrue(rule["levels"])
+            self.assertIn(site_name.casefold(), archive_names)
         self.assertTrue(any(level.get("isKept") for level in repository.sites["Sunny"]["levels"]))
         self.assertTrue(repository.sites["青蛙"]["levels"][2].get("alternative"))
         self.assertEqual(repository.sites["馒头"]["levels"][-1]["groupType"], "vip")
-
-    def test_ubits_agsvpt_and_carpt_rules_use_moviepilot_database_names(self):
-        repository = rules.RuleRepository(RULES_DIR)
-        archive_names = {path.stem.casefold() for path in RULES_DIR.glob("*.json")}
-        for site_name in ("UBits", "AGSVPT", "CARPT"):
-            rule_id, rule = repository.match(site_name)
-            self.assertEqual(rule_id, site_name)
-            self.assertEqual(rule["name"], site_name)
-            self.assertIn(site_name.casefold(), archive_names)
 
     def test_hdhome_nexus_master_is_retention_level(self):
         repository = rules.RuleRepository(RULES_DIR)
@@ -256,7 +247,7 @@ class RequirementTest(unittest.TestCase):
         ]
         self.assertEqual([level["name"] for level in retention_levels], ["Nexus Master"])
 
-    def test_ttg_has_no_retention_level_or_join_time_override(self):
+    def test_sky_has_aliases_without_retention_or_join_time_override(self):
         repository = rules.RuleRepository(RULES_DIR)
         sky_rule = repository.sites["天空"]
         self.assertNotIn("levelRequirementOverrides", sky_rule)
