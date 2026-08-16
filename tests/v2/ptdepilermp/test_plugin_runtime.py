@@ -494,6 +494,26 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertNotIn("javascript:alert", bulk_html)
         self.assertIn("window.open(url, '_blank', 'noopener,noreferrer')", bulk_html)
 
+        dashboard_html = self.plugin._dashboard_filter(
+            self.plugin._cached_rows,
+            self.plugin._summary(self.plugin._cached_rows),
+        )["props"]["srcdoc"]
+        self.assertIn(
+            'class="ptd-site-link ptd-site-default" href="https://kept.example/"',
+            dashboard_html,
+        )
+        self.assertIn(
+            'class="ptd-site-link ptd-site-warning" href="https://pending.example/"',
+            dashboard_html,
+        )
+        self.assertIn(
+            'class="ptd-site-link ptd-site-grey" href="https://unknown.example/"',
+            dashboard_html,
+        )
+        self.assertIn("text-decoration-color:currentColor", dashboard_html)
+        self.assertIn(".ptd-site-default{color:inherit}", dashboard_html)
+        self.assertNotIn("javascript:alert", dashboard_html)
+
         table_rows = self._page_table(page)["content"][1]["content"]
         site_cells = {}
         for table_row in table_rows:

@@ -36,7 +36,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.5"
+    plugin_version = "1.38.6"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -1331,8 +1331,11 @@ class PTDepilerMp(_PluginBase):
 
             site_name = escape(str(row.get("site_name") or "未知站点"))
             site_url = row.get("site_url")
-            if result.retained is not True and site_url:
-                link_class = "ptd-site-warning" if result.retained is False else "ptd-site-grey"
+            if site_url:
+                if result.retained is True:
+                    link_class = "ptd-site-default"
+                else:
+                    link_class = "ptd-site-warning" if result.retained is False else "ptd-site-grey"
                 site_name = (
                     f'<a class="ptd-site-link {link_class}" href="{escape(str(site_url), quote=True)}" '
                     f'target="_blank" rel="noopener noreferrer">{site_name}</a>'
@@ -1430,7 +1433,8 @@ class PTDepilerMp(_PluginBase):
     .ptd-rule-warning{{color:rgb(var(--v-theme-warning))}}
     .ptd-rule-info,.ptd-rule-info .ptd-rule-requirements{{color:rgb(var(--v-theme-info))}}
     .ptd-rule-empty{{padding:10px 8px;color:rgba(var(--v-theme-on-surface),.7)}}
-    .ptd-site-link{{text-decoration:underline}}
+    .ptd-site-link{{text-decoration:underline;text-decoration-color:currentColor}}
+    .ptd-site-default{{color:inherit}}
     .ptd-site-warning{{color:rgb(var(--v-theme-warning))}}
     .ptd-site-grey{{color:rgb(var(--v-theme-on-surface))}}
     {''.join(selected_rules)}
