@@ -36,7 +36,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.6"
+    plugin_version = "1.38.7"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -639,6 +639,25 @@ class PTDepilerMp(_PluginBase):
         site_url = row.get("site_url")
         if site_url:
             retained = row["result"].retained
+            if retained is True:
+                # 原生链接继承表格单元格排版，只增加下划线与跳转能力。
+                return self._cell("", [{
+                    "component": "a",
+                    "props": {
+                        "href": site_url,
+                        "target": "_blank",
+                        "rel": "noopener noreferrer",
+                        "style": {
+                            "color": "inherit",
+                            "font": "inherit",
+                            "line-height": "inherit",
+                            "letter-spacing": "inherit",
+                            "text-decoration": "underline",
+                            "text-decoration-color": "currentColor",
+                        },
+                    },
+                    "text": site_name,
+                }], width=width)
             link_props = {
                 "href": site_url,
                 "target": "_blank",
@@ -648,11 +667,7 @@ class PTDepilerMp(_PluginBase):
                 "class": "px-0 text-none justify-start",
                 "style": {"min-width": "0"},
             }
-            if retained is True:
-                # 已保号站点只增加链接样式，文字继续继承原表格颜色。
-                link_props["style"]["color"] = "inherit"
-            else:
-                link_props["color"] = "warning" if retained is False else "grey"
+            link_props["color"] = "warning" if retained is False else "grey"
             return self._cell("", [{
                 "component": "VBtn",
                 "props": link_props,

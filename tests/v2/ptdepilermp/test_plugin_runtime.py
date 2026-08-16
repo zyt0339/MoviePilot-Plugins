@@ -529,14 +529,15 @@ class PluginRuntimeTest(unittest.TestCase):
             site_cells[site_name] = site_cell
 
         kept_link = site_cells["已保号站"]["content"][0]
-        self.assertEqual(kept_link["component"], "VBtn")
+        self.assertEqual(kept_link["component"], "a")
         self.assertEqual(kept_link["props"]["href"], "https://kept.example/")
-        self.assertNotIn("color", kept_link["props"])
         self.assertEqual(kept_link["props"]["style"]["color"], "inherit")
-        self.assertEqual(
-            kept_link["content"][0]["props"]["style"]["text-decoration-color"],
-            "currentColor",
-        )
+        self.assertEqual(kept_link["props"]["style"]["font"], "inherit")
+        self.assertEqual(kept_link["props"]["style"]["line-height"], "inherit")
+        self.assertEqual(kept_link["props"]["style"]["letter-spacing"], "inherit")
+        self.assertEqual(kept_link["props"]["style"]["text-decoration"], "underline")
+        self.assertEqual(kept_link["props"]["style"]["text-decoration-color"], "currentColor")
+        self.assertEqual(kept_link["text"], "已保号站")
         pending_link = site_cells["未保号站"]["content"][0]
         self.assertEqual(pending_link["component"], "VBtn")
         self.assertEqual(pending_link["props"]["href"], "https://pending.example/")
