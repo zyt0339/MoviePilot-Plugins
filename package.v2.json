@@ -186,11 +186,12 @@
     "name": "媒体库服务器通知zyt",
     "description": "发送Emby/Jellyfin/Plex服务器的播放、入库等通知消息。",
     "labels": "消息通知,媒体库",
-    "version": "1.8.2.2",
+    "version": "1.8.5",
     "icon": "mediaplay.png",
     "author": "zyt0339",
     "level": 1,
     "history": {
+      "v1.8.5": "185",
       "v1.8.2.2": "修复emby多条相同新入库消息推送多次的问题"
     }
   }

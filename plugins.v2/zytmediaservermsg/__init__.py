@@ -30,6 +30,7 @@ class ZYTMediaServerMsg(_PluginBase):
     DEFAULT_EXPIRATION_TIME = 600                  # 默认过期时间（秒）
     DEFAULT_AGGREGATE_TIME = 15                   # 默认聚合时间（秒）
     DEDUPE_EXPIRATION_TIME = 30                    # 去重缓存过期时间（秒）
+    SHUTDOWN_TIMEOUT = 3.0                        # 生命周期收敛总预算（秒）
 
     # 插件基本信息
     plugin_name = "媒体库服务器通知zyt"
@@ -38,7 +39,7 @@ class ZYTMediaServerMsg(_PluginBase):
     # 插件图标
     plugin_icon = "mediaplay.png"
     # 插件版本
-    plugin_version = "1.8.2.2"
+    plugin_version = "1.8.5"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -68,6 +69,7 @@ class ZYTMediaServerMsg(_PluginBase):
     # Webhook事件映射配置
     _webhook_actions = {
         "library.new": "新入库",
+        "ItemAdded": "新入库",
         "system.notificationtest": "测试",
         "playback.start": "开始播放",
         "playback.stop": "停止播放",
@@ -80,6 +82,11 @@ class ZYTMediaServerMsg(_PluginBase):
         "item.rate": "标记了"
     }
 
+    # Jellyfin Webhook 新增媒体事件使用 ItemAdded，与通用入库事件按同一类型处理。
+    _webhook_event_aliases = {
+        "ItemAdded": "library.new"
+    }
+
     # 媒体服务器默认图标
     _webhook_images = {
         "emby": "https://emby.media/notificationicon.png",
@@ -88,9 +95,20 @@ class ZYTMediaServerMsg(_PluginBase):
     }
 
     def __init__(self):
+        """初始化插件依赖及聚合 Timer 的实例级生命周期状态。"""
         super().__init__()
         self.category = CategoryHelper()
+        self._initialize_lifecycle_state()
         logger.debug("媒体服务器消息插件初始化完成")
+
+    def _initialize_lifecycle_state(self) -> None:
+        """建立 admission、活动操作计数和 Timer owner 容器。"""
+        self._lifecycle_condition = threading.Condition(threading.RLock())
+        self._accepting_events = False
+        self._active_operations = 0
+        self._pending_messages = {}
+        self._aggregate_timers = {}
+        self._owned_timers = set()
 
     def init_plugin(self, config: dict = None):
         """
@@ -99,15 +117,47 @@ class ZYTMediaServerMsg(_PluginBase):
         Args:
             config (dict, optional): 插件配置参数
         """
-        if config:
-            self._enabled = config.get("enabled")
-            self._types = config.get("types") or []
-            self._mediaservers = config.get("mediaservers") or []
-            self._add_play_link = config.get("add_play_link", False)
-            self._aggregate_enabled = config.get("aggregate_enabled", False)
-            self._ignore_usernames = config.get("ignore_usernames", None)
-            self._aggregate_time = int(config.get(
-                "aggregate_time", self.DEFAULT_AGGREGATE_TIME))
+        if not self._quiesce():
+            logger.error("媒体服务器通知聚合任务尚未退出，跳过本次重新初始化")
+            return
+
+        with self._lifecycle_condition:
+            if config:
+                self._enabled = config.get("enabled")
+                self._types = config.get("types") or []
+                self._mediaservers = config.get("mediaservers") or []
+                self._add_play_link = config.get("add_play_link", False)
+                self._aggregate_enabled = config.get("aggregate_enabled", False)
+                self._ignore_usernames = config.get("ignore_usernames", None)
+                self._aggregate_time = int(config.get(
+                    "aggregate_time", self.DEFAULT_AGGREGATE_TIME))
+            self._pending_messages = {}
+            self._aggregate_timers = {}
+            self._owned_timers = set()
+            self._accepting_events = True
+
+    def _begin_operation(self) -> bool:
+        """在 admission 开放时登记一个必须由关闭流程等待的活动操作。"""
+        with self._lifecycle_condition:
+            if not self._accepting_events:
+                return False
+            self._active_operations += 1
+            return True
+
+    def _finish_operation(self) -> None:
+        """释放活动操作计数，并唤醒正在等待收敛的关闭流程。"""
+        with self._lifecycle_condition:
+            self._active_operations -= 1
+            self._lifecycle_condition.notify_all()
+
+    def _reap_finished_timers_locked(self) -> None:
+        """移除已经终止的 Timer；调用方必须持有生命周期条件锁。"""
+        self._owned_timers = {
+            timer for timer in self._owned_timers if timer.is_alive()
+        }
+        for series_id, timer in list(self._aggregate_timers.items()):
+            if not timer.is_alive():
+                self._aggregate_timers.pop(series_id, None)
 
     def service_infos(self, type_filter: Optional[str] = None) -> Optional[Dict[str, ServiceInfo]]:
         """
@@ -190,7 +240,7 @@ class ZYTMediaServerMsg(_PluginBase):
         拼装插件配置页面，需要返回两块数据：1、页面配置；2、数据结构
         """
         types_options = [
-            {"title": "新入库", "value": "library.new"},
+            {"title": "新入库", "value": "library.new|ItemAdded"},
             {"title": "开始播放", "value": "playback.start|media.play|PlaybackStart"},
             {"title": "停止播放", "value": "playback.stop|media.stop|PlaybackStop"},
             {"title": "用户标记", "value": "item.rate"},
@@ -418,8 +468,18 @@ class ZYTMediaServerMsg(_PluginBase):
 
     @eventmanager.register(EventType.WebhookMessage)
     def send(self, event: Event):
+        """在生命周期 admission 内处理一个媒体服务器 Webhook 事件。"""
+        if not self._begin_operation():
+            return
+        try:
+            return self._handle_webhook_event(event)
+        finally:
+            self._finish_operation()
+
+    def _handle_webhook_event(self, event: Event):
         """
-        发送通知消息主入口函数
+        执行原有通知处理流程，公开事件方法负责生命周期登记。
+
         处理来自媒体服务器的Webhook事件，并根据配置决定是否发送通知消息
 
         处理流程：
@@ -452,7 +512,9 @@ class ZYTMediaServerMsg(_PluginBase):
 
             # 检查事件类型是否在支持范围内
             event_type = getattr(event_info, 'event', None)
-            if not event_type or not self._webhook_actions.get(event_type):
+            event_action_type = self._get_event_action_type(event_type)
+            event_match_types = self._get_event_match_types(event_type)
+            if not event_type or not self._webhook_actions.get(event_action_type):
                 logger.debug(f"事件类型 {event_type} 不在支持范围内")
                 return
 
@@ -462,7 +524,7 @@ class ZYTMediaServerMsg(_PluginBase):
             for _type in self._types:
                 allowed_types.update(_type.split("|"))
 
-            if event_type not in allowed_types:
+            if not event_match_types.intersection(allowed_types):
                 logger.debug(f"事件类型 {event_type} 不在用户配置的允许范围内{allowed_types}")
                 logger.info(f"未开启 {event_type} 类型的消息通知")
                 return
@@ -485,14 +547,17 @@ class ZYTMediaServerMsg(_PluginBase):
             # 通用去重：构造去重键
             item_id = getattr(event_info, 'item_id', '')
             if item_id:
-                # 使用 server_name + event_type + item_id 作为唯一标识
-                dedupe_key = f"{server_name}-{event_type}-{item_id}" if server_name else f"{event_type}-{item_id}"
+                # 使用标准化后的事件类型去重，避免同类事件别名造成重复通知。
+                dedupe_key = f"{server_name}-{event_action_type}-{item_id}" if server_name else f"{event_action_type}-{item_id}"
                 # 检查是否已处理过该事件
                 if dedupe_key in self.__get_elements():
                     logger.debug(f"检测到重复Webhook事件，已处理过: {dedupe_key}")
                     return
                 # 添加到去重缓存（30秒过期）
                 self.__add_element(dedupe_key, duration=self.DEDUPE_EXPIRATION_TIME)
+
+            # 后续图片处理也需要媒体类型；这里在事件处理外层读取，避免只在聚合判断函数内定义。
+            item_type = getattr(event_info, 'item_type', '')
 
             # TV剧集结入库聚合处理
             logger.debug("检查是否需要进行TV剧集聚合处理")
@@ -502,11 +567,11 @@ class ZYTMediaServerMsg(_PluginBase):
                 if not self._aggregate_enabled:
                     return False
 
-                if event_type != "library.new":
+                if event_action_type != "library.new":
                     return False
 
-                item_type = getattr(event_info, 'item_type', None)
-                if item_type not in ["TV", "SHOW"]:
+                aggregate_item_type = getattr(event_info, 'item_type', None)
+                if aggregate_item_type not in ["TV", "SHOW"]:
                     return False
 
                 json_object = getattr(event_info, 'json_object', None)
@@ -541,19 +606,8 @@ class ZYTMediaServerMsg(_PluginBase):
                 return
 
             # 构造消息标题
-            item_type = getattr(event_info, 'item_type', '')
-            item_name = getattr(event_info, 'item_name', '')
-
-            message_title = ""
-            event_action = self._webhook_actions.get(event_type, event_type)
-            if item_type in ["TV", "SHOW"]:
-                message_title = f"{event_action}剧集 {item_name}"
-            elif item_type == "MOV":
-                message_title = f"{event_action}电影 {item_name}"
-            elif item_type == "AUD":
-                message_title = f"{event_action}有声书 {item_name}"
-            else:
-                message_title = f"{event_action}"
+            event_action = self._webhook_actions.get(event_action_type, event_type)
+            message_title = self._build_message_title(event_info, event_action)
 
             # 构造消息内容
             message_texts = []
@@ -692,62 +746,82 @@ class ZYTMediaServerMsg(_PluginBase):
 
     def _aggregate_tv_episodes(self, series_id: str, event_info: WebhookEventInfo):
         """
-        聚合TV剧集结入库消息
-
-        当同一剧集的多集在短时间内入库时，将它们聚合为一条消息发送，
-        避免消息轰炸。通过设置定时器实现延迟发送，定时器时间内到达的
-        同剧集消息会被聚合在一起。
+        将同剧集事件加入聚合队列，并为其建立可被宿主收敛的 Timer owner。
 
         Args:
             series_id (str): 剧集ID
             event_info (WebhookEventInfo): Webhook事件信息
         """
-        try:
-            logger.debug(f"开始执行聚合处理: series_id={series_id}")
+        if not series_id:
+            logger.warning("无效的series_id")
+            return
 
-            # 参数校验
-            if not series_id:
-                logger.warning("无效的series_id")
+        fallback_to_immediate_send = False
+        with self._lifecycle_condition:
+            if not self._accepting_events:
                 return
+            self._reap_finished_timers_locked()
+            self._pending_messages.setdefault(series_id, []).append(event_info)
 
-            # 初始化该series_id的消息列表
-            if series_id not in self._pending_messages:
-                logger.debug(f"为series_id={series_id}初始化消息列表")
-                self._pending_messages[series_id] = []
+            previous_timer = self._aggregate_timers.get(series_id)
+            if previous_timer is not None:
+                previous_timer.cancel()
 
-            # 添加消息到待处理列表
-            logger.debug(f"添加消息到待处理列表: series_id={series_id}")
-            self._pending_messages[series_id].append(event_info)
-
-            # 如果已经有定时器，取消它并重新设置
-            if series_id in self._aggregate_timers:
-                logger.debug(f"取消已存在的定时器: {series_id}")
-                try:
-                    self._aggregate_timers[series_id].cancel()
-                except Exception as e:
-                    logger.debug(f"取消定时器时出错: {str(e)}")
-
-            # 设置新的定时器
-            logger.debug(f"设置新的定时器，将在 {self._aggregate_time} 秒后触发")
+            timer = None
             try:
                 timer = threading.Timer(
-                    self._aggregate_time, self._send_aggregated_message, [series_id])
+                    self._aggregate_time,
+                    self._run_aggregate_timer,
+                    [series_id],
+                )
+                timer.daemon = True
                 self._aggregate_timers[series_id] = timer
+                self._owned_timers.add(timer)
                 timer.start()
-            except Exception as e:
-                logger.error(f"设置定时器时出错: {str(e)}")
-                # 如果定时器设置失败，直接发送消息
-                self._send_aggregated_message(series_id)
+            except Exception as err:
+                logger.error(f"设置定时器时出错: {str(err)}")
+                if timer is not None and timer.is_alive():
+                    # 极端情况下 start() 抛错但线程已启动，仍必须保留 owner。
+                    self._owned_timers.add(timer)
+                    self._aggregate_timers[series_id] = timer
+                elif timer is not None:
+                    self._owned_timers.discard(timer)
+                    if self._aggregate_timers.get(series_id) is timer:
+                        self._aggregate_timers.pop(series_id, None)
+                    fallback_to_immediate_send = True
+                else:
+                    fallback_to_immediate_send = True
 
-            logger.debug(
-                f"已添加剧集 {series_id} 的消息到聚合队列，当前队列长度: {len(self._pending_messages.get(series_id, []))}，定时器将在 {self._aggregate_time} 秒后触发")
-            logger.debug(f"完成聚合处理: series_id={series_id}")
-        except Exception as e:
-            logger.error(f"聚合处理过程中出现异常: {str(e)}", exc_info=True)
+        if fallback_to_immediate_send:
+            self._send_aggregated_message(series_id)
+
+    def _run_aggregate_timer(self, series_id: str) -> None:
+        """执行 Timer 回调，并将线程 owner 保留到回调真正终止。"""
+        timer = threading.current_thread()
+        try:
+            with self._lifecycle_condition:
+                if self._aggregate_timers.get(series_id) is not timer:
+                    return
+            self._send_aggregated_message(series_id)
+        finally:
+            with self._lifecycle_condition:
+                if self._aggregate_timers.get(series_id) is timer:
+                    self._aggregate_timers.pop(series_id, None)
+                # 当前线程在函数返回前仍是 alive，owner 由下一次 reap 或关闭流程移除。
+                self._lifecycle_condition.notify_all()
 
     def _send_aggregated_message(self, series_id: str):
+        """在 admission 内发送一组已聚合消息，并纳入活动操作计数。"""
+        if not self._begin_operation():
+            return
+        try:
+            return self._send_aggregated_message_impl(series_id)
+        finally:
+            self._finish_operation()
+
+    def _send_aggregated_message_impl(self, series_id: str):
         """
-        发送聚合后的TV剧集消息
+        执行原有聚合通知构造与发送流程。
 
         当聚合定时器到期或插件退出时调用此方法，将累积的同剧集消息
         合并为一条消息发送给用户。
@@ -757,23 +831,14 @@ class ZYTMediaServerMsg(_PluginBase):
         """
         logger.debug(f"定时器触发，准备发送聚合消息: {series_id}")
 
-        # 获取该series_id的所有待处理消息
-        if series_id not in self._pending_messages or not self._pending_messages[series_id]:
+        with self._lifecycle_condition:
+            events = self._pending_messages.pop(series_id, [])
+        if not events:
             logger.debug(f"消息队列为空或不存在: {series_id}")
-            # 清除定时器引用
-            self._aggregate_timers.pop(series_id, None)
             return
-
-        events = self._pending_messages.pop(series_id)
         logger.debug(f"从队列中获取 {len(events)} 条消息: {series_id}")
-        # 清除定时器引用
-        self._aggregate_timers.pop(series_id, None)
 
         # 构造聚合消息
-        if not events:
-            logger.debug(f"事件列表为空: {series_id}")
-            return
-
         try:
             # 使用第一个事件的信息作为基础
             first_event = events[0]
@@ -871,7 +936,7 @@ class ZYTMediaServerMsg(_PluginBase):
                 if not first_event.tmdb_id:
                     logger.debug("tmdb_id为空，使用原有逻辑发送消息")
                     # 使用原有逻辑构造消息
-                    message_title = f"📺 {self._webhook_actions.get(first_event.event)}剧集：{first_event.item_name}"
+                    message_title = f"📺 {self._get_event_action(first_event.event)}剧集：{first_event.item_name}"
                     message_texts = []
                     message_texts.append(
                         f"⏰ 时间：{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}")
@@ -938,7 +1003,7 @@ class ZYTMediaServerMsg(_PluginBase):
             except Exception as e:
                 logger.error(f"从json_object提取SeriesName时出错: {str(e)}")
 
-            message_title = f"📺 {self._webhook_actions.get(first_event.event, '新入库')}剧集：{show_name}"
+            message_title = f"📺 {self._get_event_action(first_event.event) or '新入库'}剧集：{show_name}"
 
             if is_multiple_episodes:
                 message_title += f" {events_count}个文件"
@@ -1245,6 +1310,87 @@ class ZYTMediaServerMsg(_PluginBase):
             logger.error(f"获取有效元素时出错: {str(e)}")
             return []
 
+    def _get_event_action_type(self, event_type: Optional[str]) -> Optional[str]:
+        """
+        获取用于消息文案和去重的标准事件类型。
+        """
+        if event_type is None:
+            return None
+        return self._webhook_event_aliases.get(str(event_type), str(event_type))
+
+    def _get_event_match_types(self, event_type: Optional[str]) -> set:
+        """
+        获取配置匹配时允许命中的事件类型，兼容历史配置和媒体服务器原始事件。
+        """
+        if event_type is None:
+            return set()
+        normalized_type = self._get_event_action_type(event_type)
+        return {str(event_type), normalized_type}
+
+    def _get_event_action(self, event_type: Optional[str]) -> Optional[str]:
+        """
+        获取事件对应的消息动作文案。
+        """
+        return self._webhook_actions.get(self._get_event_action_type(event_type))
+
+    @staticmethod
+    def _clean_metadata_text(value: Any) -> str:
+        """清理Webhook元数据文本，避免将None/null拼进通知标题。"""
+        if value is None:
+            return ""
+        text = str(value).strip()
+        if text.lower() in {"none", "null"}:
+            return ""
+        return text
+
+    @classmethod
+    def _get_plex_track_info(cls, event_info: WebhookEventInfo) -> Optional[Tuple[str, str]]:
+        """从Plex原始Webhook中提取音乐曲目和歌手。"""
+        channel = cls._clean_metadata_text(getattr(event_info, 'channel', None)).lower()
+        if channel != "plex":
+            return None
+
+        json_object = getattr(event_info, 'json_object', None)
+        if not isinstance(json_object, dict):
+            return None
+
+        metadata = json_object.get("Metadata")
+        if not isinstance(metadata, dict):
+            return None
+
+        metadata_type = cls._clean_metadata_text(metadata.get("type")).lower()
+        if metadata_type != "track":
+            return None
+
+        track_title = cls._clean_metadata_text(metadata.get("title"))
+        if not track_title:
+            item_name = cls._clean_metadata_text(getattr(event_info, 'item_name', None))
+            track_title = re.sub(r"\s+\((?:none|null)\)\s*$", "", item_name, flags=re.IGNORECASE)
+
+        artist = cls._clean_metadata_text(metadata.get("grandparentTitle"))
+        return track_title, artist
+
+    @classmethod
+    def _build_message_title(cls, event_info: WebhookEventInfo, event_action: str) -> str:
+        """根据Webhook信息构造通知标题，并单独处理Plex音乐曲目。"""
+        plex_track_info = cls._get_plex_track_info(event_info)
+        if plex_track_info is not None:
+            track_title, artist = plex_track_info
+            track_display = (
+                f"{track_title} - {artist}" if track_title and artist else track_title or artist
+            )
+            return f"{event_action}音乐{f' {track_display}' if track_display else ''}"
+
+        item_type = getattr(event_info, 'item_type', '')
+        item_name = getattr(event_info, 'item_name', '')
+        if item_type in ["TV", "SHOW"]:
+            return f"{event_action}剧集 {item_name}"
+        if item_type == "MOV":
+            return f"{event_action}电影 {item_name}"
+        if item_type == "AUD":
+            return f"{event_action}有声书 {item_name}"
+        return f"{event_action}"
+
     def _get_play_link(self, event_info: WebhookEventInfo) -> Optional[str]:
         """
         获取媒体项目的播放链接
@@ -1317,39 +1463,58 @@ class ZYTMediaServerMsg(_PluginBase):
             tmdb_info2 = self.chain.tmdb_info(tmdbid=tmdb_id, mtype=mtype)
             return tmdb_info | tmdb_info2
 
-    def stop_service(self):
-        """
-        退出插件时的清理工作
+    def _quiesce(self, timeout: float = None) -> bool:
+        """封闭 Webhook admission，取消 Timer 并在共享预算内等待全部 owner。"""
+        budget = self.SHUTDOWN_TIMEOUT if timeout is None else max(0.0, timeout)
+        deadline = time.monotonic() + budget
+        with self._lifecycle_condition:
+            self._accepting_events = False
+            self._reap_finished_timers_locked()
+            timers = set(self._owned_timers) | set(self._aggregate_timers.values())
+            for timer in timers:
+                timer.cancel()
 
-        在插件被停用或系统关闭时调用，确保：
-        1. 所有待处理的聚合消息被立即发送出去
-        2. 所有正在进行的定时器被取消
-        3. 清空所有内部缓存数据
-        """
-        try:
-            # 发送所有待处理的聚合消息
-            pending_series_ids = list(self._pending_messages.keys())
-            for series_id in pending_series_ids:
-                # 直接发送消息而不依赖定时器
-                try:
-                    self._send_aggregated_message(series_id)
-                except Exception as e:
-                    logger.error(f"发送聚合消息时出错: {str(e)}")
+        current_thread = threading.current_thread()
+        for timer in timers:
+            if timer is current_thread:
+                continue
+            try:
+                timer.join(timeout=max(0.0, deadline - time.monotonic()))
+            except RuntimeError:
+                # start() 失败的 Timer 不会存活，也无需阻塞后续重试。
+                continue
 
-            # 取消所有定时器
-            for timer in self._aggregate_timers.values():
-                try:
-                    timer.cancel()
-                except Exception as e:
-                    logger.debug(f"取消定时器时出错: {str(e)}")
+        with self._lifecycle_condition:
+            while self._active_operations > 0:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    break
+                self._lifecycle_condition.wait(timeout=remaining)
 
+            alive_timers = {timer for timer in timers if timer.is_alive()}
+            if alive_timers or self._active_operations > 0:
+                # 失败时必须保留活 owner，宿主随后重复调用 stop_service 可继续收敛。
+                self._owned_timers.update(alive_timers)
+                logger.warning(
+                    "媒体服务器通知后台任务未在停止预算内退出："
+                    f"timers={len(alive_timers)}, active={self._active_operations}"
+                )
+                return False
+
+            self._owned_timers.clear()
             self._aggregate_timers.clear()
             self._pending_messages.clear()
 
-            # 清理缓存
-            try:
-                self._get_tmdb_info.cache_clear()
-            except Exception as e:
-                logger.debug(f"清理缓存时出错: {str(e)}")
-        except Exception as e:
-            logger.error(f"插件停止时发生错误: {str(e)}", exc_info=True)
+        try:
+            self._get_tmdb_info.cache_clear()
+        except Exception as err:
+            logger.debug(f"清理缓存时出错: {str(err)}")
+        return True
+
+    def close(self) -> bool:
+        """兼容新版宿主的第一阶段关闭钩子。"""
+        return self._quiesce()
+
+    def stop_service(self) -> bool:
+        """兼容旧版宿主的停止钩子，并复用幂等收敛逻辑。"""
+        return self._quiesce()
