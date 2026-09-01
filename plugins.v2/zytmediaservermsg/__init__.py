@@ -39,7 +39,7 @@ class ZYTMediaServerMsg(_PluginBase):
     # 插件图标
     plugin_icon = "mediaplay.png"
     # 插件版本
-    plugin_version = "1.8.5"
+    plugin_version = "1.8.5.1"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -655,6 +655,11 @@ class ZYTMediaServerMsg(_PluginBase):
             season_id = getattr(event_info, 'season_id', None)
             episode_id = getattr(event_info, 'episode_id', None)
 
+            if item_type != "MOV":
+                resolved_tmdb_id = self._resolve_tv_tmdb_id_by_zyt(event_info, tmdb_id)
+                if resolved_tmdb_id:
+                    tmdb_id = resolved_tmdb_id
+
             # 查询电影图片
             if item_type == "MOV" and tmdb_id:
                 try:
@@ -710,6 +715,30 @@ class ZYTMediaServerMsg(_PluginBase):
 
         except Exception as e:
             logger.error(f"处理Webhook事件时发生错误: {str(e)}", exc_info=True)
+
+    def _resolve_tv_tmdb_id_by_zyt(self, event_info: WebhookEventInfo,
+                                   tmdb_id: Optional[str]) -> Optional[str]:
+        """将Emby单集事件中的单集TMDB ID转换为电视剧TMDB ID。"""
+        channel = getattr(event_info, 'channel', None)
+        media_type = getattr(event_info, 'media_type', None)
+        if channel != "emby" or media_type != "Episode":
+            return tmdb_id
+
+        series_id = getattr(event_info, 'item_id', None)
+        if not series_id:
+            return None
+
+        try:
+            media_service = self.service_info(name=getattr(event_info, 'server_name', None))
+            service = media_service.instance if media_service else None
+            series_info: Optional[MediaServerItem] = service.get_iteminfo(series_id) if service else None
+            if series_info and series_info.tmdbid:
+                logger.debug(f"从Emby电视剧条目获取到TMDB ID: {series_info.tmdbid}")
+                return str(series_info.tmdbid)
+        except Exception as e:
+            logger.debug(f"从Emby电视剧条目获取TMDB ID时出错: {str(e)}")
+
+        return None
 
     def _get_series_id(self, event_info: WebhookEventInfo) -> Optional[str]:
         """
