@@ -1,0 +1,90 @@
+{
+  "name": "凤凰PT",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Peasant",
+      "privilege": "被降级的用户，他们有30天时间来提升分享率，否则他们会被踢。不能发表趣味盒内容；不能申请友情链接；不能上传字幕。当以下情况时将被自动降至本级：1.如果你已经下载了超过50GB，你应该有大于0.4的分享率。2.如果你已经下载了超过100GB，你应该有大于0.5的分享率。3.如果你已经下载了超过200GB，你应该有大于0.6的分享率。4.如果你已经下载了超过400GB，你应该有大于0.7的分享率。5.如果你已经下载了超过800GB，你应该有大于0.8的分享率。"
+    },
+    {
+      "id": 2,
+      "name": "User",
+      "privilege": "新用户的默认级别。只能在每周六中午12点至每周日晚上11点59分发布种子。"
+    },
+    {
+      "id": 3,
+      "name": "Power User",
+      "privilege": "得到一个邀请名额；可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于0.95，你将自动降级。",
+      "interval": "P4W",
+      "downloaded": "50GB",
+      "ratio": 1.05
+    },
+    {
+      "id": 4,
+      "name": "Elite User",
+      "privilege": "Elite User及以上用户封存账号后不会被删除。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于1.45，你将自动降级。",
+      "interval": "P8W",
+      "downloaded": "120GB",
+      "ratio": 1.55
+    },
+    {
+      "id": 5,
+      "name": "Crazy User",
+      "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于1.95，你将自动降级。",
+      "interval": "P15W",
+      "downloaded": "300GB",
+      "ratio": 2.05
+    },
+    {
+      "id": 6,
+      "name": "Insane User",
+      "privilege": "可以查看普通日志。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于2.45，你将自动降级。",
+      "interval": "P25W",
+      "downloaded": "500GB",
+      "ratio": 2.55
+    },
+    {
+      "id": 7,
+      "name": "Veteran User",
+      "isKept": true,
+      "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于2.95，你将自动降级。",
+      "interval": "P40W",
+      "downloaded": "750GB",
+      "ratio": 3.05
+    },
+    {
+      "id": 8,
+      "name": "Extreme User",
+      "isKept": true,
+      "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于3.45，你将自动降级。",
+      "interval": "P60W",
+      "downloaded": "1TB",
+      "ratio": 3.55
+    },
+    {
+      "id": 9,
+      "name": "Ultimate User",
+      "isKept": true,
+      "privilege": "得到五个邀请名额。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于3.95，你将自动降级。",
+      "interval": "P80W",
+      "downloaded": "1.5TB",
+      "ratio": 4.05
+    },
+    {
+      "id": 10,
+      "name": "Nexus Master",
+      "isKept": true,
+      "privilege": "得到十个邀请名额。当条件符合时将被自动提升。注意，无论何时，如果你的分享率低于4.45，你将自动降级。",
+      "interval": "P100W",
+      "downloaded": "3TB",
+      "ratio": 4.55
+    },
+    {
+      "id": 100,
+      "name": "贵宾(VIP)",
+      "groupType": "vip",
+      "privilege": "和Nexus Master拥有相同权限并被认为是精英成员。免除自动降级。"
+    }
+  ]
+}

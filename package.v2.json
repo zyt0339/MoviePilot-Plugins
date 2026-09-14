@@ -22,11 +22,12 @@
     "name": "IYUU自动辅种(zyt)",
     "description": "基于IYUU官方Api实现自动辅种。",
     "labels": "做种,IYUU",
-    "version": "2.17",
+    "version": "2.18",
     "icon": "IYUU.png",
     "author": "zyt",
     "level": 2,
     "history": {
+      "v2.18": "IYUU 损坏响应的 JSON 解析异常",
       "v2.17": "修复由于站点哈希值过期导致辅种失败的问题",
       "v2.0": "兼容MoviePilot V2 版本"
     }
@@ -35,11 +36,12 @@
     "name": "IYUU刷流辅种",
     "description": "基于IYUU官方Api实现自动辅种",
     "labels": "做种,IYUU",
-    "version": "2.17",
+    "version": "2.18",
     "icon": "Iyuu_A.png",
     "author": "zyt",
     "level": 2,
     "history": {
+      "v2.18": "IYUU 损坏响应的 JSON 解析异常",
       "v2.17": "修复由于站点哈希值过期导致辅种失败的问题",
       "v2.2.0": "支持 qb5.0.3 自动开始"
     }
