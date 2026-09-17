@@ -18,11 +18,12 @@
     "name": "媒体库服务器通知zyt",
     "description": "发送Emby/Jellyfin/Plex服务器的播放、入库等通知消息。",
     "labels": "消息通知,媒体库",
-    "version": "2.0.0",
+    "version": "2.1.2",
     "icon": "mediaplay.png",
     "author": "zyt0339",
     "level": 1,
     "history": {
+      "v2.1.2": "同步官方 2.1.2：补齐媒体服务器身份查询与分类 SDK，保留个人通知逻辑及 Emby 单集保护。",
       "v2.0.0": "适配 MoviePilot V3 媒体身份、媒体服务器条目及分类 SDK；保留 Emby 单集识别保护。",
       "v1.8.5.1": "修复Emby单集事件使用单集TMDB ID查询剧集图片导致404的问题",
       "v1.8.5": "185",

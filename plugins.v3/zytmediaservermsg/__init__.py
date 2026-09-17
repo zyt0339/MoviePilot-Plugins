@@ -42,7 +42,7 @@ class ZYTMediaServerMsg(_PluginBase):
     # 插件图标
     plugin_icon = "mediaplay.png"
     # 插件版本
-    plugin_version = "2.0.0"
+    plugin_version = "2.1.2"
     # 插件作者
     plugin_author = "zyt0339"
     # 作者主页
@@ -1062,14 +1062,8 @@ class ZYTMediaServerMsg(_PluginBase):
             episodes_detail = self._merge_continuous_episodes(events)
             message_texts.append(f"📺 季集：{episodes_detail}")
 
-            # 确定二级分类
-            cat = None
-            if tmdb_info:
-                try:
-                    classified = classify_media(MediaInfo(tmdb_info=dict(tmdb_info)))
-                    cat = str(classified.library_category or '').strip() or None
-                except Exception as e:
-                    logger.debug(f"获取分类时出错: {str(e)}")
+            # 统一分类服务返回当前生效路径，不再读取 legacy category.yaml。
+            cat = self._classification_path(tmdb_info)
 
             if cat:
                 message_texts.append(f"📚 分类：{cat}")
@@ -1182,7 +1176,8 @@ class ZYTMediaServerMsg(_PluginBase):
         # 安全获取tmdb_info
         tmdb_info = {}
         try:
-            source, media_id = self._resolve_event_media_identity(events[0] if events else None)
+            source, media_id = self._resolve_event_media_identity(
+                events[0] if events else None, lookup_item=True)
             tmdb_id = media_id if source == MediaSource.TMDB else None
             if events and source == MediaSource.TMDB:
                 tmdb_id = self._resolve_tv_tmdb_id_by_zyt(events[0], tmdb_id)
@@ -1480,6 +1475,18 @@ class ZYTMediaServerMsg(_PluginBase):
             logger.debug(f"获取播放链接时发生未知错误: {str(e)}")
 
         return None
+
+    @staticmethod
+    def _classification_path(tmdb_info: Optional[dict]) -> Optional[str]:
+        """通过宿主分类 SDK 返回当前 TMDB 媒体的生效分类路径。"""
+        if not tmdb_info:
+            return None
+        try:
+            classified = classify_media(MediaInfo(tmdb_info=dict(tmdb_info)))
+        except Exception as error:
+            logger.debug(f"获取分类时出错: {str(error)}")
+            return None
+        return str(classified.library_category or "").strip() or None
 
     @cached(
         region="ZYTMediaServerMsg",           # 缓存区域，用于隔离不同插件的缓存
