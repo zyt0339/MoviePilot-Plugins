@@ -1,0 +1,33 @@
+{
+  "ZYTBrushFlow": {
+    "name": "站点刷流(删辅种)",
+    "description": "自动托管刷流，将会提高对应站点的访问频率。",
+    "labels": "刷流,仪表板",
+    "version": "5.0.0",
+    "icon": "Iyuu_A.png",
+    "author": "zyt",
+    "level": 2,
+    "history": {
+      "v5.0.0": "适配 MoviePilot V3 统一媒体身份和稳定 SDK；保留订阅原名排除保护。",
+      "v4.3.4.1": "减少内存占用",
+      "v4.0.1.1": "NexusPHP 站点支持自动跳过下载提示页调整为站点独立配置项"
+    },
+    "system_version": ">=3.0.0"
+  },
+  "ZYTMediaServerMsg": {
+    "name": "媒体库服务器通知zyt",
+    "description": "发送Emby/Jellyfin/Plex服务器的播放、入库等通知消息。",
+    "labels": "消息通知,媒体库",
+    "version": "2.0.0",
+    "icon": "mediaplay.png",
+    "author": "zyt0339",
+    "level": 1,
+    "history": {
+      "v2.0.0": "适配 MoviePilot V3 媒体身份、媒体服务器条目及分类 SDK；保留 Emby 单集识别保护。",
+      "v1.8.5.1": "修复Emby单集事件使用单集TMDB ID查询剧集图片导致404的问题",
+      "v1.8.5": "185",
+      "v1.8.2.2": "修复emby多条相同新入库消息推送多次的问题"
+    },
+    "system_version": ">=3.0.0"
+  }
+}

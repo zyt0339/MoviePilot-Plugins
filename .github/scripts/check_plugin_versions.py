@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""校验启用 Release 分发的 V2 插件市场版本与源码版本一致。"""
+"""校验 V2 Release 插件和全部 V3 插件市场版本与源码版本一致。"""
 
 from __future__ import annotations
 
@@ -30,14 +30,15 @@ def plugin_version(init_file: Path) -> str | None:
 
 
 def check_package(package_file: Path) -> list[str]:
-    """返回索引中所有 Release 插件的版本错误。"""
+    """返回 V2 Release 条目及全部 V3 条目的版本错误。"""
+    plugin_root = {"package.v2.json": "plugins.v2", "package.v3.json": "plugins.v3"}[package_file.name]
     package = json.loads(package_file.read_text(encoding="utf-8"))
     errors = []
     for plugin_id, meta in package.items():
-        if not isinstance(meta, dict) or meta.get("release") is not True:
+        if not isinstance(meta, dict) or (package_file.name != "package.v3.json" and meta.get("release") is not True):
             continue
         expected = str(meta.get("version") or "").strip()
-        plugin_dir = package_file.parent / "plugins.v2" / plugin_id.lower()
+        plugin_dir = package_file.parent / plugin_root / plugin_id.lower()
         init_file = plugin_dir / "__init__.py"
         if not init_file.is_file():
             errors.append(f"{plugin_id}: 缺少 {init_file}")

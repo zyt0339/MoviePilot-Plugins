@@ -47,6 +47,7 @@
     }
   },
   "ZYTBrushFlow": {
+    "v3": false,
     "name": "站点刷流(删辅种)",
     "description": "自动托管刷流，将会提高对应站点的访问频率。",
     "labels": "刷流,仪表板",
@@ -185,6 +186,7 @@
     }
   },
   "ZYTMediaServerMsg": {
+    "v3": false,
     "name": "媒体库服务器通知zyt",
     "description": "发送Emby/Jellyfin/Plex服务器的播放、入库等通知消息。",
     "labels": "消息通知,媒体库",
