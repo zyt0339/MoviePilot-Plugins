@@ -86,6 +86,15 @@ class FakePluginBase:
         return self.data_store.pop(key, None)
 
 
+class FakeResponse:
+    """模拟 V3 严格的 success/message/data 响应。"""
+
+    def __init__(self, success, message="", data=None):
+        self.success = success
+        self.message = message
+        self.data = data
+
+
 class FakeSiteOper:
     """提供启用站点和最新快照。"""
 
@@ -127,7 +136,7 @@ def load_plugin():
         "app.db.site_oper": _module("app.db.site_oper", SiteOper=FakeSiteOper),
         "app.log": _module("app.log", logger=types.SimpleNamespace(info=lambda *a: None, error=lambda *a: None, warning=lambda *a: None, debug=lambda *a: None)),
         "app.plugins": _module("app.plugins", _PluginBase=FakePluginBase),
-        "app.schemas": _module("app.schemas"),
+        "app.schemas": _module("app.schemas", Response=FakeResponse),
         "app.schemas.types": _module("app.schemas.types", EventType=FakeEventType),
         "app.utils": _module("app.utils"),
         "app.utils.string": _module("app.utils.string", StringUtils=types.SimpleNamespace(str_filesize=lambda value: f"{value}B")),
@@ -187,6 +196,7 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertEqual(apis[0]["path"], "/page_filter")
         self.assertEqual(apis[0]["methods"], ["GET"])
         self.assertEqual(apis[0]["auth"], "bear")
+        self.assertIs(apis[0]["response_model"], FakeResponse)
         self.assertFalse(hasattr(self.plugin, "refresh_site"))
         self.assertFalse(hasattr(self.plugin, "refresh_all"))
         self.plugin.stop_service()
@@ -226,14 +236,17 @@ class PluginRuntimeTest(unittest.TestCase):
             {"status": "unretained"},
         )
 
-        self.assertEqual(self.plugin.set_page_filter("unretained"), {
-            "success": True,
-            "status": "unretained",
-        })
+        response = self.plugin.set_page_filter("unretained")
+        self.assertTrue(response.success)
+        self.assertEqual(response.message, "")
+        self.assertEqual(response.data, {"status": "unretained"})
         filtered_rows = self._page_table(self.plugin.get_page())["content"][1]["content"]
         self.assertEqual(len(filtered_rows), 1)
         self.assertEqual(self._embedded_row_cells(filtered_rows[0])[0]["text"], "未保号站")
-        self.assertFalse(self.plugin.set_page_filter("invalid")["success"])
+        invalid_response = self.plugin.set_page_filter("invalid")
+        self.assertFalse(invalid_response.success)
+        self.assertEqual(invalid_response.message, "不支持的筛选状态")
+        self.assertIsNone(invalid_response.data)
 
         # 热重载后 API 可能仍绑定旧实例；筛选结果必须能被新页面实例读取。
         reloaded_plugin = self.module.PTDepilerMp()

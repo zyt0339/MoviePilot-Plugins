@@ -13,6 +13,7 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from app import schemas
 from app.core.config import settings
 from app.core.event import Event, eventmanager
 from app.db.site_oper import SiteOper
@@ -36,7 +37,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.7"
+    plugin_version = "1.38.8"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -138,17 +139,26 @@ class PTDepilerMp(_PluginBase):
             "methods": ["GET"],
             "auth": "bear",
             "summary": "切换详情页站点状态筛选",
+            "response_model": schemas.Response,
         }]
 
-    def set_page_filter(self, status: str = "all") -> Dict[str, Any]:
+    def set_page_filter(self, status: str = "all") -> schemas.Response:
         """切换详情页临时筛选状态，不写入插件配置。"""
         normalized = str(status or "all").strip().lower()
         if normalized not in self._page_filter_options:
-            return {"success": False, "message": "不支持的筛选状态"}
+            return schemas.Response(
+                success=False,
+                message="不支持的筛选状态",
+                data=None,
+            )
         self._page_filter = normalized
         # MoviePilot 本地热重载不会重新绑定插件 API，旧实例也必须能通知新页面实例。
         self.save_data(self._page_filter_data_key, normalized)
-        return {"success": True, "status": normalized}
+        return schemas.Response(
+            success=True,
+            message="",
+            data={"status": normalized},
+        )
 
     def _current_page_filter(self) -> str:
         """消费一次跨热重载实例共享的页面筛选状态。"""
