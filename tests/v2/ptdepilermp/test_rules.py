@@ -247,6 +247,21 @@ class RequirementTest(unittest.TestCase):
         ]
         self.assertEqual([level["name"] for level in retention_levels], ["Nexus Master"])
 
+    def test_dolphin_rule_uses_moviepilot_name_and_current_requirements(self):
+        repository = rules.RuleRepository(RULES_DIR)
+        rule_id, dolphin = repository.match("海豚")
+        self.assertEqual(rule_id, "海豚")
+        self.assertEqual(dolphin["name"], "海豚")
+        self.assertEqual(dolphin["levels"][0], {
+            "id": 0,
+            "name": "User",
+            "privilege": "所有新用户的默认等级；能够使用 RSS 订阅系统；具有论坛「茶话会」版块的阅读权限",
+        })
+        self.assertTrue(dolphin["levels"][2]["isKept"])
+        self.assertEqual(dolphin["levels"][5]["uploaded"], "375GiB")
+        self.assertEqual(dolphin["levels"][5]["groups"], 300)
+        self.assertEqual(dolphin["levels"][7]["name"], "Elite Torrent Master Plus")
+
     def test_sky_has_aliases_without_retention_or_join_time_override(self):
         repository = rules.RuleRepository(RULES_DIR)
         sky_rule = repository.sites["天空"]
