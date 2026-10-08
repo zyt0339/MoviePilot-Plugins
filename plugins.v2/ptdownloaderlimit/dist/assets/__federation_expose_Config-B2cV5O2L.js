@@ -65,6 +65,7 @@ function defaultConfig() {
     notify: false,
     cron: '',
     nolabels: '',
+    limit_seeders: null,
     rules: [emptyRule()],
   }
 }
@@ -160,6 +161,11 @@ function ruleTitle(index, rule) {
 }
 
 function validate() {
+  const seeders = config.value.limit_seeders;
+  if (seeders !== null && seeders !== '' && (!Number.isInteger(Number(seeders)) || Number(seeders) < 0)) {
+    showMessage('限速做种数必须是非负整数，留空表示不限制', 'error');
+    return false
+  }
   const timePattern = /^\d{2}:\d{2}-\d{2}:\d{2}$/;
   const validClock = value => {
     const [hour, minute] = value.split(':').map(Number);
@@ -186,6 +192,8 @@ function validate() {
 function saveConfig() {
   if (!validate()) return
   const payload = clone(config.value);
+  payload.limit_seeders = payload.limit_seeders === null || payload.limit_seeders === ''
+    ? null : Number(payload.limit_seeders);
   payload.rules = payload.rules.map(rule => ({
     ...rule,
     limit_speed: Math.max(0, Number(rule.limit_speed || 0)),
@@ -228,7 +236,7 @@ return (_ctx, _cache) => {
       color: "transparent"
     }, {
       default: _withCtx(() => [
-        _cache[8] || (_cache[8] = _createElementVNode("div", { class: "text-h6 ms-3" }, "QB&TR上传限速 - 插件配置", -1)),
+        _cache[9] || (_cache[9] = _createElementVNode("div", { class: "text-h6 ms-3" }, "QB&TR上传限速 - 插件配置", -1)),
         _createVNode(_component_VSpacer),
         _createVNode(_component_VBtn, {
           icon: "mdi-content-save",
@@ -282,7 +290,7 @@ return (_ctx, _cache) => {
             }),
             _createVNode(_component_VCol, {
               cols: "12",
-              md: "3"
+              md: "2"
             }, {
               default: _withCtx(() => [
                 _createVNode(_component_VTextField, {
@@ -296,13 +304,32 @@ return (_ctx, _cache) => {
               _: 1
             }),
             _createVNode(_component_VCol, {
+              cols: "12",
+              md: "2"
+            }, {
+              default: _withCtx(() => [
+                _createVNode(_component_VTextField, {
+                  modelValue: config.value.limit_seeders,
+                  "onUpdate:modelValue": _cache[4] || (_cache[4] = $event => ((config.value.limit_seeders) = $event)),
+                  label: "限速做种数",
+                  type: "number",
+                  min: "0",
+                  step: "1",
+                  hint: "小于该值不限速，仅限速区间外生效",
+                  "persistent-hint": "",
+                  clearable: ""
+                }, null, 8, ["modelValue"])
+              ]),
+              _: 1
+            }),
+            _createVNode(_component_VCol, {
               cols: "6",
               md: "2"
             }, {
               default: _withCtx(() => [
                 _createVNode(_component_VSwitch, {
                   modelValue: config.value.notify,
-                  "onUpdate:modelValue": _cache[4] || (_cache[4] = $event => ((config.value.notify) = $event)),
+                  "onUpdate:modelValue": _cache[5] || (_cache[5] = $event => ((config.value.notify) = $event)),
                   label: "开启通知",
                   color: "primary",
                   "hide-details": ""
@@ -312,12 +339,12 @@ return (_ctx, _cache) => {
             }),
             _createVNode(_component_VCol, {
               cols: "6",
-              md: "3"
+              md: "2"
             }, {
               default: _withCtx(() => [
                 _createVNode(_component_VSwitch, {
                   modelValue: config.value.onlyonce,
-                  "onUpdate:modelValue": _cache[5] || (_cache[5] = $event => ((config.value.onlyonce) = $event)),
+                  "onUpdate:modelValue": _cache[6] || (_cache[6] = $event => ((config.value.onlyonce) = $event)),
                   label: "立即运行一次",
                   color: "primary",
                   "hide-details": ""
@@ -329,7 +356,7 @@ return (_ctx, _cache) => {
           _: 1
         }),
         _createElementVNode("div", _hoisted_2, [
-          _cache[10] || (_cache[10] = _createElementVNode("div", { class: "text-h6" }, "限速规则", -1)),
+          _cache[11] || (_cache[11] = _createElementVNode("div", { class: "text-h6" }, "限速规则", -1)),
           _createVNode(_component_VSpacer),
           _createVNode(_component_VBtn, {
             color: "primary",
@@ -337,7 +364,7 @@ return (_ctx, _cache) => {
             variant: "tonal",
             onClick: addRule
           }, {
-            default: _withCtx(() => [...(_cache[9] || (_cache[9] = [
+            default: _withCtx(() => [...(_cache[10] || (_cache[10] = [
               _createTextVNode(" 新增规则 ", -1)
             ]))]),
             _: 1
@@ -350,7 +377,7 @@ return (_ctx, _cache) => {
               variant: "tonal",
               class: "mb-4"
             }, {
-              default: _withCtx(() => [...(_cache[11] || (_cache[11] = [
+              default: _withCtx(() => [...(_cache[12] || (_cache[12] = [
                 _createTextVNode(" 当前没有限速规则，可点击“新增规则”开始配置。 ", -1)
               ]))]),
               _: 1
@@ -358,7 +385,7 @@ return (_ctx, _cache) => {
           : _createCommentVNode("", true),
         _createVNode(_component_VExpansionPanels, {
           modelValue: expanded.value,
-          "onUpdate:modelValue": _cache[6] || (_cache[6] = $event => ((expanded).value = $event)),
+          "onUpdate:modelValue": _cache[7] || (_cache[7] = $event => ((expanded).value = $event)),
           variant: "accordion",
           class: "rule-panels"
         }, {
@@ -534,8 +561,8 @@ return (_ctx, _cache) => {
           variant: "tonal",
           class: "mt-4"
         }, {
-          default: _withCtx(() => [...(_cache[12] || (_cache[12] = [
-            _createTextVNode(" 规则按列表顺序逐条执行；同一下载器和站点命中多条规则时，靠后的规则最终生效，靠后规则不在限速时间段时会解除前面规则的限速。 ", -1)
+          default: _withCtx(() => [...(_cache[13] || (_cache[13] = [
+            _createTextVNode(" 规则按列表顺序逐条执行；同一下载器和站点命中多条规则时，靠后的规则最终生效。限速区间外，配置了限速做种数时，仅做种数小于该值才解除限速。 ", -1)
           ]))]),
           _: 1
         })
@@ -544,7 +571,7 @@ return (_ctx, _cache) => {
     }),
     _createVNode(_component_VSnackbar, {
       modelValue: snackbar.value.show,
-      "onUpdate:modelValue": _cache[7] || (_cache[7] = $event => ((snackbar.value.show) = $event)),
+      "onUpdate:modelValue": _cache[8] || (_cache[8] = $event => ((snackbar.value.show) = $event)),
       color: snackbar.value.color,
       timeout: "3500"
     }, {
@@ -558,6 +585,6 @@ return (_ctx, _cache) => {
 }
 
 };
-const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-4995e976"]]);
+const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-922cef89"]]);
 
 export { Config as default };

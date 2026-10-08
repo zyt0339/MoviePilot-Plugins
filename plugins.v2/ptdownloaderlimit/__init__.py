@@ -29,7 +29,7 @@ class PTDownloaderLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.3"
+    plugin_version = "1.0.4"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -48,6 +48,7 @@ class PTDownloaderLimit(_PluginBase):
     _notify = False
     _cron = ""
     _nolabels = ""  # 不限速标签
+    _limit_seeders = None  # 留空沿用原行为；仅限制非限速区间的自动解除限速。
     # 原插件的六组固定字段由有序动态规则列表替代。
     _rules: List[Dict[str, Any]] = []
     # 定时器
@@ -105,6 +106,17 @@ class PTDownloaderLimit(_PluginBase):
         self._notify = config.get("notify")
         self._cron = config.get("cron")
         self._nolabels = config.get("nolabels") or ""
+        value = config.get("limit_seeders")
+        self._limit_seeders = None
+        if value is not None and value != "":
+            try:
+                if isinstance(value, bool) or int(value) < 0 or float(value) != int(value):
+                    raise ValueError
+                self._limit_seeders = int(value)
+            except (ValueError, TypeError, OverflowError):
+                # 无效配置不得意外放开所有种子的限速。
+                self._limit_seeders = 0
+                logger.warning("限速做种数配置无效，保留非限速区间的种子限速")
         # 原插件在此分别读取 downloaders1...downloaders6、limit_sites1...limit_sites6、
         # limit_speed1...limit_speed6 等固定字段；联邦动态表单改为等价的有序 rules 列表。
         # self._downloaders = config.get("downloaders")
@@ -151,6 +163,7 @@ class PTDownloaderLimit(_PluginBase):
             "notify": self._notify,
             "cron": self._cron,
             "nolabels": self._nolabels,
+            "limit_seeders": self._limit_seeders,
             "rules": self._rules,
         }
 
@@ -395,6 +408,36 @@ class PTDownloaderLimit(_PluginBase):
         # self.__update_config()
         logger.debug(f"限速执行完成")
 
+    def _can_cancel_limit_by_seeders(self, torrent, dl_type, current_torrent_tag_list):
+        """只在非限速区间检查；读取失败或负值（Tracker 未知）时保留限速。"""
+        if self._limit_seeders is None:
+            return True
+        try:
+            if dl_type == "qbittorrent":
+                raw_counts = [torrent.num_complete]
+            else:
+                raw_counts = [tracker.seeder_count for tracker in torrent.tracker_stats
+                              if tracker.seeder_count is not None]
+            if not raw_counts:
+                raise ValueError("做种数缺失")
+            counts = []
+            for value in raw_counts:
+                if value is None or isinstance(value, bool) or float(value) != int(value):
+                    raise ValueError("做种数无效")
+                if int(value) >= 0:
+                    counts.append(int(value))
+            if not counts:
+                raise ValueError("做种数未知")
+            # 多 Tracker 取最大有效做种数；未知值不能作为 0 放开限速。
+            seeders = max(counts)
+        except Exception:
+            logger.info(f"{torrent.name}，种子tag{current_torrent_tag_list}，做种数读取失败，继续限速")
+            return False
+        if seeders >= self._limit_seeders:
+            logger.info(f"{torrent.name}，种子tag{current_torrent_tag_list}，做种数{seeders}，超过限速做种数，继续限速")
+            return False
+        return True
+
     def limit_per_downloader(self, all_site_name_id_map, all_site_names, downloader_service_info,
                              limit_site_ids, limit_speed, limit_sites_pause_threshold, is_in_time_range, cancel_limit):
         downloader = downloader_service_info.name
@@ -452,6 +495,8 @@ class PTDownloaderLimit(_PluginBase):
                                 if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hash)
                     else:  # 非限速区间,解除限速,解除暂停
+                        if not self._can_cancel_limit_by_seeders(torrent, dl_type, current_torrent_tag_list):
+                            continue
                         to_cancel_limit_torrent_hashs.append(torrent.hash)
                         if state in ["pausedUP", "stoppedUP"] and torrent.total_size == torrent.completed and ('暂停' not in current_torrent_tag_list):
                             to_cancel_pausedUP_hashs_cur.append(torrent.hash)
@@ -492,7 +537,7 @@ class PTDownloaderLimit(_PluginBase):
 
         elif dl_type == "transmission":
             self.logger_info(cancel_limit, f"{downloader} 开始设置限速")
-            _trarg = ["id", "name", "labels", "hashString", "status", "rateUpload"]
+            _trarg = ["id", "name", "labels", "hashString", "status", "rateUpload", "trackerStats"]
             tr_client = downloader_obj.trc
             all_torrents = tr_client.get_torrents(arguments=_trarg)
             # all_torrents, _ = downloader_obj.get_torrents()
@@ -528,6 +573,8 @@ class PTDownloaderLimit(_PluginBase):
                                 if (current_time - pausedUPTime) > _limit_sites_pause_threshold_s:
                                     to_cancel_pausedUP_hashs_cur.append(torrent.hashString)
                     else:
+                        if not self._can_cancel_limit_by_seeders(torrent, dl_type, current_torrent_tag_list):
+                            continue
                         to_cancel_limit_torrent_hashs.append(torrent.hashString)
                         if state.stopped and ('暂停' not in current_torrent_tag_list):
                             to_cancel_pausedUP_hashs_cur.append(torrent.hashString)

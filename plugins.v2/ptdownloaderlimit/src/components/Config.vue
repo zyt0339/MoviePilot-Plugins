@@ -40,6 +40,7 @@ function defaultConfig() {
     notify: false,
     cron: '',
     nolabels: '',
+    limit_seeders: null,
     rules: [emptyRule()],
   }
 }
@@ -135,6 +136,11 @@ function ruleTitle(index, rule) {
 }
 
 function validate() {
+  const seeders = config.value.limit_seeders
+  if (seeders !== null && seeders !== '' && (!Number.isInteger(Number(seeders)) || Number(seeders) < 0)) {
+    showMessage('限速做种数必须是非负整数，留空表示不限制', 'error')
+    return false
+  }
   const timePattern = /^\d{2}:\d{2}-\d{2}:\d{2}$/
   const validClock = value => {
     const [hour, minute] = value.split(':').map(Number)
@@ -161,6 +167,8 @@ function validate() {
 function saveConfig() {
   if (!validate()) return
   const payload = clone(config.value)
+  payload.limit_seeders = payload.limit_seeders === null || payload.limit_seeders === ''
+    ? null : Number(payload.limit_seeders)
   payload.rules = payload.rules.map(rule => ({
     ...rule,
     limit_speed: Math.max(0, Number(rule.limit_speed || 0)),
@@ -197,7 +205,7 @@ onMounted(() => {
         <VCol cols="12" md="2">
           <VCronField v-model="config.cron" label="执行周期" />
         </VCol>
-        <VCol cols="12" md="3">
+        <VCol cols="12" md="2">
           <VTextField
             v-model="config.nolabels"
             label="不限速标签"
@@ -205,10 +213,22 @@ onMounted(() => {
             clearable
           />
         </VCol>
+        <VCol cols="12" md="2">
+          <VTextField
+            v-model="config.limit_seeders"
+            label="限速做种数"
+            type="number"
+            min="0"
+            step="1"
+            hint="小于该值不限速，仅限速区间外生效"
+            persistent-hint
+            clearable
+          />
+        </VCol>
         <VCol cols="6" md="2">
           <VSwitch v-model="config.notify" label="开启通知" color="primary" hide-details />
         </VCol>
-        <VCol cols="6" md="3">
+        <VCol cols="6" md="2">
           <VSwitch v-model="config.onlyonce" label="立即运行一次" color="primary" hide-details />
         </VCol>
       </VRow>
@@ -334,7 +354,7 @@ onMounted(() => {
       </VExpansionPanels>
 
       <VAlert type="info" variant="tonal" class="mt-4">
-        规则按列表顺序逐条执行；同一下载器和站点命中多条规则时，靠后的规则最终生效，靠后规则不在限速时间段时会解除前面规则的限速。
+        规则按列表顺序逐条执行；同一下载器和站点命中多条规则时，靠后的规则最终生效。限速区间外，配置了限速做种数时，仅做种数小于该值才解除限速。
       </VAlert>
     </VForm>
 

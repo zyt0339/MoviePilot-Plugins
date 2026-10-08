@@ -262,7 +262,7 @@ class PTDownloaderLimitTest(unittest.TestCase):
         self.assertEqual([item["value"] for item in response.data["sites"]], [1, 2])
 
         package = json.loads((ROOT / "package.v2.json").read_text(encoding="utf-8"))
-        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.3")
+        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.4")
         self.assertTrue(package["PTDownloaderLimit"]["release"])
 
     def test_onlyonce_resets_switch_and_stop_is_idempotent(self):
@@ -372,6 +372,11 @@ class PTDownloaderLimitTest(unittest.TestCase):
             current_source = method_source(PLUGIN_DIR / "__init__.py", method_name)
             original_source = method_source(ORIGINAL_PLUGIN, method_name)
             if method_name == "limit_per_downloader":
+                # 仅允许新增的区间外做种数门禁和 Tracker 数据字段。
+                current_source = current_source.replace(
+                    '                        if not self._can_cancel_limit_by_seeders(torrent, dl_type, current_torrent_tag_list):\n'
+                    '                            continue\n', ''
+                ).replace(', "trackerStats"]', ']')
                 current_source = current_source.replace(
                     'logger.debug(f"{downloader} {torrent.name} 下载中，跳过 ...")',
                     'logger.info(f"{downloader} {torrent.name} 下载中，跳过 ...")',
@@ -442,6 +447,61 @@ class PTDownloaderLimitTest(unittest.TestCase):
             ]
 
         self.assertEqual(trace(new_calls), trace(old_calls))
+
+    def test_seeder_gate_filters_release_and_resume_for_both_downloaders(self):
+        for dl_type in ("qbittorrent", "transmission"):
+            calls, resumed = [], []
+            torrents = []
+            for name, count in (("low", 4), ("equal", 5), ("high", 6), ("unknown", None)):
+                torrents.append(types.SimpleNamespace(
+                    name=name, hash=name, hashString=name, tags="站点一", labels=["站点一"],
+                    state="pausedUP", state_enum=types.SimpleNamespace(is_downloading=False),
+                    total_size=100, completed=100,
+                    status=types.SimpleNamespace(stopped=True, seeding=False),
+                    num_complete=count,
+                    tracker_stats=[types.SimpleNamespace(seeder_count=count)],
+                ))
+            instance = types.SimpleNamespace(
+                qbc=types.SimpleNamespace(torrents_set_upload_limit=lambda speed, hashes: calls.extend(hashes)),
+                trc=types.SimpleNamespace(get_torrents=lambda arguments: torrents,
+                    change_torrent=lambda **kwargs: calls.extend(kwargs["ids"])),
+                get_torrents=lambda: (torrents, None),
+                start_torrents=lambda hashes: resumed.extend(hashes),
+                remove_torrents_tag=lambda *args: None,
+            )
+            self.plugin._limit_seeders = 5
+            self.plugin.limit_per_downloader(
+                {"站点一": 1}, {"站点一"}, FakeServiceInfo("fake", instance, dl_type),
+                {1}, 20, 0, False, False,
+            )
+            self.assertEqual(calls, ["low"])
+            self.assertEqual(resumed, ["low"])
+
+    def test_seeder_gate_missing_negative_and_tracker_maximum(self):
+        self.plugin._limit_seeders = 5
+        gate = self.plugin._can_cancel_limit_by_seeders
+        torrent = types.SimpleNamespace(name="fake", tracker_stats=[
+            types.SimpleNamespace(seeder_count=-1), types.SimpleNamespace(seeder_count=6),
+            types.SimpleNamespace(seeder_count=2),
+        ])
+        self.assertFalse(gate(torrent, "transmission", []))
+        torrent.tracker_stats = []
+        self.assertFalse(gate(torrent, "transmission", []))
+        self.assertFalse(gate(torrent, "qbittorrent", []))
+        torrent.num_complete = -1
+        self.assertFalse(gate(torrent, "qbittorrent", []))
+        torrent.num_complete = 0
+        self.assertTrue(gate(torrent, "qbittorrent", []))
+        self.plugin._limit_seeders = 0
+        self.assertFalse(gate(torrent, "qbittorrent", []))
+        self.plugin._limit_seeders = None
+        self.assertTrue(gate(torrent, "qbittorrent", []))
+
+    def test_seeder_config_is_preserved_after_onlyonce(self):
+        self.plugin.init_plugin({"onlyonce": True, "limit_seeders": "5", "rules": []})
+        self.assertEqual(self.plugin.saved_config["limit_seeders"], 5)
+        self.plugin.init_plugin({"limit_seeders": "bad", "rules": []})
+        self.assertEqual(self.plugin._limit_seeders, 0)
 
     def test_qb_and_transmission_limit_calls(self):
         qb_calls = []
