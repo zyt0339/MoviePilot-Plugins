@@ -312,11 +312,7 @@ return (_ctx, _cache) => {
                   modelValue: config.value.limit_seeders,
                   "onUpdate:modelValue": _cache[4] || (_cache[4] = $event => ((config.value.limit_seeders) = $event)),
                   label: "限速做种数",
-                  type: "number",
-                  min: "0",
-                  step: "1",
-                  hint: "小于该值不限速，仅限速区间外生效",
-                  "persistent-hint": "",
+                  placeholder: "小于该值不限速，仅限速区间外生效",
                   clearable: ""
                 }, null, 8, ["modelValue"])
               ]),
@@ -585,6 +581,6 @@ return (_ctx, _cache) => {
 }
 
 };
-const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-922cef89"]]);
+const Config = /*#__PURE__*/_export_sfc(_sfc_main, [['__scopeId',"data-v-9580def7"]]);
 
 export { Config as default };

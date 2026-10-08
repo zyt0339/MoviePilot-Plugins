@@ -217,11 +217,7 @@ onMounted(() => {
           <VTextField
             v-model="config.limit_seeders"
             label="限速做种数"
-            type="number"
-            min="0"
-            step="1"
-            hint="小于该值不限速，仅限速区间外生效"
-            persistent-hint
+            placeholder="小于该值不限速，仅限速区间外生效"
             clearable
           />
         </VCol>
