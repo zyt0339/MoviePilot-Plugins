@@ -262,7 +262,7 @@ class PTDownloaderLimitTest(unittest.TestCase):
         self.assertEqual([item["value"] for item in response.data["sites"]], [1, 2])
 
         package = json.loads((ROOT / "package.v2.json").read_text(encoding="utf-8"))
-        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.5")
+        self.assertEqual(package["PTDownloaderLimit"]["version"], "1.0.6")
         self.assertTrue(package["PTDownloaderLimit"]["release"])
 
     def test_onlyonce_resets_switch_and_stop_is_idempotent(self):

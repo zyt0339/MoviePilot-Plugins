@@ -29,7 +29,7 @@ class PTDownloaderLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.5"
+    plugin_version = "1.0.6"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -414,27 +414,17 @@ class PTDownloaderLimit(_PluginBase):
             return True
         try:
             if dl_type == "qbittorrent":
-                raw_counts = [torrent.num_complete]
+                seeders = torrent.num_complete
             else:
-                raw_counts = [tracker.seeder_count for tracker in torrent.tracker_stats
-                              if tracker.seeder_count is not None]
-            if not raw_counts:
-                raise ValueError("做种数缺失")
-            counts = []
-            for value in raw_counts:
-                if value is None or isinstance(value, bool) or float(value) != int(value):
-                    raise ValueError("做种数无效")
-                if int(value) >= 0:
-                    counts.append(int(value))
-            if not counts:
-                raise ValueError("做种数未知")
-            # 多 Tracker 取最大有效做种数；未知值不能作为 0 放开限速。
-            seeders = max(counts)
+                # 缺失时返回 False，因此不用 default=0 将缺失当成无人做种。
+                seeders = max((tracker.seeder_count for tracker in torrent.tracker_stats
+                               if tracker.seeder_count is not None), default=None)
+            if seeders is None or seeders < 0:
+                return False
+            if seeders >= self._limit_seeders:
+                logger.info(f"{torrent.name}[{current_torrent_tag_list}] 做种数{seeders}，超过限速做种数 {self._limit_seeders}，继续限速")
+                return False
         except Exception:
-            logger.info(f"{torrent.name}，种子tag{current_torrent_tag_list}，做种数读取失败，继续限速")
-            return False
-        if seeders >= self._limit_seeders:
-            logger.info(f"{torrent.name}，种子tag{current_torrent_tag_list}，做种数{seeders}，超过限速做种数，继续限速")
             return False
         return True
 
