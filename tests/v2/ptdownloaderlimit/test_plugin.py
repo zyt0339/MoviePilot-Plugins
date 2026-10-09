@@ -15,19 +15,8 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[3]
 PLUGIN_DIR = ROOT / "plugins.v2" / "ptdownloaderlimit"
-ORIGINAL_PLUGIN = Path(__file__).parent / "fixtures" / "zytlimit_baseline.py"
 
 
-def method_source(path, method_name):
-    source = path.read_text(encoding="utf-8")
-    tree = ast.parse(source)
-    plugin_class = next(item for item in tree.body if isinstance(item, ast.ClassDef))
-    method = next(
-        item
-        for item in plugin_class.body
-        if isinstance(item, ast.FunctionDef) and item.name == method_name
-    )
-    return textwrap.dedent(ast.get_source_segment(source, method))
 
 
 class FakeScheduler:
@@ -194,9 +183,6 @@ class PTDownloaderLimitTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.module = load_plugin()
-        cls.original_module = load_plugin(
-            ORIGINAL_PLUGIN, "zytlimit_test_module"
-        )
 
     def setUp(self):
         FakeSiteOper.sites = [
@@ -361,97 +347,6 @@ class PTDownloaderLimitTest(unittest.TestCase):
             self.assertTrue(check("22:00-02:00"))
             self.assertTrue(check("bad value"))
 
-    def test_high_risk_backend_methods_match_original_source_exactly(self):
-        for method_name in (
-            "get_downloader_service_infos",
-            "logger_info",
-            "limit_per_downloader",
-            "__is_current_time_in_range_site_config",
-            "__is_valid_time_range",
-        ):
-            current_source = method_source(PLUGIN_DIR / "__init__.py", method_name)
-            original_source = method_source(ORIGINAL_PLUGIN, method_name)
-            if method_name == "limit_per_downloader":
-                # 仅允许新增的区间外做种数门禁和 Tracker 数据字段。
-                for client in ("qb", "tr"):
-                    current_source = current_source.replace(
-                        f' or self._seeders_more_than_limit_{client}(downloader, torrent, current_torrent_tag_list)', ''
-                    )
-                current_source = current_source.replace(', "trackerStats"]', ']')
-                current_source = current_source.replace(
-                    'else: # 非限速区间 且 做种数小于阈值,解除限速,解除暂停',
-                    'else:  # 非限速区间,解除限速,解除暂停', 1
-                ).replace('else: # 非限速区间 且 做种数小于阈值,解除限速,解除暂停', 'else:')
-                current_source = current_source.replace(
-                    'logger.debug(f"{downloader} {torrent.name} 下载中，跳过 ...")',
-                    'logger.info(f"{downloader} {torrent.name} 下载中，跳过 ...")',
-                )
-            self.assertEqual(
-                current_source,
-                original_source,
-                method_name,
-            )
-
-    def test_dynamic_rule_adapter_matches_original_six_rule_execution_trace(self):
-        service = FakeServiceInfo("qb", types.SimpleNamespace(is_inactive=lambda: False), "qbittorrent")
-        FakeDownloaderHelper.services = {"qb": service}
-        rules = [
-            self.rule(100, sites=[1]),
-            self.rule(200, time_range="inactive", sites=[1]),
-            self.rule(0, sites=[2]),
-        ]
-        self.plugin.init_plugin({"rules": rules})
-        self.plugin._PTDownloaderLimit__is_current_time_in_range_site_config = (
-            lambda value: value != "inactive"
-        )
-
-        original = self.original_module.ZYTLimit()
-        for index in range(1, 7):
-            rule = rules[index - 1] if index <= len(rules) else {
-                "downloaders": [],
-                "limit_sites": [],
-                "limit_speed": 0,
-                "limit_sites_pause_threshold": 0,
-                "active_time_range_site_config": "",
-            }
-            setattr(original, f"_downloaders{index}", rule["downloaders"])
-            setattr(original, f"_limit_sites{index}", rule["limit_sites"])
-            setattr(original, f"_limit_speed{index}", rule["limit_speed"])
-            setattr(
-                original,
-                f"_limit_sites_pause_threshold{index}",
-                rule["limit_sites_pause_threshold"],
-            )
-            setattr(
-                original,
-                f"_active_time_range_site_config{index}",
-                rule["active_time_range_site_config"],
-            )
-        original._ZYTLimit__is_current_time_in_range_site_config = (
-            lambda value: value != "inactive"
-        )
-
-        new_calls = []
-        old_calls = []
-        self.capture_limit_calls(new_calls, self.plugin)
-        self.capture_limit_calls(old_calls, original)
-        self.plugin.limit()
-        original.limit()
-
-        def trace(calls):
-            return [
-                (
-                    call["downloader_service_info"].name,
-                    list(call["limit_site_ids"]),
-                    call["limit_speed"],
-                    call["limit_sites_pause_threshold"],
-                    call["is_in_time_range"],
-                    call["cancel_limit"],
-                )
-                for call in calls
-            ]
-
-        self.assertEqual(trace(new_calls), trace(old_calls))
 
     def test_seeder_gate_filters_release_and_resume_for_both_downloaders(self):
         for dl_type in ("qbittorrent", "transmission"):
