@@ -131,19 +131,6 @@
       "v1.0.2": "修复站点数据为0的天数,用前一天数据填充"
     }
   },
-  "ZYTLimit": {
-    "name": "QB&TR上传限速",
-    "description": "自定义时间点执行限速逻辑",
-    "labels": "限速",
-    "version": "1.2.3",
-    "icon": "upload.png",
-    "author": "zyt",
-    "level": 2,
-    "history": {
-      "v1.2.3": "下载不限速",
-      "v1.0.1": "自定义时间点执行限速逻辑,只支持qb"
-    }
-  },
   "PTDownloaderLimit": {
     "name": "QB&TR上传限速",
     "description": "按下载器、PT站点和时间段动态配置种子上传限速。",

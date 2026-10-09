@@ -1,3 +1,4 @@
+# 旧版限速插件的离线回归基准；仅供 mock 测试，不作为插件发布。
 import re
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple

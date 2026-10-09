@@ -15,7 +15,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[3]
 PLUGIN_DIR = ROOT / "plugins.v2" / "ptdownloaderlimit"
-ORIGINAL_PLUGIN = ROOT / "plugins.v2" / "zytlimit" / "__init__.py"
+ORIGINAL_PLUGIN = Path(__file__).parent / "fixtures" / "zytlimit_baseline.py"
 
 
 def method_source(path, method_name):
