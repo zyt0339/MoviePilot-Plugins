@@ -29,7 +29,7 @@ class PTDownloaderLimit(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.7"
+    plugin_version = "1.0.8"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -416,7 +416,8 @@ class PTDownloaderLimit(_PluginBase):
                 logger.debug(f"{downloader} {torrent.name}[{current_torrent_tag_list}] "
                              f"做种数{seeders}，超过限速做种数{self._limit_seeders}，继续限速")
                 return True
-        except Exception:
+        except Exception as e:
+            logger.error(f"{downloader} {torrent.name}[{current_torrent_tag_list}] {e}")
             return False
         return False
 
@@ -430,7 +431,8 @@ class PTDownloaderLimit(_PluginBase):
                 logger.debug(f"{downloader} {torrent.name}[{current_torrent_tag_list}] "
                              f"做种数{seeders}，超过限速做种数{self._limit_seeders}，继续限速")
                 return True
-        except Exception:
+        except Exception as e:
+            logger.error(f"{downloader} {torrent.name}[{current_torrent_tag_list}] {e}")
             return False
         return False
 
