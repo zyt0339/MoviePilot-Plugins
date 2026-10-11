@@ -24,7 +24,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.8"
+    plugin_version = "1.0.9"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -67,7 +67,7 @@ class QBBanIp(_PluginBase):
             self._nopaths = config.get("nopaths")
             self._tracker_domain = config.get("tracker_domain") or ""  # tracker域名过滤
             self._nolabels = config.get("nolabels") or ""  # 标签过滤
-            self._no_torrent_size = config.get("no_torrent_size") or ""  # 体积过滤
+            self._no_torrent_size = config.get("no_torrent_size", "")  # 体积过滤，保留数字0
 
             self._downloaders1 = config.get("downloaders1")
             # 加载模块
@@ -351,7 +351,7 @@ class QBBanIp(_PluginBase):
                                                "props": {
                                                    "model": "no_torrent_size",
                                                    "label": "种子体积过滤(GB)",
-                                                   "placeholder": "只处理体积大于此值的种子"
+                                                   "placeholder": "只处理体积大于此值的种子，默认0"
                                                }
                                            }
                                        ]
@@ -510,7 +510,8 @@ class QBBanIp(_PluginBase):
                 return f"{file_size / (1024 * 1024 * 1024 * 1024):.0f}TB"
 
     def limit_per_downloader(self, qbt_client, downloader_name):
-        TARGET_TORRENT_SIZE = int(self._no_torrent_size) * 1024 * 1024 * 1024  # xGB
+        size_text = str(self._no_torrent_size or "").strip()
+        TARGET_TORRENT_SIZE = int(size_text or "0") * 1024 * 1024 * 1024  # xGB
         TARGET_TAG = self._nolabels
         TARGET_TRACKER = self._tracker_domain
         # 按逗号分割字符串，去除每个元素的空白字符，转换为整数
