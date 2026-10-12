@@ -1,0 +1,126 @@
+{
+  "name": "0DayFiles",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Leech",
+      "privilege": "Ratio below 0.40; new downloads are restricted"
+    },
+    {
+      "id": 1,
+      "name": "User",
+      "ratio": 0.4
+    },
+    {
+      "id": 2,
+      "name": "PowerUser",
+      "interval": "P1M",
+      "uploaded": "1TiB",
+      "ratio": 0.4
+    },
+    {
+      "id": 3,
+      "name": "SuperUser",
+      "interval": "P2M",
+      "uploaded": "5TiB",
+      "ratio": 0.4
+    },
+    {
+      "id": 4,
+      "name": "ExtremeUser",
+      "privilege": "Trusted uploads",
+      "interval": "P3M",
+      "uploaded": "20TiB",
+      "ratio": 0.4
+    },
+    {
+      "id": 5,
+      "name": "InsaneUser",
+      "privilege": "Trusted uploads",
+      "interval": "P6M",
+      "uploaded": "50TiB",
+      "ratio": 0.4
+    },
+    {
+      "id": 6,
+      "name": "Veteran",
+      "privilege": "Freeleech",
+      "interval": "P1Y",
+      "uploaded": "100TiB",
+      "ratio": 0.4
+    },
+    {
+      "id": 7,
+      "name": "Seeder",
+      "privilege": "Trusted uploads; immune to Hit & Run",
+      "interval": "P1M",
+      "ratio": 0.4,
+      "seedingSize": "5TiB",
+      "averageSeedingTime": "P30D"
+    },
+    {
+      "id": 8,
+      "name": "Archivist",
+      "privilege": "Trusted uploads; Freeleech; immune to Hit & Run",
+      "interval": "P3M",
+      "ratio": 0.4,
+      "seedingSize": "10TiB",
+      "averageSeedingTime": "P60D"
+    },
+    {
+      "id": 100,
+      "name": "Trustee",
+      "groupType": "vip",
+      "privilege": "Trusted uploads; Freeleech; immune to Hit & Run"
+    },
+    {
+      "id": 101,
+      "name": "Internal",
+      "groupType": "vip",
+      "privilege": "Trusted uploads; Freeleech; immune to Hit & Run"
+    },
+    {
+      "id": 200,
+      "name": "Uploader",
+      "groupType": "manager",
+      "privilege": "Trusted uploads; Freeleech; immune to Hit & Run"
+    },
+    {
+      "id": 201,
+      "name": "Editor",
+      "groupType": "manager",
+      "privilege": "Trusted uploads; Freeleech; immune to Hit & Run"
+    },
+    {
+      "id": 202,
+      "name": "Torrent Moderator",
+      "groupType": "manager",
+      "privilege": "Editor privileges and torrent moderation tools"
+    },
+    {
+      "id": 203,
+      "name": "Moderator",
+      "groupType": "manager",
+      "privilege": "Trusted uploads; Freeleech; immune to Hit & Run; moderation tools"
+    },
+    {
+      "id": 204,
+      "name": "Administrator",
+      "groupType": "manager",
+      "privilege": "Administrator tools"
+    },
+    {
+      "id": 205,
+      "name": "Owner",
+      "groupType": "manager",
+      "privilege": "Full site access"
+    },
+    {
+      "id": 206,
+      "name": "Bot",
+      "groupType": "manager",
+      "privilege": "Trusted uploads; Freeleech; immune to Hit & Run; full posting tools"
+    }
+  ]
+}

@@ -47,6 +47,7 @@
       "interval": "P6M",
       "uploaded": "1.25TiB",
       "ratio": 0.7,
+      "specialSeedingSize": "500GiB",
       "seedingTime": "P4Y11M",
       "averageSeedingTime": "P30D",
       "snatches": 60
@@ -58,6 +59,7 @@
       "interval": "P9M",
       "uploaded": "2.5TiB",
       "ratio": 0.85,
+      "specialSeedingSize": "2TiB",
       "seedingTime": "P9Y3M",
       "averageSeedingTime": "P45D",
       "snatches": 75
@@ -69,6 +71,7 @@
       "interval": "P1Y",
       "uploaded": "8TiB",
       "ratio": 1,
+      "specialSeedingSize": "4TiB",
       "seedingTime": "P41Y1M5D",
       "averageSeedingTime": "P60D",
       "snatches": 250
@@ -80,6 +83,7 @@
       "interval": "P2Y",
       "uploaded": "24TiB",
       "ratio": 1.25,
+      "specialSeedingSize": "8TiB",
       "seedingTime": "P123Y3M15D",
       "averageSeedingTime": "P90D",
       "snatches": 500
@@ -91,6 +95,7 @@
       "interval": "P5Y",
       "uploaded": "96TiB",
       "ratio": 4,
+      "specialSeedingSize": "48TiB",
       "seedingTime": "P123Y3M15D",
       "averageSeedingTime": "P180D",
       "snatches": 10000

@@ -1,0 +1,11 @@
+{
+  "name": "Fappaizuri",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "默认等级"
+    }
+  ]
+}

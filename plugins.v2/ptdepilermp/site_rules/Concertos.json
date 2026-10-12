@@ -1,0 +1,14 @@
+{
+  "name": "Concertos",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User"
+    },
+    {
+      "id": 2,
+      "name": "Power User"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "LzTr",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Member",
+      "privilege": "Can make requests, bookmarks, edit Collages, and can access the Top 10",
+      "interval": "P1W",
+      "uploaded": "10GB",
+      "ratio": 0.7,
+      "snatches": 1
+    },
+    {
+      "id": 2,
+      "name": "Power User",
+      "privilege": "Receives invites, can access notifications, create new collages, access power user & invites forums.",
+      "interval": "P2W",
+      "uploaded": "25GB",
+      "ratio": 1.05,
+      "uploads": 5
+    },
+    {
+      "id": 3,
+      "name": "Elite",
+      "privilege": "Top 10 filters",
+      "interval": "P4W",
+      "uploaded": "100GB",
+      "ratio": 1.05,
+      "uploads": 50
+    },
+    {
+      "id": 4,
+      "name": "Torrent Master",
+      "privilege": "Can invite users even when invites are closed, Can send unlimited invites",
+      "interval": "P8W",
+      "uploaded": "200GB",
+      "ratio": 1.05,
+      "uploads": 200
+    }
+  ]
+}

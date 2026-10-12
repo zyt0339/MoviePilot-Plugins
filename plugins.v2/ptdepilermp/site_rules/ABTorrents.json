@@ -1,0 +1,24 @@
+{
+  "name": "ABTorrents",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User"
+    },
+    {
+      "id": 2,
+      "name": "Power User",
+      "interval": "P4W",
+      "uploaded": "50GB",
+      "ratio": 1.2
+    },
+    {
+      "id": 3,
+      "name": "Elite User",
+      "interval": "P12W",
+      "uploaded": "500GB",
+      "ratio": 1.5
+    }
+  ]
+}

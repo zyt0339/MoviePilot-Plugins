@@ -1,0 +1,40 @@
+{
+  "name": "DesiTorrents",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User"
+    },
+    {
+      "id": 2,
+      "name": "PowerUser",
+      "interval": "P4W",
+      "uploaded": "1TB"
+    },
+    {
+      "id": 3,
+      "name": "SuperUser",
+      "interval": "P8W",
+      "uploaded": "5TB"
+    },
+    {
+      "id": 4,
+      "name": "ExtremeUser",
+      "interval": "P13W",
+      "uploaded": "20TB"
+    },
+    {
+      "id": 5,
+      "name": "InsaneUser",
+      "interval": "P26W",
+      "uploaded": "50TB"
+    },
+    {
+      "id": 6,
+      "name": "Veteran",
+      "interval": "P52W",
+      "uploaded": "100TB"
+    }
+  ]
+}

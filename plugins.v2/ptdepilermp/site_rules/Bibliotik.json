@@ -1,0 +1,37 @@
+{
+  "name": "Bibliotik",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "Default class for all new members"
+    },
+    {
+      "id": 2,
+      "name": "Power User",
+      "isKept": true,
+      "privilege": "Create collections; Add torrents to collections (unless protected); Access to the Power User and Invite forums; Exempt from inactivity disabling; Receives one invite on the 1st and 15th of every month (maximum of 2)",
+      "interval": "P2W",
+      "uploaded": "10GiB",
+      "ratio": 1.05,
+      "uploads": 10,
+      "alternative": [
+        {
+          "uploaded": "1GiB",
+          "uploads": 100
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Elite",
+      "isKept": true,
+      "privilege": "Create and edit collections (unless protected); Add torrents to collections (unless protected); Edit torrent page descriptions and images; Moderate authors, creators, publishers, and tags; Access to the Elite, Power User, and Invite forums; Exempt from inactivity disabling; Receives one invite every Sunday (maximum of 4)",
+      "interval": "P4W",
+      "uploaded": "20GiB",
+      "ratio": 1.05,
+      "uploads": 100
+    }
+  ]
+}

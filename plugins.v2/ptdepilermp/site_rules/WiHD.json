@@ -1,0 +1,27 @@
+{
+  "name": "WiHD",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "720p",
+      "interval": "P5W",
+      "uploaded": "250GB",
+      "ratio": 2
+    },
+    {
+      "id": 2,
+      "name": "1080i",
+      "interval": "P15W",
+      "uploaded": "400GB",
+      "ratio": 3
+    },
+    {
+      "id": 3,
+      "name": "1080p",
+      "interval": "P25W",
+      "uploaded": "1.2TB",
+      "ratio": 4.5
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Femdomcult",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "Beginner"
+    },
+    {
+      "id": 2,
+      "name": "Perv",
+      "interval": "P4W"
+    },
+    {
+      "id": 3,
+      "name": "Member"
+    },
+    {
+      "id": 4,
+      "name": "Power Perv"
+    },
+    {
+      "id": 5,
+      "name": "Guru"
+    }
+  ]
+}

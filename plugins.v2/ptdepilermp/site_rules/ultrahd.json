@@ -64,7 +64,7 @@
       "seedingBonus": 1000000
     },
     {
-      "id": 7,
+      "id": 8,
       "name": "Ultimate User",
       "isKept": true,
       "privilege": "得到一个邀请名额",
@@ -74,7 +74,7 @@
       "seedingBonus": 1200000
     },
     {
-      "id": 8,
+      "id": 9,
       "name": "Nexus Master",
       "isKept": true,
       "privilege": "得到两个邀请名额",
