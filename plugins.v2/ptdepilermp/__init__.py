@@ -37,7 +37,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.11"
+    plugin_version = "1.38.12"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -791,7 +791,7 @@ class PTDepilerMp(_PluginBase):
                     "props": {
                         "hide-actions": True,
                         "class": "px-2 py-2 text-sm justify-center rounded-0",
-                        "style": {"min-height": "auto", "border-radius": "0"},
+                        "style": {"min-height": "auto", "border-radius": "0 !important"},
                     },
                 }
             else:
@@ -903,15 +903,23 @@ class PTDepilerMp(_PluginBase):
             )
             table_rows.append({
                 "component": "tr",
+                "props": {
+                    "class": "rounded-0",
+                    "style": {"border-radius": "0 !important"},
+                },
                 "content": [{
                     "component": "td",
-                    "props": {"colspan": len(headers), "class": "pa-0"},
+                    "props": {
+                        "colspan": len(headers),
+                        "class": "pa-0 rounded-0",
+                        "style": {"border-radius": "0 !important"},
+                    },
                     "content": [{
                         "component": "VExpansionPanels",
                         "props": {
                             "variant": "accordion",
                             "class": "w-100 rounded-0",
-                            "style": {"border-radius": "0"},
+                            "style": {"border-radius": "0 !important"},
                         },
                         "content": [panel],
                     }],
@@ -1050,7 +1058,7 @@ class PTDepilerMp(_PluginBase):
             "component": "VExpansionPanel",
             "props": {
                 "class": "rounded-0 elevation-0",
-                "style": {"background": "transparent", "border-radius": "0"},
+                "style": {"background": "transparent", "border-radius": "0 !important"},
             },
             "content": [
                 panel_header,
@@ -1058,7 +1066,7 @@ class PTDepilerMp(_PluginBase):
                     "component": "VExpansionPanelText",
                     "props": {
                         "class": "rounded-0",
-                        "style": {"border-radius": "0"},
+                        "style": {"border-radius": "0 !important"},
                     },
                     "content": [
                     {

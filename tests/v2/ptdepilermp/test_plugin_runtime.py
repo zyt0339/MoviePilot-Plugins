@@ -523,7 +523,7 @@ class PluginRuntimeTest(unittest.TestCase):
             row = self.plugin._rows()[0]
             panel = self.plugin._level_panel(row)
             self.assertEqual(panel["props"]["style"]["background"], "transparent")
-            self.assertEqual(panel["props"]["style"]["border-radius"], "0")
+            self.assertEqual(panel["props"]["style"]["border-radius"], "0 !important")
             panel_title = panel["content"][0]
             self.assertEqual(panel_title["content"][0]["text"], "站点A")
             self.assertEqual(panel_title["content"][0]["props"]["class"], "text-success")
@@ -559,12 +559,15 @@ class PluginRuntimeTest(unittest.TestCase):
                 ],
             )
             table_row = table["content"][1]["content"][0]
+            self.assertEqual(table_row["props"]["style"]["border-radius"], "0 !important")
+            table_cell = table_row["content"][0]
+            self.assertEqual(table_cell["props"]["style"]["border-radius"], "0 !important")
             expansion_panels = table_row["content"][0]["content"][0]
-            self.assertEqual(expansion_panels["props"]["style"]["border-radius"], "0")
+            self.assertEqual(expansion_panels["props"]["style"]["border-radius"], "0 !important")
             data_cells = self._embedded_row_cells(table_row)
             self.assertEqual(len(data_cells), 8)
             self.assertEqual(data_cells[1]["component"], "VExpansionPanelTitle")
-            self.assertEqual(data_cells[1]["props"]["style"]["border-radius"], "0")
+            self.assertEqual(data_cells[1]["props"]["style"]["border-radius"], "0 !important")
             self.assertEqual(
                 sum(cell["component"] == "VExpansionPanelTitle" for cell in data_cells),
                 1,
