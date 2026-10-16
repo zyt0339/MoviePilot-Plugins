@@ -5,7 +5,7 @@
     "labels": "刷流,仪表板",
     "version": "5.0.0",
     "icon": "Iyuu_A.png",
-    "author": "zyt",
+    "author": "zyt0339",
     "level": 2,
     "history": {
       "v5.0.0": "适配 MoviePilot V3 统一媒体身份和稳定 SDK；保留订阅原名排除保护。",
