@@ -14,6 +14,8 @@ from app.schemas.types import EventType
 from qbittorrentapi import TorrentState, TrackerStatus
 from urllib.parse import urlparse
 import time
+import os
+import shutil
 
 
 class QBBanIp(_PluginBase):
@@ -24,7 +26,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.10"
+    plugin_version = "1.0.11"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -615,24 +617,25 @@ class QBBanIp(_PluginBase):
                 if torrent.hash in toHashs:
                     progress = torrent.progress
                     if progress > 0.8:
-                        # 重新汇报
-                        qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
-                        time.sleep(2)
-                        # 导出
-                        torrent_file = qbt_client.torrents_export(torrent_hash=torrent.hash)
-                        # 删除
-                        qbt_client.torrents_delete(torrent_hashes=torrent.hash, delete_files=True)
-                        # 重新添加
-                        qbt_client.torrents_add(
-                            torrent_files=torrent_file,
-                            save_path=torrent.save_path,
-                            category=torrent.category,
-                            tags=torrent.tags,
-                        )
-                        logger.info(
-                            f"---种子'{torrent['name'][:30]}...'下载进度{progress * 100:.2f}%,超80%,已清除重来")
-                        time.sleep(2)
-
+                        self._reset_torrent_data(qbt_client, torrent)
+                        # 原实现暂时保留：强制汇报、删除任务并重新添加（已停用）。
+                        # # 重新汇报
+                        # qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
+                        # time.sleep(2)
+                        # # 导出
+                        # torrent_file = qbt_client.torrents_export(torrent_hash=torrent.hash)
+                        # # 删除
+                        # qbt_client.torrents_delete(torrent_hashes=torrent.hash, delete_files=True)
+                        # # 重新添加
+                        # qbt_client.torrents_add(
+                        #     torrent_files=torrent_file,
+                        #     save_path=torrent.save_path,
+                        #     category=torrent.category,
+                        #     tags=torrent.tags,
+                        # )
+                        # logger.info(
+                        #     f"---种子'{torrent['name'][:30]}...'下载进度{progress * 100:.2f}%,超80%,已清除重来")
+                        # time.sleep(2)
 
         if to_limit_hashs:
             qbt_client.torrents_set_download_limit(DOWNLOADLIMIT_SPEED, to_limit_hashs)  # 11M
@@ -660,6 +663,28 @@ class QBBanIp(_PluginBase):
                 f"✅ {downloader_name}成功更新IP黑名单,本次新增 {len(ips_to_block)} 个IP,下载器中共 {len(updated_ips)} 个IP")
         else:
             logger.info(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
+
+    def _reset_torrent_data(self, qbt_client, torrent):
+        """停止原任务，清理数据后重新校验并恢复下载。"""
+        try:
+            qbt_client.torrents_pause(torrent_hashes=torrent.hash)
+            time.sleep(2)
+            data_path = os.path.join(torrent.save_path, torrent.name)
+            if os.path.exists(data_path):
+                if os.path.isdir(data_path):
+                    shutil.rmtree(data_path)
+                else:
+                    os.remove(data_path)
+            time.sleep(5)
+            qbt_client.torrents_recheck(torrent_hashes=torrent.hash)
+            # 停止的任务校验后仍可能保持停止，提交恢复请求以便校验后继续下载。
+            time.sleep(5)
+            qbt_client.torrents_resume(torrent_hashes=torrent.hash)
+            logger.info(
+                f"---种子'{torrent['name'][:30]}...'下载进度超80%,已清除重来")
+            time.sleep(2)
+        except Exception as error:
+            logger.error(f"自动管理种子清理或校验失败（{type(error).__name__}）")
 
     def get_page(self) -> List[dict]:
         pass

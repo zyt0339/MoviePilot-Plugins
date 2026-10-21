@@ -13,12 +13,13 @@ def plugin():
     tree = ast.parse(path.read_text(encoding="utf-8"))
     cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "QBBanIp")
     methods = [node for node in cls.body if isinstance(node, ast.FunctionDef)
-               and node.name in ("limit_per_downloader", "readable_file_size", "init_plugin", "get_form", "__update_config")]
-    namespace = {"logger": Mock(),
+               and node.name in ("limit_per_downloader", "readable_file_size", "init_plugin", "get_form", "__update_config", "_reset_torrent_data")]
+    namespace = {"logger": Mock(), "os": __import__("os"),
+                 "shutil": __import__("shutil"), "time": Mock(),
                  "TorrentState": SimpleNamespace(DOWNLOADING="downloading")}
     exec(compile(ast.Module(body=methods, type_ignores=[]), str(path), "exec"), namespace)
     test_class = type("IsolatedQBBanIp", (), {name: namespace[name] for name in
-                      ("limit_per_downloader", "readable_file_size", "init_plugin", "get_form", "__update_config")})
+                      ("limit_per_downloader", "readable_file_size", "init_plugin", "get_form", "__update_config", "_reset_torrent_data")})
     instance = test_class()
     instance._nolabels = ""
     instance._tracker_domain = ""
