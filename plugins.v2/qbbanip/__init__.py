@@ -24,7 +24,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.9"
+    plugin_version = "1.0.10"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -44,6 +44,7 @@ class QBBanIp(_PluginBase):
     _cron = None
 
     _tracker_ports = []  # 端口白名单
+    _ip_whitelist = "159.195.49.141"  # IP白名单
     _nopaths = None  # 自动管理hash
     _tracker_domain = None  # tracker域名过滤
     _nolabels = ""  # 标签过滤
@@ -57,6 +58,7 @@ class QBBanIp(_PluginBase):
     def init_plugin(self, config: dict = None):
         # 停止现有任务
         self.stop_service()
+        self._ip_whitelist = (config or {}).get("ip_whitelist", "159.195.49.141") or ""
         if config:
             self._enabled = config.get("enabled")
             self._onlyonce = config.get("onlyonce")
@@ -377,6 +379,23 @@ class QBBanIp(_PluginBase):
                                        "component": "VCol",
                                        "props": {
                                            "cols": 12,
+                                           "md": 12
+                                       },
+                                       "content": [
+                                           {
+                                               "component": "VTextField",
+                                               "props": {
+                                                   "model": "ip_whitelist",
+                                                   "label": "IP白名单",
+                                                   "placeholder": "多个用英文逗号分隔"
+                                               }
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "component": "VCol",
+                                       "props": {
+                                           "cols": 12,
                                        },
                                        "content": [
                                            {
@@ -422,7 +441,7 @@ class QBBanIp(_PluginBase):
                                                "props": {
                                                    "type": "info",
                                                    "variant": "tonal",
-                                                   "text": "不在端口白名单中的IP会加入QB黑名单"
+                                                   "text": "端口和IP均不在白名单中的IP会加入QB黑名单"
                                                }
                                            }
                                        ]
@@ -437,6 +456,7 @@ class QBBanIp(_PluginBase):
                    "notify": False,
                    "cron": "*/3 * * * *",
                    "tracker_ports": "63222,63223,63224",
+                   "ip_whitelist": "159.195.49.141",
                     "nopaths": "",
                     "tracker_domain": "dmhy",
                    "nolabels": "",
@@ -451,6 +471,7 @@ class QBBanIp(_PluginBase):
             "notify": self._notify,
             "cron": self._cron,
             "tracker_ports": self._tracker_ports,
+            "ip_whitelist": self._ip_whitelist,
             "nopaths": self._nopaths,
             "tracker_domain": self._tracker_domain,
             "nolabels": self._nolabels,
@@ -520,6 +541,9 @@ class QBBanIp(_PluginBase):
             for port in self._tracker_ports.split(',')
             if port.strip()  # 过滤空字符串（如",,80,,"的情况）
         ]
+        TARGET_IP_WHITELIST = {
+            ip.strip() for ip in self._ip_whitelist.split(',') if ip.strip()
+        }
         DOWNLOADLIMIT_SPEED = 11 * 1024 * 1024
         # 获取需要屏蔽的IP
         ips_to_block = set()
@@ -577,6 +601,8 @@ class QBBanIp(_PluginBase):
                     continue
                 # 检查端口是否在允许范围内
                 if port not in TARGET_PORT_RANGE:
+                    if ip in TARGET_IP_WHITELIST:
+                        continue
                     ips_to_block.add(ip)
                     cur_to_block_count = cur_to_block_count + 1
             logger.info(
