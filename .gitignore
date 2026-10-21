@@ -161,3 +161,8 @@ cython_debug/
 
 .idea/
 .vscode/
+
+# Keep plugin README files local
+/plugins/**/README.md
+/plugins.v2/**/README.md
+/plugins.v3/**/README.md
