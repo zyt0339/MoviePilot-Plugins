@@ -65,7 +65,7 @@ def test_scan_dispatches_selected_hash_above_threshold(plugin, selected, progres
     plugin.limit_per_downloader(client, "mock")
     assert plugin._reset_torrent_data.call_count == calls
     if calls:
-        plugin._reset_torrent_data.assert_called_once_with(client, torrent)
+        plugin._reset_torrent_data.assert_called_once_with(client, torrent, path_mapper=None)
     client.torrents_delete.assert_not_called()
     client.torrents_add.assert_not_called()
 
@@ -110,3 +110,51 @@ def test_export_error_never_deletes_task(plugin, tmp_path):
     plugin._reset_torrent_data(client, torrent)
     client.torrents_delete.assert_not_called()
     client.torrents_add.assert_not_called()
+
+
+@pytest.mark.parametrize("kind", ["file", "directory", "missing"])
+def test_mapped_path_used_for_cleanup_and_original_path_for_readd(plugin, tmp_path, kind):
+    local = tmp_path / "mapped-data"
+    local.mkdir()
+    target = local / "payload"
+    if kind == "file":
+        target.write_bytes(b"mock")
+    elif kind == "directory":
+        target.mkdir()
+        (target / "part").write_bytes(b"mock")
+    class Torrent(dict):
+        hash = "target"
+        save_path = "/downloads"
+        name = "payload"
+        category = "mock-category"
+        tags = "mock-tag"
+    torrent = Torrent(name="payload")
+    client = Mock()
+    client.torrents_export.return_value = b"mock-torrent"
+    mapper = Mock(return_value=str(target))
+    plugin._reset_torrent_data(client, torrent, path_mapper=mapper)
+    mapper.assert_called_once_with("/downloads/payload")
+    assert not target.exists()
+    if kind == "missing":
+        client.torrents_delete.assert_called_once_with(torrent_hashes="target", delete_files=True)
+        assert client.torrents_add.call_args.kwargs["save_path"] == "/downloads"
+        client.torrents_recheck.assert_not_called()
+    else:
+        client.torrents_delete.assert_not_called()
+        client.torrents_add.assert_not_called()
+        client.torrents_recheck.assert_called_once_with(torrent_hashes="target")
+
+
+def test_current_downloader_mapping_reaches_scan(plugin):
+    module = Mock()
+    module.normalize_return_path.return_value = "/mock/storage/payload"
+    client = Mock()
+    plugin._downloaders1 = ["selected-qb"]
+    plugin.get_downloader_service_infos = Mock(return_value={"selected-qb": SimpleNamespace(
+        name="selected-qb", type="qbittorrent", instance=SimpleNamespace(qbc=client), module=module)})
+    plugin.limit_per_downloader = Mock()
+    plugin.limit()
+    mapper = plugin.limit_per_downloader.call_args.kwargs["path_mapper"]
+    assert mapper("/downloads/payload") == "/mock/storage/payload"
+    from pathlib import Path
+    module.normalize_return_path.assert_called_once_with(Path("/downloads/payload"), "selected-qb")

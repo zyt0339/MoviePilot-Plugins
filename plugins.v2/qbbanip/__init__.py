@@ -16,6 +16,7 @@ from urllib.parse import urlparse
 import time
 import os
 import shutil
+from pathlib import Path
 
 
 class QBBanIp(_PluginBase):
@@ -26,7 +27,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.12"
+    plugin_version = "1.0.13"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -503,7 +504,10 @@ class QBBanIp(_PluginBase):
             dl_type = downloader_service_info.type
             logger.info(f"开始扫描下载器: {downloader}")
             if dl_type == "qbittorrent":
-                self.limit_per_downloader(downloader_obj.qbc, downloader)
+                self.limit_per_downloader(
+                    downloader_obj.qbc, downloader,
+                    path_mapper=lambda path: downloader_service_info.module.normalize_return_path(
+                        Path(path), downloader))
             else:
                 logger.warning(f"暂不支持 {dl_type} 类型下载器 {downloader}")
         logger.info(f"执行完成")
@@ -532,7 +536,7 @@ class QBBanIp(_PluginBase):
             else:
                 return f"{file_size / (1024 * 1024 * 1024 * 1024):.0f}TB"
 
-    def limit_per_downloader(self, qbt_client, downloader_name):
+    def limit_per_downloader(self, qbt_client, downloader_name, path_mapper=None):
         size_text = str(self._no_torrent_size or "").strip()
         TARGET_TORRENT_SIZE = int(size_text or "0") * 1024 * 1024 * 1024  # xGB
         TARGET_TAG = self._nolabels
@@ -617,7 +621,7 @@ class QBBanIp(_PluginBase):
                 if torrent.hash in toHashs:
                     progress = torrent.progress
                     if progress > 0.8:
-                        self._reset_torrent_data(qbt_client, torrent)
+                        self._reset_torrent_data(qbt_client, torrent, path_mapper=path_mapper)
                         # 原实现保留备查；路径不存在时由_reset_torrent_data回退执行。
                         # # 重新汇报
                         # qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
@@ -664,12 +668,14 @@ class QBBanIp(_PluginBase):
         else:
             logger.info(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
 
-    def _reset_torrent_data(self, qbt_client, torrent):
+    def _reset_torrent_data(self, qbt_client, torrent, path_mapper=None):
         """优先本地清理并校验；路径不存在时回退到QB删除任务及文件后重加。"""
         try:
             qbt_client.torrents_pause(torrent_hashes=torrent.hash)
             time.sleep(2)
             data_path = os.path.join(torrent.save_path, torrent.name)
+            if path_mapper:
+                data_path = path_mapper(data_path)
             if os.path.exists(data_path):
                 if os.path.isdir(data_path):
                     shutil.rmtree(data_path)
