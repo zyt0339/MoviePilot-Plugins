@@ -5,7 +5,7 @@ import pytest
 from test_size_filter import plugin
 
 
-@pytest.mark.parametrize("kind", ["file", "directory", "missing"])
+@pytest.mark.parametrize("kind", ["file", "directory"])
 def test_reset_keeps_original_task(plugin, tmp_path, kind):
     target = tmp_path / "payload"
     if kind == "file":
@@ -66,5 +66,47 @@ def test_scan_dispatches_selected_hash_above_threshold(plugin, selected, progres
     assert plugin._reset_torrent_data.call_count == calls
     if calls:
         plugin._reset_torrent_data.assert_called_once_with(client, torrent)
+    client.torrents_delete.assert_not_called()
+    client.torrents_add.assert_not_called()
+
+
+def test_missing_path_falls_back_to_qb_delete_and_readd(plugin, tmp_path):
+    class Torrent(dict):
+        hash = "target"
+        save_path = str(tmp_path)
+        name = "missing"
+        category = "mock-category"
+        tags = "mock-tag"
+    torrent = Torrent(name="missing")
+    client = Mock()
+    client.torrents_export.return_value = b"mock-torrent"
+    plugin._reset_torrent_data(client, torrent)
+    names = [call[0] for call in client.mock_calls]
+    assert names == ["torrents_pause", "torrents_export",
+                     "torrents_delete", "torrents_add"]
+    client.torrents_reannounce.assert_not_called()
+    client.torrents_delete.assert_called_once_with(torrent_hashes="target", delete_files=True)
+    client.torrents_add.assert_called_once_with(
+        torrent_files=b"mock-torrent", save_path=str(tmp_path), category="mock-category", tags="mock-tag")
+    client.torrents_recheck.assert_not_called()
+    client.torrents_resume.assert_not_called()
+
+
+@pytest.mark.parametrize("export_result", [None, b""])
+def test_empty_export_never_deletes_task(plugin, tmp_path, export_result):
+    torrent = SimpleNamespace(hash="target", save_path=str(tmp_path), name="missing")
+    client = Mock()
+    client.torrents_export.return_value = export_result
+    plugin._reset_torrent_data(client, torrent)
+    client.torrents_delete.assert_not_called()
+    client.torrents_add.assert_not_called()
+    client.torrents_recheck.assert_not_called()
+
+
+def test_export_error_never_deletes_task(plugin, tmp_path):
+    torrent = SimpleNamespace(hash="target", save_path=str(tmp_path), name="missing")
+    client = Mock()
+    client.torrents_export.side_effect = RuntimeError("mock export failure")
+    plugin._reset_torrent_data(client, torrent)
     client.torrents_delete.assert_not_called()
     client.torrents_add.assert_not_called()

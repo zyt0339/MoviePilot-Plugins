@@ -26,7 +26,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.11"
+    plugin_version = "1.0.12"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -618,7 +618,7 @@ class QBBanIp(_PluginBase):
                     progress = torrent.progress
                     if progress > 0.8:
                         self._reset_torrent_data(qbt_client, torrent)
-                        # 原实现暂时保留：强制汇报、删除任务并重新添加（已停用）。
+                        # 原实现保留备查；路径不存在时由_reset_torrent_data回退执行。
                         # # 重新汇报
                         # qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
                         # time.sleep(2)
@@ -665,7 +665,7 @@ class QBBanIp(_PluginBase):
             logger.info(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
 
     def _reset_torrent_data(self, qbt_client, torrent):
-        """停止原任务，清理数据后重新校验并恢复下载。"""
+        """优先本地清理并校验；路径不存在时回退到QB删除任务及文件后重加。"""
         try:
             qbt_client.torrents_pause(torrent_hashes=torrent.hash)
             time.sleep(2)
@@ -675,6 +675,24 @@ class QBBanIp(_PluginBase):
                     shutil.rmtree(data_path)
                 else:
                     os.remove(data_path)
+            else:
+                # qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
+                # time.sleep(2)
+                torrent_file = qbt_client.torrents_export(torrent_hash=torrent.hash)
+                if not torrent_file:
+                    logger.error("种子导出为空，取消删除任务")
+                    return
+                qbt_client.torrents_delete(torrent_hashes=torrent.hash, delete_files=True)
+                qbt_client.torrents_add(
+                    torrent_files=torrent_file,
+                    save_path=torrent.save_path,
+                    category=torrent.category,
+                    tags=torrent.tags,
+                )
+                logger.info(
+                    f"---种子'{torrent['name'][:30]}...'下载进度超80%,已清除重来,QB重新添加")
+                time.sleep(2)
+                return
             time.sleep(5)
             qbt_client.torrents_recheck(torrent_hashes=torrent.hash)
             # 停止的任务校验后仍可能保持停止，提交恢复请求以便校验后继续下载。
