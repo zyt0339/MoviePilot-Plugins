@@ -12,7 +12,7 @@
       "name": "结丹",
       "privilege": "无",
       "interval": "P5W",
-      "downloaded": "10GB",
+      "downloaded": "10GiB",
       "ratio": 2
     },
     {
@@ -20,7 +20,7 @@
       "name": "元婴",
       "privilege": "无",
       "interval": "P10W",
-      "downloaded": "25GB",
+      "downloaded": "25GiB",
       "ratio": 2
     },
     {
@@ -28,7 +28,7 @@
       "name": "出窍",
       "privilege": "无",
       "interval": "P15W",
-      "downloaded": "50GB",
+      "downloaded": "50GiB",
       "ratio": 2
     },
     {
@@ -36,7 +36,7 @@
       "name": "炼虚",
       "privilege": "无",
       "interval": "P20W",
-      "downloaded": "100GB",
+      "downloaded": "100GiB",
       "ratio": 2
     },
     {
@@ -44,7 +44,7 @@
       "name": "合体",
       "privilege": "无",
       "interval": "P25W",
-      "downloaded": "200GB",
+      "downloaded": "200GiB",
       "ratio": 4
     },
     {
@@ -52,7 +52,7 @@
       "name": "大乘",
       "privilege": "无",
       "interval": "P30W",
-      "downloaded": "300GB",
+      "downloaded": "300GiB",
       "ratio": 6
     },
     {
@@ -60,7 +60,7 @@
       "name": "真仙",
       "privilege": "无",
       "interval": "P35W",
-      "downloaded": "400GB",
+      "downloaded": "400GiB",
       "ratio": 8
     }
   ]
