@@ -147,6 +147,7 @@ def test_mapped_path_used_for_cleanup_and_original_path_for_readd(plugin, tmp_pa
 
 def test_current_downloader_mapping_reaches_scan(plugin):
     module = Mock()
+    module.get_config.return_value = SimpleNamespace(path_mapping=[("/mock/storage", "/downloads")])
     module.normalize_return_path.return_value = "/mock/storage/payload"
     client = Mock()
     plugin._downloaders1 = ["selected-qb"]
@@ -158,3 +159,30 @@ def test_current_downloader_mapping_reaches_scan(plugin):
     assert mapper("/downloads/payload") == "/mock/storage/payload"
     from pathlib import Path
     module.normalize_return_path.assert_called_once_with(Path("/downloads/payload"), "selected-qb")
+    module.get_config.assert_called_once_with("selected-qb")
+
+
+@pytest.mark.parametrize("source, expected", [
+    ("/downloads/payload", "/mock/storage/payload"),
+    ("/downloads/nested/payload", "/mock/storage/nested/payload"),
+    ("/downloads2/payload", "/downloads2/payload"),
+])
+def test_host_return_path_mapping_contract(plugin, source, expected):
+    # 直接验证本地宿主的映射方法，不启动宿主或读取真实运行配置。
+    import ast
+    from pathlib import Path
+    from typing import Optional, Union
+    host_path = Path(__file__).resolve().parents[4] / "MoviePilot/app/modules/__init__.py"
+    tree = ast.parse(host_path.read_text())
+    host_class = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "_DownloaderBase")
+    methods = [n for n in host_class.body if isinstance(n, ast.FunctionDef)
+               and n.name in ("__replace_path_prefix", "normalize_return_path")]
+    isolated = ast.ClassDef(name="IsolatedDownloader", bases=[], keywords=[], body=methods, decorator_list=[])
+    namespace = {"Path": Path, "Optional": Optional, "Union": Union}
+    exec(compile(ast.fix_missing_locations(ast.Module(body=[isolated], type_ignores=[])), str(host_path), "exec"), namespace)
+    module = namespace["IsolatedDownloader"]()
+    config = SimpleNamespace(path_mapping=[("local:/mock/storage", "/downloads")])
+    module.get_config = Mock(return_value=config)
+    service = SimpleNamespace(module=module, name="mock-qb", config=config)
+    assert plugin._map_cleanup_path(source, service) == expected
+    module.get_config.assert_called_with("mock-qb")

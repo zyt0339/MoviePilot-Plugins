@@ -27,7 +27,7 @@ class QBBanIp(_PluginBase):
     # 插件图标
     plugin_icon = "upload.png"
     # 插件版本
-    plugin_version = "1.0.13"
+    plugin_version = "1.0.14"
     # 插件作者
     plugin_author = "zyt"
     # 作者主页
@@ -506,8 +506,8 @@ class QBBanIp(_PluginBase):
             if dl_type == "qbittorrent":
                 self.limit_per_downloader(
                     downloader_obj.qbc, downloader,
-                    path_mapper=lambda path: downloader_service_info.module.normalize_return_path(
-                        Path(path), downloader))
+                    path_mapper=lambda path, service=downloader_service_info:
+                        self._map_cleanup_path(path, service))
             else:
                 logger.warning(f"暂不支持 {dl_type} 类型下载器 {downloader}")
         logger.info(f"执行完成")
@@ -668,20 +668,43 @@ class QBBanIp(_PluginBase):
         else:
             logger.info(f"🎯 {downloader_name}未发现需要屏蔽的IP地址")
 
+    def _map_cleanup_path(self, path, service):
+        """使用当前下载器模块的反向映射，并记录实际读取到的路径配置。"""
+        module = service.module
+        service_config = getattr(service, "config", None)
+        logger.debug(
+            f"自动管理路径映射：下载器={service.name!r}，模块={type(module).__name__}，"
+            f"服务配置存在={service_config is not None}，"
+            f"服务路径映射={getattr(service_config, 'path_mapping', None)!r}")
+        config = module.get_config(service.name)
+        logger.debug(
+            f"自动管理路径映射：模块配置存在={config is not None}，"
+            f"模块路径映射={getattr(config, 'path_mapping', None)!r}")
+        logger.debug(f"自动管理路径映射：调用normalize_return_path，输入={path!r}，下载器={service.name!r}")
+        mapped_path = module.normalize_return_path(Path(path), service.name)
+        logger.debug(f"自动管理路径映射：输出={mapped_path!r}，路径发生变化={mapped_path != path}")
+        return mapped_path
+
     def _reset_torrent_data(self, qbt_client, torrent, path_mapper=None):
         """优先本地清理并校验；路径不存在时回退到QB删除任务及文件后重加。"""
         try:
             qbt_client.torrents_pause(torrent_hashes=torrent.hash)
             time.sleep(2)
             data_path = os.path.join(torrent.save_path, torrent.name)
+            logger.debug(f"自动管理路径检查：QB保存路径={torrent.save_path!r}，种子名称={torrent.name!r}")
+            logger.debug(f"自动管理路径检查：转换前路径={data_path!r}，启用路径转换={bool(path_mapper)}")
             if path_mapper:
                 data_path = path_mapper(data_path)
-            if os.path.exists(data_path):
+            path_exists = os.path.exists(data_path)
+            logger.debug(f"自动管理路径检查：转换后路径={data_path!r}，路径存在={path_exists}")
+            if path_exists:
+                logger.debug(f"自动管理路径检查：使用本地清理，是否目录={os.path.isdir(data_path)}")
                 if os.path.isdir(data_path):
                     shutil.rmtree(data_path)
                 else:
                     os.remove(data_path)
             else:
+                logger.debug("自动管理路径检查：转换后路径不存在，使用QB API删除任务及文件并重新添加")
                 # qbt_client.torrents_reannounce(torrent_hashes=torrent.hash)
                 # time.sleep(2)
                 torrent_file = qbt_client.torrents_export(torrent_hash=torrent.hash)
