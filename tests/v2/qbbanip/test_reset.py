@@ -186,3 +186,12 @@ def test_host_return_path_mapping_contract(plugin, source, expected):
     service = SimpleNamespace(module=module, name="mock-qb", config=config)
     assert plugin._map_cleanup_path(source, service) == expected
     module.get_config.assert_called_with("mock-qb")
+
+
+@pytest.mark.parametrize("config", [None, SimpleNamespace(path_mapping=[]), SimpleNamespace(path_mapping=None)])
+def test_no_mapping_keeps_original_path_without_conversion(plugin, config):
+    module = Mock()
+    module.get_config.return_value = config
+    service = SimpleNamespace(module=module, name="mock-qb")
+    assert plugin._map_cleanup_path("/downloads/payload", service) == "/downloads/payload"
+    module.normalize_return_path.assert_not_called()

@@ -160,11 +160,12 @@
     "name": "QB IP黑名单",
     "description": "自定义时间点执行限速逻辑",
     "labels": "黑名单",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "icon": "upload.png",
     "author": "zyt0339",
     "level": 2,
     "history": {
+      "v1.0.15": "支持下载器配置路径映射",
       "v1.0.14": "debug 路径",
       "v1.0.13": "增加 路径映射",
       "v1.0.12": "增加清理兜底逻辑",
