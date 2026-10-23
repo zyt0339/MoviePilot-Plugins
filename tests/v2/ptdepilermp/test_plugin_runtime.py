@@ -229,7 +229,7 @@ class PluginRuntimeTest(unittest.TestCase):
         page = self.plugin.get_page()
         cards = page[0]["content"][0]["content"][:4]
         self.assertEqual([card["content"][0]["content"][0]["content"][1]["text"] for card in cards], [
-            "✓ 当前 · 全部 2", "已保号 1", "未保号 1", "无法判断 0",
+            "✓ 当前 · 全部 2", "已保号 1", "未保号 1", "无法判断 1",
         ])
         self.assertEqual(
             cards[2]["content"][0]["events"]["click"]["params"],
@@ -244,14 +244,26 @@ class PluginRuntimeTest(unittest.TestCase):
             "class": "flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
             "style": {"min-width": "0", "flex-basis": "0"},
         })
-        sort_button = sort_column["content"][0]
-        self.assertEqual(sort_button["component"], "VBtn")
-        self.assertEqual(sort_button["text"], "保号状态")
-        self.assertEqual(sort_button["props"]["append-icon"], "mdi-menu-down")
-        menu_items = sort_button["content"][0]["content"][0]["content"]
+        sort_card = sort_column["content"][0]
+        self.assertEqual(sort_card["component"], "VCard")
+        self.assertEqual(sort_card["props"]["variant"], "tonal")
+        self.assertEqual(sort_card["props"]["color"], "primary")
+        sort_text = sort_card["content"][0]
+        self.assertEqual(sort_text["component"], "VCardText")
+        self.assertEqual(sort_text["props"]["class"], "text-center py-2 py-sm-4 px-1")
+        self.assertEqual(sort_text["content"][0]["text"], "保号状态 ▾")
+        self.assertIn("d-sm-none", sort_text["content"][0]["props"]["class"])
+        self.assertIn("font-weight-bold", sort_text["content"][0]["props"]["class"])
+        self.assertEqual(sort_text["content"][0]["props"]["style"]["font-size"], "0.625rem")
+        menu_items = sort_text["content"][2]["content"][0]["content"]
         self.assertEqual([item["props"]["title"] for item in menu_items], [
             "保号状态", "入站时间", "上传量", "分享率",
         ])
+        self.assertTrue(all(item["props"]["class"] == "text-center" for item in menu_items))
+        self.assertTrue(all(
+            item["props"]["style"] == {"text-align": "center"}
+            for item in menu_items
+        ))
 
         response = self.plugin.set_page_filter("unretained")
         self.assertTrue(response.success)
@@ -264,6 +276,13 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertFalse(invalid_response.success)
         self.assertEqual(invalid_response.message, "不支持的筛选状态")
         self.assertIsNone(invalid_response.data)
+        stale_response = self.plugin.set_page_filter("stale")
+        self.assertFalse(stale_response.success)
+
+        self.plugin.set_page_filter("unknown")
+        unknown_rows = self._page_table(self.plugin.get_page())["content"][1]["content"]
+        self.assertEqual(len(unknown_rows), 1)
+        self.assertEqual(self._embedded_row_cells(unknown_rows[0])[0]["text"], "未保号站")
 
         # 热重载后 API 可能仍绑定旧实例；筛选结果必须能被新页面实例读取。
         reloaded_plugin = self.module.PTDepilerMp()
@@ -479,6 +498,36 @@ class PluginRuntimeTest(unittest.TestCase):
         self.assertEqual([row["site_name"] for row in rendered_rows], [
             "已保号较早", "已保号较晚", "未保号较早",
         ])
+
+    def test_dashboard_unknown_filter_includes_stale_rows_without_duplicate_count(self):
+        rows = [
+            {
+                "site_name": "陈旧已保号",
+                "site_url": None,
+                "user": {},
+                "rule": {},
+                "result": self.module.SiteLevelResult("a", None, "user", None, None, True),
+                "stale": True,
+            },
+            {
+                "site_name": "陈旧且无法判断",
+                "site_url": None,
+                "user": {},
+                "rule": {},
+                "result": self.module.SiteLevelResult("b", None, "user", None, None, None),
+                "stale": True,
+            },
+        ]
+        dashboard_html = self.plugin._dashboard_filter(
+            rows,
+            self.plugin._summary(rows),
+        )["props"]["srcdoc"]
+        self.assertNotIn('ptd-dashboard-stale', dashboard_html)
+        self.assertIn('无法判断 2</label>', dashboard_html)
+        self.assertIn(
+            'class="ptd-row-group ptd-status-retained ptd-status-stale ptd-status-unknown"',
+            dashboard_html,
+        )
 
     def test_safe_site_links_and_bulk_open_groups(self):
         FakeSiteOper.sites = [
@@ -825,7 +874,6 @@ class PluginRuntimeTest(unittest.TestCase):
             'for="ptd-dashboard-retained"',
             'for="ptd-dashboard-unretained"',
             'for="ptd-dashboard-unknown"',
-            'for="ptd-dashboard-stale"',
             "ptd-filter-table",
             "ptd-rule-detail",
             "展开或收起完整等级规则",
@@ -835,6 +883,11 @@ class PluginRuntimeTest(unittest.TestCase):
             "new parent.MutationObserver(queueThemeSync)",
         ):
             self.assertIn(marker, dashboard_html)
+        self.assertNotIn('ptd-dashboard-stale', dashboard_html)
+        self.assertIn('grid-template-columns:repeat(4,minmax(0,1fr))', dashboard_html)
+        self.assertIn('无法判断 1</label>', dashboard_html)
+        self.assertIn('ptd-status-stale', dashboard_html)
+        self.assertIn('ptd-status-unknown', dashboard_html)
         form_payload = json.dumps(self.plugin.get_form(), ensure_ascii=False)
         self.assertNotIn("显示仪表盘", form_payload)
         self.assertNotIn("输出一次调查日志", form_payload)

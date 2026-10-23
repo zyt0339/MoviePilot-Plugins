@@ -37,7 +37,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.15"
+    plugin_version = "1.38.16"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -48,7 +48,7 @@ class PTDepilerMp(_PluginBase):
     _cron = ""
     _donor_sites: List[str] = []
     _scheduler: Optional[BackgroundScheduler] = None
-    _page_filter_options = {"all", "retained", "unretained", "unknown", "stale"}
+    _page_filter_options = {"all", "retained", "unretained", "unknown"}
     _page_filter_data_key = "page_filter"
     _page_sort_options = {"retention", "join_at", "upload", "ratio"}
     _page_sort_data_key = "page_sort"
@@ -948,6 +948,8 @@ class PTDepilerMp(_PluginBase):
                     "value": sort_key,
                     "active": sort_key == active_sort,
                     "color": "primary",
+                    "class": "text-center",
+                    "style": {"text-align": "center"},
                 },
                 "events": {
                     "click": {
@@ -958,21 +960,43 @@ class PTDepilerMp(_PluginBase):
                 },
             })
         return {
-            "component": "VBtn",
+            "component": "VCard",
             "props": {
                 "variant": "tonal",
                 "color": "primary",
-                "block": True,
-                "height": "64",
-                "rounded": "xl",
-                "append-icon": "mdi-menu-down",
-                "class": "text-none text-subtitle-1 font-weight-medium",
+                "hover": True,
+                "aria-pressed": True,
+                "class": "cursor-pointer transition-all",
             },
-            "text": labels.get(active_sort, labels["retention"]),
             "content": [{
-                "component": "VMenu",
-                "props": {"activator": "parent", "location": "bottom end"},
-                "content": [{"component": "VList", "content": menu_items}],
+                "component": "VCardText",
+                "props": {"class": "text-center py-2 py-sm-4 px-1"},
+                "content": [
+                    {
+                        "component": "span",
+                        "props": {
+                            "class": "d-sm-none text-no-wrap font-weight-bold",
+                            "style": {"font-size": "0.625rem"},
+                        },
+                        "text": f"{labels.get(active_sort, labels['retention'])} ▾",
+                    },
+                    {
+                        "component": "span",
+                        "props": {
+                            "class": "d-none d-sm-inline text-subtitle-1 text-no-wrap font-weight-bold",
+                        },
+                        "text": f"{labels.get(active_sort, labels['retention'])} ▾",
+                    },
+                    {
+                        "component": "VMenu",
+                        "props": {"activator": "parent", "location": "bottom end"},
+                        "content": [{
+                            "component": "VList",
+                            "props": {"class": "pa-0"},
+                            "content": menu_items,
+                        }],
+                    },
+                ],
             }],
         }
 
@@ -981,14 +1005,21 @@ class PTDepilerMp(_PluginBase):
         active_sort = self._current_page_sort()
         all_rows = self._sort_rows(self._rows(), active_sort)
         summary = self._summary(all_rows)
+        # 详情页与仪表盘保持一致：“无法判断”包含状态未知或快照陈旧/失败的站点。
+        summary["unknown"] = sum(
+            1 for row in all_rows
+            if row["result"].retained is None or row["stale"]
+        )
         active_filter = self._current_page_filter()
         rows = [
             row for row in all_rows
             if active_filter == "all"
             or (active_filter == "retained" and row["result"].retained is True)
             or (active_filter == "unretained" and row["result"].retained is False)
-            or (active_filter == "unknown" and row["result"].retained is None)
-            or (active_filter == "stale" and row["stale"])
+            or (
+                active_filter == "unknown"
+                and (row["result"].retained is None or row["stale"])
+            )
         ]
         headers = [
             ("站点", "6fr"),
@@ -1443,9 +1474,13 @@ class PTDepilerMp(_PluginBase):
             ("retained", "已保号", "success"),
             ("unretained", "未保号", "warning"),
             ("unknown", "无法判断", "grey"),
-            ("stale", "陈旧/失败", "error"),
         ]
         counts = {"all": summary["all"], **summary}
+        # 仪表盘不再单列陈旧快照；“无法判断”同时覆盖状态未知或快照陈旧/失败的站点。
+        counts["unknown"] = sum(
+            1 for row in rows
+            if row["result"].retained is None or row["stale"]
+        )
         inputs = []
         cards = []
         selected_rules = []
@@ -1511,6 +1546,8 @@ class PTDepilerMp(_PluginBase):
             row_classes = f"ptd-row-group ptd-status-{status_key}"
             if row["stale"]:
                 row_classes += " ptd-status-stale"
+                if status_key != "unknown":
+                    row_classes += " ptd-status-unknown"
             row_toggle_id = f"ptd-dashboard-row-{row_index}"
 
             site_name = escape(str(row.get("site_name") or "未知站点"))
@@ -1576,7 +1613,7 @@ class PTDepilerMp(_PluginBase):
   <style>
     .ptd-dashboard-filter{{box-sizing:border-box;min-block-size:100%;padding:1px}}
     .ptd-dashboard-filter>input{{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}}
-    .ptd-filter-cards{{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}}
+    .ptd-filter-cards{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
     .ptd-filter-card{{display:flex;align-items:center;justify-content:center;box-sizing:border-box;
       min-inline-size:0;padding:16px 4px;border-radius:12px;cursor:pointer;text-align:center;
       white-space:nowrap;font-size:1rem;font-weight:500;transition:filter .2s ease,box-shadow .2s ease}}
