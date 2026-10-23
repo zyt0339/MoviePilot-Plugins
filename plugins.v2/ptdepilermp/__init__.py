@@ -37,7 +37,7 @@ class PTDepilerMp(_PluginBase):
     plugin_name = "PT 站点保号状态"
     plugin_desc = "展示站点当前等级、保号等级和保号缺口。"
     plugin_icon = "database.png"
-    plugin_version = "1.38.14"
+    plugin_version = "1.38.15"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339/MoviePilot-Plugins"
     plugin_config_prefix = "ptdepilermp_"
@@ -50,6 +50,8 @@ class PTDepilerMp(_PluginBase):
     _scheduler: Optional[BackgroundScheduler] = None
     _page_filter_options = {"all", "retained", "unretained", "unknown", "stale"}
     _page_filter_data_key = "page_filter"
+    _page_sort_options = {"retention", "join_at", "upload", "ratio"}
+    _page_sort_data_key = "page_sort"
 
     def __init__(self):
         super().__init__()
@@ -58,6 +60,7 @@ class PTDepilerMp(_PluginBase):
         self._cached_rows: List[Dict[str, Any]] = []
         self._has_calculated = False
         self._page_filter = "all"
+        self._page_sort = "retention"
 
     def init_plugin(self, config: dict = None):
         """载入插件配置和磁盘站点规则。"""
@@ -65,6 +68,8 @@ class PTDepilerMp(_PluginBase):
         # 筛选仅属于当前运行周期；通过插件数据在热重载前后的实例间传递点击结果。
         self._page_filter = "all"
         self.save_data(self._page_filter_data_key, self._page_filter)
+        self._page_sort = "retention"
+        self.save_data(self._page_sort_data_key, self._page_sort)
         config = dict(config or {})
         self._onlyonce = bool(config.get("onlyonce", False))
         self._cron = str(config.get("cron") or "").strip()
@@ -132,17 +137,27 @@ class PTDepilerMp(_PluginBase):
         return []
 
     def get_api(self) -> List[Dict[str, Any]]:
-        """提供详情页状态筛选接口。"""
-        return [{
-            "path": "/page_filter",
-            "endpoint": self.set_page_filter,
-            "methods": ["GET"],
-            "auth": "bear",
-            "summary": "切换详情页站点状态筛选",
-            "response_model": schemas.Response,
-        }]
+        """提供详情页状态筛选和排序接口。"""
+        return [
+            {
+                "path": "/page_filter",
+                "endpoint": self.set_page_filter,
+                "methods": ["GET"],
+                "auth": "bear",
+                "summary": "切换详情页站点状态筛选",
+                "response_model": schemas.Response,
+            },
+            {
+                "path": "/page_sort",
+                "endpoint": self.set_page_sort,
+                "methods": ["GET"],
+                "auth": "bear",
+                "summary": "切换详情页站点排序",
+                "response_model": schemas.Response,
+            },
+        ]
 
-    def set_page_filter(self, status: str = "all") -> schemas.Response:
+    def set_page_filter(self, status: str = "all", sort: str = "retention") -> schemas.Response:
         """切换详情页临时筛选状态，不写入插件配置。"""
         normalized = str(status or "all").strip().lower()
         if normalized not in self._page_filter_options:
@@ -151,9 +166,14 @@ class PTDepilerMp(_PluginBase):
                 message="不支持的筛选状态",
                 data=None,
             )
+        normalized_sort = str(sort or "retention").strip().lower()
+        if normalized_sort not in self._page_sort_options:
+            normalized_sort = "retention"
         self._page_filter = normalized
+        self._page_sort = normalized_sort
         # MoviePilot 本地热重载不会重新绑定插件 API，旧实例也必须能通知新页面实例。
         self.save_data(self._page_filter_data_key, normalized)
+        self.save_data(self._page_sort_data_key, normalized_sort)
         return schemas.Response(
             success=True,
             message="",
@@ -169,6 +189,37 @@ class PTDepilerMp(_PluginBase):
         if stored_filter:
             self.del_data(self._page_filter_data_key)
         return active_filter
+
+    def set_page_sort(self, sort: str = "retention", status: str = "all") -> schemas.Response:
+        """切换详情页临时排序，并保留当前状态筛选。"""
+        normalized = str(sort or "retention").strip().lower()
+        if normalized not in self._page_sort_options:
+            return schemas.Response(
+                success=False,
+                message="不支持的排序方式",
+                data=None,
+            )
+        normalized_filter = str(status or "all").strip().lower()
+        if normalized_filter not in self._page_filter_options:
+            normalized_filter = "all"
+        self._page_sort = normalized
+        self._page_filter = normalized_filter
+        self.save_data(self._page_sort_data_key, normalized)
+        self.save_data(self._page_filter_data_key, normalized_filter)
+        return schemas.Response(
+            success=True,
+            message="",
+            data={"sort": normalized},
+        )
+
+    def _current_page_sort(self) -> str:
+        """消费一次跨热重载实例共享的页面排序状态。"""
+        stored_sort = str(self.get_data(self._page_sort_data_key) or "").strip().lower()
+        active_sort = stored_sort if stored_sort in self._page_sort_options else "retention"
+        self._page_sort = active_sort
+        if stored_sort:
+            self.del_data(self._page_sort_data_key)
+        return active_sort
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """返回插件配置表单和默认值。"""
@@ -841,9 +892,94 @@ class PTDepilerMp(_PluginBase):
         except (TypeError, ValueError, OverflowError, OSError):
             return 1, 0.0
 
+    @staticmethod
+    def _descending_number_sort_key(value: Any, size: bool = False) -> Tuple[int, float]:
+        """按数值降序排列，缺失或异常值统一放在最后。"""
+        try:
+            parsed = parse_size(value) if size else float(value)
+            if parsed is None:
+                raise ValueError
+            return 0, -float(parsed)
+        except (TypeError, ValueError, OverflowError):
+            return 1, 0.0
+
+    def _sort_rows(self, rows: List[Dict[str, Any]], sort: str) -> List[Dict[str, Any]]:
+        """按详情页选择排列站点；同权重时保持入站时间从早到晚。"""
+        if sort == "join_at":
+            return sorted(rows, key=self._join_at_sort_key)
+        if sort == "upload":
+            return sorted(
+                rows,
+                key=lambda row: (
+                    *self._descending_number_sort_key(row.get("user", {}).get("upload"), size=True),
+                    *self._join_at_sort_key(row),
+                ),
+            )
+        if sort == "ratio":
+            return sorted(
+                rows,
+                key=lambda row: (
+                    *self._descending_number_sort_key(row.get("user", {}).get("ratio")),
+                    *self._join_at_sort_key(row),
+                ),
+            )
+        return sorted(
+            rows,
+            key=lambda row: (
+                0 if row["result"].retained is True else 1,
+                *self._join_at_sort_key(row),
+            ),
+        )
+
+    def _page_sort_control(self, active_sort: str, active_filter: str) -> Dict[str, Any]:
+        """构建与摘要卡片等宽的详情页排序下拉按钮。"""
+        labels = {
+            "retention": "保号状态",
+            "join_at": "入站时间",
+            "upload": "上传量",
+            "ratio": "分享率",
+        }
+        menu_items = []
+        for sort_key, label in labels.items():
+            menu_items.append({
+                "component": "VListItem",
+                "props": {
+                    "title": label,
+                    "value": sort_key,
+                    "active": sort_key == active_sort,
+                    "color": "primary",
+                },
+                "events": {
+                    "click": {
+                        "api": f"plugin/{self.__class__.__name__}/page_sort",
+                        "method": "get",
+                        "params": {"sort": sort_key, "status": active_filter},
+                    },
+                },
+            })
+        return {
+            "component": "VBtn",
+            "props": {
+                "variant": "tonal",
+                "color": "primary",
+                "block": True,
+                "height": "64",
+                "rounded": "xl",
+                "append-icon": "mdi-menu-down",
+                "class": "text-none text-subtitle-1 font-weight-medium",
+            },
+            "text": labels.get(active_sort, labels["retention"]),
+            "content": [{
+                "component": "VMenu",
+                "props": {"activator": "parent", "location": "bottom end"},
+                "content": [{"component": "VList", "content": menu_items}],
+            }],
+        }
+
     def get_page(self) -> List[dict]:
         """返回站点等级详情页。"""
-        all_rows = sorted(self._rows(), key=self._join_at_sort_key)
+        active_sort = self._current_page_sort()
+        all_rows = self._sort_rows(self._rows(), active_sort)
         summary = self._summary(all_rows)
         active_filter = self._current_page_filter()
         rows = [
@@ -942,6 +1078,7 @@ class PTDepilerMp(_PluginBase):
                     summary,
                     active_filter=active_filter,
                     trailing_content=self._bulk_open_buttons(all_rows),
+                    sort_content=self._page_sort_control(active_sort, active_filter),
                 ),
                 {
                     "component": "VTable",
@@ -1095,6 +1232,7 @@ class PTDepilerMp(_PluginBase):
         active_filter: Optional[str] = None,
         page_layout: bool = False,
         trailing_content: Optional[Dict[str, Any]] = None,
+        sort_content: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """构建摘要统计卡片。"""
         items = [
@@ -1185,7 +1323,10 @@ class PTDepilerMp(_PluginBase):
                     "click": {
                         "api": f"plugin/{self.__class__.__name__}/page_filter",
                         "method": "get",
-                        "params": {"status": filter_key},
+                        "params": {
+                            "status": filter_key,
+                            "sort": self._page_sort if sort_content else "retention",
+                        },
                     }
                 }
             cards.append(card)
@@ -1198,6 +1339,16 @@ class PTDepilerMp(_PluginBase):
                     "style": {"min-width": "0", "flex-basis": "0"},
                 },
                 "content": [trailing_content],
+            })
+        if sort_content:
+            cards.append({
+                "component": "VCol",
+                "props": {
+                    "sm": "auto",
+                    "class": "flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
+                    "style": {"min-width": "0", "flex-basis": "0"},
+                },
+                "content": [sort_content],
             })
         row = {
             "component": "VRow",
@@ -1592,7 +1743,7 @@ class PTDepilerMp(_PluginBase):
 
     def get_dashboard(self, **kwargs) -> Optional[Tuple[Dict[str, Any], Dict[str, Any], List[dict]]]:
         """返回等级摘要仪表板；仅在页面加载时读取一次快照。"""
-        rows = sorted(self._rows(), key=self._join_at_sort_key)
+        rows = self._sort_rows(self._rows(), "retention")
         summary = self._summary(rows)
         return {"cols": 12}, {}, [self._dashboard_filter(rows, summary)]
 

@@ -189,14 +189,14 @@ class PluginRuntimeTest(unittest.TestCase):
         panel = cls._embedded_panel(table_row)
         return panel["content"][0]["content"]
 
-    def test_only_page_filter_api_and_stop_is_idempotent(self):
+    def test_page_view_apis_and_stop_are_idempotent(self):
         self.plugin.init_plugin({})
         apis = self.plugin.get_api()
-        self.assertEqual(len(apis), 1)
-        self.assertEqual(apis[0]["path"], "/page_filter")
-        self.assertEqual(apis[0]["methods"], ["GET"])
-        self.assertEqual(apis[0]["auth"], "bear")
-        self.assertIs(apis[0]["response_model"], FakeResponse)
+        self.assertEqual([api["path"] for api in apis], ["/page_filter", "/page_sort"])
+        for api in apis:
+            self.assertEqual(api["methods"], ["GET"])
+            self.assertEqual(api["auth"], "bear")
+            self.assertIs(api["response_model"], FakeResponse)
         self.assertFalse(hasattr(self.plugin, "refresh_site"))
         self.assertFalse(hasattr(self.plugin, "refresh_all"))
         self.plugin.stop_service()
@@ -233,8 +233,25 @@ class PluginRuntimeTest(unittest.TestCase):
         ])
         self.assertEqual(
             cards[2]["content"][0]["events"]["click"]["params"],
-            {"status": "unretained"},
+            {"status": "unretained", "sort": "retention"},
         )
+
+        summary_row = page[0]["content"][0]
+        self.assertEqual(len(summary_row["content"]), 6)
+        sort_column = summary_row["content"][-1]
+        self.assertEqual(sort_column["props"], {
+            "sm": "auto",
+            "class": "flex-grow-1 flex-shrink-1 pa-1 pa-sm-3",
+            "style": {"min-width": "0", "flex-basis": "0"},
+        })
+        sort_button = sort_column["content"][0]
+        self.assertEqual(sort_button["component"], "VBtn")
+        self.assertEqual(sort_button["text"], "保号状态")
+        self.assertEqual(sort_button["props"]["append-icon"], "mdi-menu-down")
+        menu_items = sort_button["content"][0]["content"][0]["content"]
+        self.assertEqual([item["props"]["title"] for item in menu_items], [
+            "保号状态", "入站时间", "上传量", "分享率",
+        ])
 
         response = self.plugin.set_page_filter("unretained")
         self.assertTrue(response.success)
@@ -364,7 +381,7 @@ class PluginRuntimeTest(unittest.TestCase):
                 "updated_day": "无效日期", "err_msg": None,
             }))
 
-    def test_page_sorts_sites_by_join_time_with_missing_or_invalid_last(self):
+    def test_page_sort_defaults_to_retention_and_supports_join_time(self):
         FakeSiteOper.sites = [
             types.SimpleNamespace(id=1, name="较晚", domain="ignored"),
             types.SimpleNamespace(id=2, name="缺失", domain="ignored"),
@@ -378,12 +395,90 @@ class PluginRuntimeTest(unittest.TestCase):
             types.SimpleNamespace(name="异常", join_at="not-a-date"),
         ]
         self.plugin.init_plugin({})
+        self.plugin._cached_rows[0]["result"].retained = False
+        self.plugin._cached_rows[1]["result"].retained = False
+        self.plugin._cached_rows[2]["result"].retained = True
+        self.plugin._cached_rows[3]["result"].retained = True
+
         page = self.plugin.get_page()
         table_rows = self._page_table(page)["content"][1]["content"]
         self.assertEqual(
             [self._embedded_row_cells(row)[0]["text"] for row in table_rows],
+            ["最早", "异常", "较晚", "缺失"],
+        )
+
+        response = self.plugin.set_page_sort("join_at")
+        self.assertTrue(response.success)
+        self.assertEqual(response.data, {"sort": "join_at"})
+        join_time_rows = self._page_table(self.plugin.get_page())["content"][1]["content"]
+        self.assertEqual(
+            [self._embedded_row_cells(row)[0]["text"] for row in join_time_rows],
             ["最早", "较晚", "缺失", "异常"],
         )
+        invalid_response = self.plugin.set_page_sort("invalid")
+        self.assertFalse(invalid_response.success)
+        self.assertEqual(invalid_response.message, "不支持的排序方式")
+
+    def test_page_supports_upload_and_ratio_descending_sort(self):
+        rows = []
+        for name, upload, ratio, join_at in (
+            ("低", 100, 1.0, "2020-01-01"),
+            ("高", 300, 3.0, "2022-01-01"),
+            ("中", 200, 2.0, "2021-01-01"),
+            ("缺失", None, None, "2019-01-01"),
+        ):
+            rows.append({
+                "site_name": name,
+                "site_url": None,
+                "user": {"upload": upload, "ratio": ratio, "join_at": join_at},
+                "rule": {},
+                "result": self.module.SiteLevelResult(name, None, "user", None, None, False),
+                "stale": False,
+            })
+        self.plugin._cached_rows = rows
+        self.plugin._has_calculated = True
+
+        for sort_key in ("upload", "ratio"):
+            self.plugin.set_page_sort(sort_key)
+            page_rows = self._page_table(self.plugin.get_page())["content"][1]["content"]
+            self.assertEqual(
+                [self._embedded_row_cells(row)[0]["text"] for row in page_rows],
+                ["高", "中", "低", "缺失"],
+            )
+
+    def test_dashboard_defaults_to_retention_then_join_time_sort(self):
+        rows = [
+            {
+                "site_name": "未保号较早",
+                "user": {"join_at": "2019-01-01"},
+                "result": self.module.SiteLevelResult("a", None, "user", None, None, False),
+                "stale": False,
+            },
+            {
+                "site_name": "已保号较晚",
+                "user": {"join_at": "2021-01-01"},
+                "result": self.module.SiteLevelResult("b", None, "user", None, None, True),
+                "stale": False,
+            },
+            {
+                "site_name": "已保号较早",
+                "user": {"join_at": "2020-01-01"},
+                "result": self.module.SiteLevelResult("c", None, "user", None, None, True),
+                "stale": False,
+            },
+        ]
+        self.plugin._cached_rows = rows
+        self.plugin._has_calculated = True
+        with patch.object(
+            self.plugin,
+            "_dashboard_filter",
+            return_value={"component": "iframe"},
+        ) as dashboard_filter:
+            self.plugin.get_dashboard()
+        rendered_rows = dashboard_filter.call_args.args[0]
+        self.assertEqual([row["site_name"] for row in rendered_rows], [
+            "已保号较早", "已保号较晚", "未保号较早",
+        ])
 
     def test_safe_site_links_and_bulk_open_groups(self):
         FakeSiteOper.sites = [
