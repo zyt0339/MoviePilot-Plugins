@@ -1,72 +1,118 @@
 {
   "name": "HDChina",
-  "is_dead": true,
+  "is_dead": false,
   "levels": [
     {
-      "id": 0,
-      "name": "User",
-      "privilege": ""
+      "id": 1,
+      "name": "Peasant",
+      "nameAka": [
+        "封杀对象",
+        "封杀对象(Peasant)"
+      ],
+      "privilege": "被降级的用户，他们有30天时间来提升分享率，否则他们会被踢。不能发表趣味盒内容；不能申请友情链接；不能上传字幕。"
     },
     {
-      "id": 1,
+      "id": 2,
+      "name": "User",
+      "nameAka": [
+        "群众演员",
+        "群众演员(User)"
+      ],
+      "privilege": "默认的新用户等级。无法提交种子候选，无法对候选投票，无法使用道具，无法打开签名和个性化称号，不能直接发种，不能查看排行榜。"
+    },
+    {
+      "id": 3,
       "name": "Power User",
-      "privilege": "可以使用道具，可以打开签名和个性化称号",
+      "nameAka": [
+        "客串龙套",
+        "客串龙套(Power User)"
+      ],
+      "privilege": "享有群众演员的所有权限，可以使用道具，可以打开签名和个性化称号，不能直接发种(暂时下调至PU)，不能查看排行榜。",
       "interval": "P5W",
       "downloaded": "200GB",
       "ratio": 1.5
     },
     {
-      "id": 2,
+      "id": 4,
       "name": "Elite User",
-      "privilege": "可以在候选区投票，可以在论坛建议区发帖，可以上传字幕，可以删除自己上传的字幕。",
+      "nameAka": [
+        "领衔主演",
+        "领衔主演(Elite User)"
+      ],
+      "privilege": "享有龙套的所有权限，可以在候选区投票，可以在论坛建议区发帖，可以上传字幕，可以删除自己上传的字幕。",
       "interval": "P10W",
       "downloaded": "500GB",
       "ratio": 2
     },
     {
-      "id": 3,
+      "id": 5,
       "name": "Crazy User",
-      "privilege": "可以进入邀请区。",
+      "nameAka": [
+        "成名大腕",
+        "成名大腕(Crazy User)"
+      ],
+      "privilege": "享有主演的所有权限，可以查看排行榜，可以使用挂起功能，可在种子区观看到当前下载活动进度条，可以查看当前自己在全站中的流量排名，可以进入邀请区。",
       "interval": "P15W",
       "downloaded": "1TB",
       "ratio": 2.5
     },
     {
-      "id": 4,
+      "id": 6,
       "name": "Insane User",
-      "privilege": "并可以直接发布种子，无需候选。",
+      "nameAka": [
+        "金牌经纪",
+        "金牌经纪(Insane User)"
+      ],
+      "privilege": "享有大腕的所有权限，并可以直接发布种子，无需候选。",
       "interval": "P20W",
       "downloaded": "1.5TB",
       "ratio": 3
     },
     {
-      "id": 5,
+      "id": 7,
       "name": "Veteran User",
-      "privilege": "可以在个人资料内隐藏个人信息，可以匿名做种。",
+      "nameAka": [
+        "最佳导演",
+        "最佳导演(Veteran User)"
+      ],
+      "privilege": "享有经纪人的所有权限，可以在个人资料内隐藏个人信息，可以匿名做种。",
       "interval": "P25W",
       "downloaded": "2TB",
       "ratio": 4
     },
     {
-      "id": 6,
+      "id": 8,
       "name": "Extreme User",
-      "privilege": "发送邀请，可以查看其它会员种子历史，可以更新IMDb信息。",
+      "nameAka": [
+        "大制作人",
+        "大制作人(Extreme User)"
+      ],
+      "privilege": "享有导演的所有权限，可以发送邀请，可以查看其它会员种子历史，可以更新IMDb信息。",
       "interval": "P30W",
       "downloaded": "3TB",
       "ratio": 5
     },
     {
-      "id": 7,
+      "id": 9,
       "name": "Ultimate User",
-      "privilege": "账号挂起永久保留。取消一个月只能发送一个邀请的限制。",
+      "nameAka": [
+        "国际巨星",
+        "国际巨星(Ultimate User)"
+      ],
+      "privilege": "享有制片人的所有权限，首次升级该级别可自动获得2枚邀请名额。账号挂起永久保留，未挂起的情况下可以保留50周。取消一个月只能发送一个邀请的限制。",
       "interval": "P40W",
       "downloaded": "4TB",
       "ratio": 6
     },
     {
-      "id": 8,
+      "id": 10,
       "name": "Nexus Master",
-      "privilege": "账号永久保存(无需挂起)",
+      "nameAka": [
+        "影业帝国",
+        "影业帝国(Nexus Master)"
+      ],
+      "isKept": true,
+      "privilege": "享有国际巨星的所有权限，首次升级该级别可自动获得3枚邀请名额，账号永久保存(无需挂起)。",
       "interval": "P50W",
       "downloaded": "5TB",
       "ratio": 8

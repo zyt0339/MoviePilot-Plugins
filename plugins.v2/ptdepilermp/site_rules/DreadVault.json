@@ -1,0 +1,75 @@
+{
+  "name": "DreadVault",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "User",
+      "privilege": "DL slots: ∞; Upload Torrents"
+    },
+    {
+      "id": 2,
+      "name": "Wanderer",
+      "privilege": "DL slots: ∞; Upload Torrents; Send invite",
+      "interval": "P1M",
+      "uploaded": "1 TiB",
+      "ratio": 0.4
+    },
+    {
+      "id": 3,
+      "name": "Survivor",
+      "privilege": "DL slots: ∞; Upload Torrents; Send invite; Torrent moderation bypass",
+      "interval": "P2M",
+      "uploaded": "5 TiB",
+      "ratio": 0.4,
+      "uploads": 5
+    },
+    {
+      "id": 4,
+      "name": "Night Stalker",
+      "privilege": "DL slots: ∞; Upload Torrents; Send invite; Torrent moderation bypass",
+      "interval": "P3M",
+      "uploaded": "20 TiB",
+      "ratio": 0.4,
+      "uploads": 20
+    },
+    {
+      "id": 5,
+      "name": "Grave Keeper",
+      "privilege": "DL slots: ∞; Upload Torrents; Send invite; Torrent moderation bypass",
+      "interval": "P6M",
+      "uploaded": "50 TiB",
+      "ratio": 0.4,
+      "uploads": 50
+    },
+    {
+      "id": 6,
+      "name": "Dreadborn",
+      "privilege": "DL slots: ∞; Upload Torrents; Send invite; Freeleech; Torrent moderation bypass",
+      "interval": "P1Y",
+      "uploaded": "100 TiB",
+      "ratio": 0.4,
+      "uploads": 100
+    },
+    {
+      "id": 7,
+      "name": "Shadow Walker",
+      "privilege": "DL slots: ∞; Upload Torrents; Send invite; Immune to automated HnR warnings; Torrent moderation bypass",
+      "interval": "P1M",
+      "ratio": 0.4,
+      "seedingSize": "5 TiB",
+      "averageSeedingTime": "P1M",
+      "uploads": 5
+    },
+    {
+      "id": 8,
+      "name": "Bloodbound",
+      "privilege": "DL slots: ∞; Upload Torrents; Send invite; Freeleech; Immune to automated HnR warnings; Torrent moderation bypass",
+      "interval": "P3M",
+      "ratio": 0.4,
+      "seedingSize": "10 TiB",
+      "averageSeedingTime": "P2M",
+      "uploads": 10
+    }
+  ]
+}

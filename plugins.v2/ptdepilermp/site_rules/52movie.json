@@ -1,6 +1,6 @@
 {
   "name": "52movie",
-  "is_dead": false,
+  "is_dead": true,
   "levels": [
     {
       "id": 1,

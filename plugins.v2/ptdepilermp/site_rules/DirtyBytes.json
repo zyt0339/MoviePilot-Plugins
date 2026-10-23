@@ -1,0 +1,85 @@
+{
+  "name": "DirtyBytes",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 0,
+      "name": "Peeker",
+      "privilege": "新用户默认等级。"
+    },
+    {
+      "id": 10,
+      "name": "Flirt",
+      "interval": "P14D",
+      "uploaded": "50GiB",
+      "ratio": 1.05
+    },
+    {
+      "id": 20,
+      "name": "Tease",
+      "privilege": "可查看排行榜和扩展统计，晋升时清除已保存的 IP 记录。",
+      "interval": "P105D",
+      "uploaded": "300GiB",
+      "ratio": 1.1
+    },
+    {
+      "id": 30,
+      "name": "Heartbreaker",
+      "privilege": "晋升时增加邀请和请求名额。",
+      "interval": "P210D",
+      "uploaded": "1200GiB",
+      "ratio": 1.1
+    },
+    {
+      "id": 31,
+      "name": "Afterdark Elite",
+      "privilege": "晋升时增加邀请和请求名额。",
+      "interval": "P500D",
+      "uploaded": "5000GiB",
+      "ratio": 20
+    },
+    {
+      "id": 32,
+      "name": "Afterdark Legend",
+      "privilege": "晋升时增加邀请和请求名额。",
+      "interval": "P730D",
+      "uploaded": "20000GiB",
+      "ratio": 20
+    },
+    {
+      "id": 170,
+      "name": "VIP",
+      "groupType": "vip"
+    },
+    {
+      "id": 200,
+      "name": "Developer",
+      "groupType": "manager"
+    },
+    {
+      "id": 250,
+      "name": "Uploader",
+      "groupType": "manager"
+    },
+    {
+      "id": 251,
+      "name": "Titan",
+      "groupType": "manager"
+    },
+    {
+      "id": 275,
+      "name": "FLS",
+      "groupType": "manager"
+    },
+    {
+      "id": 280,
+      "name": "Moderator",
+      "groupType": "manager"
+    },
+    {
+      "id": 290,
+      "name": "Administrator",
+      "groupType": "manager"
+    }
+  ]
+}

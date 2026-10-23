@@ -1,0 +1,104 @@
+{
+  "name": "可乐",
+  "is_dead": false,
+  "levels": [
+    {
+      "id": 1,
+      "name": "迷你罐",
+      "nameAka": [
+        "Mini Can",
+        "mini_can"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "经典罐",
+      "nameAka": [
+        "Classic Can",
+        "classic_can"
+      ],
+      "privilege": "达标后手动晋级，消耗 22,000 瓶盖和 35 核子可乐。",
+      "interval": "P7D",
+      "trueUploaded": "50 GiB",
+      "trueRatio": 1,
+      "bonus": 22000,
+      "snatches": 5,
+      "posts": 35
+    },
+    {
+      "id": 3,
+      "name": "玻璃瓶",
+      "nameAka": [
+        "Glass Bottle",
+        "glass_bottle"
+      ],
+      "privilege": "达标后手动晋级，消耗 93,000 瓶盖和 115 核子可乐。",
+      "interval": "P30D",
+      "trueUploaded": "200 GiB",
+      "trueRatio": 1.2,
+      "bonus": 93000,
+      "snatches": 20,
+      "posts": 115
+    },
+    {
+      "id": 4,
+      "name": "分享装",
+      "nameAka": [
+        "Sharing Pack",
+        "sharing_pack"
+      ],
+      "privilege": "达标后手动晋级，消耗 272,000 瓶盖和 300 核子可乐。",
+      "interval": "P90D",
+      "trueUploaded": "1 TiB",
+      "trueRatio": 1.5,
+      "bonus": 272000,
+      "snatches": 50,
+      "posts": 300
+    },
+    {
+      "id": 5,
+      "name": "家庭装",
+      "nameAka": [
+        "Family Pack",
+        "family_pack"
+      ],
+      "privilege": "达标后手动晋级，消耗 433,000 瓶盖和 450 核子可乐。",
+      "interval": "P180D",
+      "trueUploaded": "5 TiB",
+      "trueRatio": 2,
+      "bonus": 433000,
+      "snatches": 100,
+      "posts": 450
+    },
+    {
+      "id": 6,
+      "name": "可乐收藏家",
+      "nameAka": [
+        "Cola Collector",
+        "cola_collector"
+      ],
+      "privilege": "达标后手动晋级，消耗 923,000 瓶盖和 925 核子可乐。",
+      "interval": "P365D",
+      "trueUploaded": "20 TiB",
+      "trueRatio": 2.5,
+      "bonus": 923000,
+      "snatches": 300,
+      "posts": 925
+    },
+    {
+      "id": 7,
+      "name": "可乐大亨",
+      "nameAka": [
+        "Cola Tycoon",
+        "cola_tycoon"
+      ],
+      "privilege": "达标后手动晋级，消耗 1,865,000 瓶盖和 1,825 核子可乐。",
+      "interval": "P730D",
+      "trueUploaded": "50 TiB",
+      "trueRatio": 3,
+      "bonus": 1865000,
+      "snatches": 1000,
+      "posts": 1825
+    }
+  ]
+}
