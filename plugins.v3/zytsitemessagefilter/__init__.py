@@ -1,5 +1,6 @@
-"""按站内信标题通配规则屏蔽内置渠道的站点通知。"""
+"""按站内信标题或内容通配规则屏蔽内置渠道的站点通知。"""
 
+import json
 import re
 from typing import Any
 
@@ -13,42 +14,45 @@ class ZYTSiteMessageFilter(_PluginBase):
     """仅短路命中的外发站内信通知，保留宿主消息历史。"""
 
     plugin_name = "屏蔽站点无用消息"
-    plugin_desc = "按站内信标题通配规则屏蔽内置渠道推送，并在日志保留原消息。"
+    plugin_desc = "按站点消息标题或内容屏蔽，并在日志记录原消息。"
     plugin_icon = "Moviepilot_A.png"
-    plugin_version = "1.0.0"
+    plugin_version = "1.0.1"
     plugin_author = "zyt0339"
     author_url = "https://github.com/zyt0339"
     plugin_config_prefix = "zytsitemessagefilter_"
     plugin_order = 1
     auth_level = 1
 
-    RULE_EXAMPLES = (
-        ("种子被删除", "只匹配这个完整标题"),
-        ("种子被删除*", "匹配以此开头的标题"),
-        ("您正在下载或做种的种子被删除*", "匹配以此开头的标题"),
-        ("*认领结算", "匹配以“认领结算”结尾的标题"),
-        ("*请求续种*", "匹配包含“请求续种”的标题"),
-        ("收到来自 zmpt 赠送的 *", "匹配此前缀"),
+    DEFAULT_RULES = (
+        "种子被删除\n您正在下载或做种的种子被删除*\n"
+        "*认领结算\n*请求续种*\n收到来自 zmpt 赠送的 *"
     )
-    DEFAULT_RULES = "\n".join(rule for rule, _ in RULE_EXAMPLES)
+    DEFAULT_CONTENT_RULES = "你正在下载或做种的种子*删除*"
     _enabled = False
     _rules: tuple[tuple[str, re.Pattern[str]], ...] = ()
+
+    _content_rules: tuple[tuple[str, re.Pattern[str]], ...] = ()
 
     def init_plugin(self, config: dict | None = None) -> None:
         """读取开关和规则，保留用户显式清空规则的选择。"""
         config = config or {}
-        # 保留既有配置键，不覆盖用户输入或自动追加通配符。
-        raw = config.get("prefixes", self.DEFAULT_RULES)
+        self._enabled = False
+        # 保留标题规则旧配置键；各输入框显式清空后独立停用。
+        self._rules = self._compile_rules(config.get("prefixes", self.DEFAULT_RULES))
+        self._content_rules = self._compile_rules(config.get("content_rules", self.DEFAULT_CONTENT_RULES))
+        self._enabled = bool(config.get("enabled", False))
+
+    @staticmethod
+    def _compile_rules(raw: Any) -> tuple[tuple[str, re.Pattern[str]], ...]:
+        """逐行编译仅星号特殊的通配规则，允许内容跨行匹配。"""
         rules = []
         if isinstance(raw, str):
             for line in raw.splitlines():
                 rule = line.strip()
                 if rule:
                     pattern = ".*".join(re.escape(part) for part in rule.split("*"))
-                    rules.append((rule, re.compile(pattern)))
-        self._enabled = False
-        self._rules = tuple(rules)
-        self._enabled = bool(config.get("enabled", False))
+                    rules.append((rule, re.compile(pattern, re.DOTALL)))
+        return tuple(rules)
 
     def get_state(self) -> bool:
         """返回是否启用过滤。"""
@@ -60,75 +64,83 @@ class ZYTSiteMessageFilter(_PluginBase):
 
     def filter_message(self, message: Message | None = None, **kwargs: Any) -> bool | None:
         """命中返回 True 短路模块分发，其余情况返回 None 放行。"""
-        if not self._enabled or message is None or not self._rules:
+        if not self._enabled or message is None or not (self._rules or self._content_rules):
             return None
         if message.mtype != MessageType.SiteMessage or message.action != 1:
             return None
-        title = self._extract_title(message.title, message.text)
-        if title is None:
-            return None
-        for rule, pattern in self._rules:
-            if pattern.fullmatch(title):
-                logger.info(
-                    f"[屏蔽站点无用消息] 已屏蔽，命中规则：{rule}\n"
-                    f"{message.title}\n{message.text}"
+        candidates = (
+            ("标题", self._extract_title(message.text), self._rules),
+            ("内容", self._extract_content(message.text), self._content_rules),
+        )
+        for field, value, rules in candidates:
+            if value is None:
+                continue
+            for rule, pattern in rules:
+                if not pattern.fullmatch(value):
+                    continue
+                # 单行 JSON 保留原始换行信息，避免倒序日志拆散同一条消息。
+                detail = json.dumps(
+                    {"命中字段": field, "命中规则": rule,
+                     "通知标题": message.title, "原始正文": message.text},
+                    ensure_ascii=False,
                 )
+                logger.info(f"[屏蔽站点无用消息] 已屏蔽 {detail}")
                 return True
         return None
 
     @staticmethod
-    def _extract_title(title: str | None, text: str | None) -> str | None:
-        """从完整的宿主站内信格式提取标题，格式不符时放行。"""
-        if not isinstance(title, str) or not isinstance(text, str):
+    def _extract_content(text: str | None) -> str | None:
+        """只提取正文内容标记后的文本，不把标题及时间作为内容匹配。"""
+        if not isinstance(text, str):
             return None
-        if not re.fullmatch(r"【站点 [^\r\n]+ 消息】", title):
+        parts = re.split(r"^内容：", text.replace("\r\n", "\n"), maxsplit=1, flags=re.MULTILINE)
+        return parts[1].strip() if len(parts) == 2 else None
+
+    @staticmethod
+    def _extract_title(text: str | None) -> str | None:
+        """只提取正文标题行，不依赖通知主题或时间，不搜索内容段落。"""
+        if not isinstance(text, str):
             return None
         normalized = text.replace("\r\n", "\n")
-        match = re.fullmatch(r"时间：[^\n]+\n标题：([^\n]*)\n内容：\n[\s\S]*", normalized)
-        return match.group(1).strip() if match else None
+        header = re.split(r"^内容：", normalized, maxsplit=1, flags=re.MULTILINE)[0]
+        titles = re.findall(r"^标题：([^\n]*)$", header, flags=re.MULTILINE)
+        return titles[0].strip() if len(titles) == 1 else None
 
     def get_form(self) -> tuple[list[dict], dict[str, Any]]:
-        """提供开关、逐行通配规则、示例表及过滤范围说明。"""
-        return [{"component": "VForm", "content": [
+        """提供基础配置表单和纯文字规则介绍。"""
+        fields = [
             {"component": "VSwitch", "props": {"model": "enabled", "label": "启用插件"}},
             {"component": "VTextarea", "props": {
-                "model": "prefixes", "label": "屏蔽标题规则（一行一条）", "rows": 6,
-                "hint": "标题和规则去除首尾空格，保留内部空格，区分大小写；"
-                        "* 匹配任意长度文字（可为空），其他字符按原文匹配；清空则不屏蔽。",
-                "persistent-hint": True,
+                "model": "prefixes", "label": "标题屏蔽规则（一行一条）", "rows": 6,
             }},
-            {"component": "VTable", "props": {"density": "compact"}, "content": [
-                {"component": "thead", "content": [{"component": "tr", "content": [
-                    {"component": "th", "text": "规则"},
-                    {"component": "th", "text": "效果"},
-                ]}]},
-                {"component": "tbody", "content": [
-                    {"component": "tr", "content": [
-                        {"component": "td", "text": rule},
-                        {"component": "td", "text": effect},
-                    ]} for rule, effect in self.RULE_EXAMPLES
-                ]},
-            ]},
-            {"component": "VAlert", "props": {
-                "type": "warning", "variant": "tonal",
-                "text": "旧规则提示：无星号现在为严格匹配，开头匹配需在末尾添加 *。"
-                        "已有规则不会自动修改。",
+            {"component": "VTextarea", "props": {
+                "model": "content_rules", "label": "内容屏蔽规则（一行一条）", "rows": 3,
             }},
             {"component": "VAlert", "props": {
-                "type": "info", "variant": "tonal",
-                "text": "仅过滤向外发送的站内信通知，保留消息历史，命中内容写入 INFO 日志。"
-                        "不处理分享率预警和未读数量提醒。仅阻止后续内置通知模块，"
-                        "不影响邮件、WPUSH 等广播插件或较早自行发送的模块插件。",
-            }},
-        ]}], {"enabled": False, "prefixes": self.DEFAULT_RULES}
+                "type": "info", "variant": "tonal", "style": "white-space: pre-line;",
+            },
+             "text": "规则介绍："
+                     "采用简化版正则表达，匹配站点消息正文中的标题或内容，任一命中即屏蔽，例如\n"
+                     "1、种子被删除：匹配这个完整标题，会去除首尾空格对比\n"
+                     "2、种子被删除*：匹配以此开头的标题\n"
+                     "3、*种子被删除：匹配以此结尾的标题\n"
+                     "4、种子被*删除*：如种子被管理员abc删除，原因Dup\n"
+                     "5、*请求续种*：匹配包含请求续种的标题"},
+        ]
+        return [{"component": "VForm", "content": [
+            {"component": "VRow", "content": [
+                {"component": "VCol", "props": {"cols": 12}, "content": [field]},
+            ]} for field in fields
+        ]}], {"enabled": False, "prefixes": self.DEFAULT_RULES,
+                 "content_rules": self.DEFAULT_CONTENT_RULES}
 
     def get_api(self) -> list[dict]:
         """无需注册插件 API。"""
         return []
 
-    def get_page(self) -> list[dict]:
-        """原消息通过宿主历史和 INFO 日志查看，无额外详情页。"""
-        return []
+    def get_page(self) -> None:
+        """不提供详情页，由宿主卡片点击逻辑直接打开设置。"""
+        pass
 
     def stop_service(self) -> None:
         """停用后立即放行通知，不持有后台资源。"""
