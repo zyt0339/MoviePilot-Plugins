@@ -30,5 +30,19 @@
       "v1.8.2.2": "修复emby多条相同新入库消息推送多次的问题"
     },
     "system_version": ">=3.0.0"
+  },
+  "ZYTSiteMessageFilter": {
+    "name": "屏蔽站点无用消息",
+    "description": "按站内信标题通配规则屏蔽内置渠道推送，并在日志保留原消息。",
+    "labels": "消息通知,站点",
+    "version": "1.0.0",
+    "icon": "Moviepilot_A.png",
+    "author": "zyt0339",
+    "level": 1,
+    "system_version": ">=3.0.0",
+    "history": {
+      "v1.0.0": "首次发布：支持站内信标题精确和星号通配过滤，提供默认规则与示例，保留原消息日志。"
+    },
+    "release": true
   }
 }
