@@ -130,7 +130,10 @@ class ZYTMediaServerMsg(_PluginBase):
                 self._mediaservers = config.get("mediaservers") or []
                 self._add_play_link = config.get("add_play_link", False)
                 self._aggregate_enabled = config.get("aggregate_enabled", False)
-                self._ignore_usernames = config.get("ignore_usernames", None)
+                usernames = config.get("ignore_usernames")
+                self._ignore_usernames = [
+                    name for name in usernames if isinstance(name, str) and name
+                ] if isinstance(usernames, list) else []
                 self._aggregate_time = int(config.get(
                     "aggregate_time", self.DEFAULT_AGGREGATE_TIME))
             self._pending_messages = {}
@@ -236,6 +239,36 @@ class ZYTMediaServerMsg(_PluginBase):
             List[Dict[str, Any]]: 空列表
         """
         pass
+
+    def _get_emby_user_options(self) -> List[dict]:
+        """读取所有已配置 Emby 的用户名，失败时保留已选用户供取消勾选。"""
+        names = dict.fromkeys(self._ignore_usernames or [])
+        try:
+            services = MediaServerHelper().get_services(type_filter="emby")
+        except Exception:
+            logger.warning("获取 Emby 服务列表失败，保留已选忽略用户")
+            services = {}
+        for service in services.values():
+            response = None
+            try:
+                response = service.instance.get_data(url="[HOST]Users?api_key=[APIKEY]")
+                if response is None or response.status_code != 200:
+                    logger.warning("获取 Emby 用户列表失败，请检查连接与用户管理权限")
+                    continue
+                users = response.json()
+                if not isinstance(users, list):
+                    logger.warning("Emby 用户列表格式异常，保留已选忽略用户")
+                    continue
+                for user in users:
+                    name = user.get("Name") if isinstance(user, dict) else None
+                    if isinstance(name, str) and name:
+                        names[name] = None
+            except Exception:
+                logger.warning("获取 Emby 用户列表失败，保留已选忽略用户")
+            finally:
+                if response is not None:
+                    response.close()
+        return [{"title": name, "value": name} for name in names]
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
         """
@@ -394,11 +427,16 @@ class ZYTMediaServerMsg(_PluginBase):
                                 },
                                 'content': [
                                     {
-                                        'component': 'VTextField',
+                                        'component': 'VSelect',
                                         'props': {
                                             'model': 'ignore_usernames',
-                                            'label': '忽略用户事件',
-                                            'placeholder': '英文逗号分割'
+                                            'label': '忽略通知的用户',
+                                            'multiple': True,
+                                            'chips': True,
+                                            'clearable': True,
+                                            'items': self._get_emby_user_options(),
+                                            'hint': '勾选的用户不会发送通知',
+                                            'persistent-hint': True
                                         }
                                     }
                                 ]
@@ -454,7 +492,7 @@ class ZYTMediaServerMsg(_PluginBase):
             "enabled": False,
             "types": [],
             "aggregate_enabled": False,
-            "ignore_usernames": None,
+            "ignore_usernames": [],
             "aggregate_time": 15
         }
 
@@ -713,7 +751,7 @@ class ZYTMediaServerMsg(_PluginBase):
 
             # 检查用户是否属于忽略的用户配置
             if self._ignore_usernames:
-                if user_name in self._ignore_usernames.split(','):
+                if user_name in self._ignore_usernames:
                     logger.info(f"忽略的用户({user_name})事件,不发送消息:{message_title}")
                     return
             # 发送消息
