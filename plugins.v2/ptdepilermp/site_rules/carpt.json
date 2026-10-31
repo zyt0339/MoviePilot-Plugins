@@ -12,7 +12,7 @@
       "name": "Power User",
       "privilege": "得到一个邀请名额；可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。",
       "interval": "P4W",
-      "downloaded": "200GB",
+      "downloaded": "200GiB",
       "ratio": 2,
       "seedingBonus": 40000
     },
@@ -21,7 +21,7 @@
       "name": "Elite User",
       "privilege": "Elite User及以上用户封存账号后不会被删除。",
       "interval": "P8W",
-      "downloaded": "500GB",
+      "downloaded": "500GiB",
       "ratio": 3,
       "seedingBonus": 80000
     },
@@ -30,7 +30,7 @@
       "name": "Crazy User",
       "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。",
       "interval": "P15W",
-      "downloaded": "1TB",
+      "downloaded": "1TiB",
       "ratio": 4,
       "seedingBonus": 150000
     },
@@ -39,7 +39,7 @@
       "name": "Insane User",
       "privilege": "可以查看普通日志。",
       "interval": "P25W",
-      "downloaded": "2TB",
+      "downloaded": "2TiB",
       "ratio": 5,
       "seedingBonus": 250000
     },
@@ -48,7 +48,7 @@
       "name": "Veteran User",
       "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。",
       "interval": "P40W",
-      "downloaded": "4TB",
+      "downloaded": "4TiB",
       "ratio": 6,
       "seedingBonus": 400000
     },
@@ -58,7 +58,7 @@
       "isKept": true,
       "privilege": "可以更新过期的外部信息；可以查看Extreme User论坛。Extreme User及以上用户会永远保留账号。",
       "interval": "P60W",
-      "downloaded": "6TB",
+      "downloaded": "6TiB",
       "ratio": 7,
       "seedingBonus": 600000
     },
@@ -68,7 +68,7 @@
       "isKept": true,
       "privilege": "得到五个邀请名额。",
       "interval": "P80W",
-      "downloaded": "8TB",
+      "downloaded": "8TiB",
       "ratio": 8,
       "seedingBonus": 800000
     },
@@ -78,7 +78,7 @@
       "isKept": true,
       "privilege": "得到十个邀请名额。可以发送邀请。",
       "interval": "P100W",
-      "downloaded": "10TB",
+      "downloaded": "10TiB",
       "ratio": 9,
       "seedingBonus": 1000000
     }

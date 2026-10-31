@@ -237,6 +237,10 @@ class RequirementTest(unittest.TestCase):
         self.assertTrue(any(level.get("isKept") for level in repository.sites["Sunny"]["levels"]))
         self.assertTrue(repository.sites["青蛙"]["levels"][2].get("alternative"))
         self.assertEqual(repository.sites["馒头"]["levels"][-1]["groupType"], "vip")
+        self.assertEqual(
+            [level.get("downloaded") for level in repository.sites["CARPT"]["levels"]],
+            [None, "200GiB", "500GiB", "1TiB", "2TiB", "4TiB", "6TiB", "8TiB", "10TiB"],
+        )
 
     def test_hdhome_nexus_master_is_retention_level(self):
         repository = rules.RuleRepository(RULES_DIR)
